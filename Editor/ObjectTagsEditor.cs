@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.enums;
+using ReupVirtualTwin.helpers;
 
 [CustomEditor(typeof(ObjectTags))]
 public class ObjectTagsEditor : Editor
@@ -25,7 +26,12 @@ public class ObjectTagsEditor : Editor
     private async void OnEnable()
     {
         tagsProperty = serializedObject.FindProperty("tags");
-        tagsApiManager = FinderController.FindTagsApiManager();
+        tagsApiManager = ObjectFinder.FindTagsApiManager();
+        if (tagsApiManager.webRequester == null)
+        {
+            tagsApiManager.webRequester = new TagsWebRequesterController("http://localhost:8000/api/v1/");
+            //tagsApiManager.webRequester = new TagsWebRequesterController("https://api-prod-reup.macheight.com/api/v1/");
+        }
         await GetTags();
     }
 
