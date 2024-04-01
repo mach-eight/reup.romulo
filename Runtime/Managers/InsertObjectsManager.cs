@@ -61,10 +61,10 @@ namespace ReupVirtualTwin.managers
         private GameObject AddTags(GameObject obj)
         {
             IObjectTags objectTags = _tagSystemController.AssignTagSystemToObject(obj);
-            objectTags.AddTags(new ObjectTag[3] {
-                ObjectTag.SELECTABLE,
-                ObjectTag.DELETABLE,
-                ObjectTag.TRANSFORMABLE,
+            objectTags.AddTags(new EditionTag[3] {
+                EditionTag.SELECTABLE,
+                EditionTag.DELETABLE,
+                EditionTag.TRANSFORMABLE,
             });
             return obj;
         }

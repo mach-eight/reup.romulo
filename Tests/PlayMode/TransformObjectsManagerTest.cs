@@ -36,11 +36,11 @@ public class TransformObjectsManagerTest : MonoBehaviour
         mockMediator = new MockMediator();
         transformObjectsManager.mediator = mockMediator;
         transformableObject0 = new GameObject("transformableObject0");
-        transformableObject0.AddComponent<ObjectTags>().AddTags(new ObjectTag[2] {ObjectTag.SELECTABLE, ObjectTag.TRANSFORMABLE});
+        transformableObject0.AddComponent<ObjectTags>().AddTags(new EditionTag[2] {EditionTag.SELECTABLE, EditionTag.TRANSFORMABLE});
         transformableObject1 = new GameObject("transformableObject1");
-        transformableObject1.AddComponent<ObjectTags>().AddTags(new ObjectTag[2] {ObjectTag.SELECTABLE, ObjectTag.TRANSFORMABLE});
+        transformableObject1.AddComponent<ObjectTags>().AddTags(new EditionTag[2] {EditionTag.SELECTABLE, EditionTag.TRANSFORMABLE});
         nonTransformableObject = new GameObject("nonTransformableObject");
-        nonTransformableObject.AddComponent<ObjectTags>().AddTags(new ObjectTag[1] {ObjectTag.SELECTABLE});
+        nonTransformableObject.AddComponent<ObjectTags>().AddTags(new EditionTag[1] {EditionTag.SELECTABLE});
     }
 
     [UnityTest]

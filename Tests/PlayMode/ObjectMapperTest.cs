@@ -56,12 +56,12 @@ public class ObjectMapperTest : MonoBehaviour
     private class MockTagsController : ITagsController
     {
         public string[] tags = new string[2] { "tag0", "tag1" };
-        public List<ObjectTag> AddTagToObject(GameObject obj, ObjectTag tag)
+        public List<EditionTag> AddTagToObject(GameObject obj, EditionTag tag)
         {
             throw new System.NotImplementedException();
         }
 
-        public bool DoesObjectHaveTag(GameObject obj, ObjectTag tag)
+        public bool DoesObjectHaveTag(GameObject obj, EditionTag tag)
         {
             throw new System.NotImplementedException();
         }
@@ -71,12 +71,12 @@ public class ObjectMapperTest : MonoBehaviour
             return tags;
         }
 
-        public List<ObjectTag> GetTagsFromObject(GameObject obj)
+        public List<EditionTag> GetTagsFromObject(GameObject obj)
         {
             throw new System.NotImplementedException();
         }
 
-        public List<ObjectTag> RemoveTagFromOjbect(GameObject obj, ObjectTag tag)
+        public List<EditionTag> RemoveTagFromOjbect(GameObject obj, EditionTag tag)
         {
             throw new System.NotImplementedException();
         }

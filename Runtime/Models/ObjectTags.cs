@@ -10,26 +10,26 @@ namespace ReupVirtualTwin.models
     public class ObjectTags : MonoBehaviour, IObjectTags 
     {
         [SerializeField]
-        private List<ObjectTag> tags = new List<ObjectTag>();
+        private List<EditionTag> tags = new List<EditionTag>();
 
-        public List<ObjectTag> GetTags()
+        public List<EditionTag> GetTags()
         {
             return tags;
         }
 
-        public List<ObjectTag> AddTag(ObjectTag tag)
+        public List<EditionTag> AddTag(EditionTag tag)
         {
             tags.Add(tag);
             return tags;
         }
 
-        public List<ObjectTag> RemoveTag(ObjectTag tag)
+        public List<EditionTag> RemoveTag(EditionTag tag)
         {
             tags.Remove(tag);
             return tags;
         }
 
-        public List<ObjectTag> AddTags(ObjectTag[] tagsList)
+        public List<EditionTag> AddTags(EditionTag[] tagsList)
         {
             tags.AddRange(tagsList);
             return tags;

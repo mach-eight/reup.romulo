@@ -100,13 +100,13 @@ public class DeleteObjectsManagerTest : MonoBehaviour
         public MockRegistry()
         {
             GameObject deletableObject0 = new GameObject("deletableObject0");
-            deletableObject0.AddComponent<ObjectTags>().AddTags(new ObjectTag[2] { ObjectTag.SELECTABLE, ObjectTag.DELETABLE });
+            deletableObject0.AddComponent<ObjectTags>().AddTags(new EditionTag[2] { EditionTag.SELECTABLE, EditionTag.DELETABLE });
             deletableObject0.AddComponent<UniqueId>().GenerateId();
             GameObject deletableObject1 = new GameObject("deletableObject1");
-            deletableObject1.AddComponent<ObjectTags>().AddTags(new ObjectTag[2] { ObjectTag.SELECTABLE, ObjectTag.DELETABLE });
+            deletableObject1.AddComponent<ObjectTags>().AddTags(new EditionTag[2] { EditionTag.SELECTABLE, EditionTag.DELETABLE });
             deletableObject1.AddComponent<UniqueId>().GenerateId();
             GameObject nonDeletableObject = new GameObject("nonDeletableObject");
-            nonDeletableObject.AddComponent<ObjectTags>().AddTags(new ObjectTag[1] { ObjectTag.SELECTABLE });
+            nonDeletableObject.AddComponent<ObjectTags>().AddTags(new EditionTag[1] { EditionTag.SELECTABLE });
             nonDeletableObject.AddComponent<UniqueId>().GenerateId();
             allObjects.Add(deletableObject0);
             allObjects.Add(deletableObject1);
