@@ -3,34 +3,25 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.TestTools;
 using NUnit.Framework;
-using System.Linq;
 using ReupVirtualTwin.managers;
 using ReupVirtualTwin.enums;
 using ReupVirtualTwin.managerInterfaces;
-using ReupVirtualTwin.dataModels;
 using System;
 using ReupVirtualTwin.models;
 using ReupVirtualTwin.controllers;
-using ReupVirtualTwin.modelInterfaces;
 
 public class DeleteObjectsManagerTest : MonoBehaviour
 {
     GameObject containerGameObject;
-    GameObject runtimeDeleteObj;
-    GameObject deleteWrapper;
     DeleteObjectsManager deleteObjectsManager;
     MockMediator mockMediator;
     MockRegistry mockRegistry;
-    GameObject deletableObject0;
-    GameObject deletableObject1;
-    GameObject nonDeletableObject;
     public List<GameObject> allObjects = new List<GameObject>();
 
     [SetUp]
     public void SetUp()
     {
         containerGameObject = new GameObject("containerGameObject");
-        deleteWrapper = new GameObject("deleteWrapper");
         deleteObjectsManager = containerGameObject.AddComponent<DeleteObjectsManager>();
         deleteObjectsManager.tagsController = new TagsController();
         mockMediator = new MockMediator();
