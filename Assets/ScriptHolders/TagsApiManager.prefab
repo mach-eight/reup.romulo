@@ -10,10 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4748901155591167205}
   - component: {fileID: 2917978188818067152}
-  - component: {fileID: 127101127794242236}
   m_Layer: 0
   m_Name: TagsApiManager
-  m_TagString: Untagged
+  m_TagString: TagsApiManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -43,17 +42,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2f93a9b855d36954095af3f7927619ee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &127101127794242236
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2227578903477674164}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5a8d26b9b7e75014da1a8828c26716a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

@@ -1,6 +1,6 @@
 namespace ReupVirtualTwin.enums
 {
-    public enum ObjectTagEnum
+    public enum EditionTag
     {
         SELECTABLE,
         TRANSFORMABLE,

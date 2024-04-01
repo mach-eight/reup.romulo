@@ -24,10 +24,10 @@ public class tagsControllerTest : MonoBehaviour
         tagsController = new TagsController();
         taggedObject0 = new GameObject("taggedObj0");
         objectTags0 = taggedObject0.AddComponent<ObjectTags>();
-        objectTags0.AddTags(new string[2] {ObjectTagEnum.SELECTABLE.ToString(), ObjectTagEnum.TRANSFORMABLE.ToString() });
+        objectTags0.AddTags(new string[2] {EditionTag.SELECTABLE.ToString(), EditionTag.TRANSFORMABLE.ToString() });
         taggedObject1 = new GameObject("taggedObject1");
         objectTags1 = taggedObject1.AddComponent<ObjectTags>();
-        objectTags1.AddTag(ObjectTagEnum.SELECTABLE.ToString());
+        objectTags1.AddTag(EditionTag.SELECTABLE.ToString());
         nonTaggedObject0 = new GameObject("nonTaggedObj0");
     }
     [TearDown]
@@ -38,34 +38,34 @@ public class tagsControllerTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldReturnFalseOnCheckForTags()
     {
-        Assert.IsFalse(tagsController.DoesObjectHaveTag(taggedObject0, ObjectTagEnum.DELETABLE.ToString()));
-        Assert.IsFalse(tagsController.DoesObjectHaveTag(taggedObject1, ObjectTagEnum.DELETABLE.ToString()));
-        Assert.IsFalse(tagsController.DoesObjectHaveTag(nonTaggedObject0, ObjectTagEnum.DELETABLE.ToString()));
+        Assert.IsFalse(tagsController.DoesObjectHaveTag(taggedObject0, EditionTag.DELETABLE.ToString()));
+        Assert.IsFalse(tagsController.DoesObjectHaveTag(taggedObject1, EditionTag.DELETABLE.ToString()));
+        Assert.IsFalse(tagsController.DoesObjectHaveTag(nonTaggedObject0, EditionTag.DELETABLE.ToString()));
         yield return null;
     }
     [UnityTest]
     public IEnumerator ShouldReturnTrueOnCheckForTags()
     {
-        Assert.IsTrue(tagsController.DoesObjectHaveTag(taggedObject0, ObjectTagEnum.SELECTABLE.ToString()));
-        Assert.IsTrue(tagsController.DoesObjectHaveTag(taggedObject1, ObjectTagEnum.SELECTABLE.ToString()));
+        Assert.IsTrue(tagsController.DoesObjectHaveTag(taggedObject0, EditionTag.SELECTABLE.ToString()));
+        Assert.IsTrue(tagsController.DoesObjectHaveTag(taggedObject1, EditionTag.SELECTABLE.ToString()));
         yield return null;
     }
     [UnityTest]
     public IEnumerator ShouldAddTags()
     {
-        Assert.IsFalse(tagsController.DoesObjectHaveTag(taggedObject0, ObjectTagEnum.DELETABLE.ToString()));
-        tagsController.AddTagToObject(taggedObject0, ObjectTagEnum.DELETABLE.ToString());
+        Assert.IsFalse(tagsController.DoesObjectHaveTag(taggedObject0, EditionTag.DELETABLE.ToString()));
+        tagsController.AddTagToObject(taggedObject0, EditionTag.DELETABLE.ToString());
         yield return null;
-        Assert.IsTrue(tagsController.DoesObjectHaveTag(taggedObject0, ObjectTagEnum.DELETABLE.ToString()));
+        Assert.IsTrue(tagsController.DoesObjectHaveTag(taggedObject0, EditionTag.DELETABLE.ToString()));
         yield return null;
     }
     [UnityTest]
     public IEnumerator ShouldRemoveTags()
     {
-        Assert.IsTrue(tagsController.DoesObjectHaveTag(taggedObject0, ObjectTagEnum.SELECTABLE.ToString()));
-        tagsController.RemoveTagFromOjbect(taggedObject0, ObjectTagEnum.SELECTABLE.ToString());
+        Assert.IsTrue(tagsController.DoesObjectHaveTag(taggedObject0, EditionTag.SELECTABLE.ToString()));
+        tagsController.RemoveTagFromOjbect(taggedObject0, EditionTag.SELECTABLE.ToString());
         yield return null;
-        Assert.IsFalse(tagsController.DoesObjectHaveTag(taggedObject0, ObjectTagEnum.SELECTABLE.ToString()));
+        Assert.IsFalse(tagsController.DoesObjectHaveTag(taggedObject0, EditionTag.SELECTABLE.ToString()));
         yield return null;
     }
 

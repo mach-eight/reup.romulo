@@ -1,13 +1,10 @@
 using ReupVirtualTwin.controllerInterfaces;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using System.Threading.Tasks;
 using ReupVirtualTwin.dataModels;
 
-namespace Packages.reup.romulo.Tests.PlayMode.Mocks
+namespace Tests.PlayMode.Mocks
 {
-    class MockTagsWebRequester : ITagsWebRequesterController
+    class TagsWebRequesterSpy : ITagsWebRequesterController
     {
         public int lastPageRequested;
         public int lastPageSizeRequested;
@@ -109,10 +106,6 @@ namespace Packages.reup.romulo.Tests.PlayMode.Mocks
             }
             return Task.FromResult(thirdPage);
         }
-
-        public Task<PaginationResult<ObjectTag>> GetTags(int page, int pageSize)
-        {
-            throw new System.NotImplementedException();
-        }
     }
+
 }

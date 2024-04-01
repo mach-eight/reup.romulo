@@ -62,9 +62,9 @@ namespace ReupVirtualTwin.managers
         {
             IObjectTags objectTags = _tagSystemController.AssignTagSystemToObject(obj);
             objectTags.AddTags(new string[3] {
-                ObjectTagEnum.SELECTABLE.ToString(),
-                ObjectTagEnum.DELETABLE.ToString(),
-                ObjectTagEnum.TRANSFORMABLE.ToString(),
+                EditionTag.SELECTABLE.ToString(),
+                EditionTag.DELETABLE.ToString(),
+                EditionTag.TRANSFORMABLE.ToString(),
             });
             return obj;
         }

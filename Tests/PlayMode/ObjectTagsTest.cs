@@ -33,21 +33,21 @@ public class ObjectTagsTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldAddOneTag()
     {
-        objectTags.AddTag(ObjectTagEnum.SELECTABLE.ToString());
+        objectTags.AddTag(EditionTag.SELECTABLE.ToString());
         Assert.AreEqual(1, objectTags.GetTags().Count);
-        Assert.IsTrue(objectTags.GetTags().Contains(ObjectTagEnum.SELECTABLE.ToString()));
+        Assert.IsTrue(objectTags.GetTags().Contains(EditionTag.SELECTABLE.ToString()));
         yield return null;
     }
     [UnityTest]
     public IEnumerator ShouldRemoveOneTag()
     {
-        objectTags.AddTag(ObjectTagEnum.SELECTABLE.ToString());
+        objectTags.AddTag(EditionTag.SELECTABLE.ToString());
         Assert.AreEqual(1, objectTags.GetTags().Count);
-        Assert.IsTrue(objectTags.GetTags().Contains(ObjectTagEnum.SELECTABLE.ToString()));
+        Assert.IsTrue(objectTags.GetTags().Contains(EditionTag.SELECTABLE.ToString()));
         yield return null;
-        objectTags.RemoveTag(ObjectTagEnum.SELECTABLE.ToString());
+        objectTags.RemoveTag(EditionTag.SELECTABLE.ToString());
         Assert.AreEqual(0, objectTags.GetTags().Count);
-        Assert.IsFalse(objectTags.GetTags().Contains(ObjectTagEnum.SELECTABLE.ToString()));
+        Assert.IsFalse(objectTags.GetTags().Contains(EditionTag.SELECTABLE.ToString()));
         yield return null;
     }
 }

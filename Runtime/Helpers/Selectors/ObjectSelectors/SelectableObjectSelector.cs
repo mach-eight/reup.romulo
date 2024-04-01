@@ -10,7 +10,7 @@ namespace ReupVirtualTwin.helpers
         public ITagsController tagsController { set =>  _tagsController = value; }
         protected override GameObject GetSelectedObjectFromHitObject(GameObject obj)
         {
-            if (_tagsController.DoesObjectHaveTag(obj, ObjectTagEnum.SELECTABLE.ToString()))
+            if (_tagsController.DoesObjectHaveTag(obj, EditionTag.SELECTABLE.ToString()))
             {
                 return obj;
             }

@@ -6,7 +6,6 @@
         "UnityEditor.TestRunner",
         "reup.romulo.helpers",
         "reup.romulo.enums",
-        "reup.romulo.charactermovement",
         "reup.modulo.managers",
         "reup.romulo.behaviours",
         "reup.romulo.models",
