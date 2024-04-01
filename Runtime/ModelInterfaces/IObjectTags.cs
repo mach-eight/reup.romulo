@@ -5,9 +5,9 @@ namespace ReupVirtualTwin.modelInterfaces
 {
     public interface IObjectTags
     {
-        public List<EditionTag> GetTags();
-        public List<EditionTag> AddTag(EditionTag tag);
-        public List<EditionTag> AddTags(EditionTag[] tagsList);
-        public List<EditionTag> RemoveTag(EditionTag tag);
+        public List<string> GetTags();
+        public List<string> AddTag(string tag);
+        public List<string> AddTags(string[] tagsList);
+        public List<string> RemoveTag(string tag);
     }
 }
