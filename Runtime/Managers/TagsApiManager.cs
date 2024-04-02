@@ -1,6 +1,5 @@
 using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.dataModels;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -15,13 +14,13 @@ namespace ReupVirtualTwin.managers
         private ITagsWebRequesterController _webRequester;
         private List<ObjectTag> tags = new List<ObjectTag>();
         private bool thereAreTagsToFetch = true;
+        private bool waitingForTagsResponse = false;
         private int currentPage = 0;
 
 
         public async Task<List<ObjectTag>> GetTags()
         {
-            Debug.Log("current page " + currentPage);
-            if (currentPage == 0)
+            if (currentPage == 0 && !waitingForTagsResponse)
             {
                 return await LoadMoreTags();
             }
@@ -30,32 +29,15 @@ namespace ReupVirtualTwin.managers
 
         public async Task<List<ObjectTag>> LoadMoreTags()
         {
-            Debug.Log("asking to load more tags");
-            Debug.Log("currentPage: " + currentPage);
-            if (!thereAreTagsToFetch)
+            if (!thereAreTagsToFetch || waitingForTagsResponse)
             {
                 return tags;
             }
-            Debug.Log("looks like there are still tags to fetch");
+            waitingForTagsResponse = true;
             PaginationResult<ObjectTag> fetchedTagsResult = await _webRequester.GetTags(++currentPage);
-            Debug.Log("currentPage after fetching: " + currentPage);
-            Debug.Log("fetchedTagsResult");
-            Debug.Log(fetchedTagsResult.next);
-            Debug.Log(fetchedTagsResult.previous);
-            Debug.Log(fetchedTagsResult.count);
-            //thereAreTagsToFetch = false;
-            if(fetchedTagsResult.next == null || fetchedTagsResult.next == "")
-            {
-                Debug.Log("Tags to fetch are done!");
-                thereAreTagsToFetch = false;
-            }
-            else
-            {
-                Debug.Log("There are more tags to fetch keep going babe!");
-                Debug.Log("next: " + fetchedTagsResult.next);
-            }
-            tags = new List<ObjectTag>(tags);
-            tags.AddRange(fetchedTagsResult.results);
+            CheckIfThereIsStillTagsToFetch(fetchedTagsResult);
+            AddNewTags(fetchedTagsResult.results);
+            waitingForTagsResponse = false;
             return tags;
         }
         
@@ -64,6 +46,22 @@ namespace ReupVirtualTwin.managers
             tags = new List<ObjectTag>();
             currentPage = 0;
             thereAreTagsToFetch = true;
+            waitingForTagsResponse = false;
         }
+
+        private void CheckIfThereIsStillTagsToFetch(PaginationResult<ObjectTag> fetchedTagsResult) { 
+            if(fetchedTagsResult.next == null || fetchedTagsResult.next == "")
+            {
+                thereAreTagsToFetch = false;
+            }
+        }
+
+        private List<ObjectTag> AddNewTags(ObjectTag[] newTags)
+        {
+            tags = new List<ObjectTag>(tags);
+            tags.AddRange(newTags);
+            return tags;
+        }
+
     }
 }

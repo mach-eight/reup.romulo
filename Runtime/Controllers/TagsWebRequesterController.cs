@@ -22,23 +22,19 @@ namespace ReupVirtualTwin.controllers
 
         public Task<PaginationResult<ObjectTag>> GetTags(int page)
         {
-            Debug.Log("fetching page : "+ page);
             return FetchTags($"page={page}");
         }
 
         private async Task<PaginationResult<ObjectTag>> FetchTags(string queryParams="")
         {
             string url = $"{baseUrl}tags/?{queryParams}";
-            Debug.Log("url : " + url);
             using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
             {
                 await webRequest.SendWebRequestTask();
                 if (webRequest.result != UnityWebRequest.Result.Success)
                 {
-                    Debug.Log("url of error: " + url);
-                    throw new System.Exception($"Error: {webRequest.error}");
+                    throw new System.Exception($"Error: {webRequest.error} for url: {url}");
                 }
-                Debug.Log("the json is: " + webRequest.downloadHandler.text);
                 return JsonUtility.FromJson<PaginationResult<ObjectTag>>(webRequest.downloadHandler.text);
             }
         }

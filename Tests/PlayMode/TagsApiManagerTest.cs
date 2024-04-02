@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using NUnit.Framework;
-using ReupVirtualTwin.controllers;
 using System.Threading.Tasks;
 using Tests.PlayMode.Mocks;
 using ReupVirtualTwin.dataModels;
@@ -126,5 +125,35 @@ public class TagsApiManagerTest : MonoBehaviour
         await tagsApiManager.LoadMoreTags();
         Assert.AreEqual(1, emptyStringWebRequesterSpy.numberOfTimesFetched);
     }
+
+    [Test]
+    public async Task ShouldNotFetchIfPreviousResponseIsStillWaiting()
+    {
+        DelayTagsWebRequesterSpy delayTagsWebRequesterSpy = new DelayTagsWebRequesterSpy(1000);
+        tagsApiManager.webRequester = delayTagsWebRequesterSpy;
+
+        await tagsApiManager.LoadMoreTags();
+        Assert.AreEqual(1, delayTagsWebRequesterSpy.numberOfTimesFetched);
+        Assert.AreEqual(1, delayTagsWebRequesterSpy.lastPageFetched);
+
+        tagsApiManager.LoadMoreTags();
+        await tagsApiManager.LoadMoreTags();
+        Assert.AreEqual(2, delayTagsWebRequesterSpy.numberOfTimesFetched);
+        Assert.AreEqual(2, delayTagsWebRequesterSpy.lastPageFetched);
+
+        await Task.Delay(1100); // Wait for the previous request to finish
+
+        tagsApiManager.LoadMoreTags(); // Should fetch
+        await Task.Delay(100);
+        tagsApiManager.LoadMoreTags(); // Should not fetch
+        await Task.Delay(100);
+        tagsApiManager.LoadMoreTags(); // Should not fetch
+        await Task.Delay(1000);
+        tagsApiManager.LoadMoreTags(); // Should fetch
+
+        Assert.AreEqual(4, delayTagsWebRequesterSpy.numberOfTimesFetched);
+        Assert.AreEqual(4, delayTagsWebRequesterSpy.lastPageFetched);
+    }
+
 }
 
