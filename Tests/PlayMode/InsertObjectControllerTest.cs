@@ -8,17 +8,30 @@ using ReupVirtualTwin.webRequestersInterfaces;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 namespace ReupVirtualTwinTests.controllers
 {
-    public class InsertObjectControllerTest
+    public class InsertObjectControllerTest: MonoBehaviour
     {
-
+        GameObject ObjectRegistryPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Assets/ScriptHolders/ObjectRegistry.prefab");
+        GameObject objectRegistryGameObject;
         MediatorSpy mediatorSpy;
         MeshDownloaderSpy meshDownloaderSpy;
         InsertObjectMessagePayload insertObjectMessagePayload;
         InserObjectController controller;
         ITagsController tagsReader;
+        IIdGetterController idReader;
+        Vector3 insertPosition;
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            // we set the objectRegistry only once because some objects that depend on it are use the ObjectFinder class to find it
+            // if we create a different objectRegistry for each test in the SetUp method, the ObjectFinder sometimes finds
+            // an old objectRegistry why this happens is still unknown to me
+            objectRegistryGameObject = (GameObject)PrefabUtility.InstantiatePrefab(ObjectRegistryPrefab);
+        }
 
         [SetUp]
         public void SetUp()
@@ -32,9 +45,17 @@ namespace ReupVirtualTwinTests.controllers
                 selectObjectAfterInsertion = true,
                 deselectPreviousSelection = true,
             };
-            controller = new InserObjectController(mediatorSpy, meshDownloaderSpy);
+            insertPosition = new Vector3(1, 2, 3);
+            controller = new InserObjectController(mediatorSpy, meshDownloaderSpy, insertPosition);
             controller.InsertObject(insertObjectMessagePayload);
             tagsReader = new TagsController();
+            idReader = new IdController();
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            Destroy(objectRegistryGameObject);
         }
 
         [Test]
@@ -82,6 +103,42 @@ namespace ReupVirtualTwinTests.controllers
             Assert.IsTrue(tagsReader.DoesObjectHaveTag(mediatorSpy.loadedObject, ObjectTag.DELETABLE));
         }
 
+        [Test]
+        public void InsertedObjectShouldHaveCorrectPosition()
+        {
+            Assert.AreEqual(insertPosition, mediatorSpy.loadedObject.transform.position);
+        }
+
+        [Test]
+        public void InsertedObjectShouldHaveDefinedId()
+        {
+            Assert.AreEqual(insertObjectMessagePayload.objectId, idReader.GetIdFromObject(mediatorSpy.loadedObject));
+        }
+
+        [Test]
+        public void InsertedObjectShouldHaveColliders()
+        {
+            Assert.IsTrue(CheckMeshesCollider(mediatorSpy.loadedObject));
+        }
+
+        private bool CheckMeshesCollider(GameObject obj)
+        {
+            MeshFilter meshFilter = obj.GetComponent<MeshFilter>();
+            Collider collider = obj.GetComponent<Collider>();
+            if (meshFilter != null && meshFilter.sharedMesh != null && collider == null)
+            {
+                return false;
+            }
+            for (int i = 0; i < obj.transform.childCount; i++)
+            {
+                if (!CheckMeshesCollider(obj.transform.GetChild(i).gameObject))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
     }
 
     class MediatorSpy : IMediator
@@ -118,13 +175,23 @@ namespace ReupVirtualTwinTests.controllers
         public MeshDownloaderSpy()
         {
             numberOfCalls = 0;
-            loadedObject = new GameObject();
+            loadedObject = CreateGameObject();
             modelLoaderContext = new ModelLoaderContext()
             {
                 loadedObject = loadedObject,
             };
         }
-        //public void downloadMesh(string meshUrl, Action<T, float> onProgress, Action<T> onLoad, Action<T> onMaterialsLoad, Action<E> onError = null)
+
+        private GameObject CreateGameObject()
+        {
+            GameObject parent = new();
+            GameObject child = new();
+            MeshFilter meshFilter = child.AddComponent<MeshFilter>();
+            meshFilter.sharedMesh = new Mesh();
+            child.transform.parent = parent.transform;
+            return parent;
+        }
+
         public void downloadMesh(string meshUrl, Action<ModelLoaderContext, float> onProgress, Action<ModelLoaderContext> onLoad, Action<ModelLoaderContext> onMaterialsLoad)
         {
             numberOfCalls++;
@@ -136,10 +203,6 @@ namespace ReupVirtualTwinTests.controllers
             onLoad(modelLoaderContext);
             onMaterialsLoad(modelLoaderContext);
         }
-
-        //{
-        //    throw new NotImplementedException();
-        //}
 
         private class AssetLoaderContextStub
         {

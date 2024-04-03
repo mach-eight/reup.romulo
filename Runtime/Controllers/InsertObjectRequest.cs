@@ -6,6 +6,8 @@ using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.webRequestersInterfaces;
 using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.modelInterfaces;
+using ReupVirtualTwin.helperInterfaces;
+using ReupVirtualTwin.helpers;
 
 namespace ReupVirtualTwin.controllers
 {
@@ -14,8 +16,12 @@ namespace ReupVirtualTwin.controllers
         private IMediator mediator;
         private InsertObjectMessagePayload insertObjectMessagePayload;
         private ITagSystemController tagSystemController = new TagSystemController();
-        public InsertObjectRequest(IMediator mediator, IMeshDownloader meshDownloader, InsertObjectMessagePayload messagePayload)
+        private IIdAssignerController idAssigner = new IdController();
+        private IColliderAdder colliderAdder = new  ColliderAdder();
+        private Vector3 insertPosition;
+        public InsertObjectRequest(IMediator mediator, IMeshDownloader meshDownloader, InsertObjectMessagePayload messagePayload, Vector3 insertPosition)
         {
+            this.insertPosition = insertPosition;
             this.mediator = mediator;
             insertObjectMessagePayload = messagePayload;
             meshDownloader.downloadMesh(
@@ -31,22 +37,16 @@ namespace ReupVirtualTwin.controllers
             mediator.Notify(ReupEvent.insertedObjectStatusUpdate, progress);
         }
 
-        //private void OnError(IContextualizedError contextualizedError)
-        //{
-        //    //Debug.LogError(contextualizedError);
-        //}
-
-        //private void OnLoad(AssetLoaderContext assetLoaderContext)
         private void OnLoad(ModelLoaderContext assetLoaderContext)
         {
 
             GameObject loadedObj = assetLoaderContext.loadedObject;
 
             AddTags(loadedObj);
-            //SetLoadPosition(loadedObj);
-            //AddColliders(loadedObj);
-            //AssignIds(loadedObj);
-            //loadedObj.SetActive(false);
+            SetLoadPosition(loadedObj);
+            AddColliders(loadedObj);
+            AssignIds(loadedObj);
+            loadedObj.SetActive(false);
         }
         private GameObject AddTags(GameObject obj)
         {
@@ -60,17 +60,17 @@ namespace ReupVirtualTwin.controllers
         }
         private GameObject SetLoadPosition(GameObject obj)
         {
-            //obj.transform.position = _insertPositionLocation.transform.position;
+            obj.transform.position = insertPosition;
             return obj;
         }
         private GameObject AddColliders(GameObject obj)
         {
-            //_colliderAdder.AddCollidersToTree(obj);
+            colliderAdder.AddCollidersToTree(obj);
             return obj;
         }
         private GameObject AssignIds(GameObject obj)
         {
-            //_idAssigner.AssignIdsToTree(obj, objectId);
+            idAssigner.AssignIdsToTree(obj, insertObjectMessagePayload.objectId);
             return obj;
         }
 

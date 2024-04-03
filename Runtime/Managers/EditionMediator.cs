@@ -27,7 +27,7 @@ namespace ReupVirtualTwin.managers
         public IDeleteObjectsManager deleteObjectsManager { set => _deleteObjectsManager = value; }
 
         private IInsertObjectsController _insertObjectsManager;
-        public IInsertObjectsController insertObjectsManager { set => _insertObjectsManager = value; }
+        public IInsertObjectsController insertObjectsController { set => _insertObjectsManager = value; }
 
         private IWebMessagesSender _webMessageSender;
         public IWebMessagesSender webMessageSender { set { _webMessageSender = value; } }

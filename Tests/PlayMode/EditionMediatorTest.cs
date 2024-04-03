@@ -37,7 +37,7 @@ public class EditionMediatorTest : MonoBehaviour
         mockTransformObjectsManager = new MockTransformObjectsManager();
         editionMediator.transformObjectsManager = mockTransformObjectsManager;
         mockInsertObjectsManager = new MockInsertObjectsManager(editionMediator);
-        editionMediator.insertObjectsManager = mockInsertObjectsManager;
+        editionMediator.insertObjectsController = mockInsertObjectsManager;
         mockObjectMapper = new MockObjectMapper();
         editionMediator.objectMapper = mockObjectMapper;
     }

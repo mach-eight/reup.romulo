@@ -12,6 +12,8 @@ namespace ReupVirtualTwin.dependencyInjectors
     [RequireComponent(typeof(EditionMediator))]
     public class EditionMediatorDependecyInjector : MonoBehaviour
     {
+        [SerializeField]
+        private GameObject _insertPositionLocation;
         EditionMediator _editionMediator;
         [SerializeField]
         GameObject editModeManager;
@@ -19,8 +21,6 @@ namespace ReupVirtualTwin.dependencyInjectors
         GameObject selectedObjectsManager;
         [SerializeField]
         GameObject transformObjectsManager;
-        [SerializeField]
-        GameObject insertObjectsManager;
         [SerializeField]
         GameObject deleteObjectsManager;
 
@@ -40,8 +40,11 @@ namespace ReupVirtualTwin.dependencyInjectors
             }
             _editionMediator.webMessageSender = webMessageSender;
             _editionMediator.objectMapper = new ObjectMapper(new TagsController(), new IdController());
-            //_editionMediator.insertObjectsManager = insertObjectsManager.GetComponent<IInsertObjectsManager>();
-            _editionMediator.insertObjectsManager = new InserObjectController(_editionMediator, new MeshDownloader());
+            _editionMediator.insertObjectsController = new InserObjectController(
+                _editionMediator,
+                new MeshDownloader(),
+                _insertPositionLocation.transform.position
+            );
         }
     }
 }
