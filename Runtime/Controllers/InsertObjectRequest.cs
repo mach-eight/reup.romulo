@@ -39,9 +39,7 @@ namespace ReupVirtualTwin.controllers
 
         private void OnLoad(ModelLoaderContext assetLoaderContext)
         {
-
             GameObject loadedObj = assetLoaderContext.loadedObject;
-
             AddTags(loadedObj);
             SetLoadPosition(loadedObj);
             AddColliders(loadedObj);
@@ -74,7 +72,6 @@ namespace ReupVirtualTwin.controllers
             return obj;
         }
 
-        //private void OnMaterialsLoad(AssetLoaderContext assetLoaderContext)
         private void OnMaterialsLoad(ModelLoaderContext assetLoaderContext)
         {
             var myLoadedGameObject = assetLoaderContext.loadedObject;

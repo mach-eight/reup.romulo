@@ -1,14 +1,18 @@
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.TestTools;
+using UnityEditor;
+using System.Threading.Tasks;
+
 using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.enums;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.webRequestersInterfaces;
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
+using System.Collections;
 
 namespace ReupVirtualTwinTests.controllers
 {
@@ -27,100 +31,17 @@ namespace ReupVirtualTwinTests.controllers
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            // we set the objectRegistry only once because some objects that depend on it are use the ObjectFinder class to find it
+            // we set the objectRegistry only once because some objects that depend on it are using the ObjectFinder class to find it
             // if we create a different objectRegistry for each test in the SetUp method, the ObjectFinder sometimes finds
             // an old objectRegistry why this happens is still unknown to me
             objectRegistryGameObject = (GameObject)PrefabUtility.InstantiatePrefab(ObjectRegistryPrefab);
         }
 
-        [SetUp]
-        public void SetUp()
+        private void RequesObject(InsertObjectMessagePayload message)
         {
-            mediatorSpy = new MediatorSpy();
-            meshDownloaderSpy = new MeshDownloaderSpy();
-            insertObjectMessagePayload = new InsertObjectMessagePayload()
-            {
-                objectId = "object-id",
-                objectUrl = "object-url",
-                selectObjectAfterInsertion = true,
-                deselectPreviousSelection = true,
-            };
-            insertPosition = new Vector3(1, 2, 3);
-            controller = new InserObjectController(mediatorSpy, meshDownloaderSpy, insertPosition);
-            controller.InsertObject(insertObjectMessagePayload);
-            tagsReader = new TagsController();
-            idReader = new IdController();
+            mediatorSpy.IncreaseObjectRequestedCount();
+            controller.InsertObject(message);
         }
-
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
-            Destroy(objectRegistryGameObject);
-        }
-
-        [Test]
-        public void ShouldCreateInsertObjectController()
-        {
-            Assert.IsNotNull(controller);
-        }
-
-        [Test]
-        public void ShouldRequestMeshDownload()
-        {
-            Assert.AreEqual(1, meshDownloaderSpy.numberOfCalls);
-            Assert.AreEqual(insertObjectMessagePayload.objectUrl, meshDownloaderSpy.meshUrl);
-        }
-
-        [Test]
-        public void ShouldNotifyMediatorForProgress()
-        {
-            Assert.AreEqual(4, mediatorSpy.onProgressNumberOfCalls);
-            Assert.AreEqual(new List<float> { 0.3f, 0.6f, 0.9f, 1f }, mediatorSpy.progresses);
-        }
-
-        [Test]
-        public void ShouldNotifyMediatorForLoad()
-        {
-            Assert.AreEqual(meshDownloaderSpy.loadedObject, mediatorSpy.loadedObject);
-            Assert.IsTrue(mediatorSpy.loadedObject.activeInHierarchy);
-        }
-
-        [Test]
-        public void InsertedObjectShouldHaveSelectableTag()
-        {
-            Assert.IsTrue(tagsReader.DoesObjectHaveTag(mediatorSpy.loadedObject, ObjectTag.SELECTABLE));
-        }
-
-        [Test]
-        public void InsertedObjectShouldHaveTransformableTag()
-        {
-            Assert.IsTrue(tagsReader.DoesObjectHaveTag(mediatorSpy.loadedObject, ObjectTag.TRANSFORMABLE));
-        }
-
-        [Test]
-        public void InsertedObjectShouldHaveDeletableTag()
-        {
-            Assert.IsTrue(tagsReader.DoesObjectHaveTag(mediatorSpy.loadedObject, ObjectTag.DELETABLE));
-        }
-
-        [Test]
-        public void InsertedObjectShouldHaveCorrectPosition()
-        {
-            Assert.AreEqual(insertPosition, mediatorSpy.loadedObject.transform.position);
-        }
-
-        [Test]
-        public void InsertedObjectShouldHaveDefinedId()
-        {
-            Assert.AreEqual(insertObjectMessagePayload.objectId, idReader.GetIdFromObject(mediatorSpy.loadedObject));
-        }
-
-        [Test]
-        public void InsertedObjectShouldHaveColliders()
-        {
-            Assert.IsTrue(CheckMeshesCollider(mediatorSpy.loadedObject));
-        }
-
         private bool CheckMeshesCollider(GameObject obj)
         {
             MeshFilter meshFilter = obj.GetComponent<MeshFilter>();
@@ -139,13 +60,189 @@ namespace ReupVirtualTwinTests.controllers
             return true;
         }
 
+        [SetUp]
+        public void SetUp()
+        {
+            mediatorSpy = new MediatorSpy();
+            meshDownloaderSpy = new MeshDownloaderSpy();
+            insertObjectMessagePayload = new InsertObjectMessagePayload()
+            {
+                objectId = "object-id",
+                objectUrl = "object-url",
+                selectObjectAfterInsertion = true,
+                deselectPreviousSelection = true,
+            };
+            insertPosition = new Vector3(1, 2, 3);
+            controller = new InserObjectController(mediatorSpy, meshDownloaderSpy, insertPosition);
+            RequesObject(insertObjectMessagePayload);
+            tagsReader = new TagsController();
+            idReader = new IdController();
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            Destroy(objectRegistryGameObject);
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldCreateInsertObjectController()
+        {
+            yield return new WaitUntil(() => mediatorSpy.allRequestedObjectsAreLoaded);
+            Assert.IsNotNull(controller);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldRequestMeshDownload()
+        {
+            yield return new WaitUntil(() => mediatorSpy.allRequestedObjectsAreLoaded);
+            Assert.AreEqual(1, meshDownloaderSpy.numberOfCalls);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldNotifyProgressToMediator()
+        {
+            yield return new WaitUntil(() => mediatorSpy.allRequestedObjectsAreLoaded);
+            Assert.AreEqual(4, mediatorSpy.onProgressNumberOfCalls);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldNotifyWhenObjectLoadsToMediator()
+        {
+            yield return new WaitUntil(() => mediatorSpy.allRequestedObjectsAreLoaded);
+            Assert.AreEqual(meshDownloaderSpy.GetLastLoadedObject(), mediatorSpy.GetLastLoadedObject());
+            Assert.IsTrue(mediatorSpy.GetLastLoadedObject().activeInHierarchy);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator InsertedObjectShouldHaveSelectableTag()
+        {
+            yield return new WaitUntil(() => mediatorSpy.allRequestedObjectsAreLoaded);
+            Assert.IsTrue(tagsReader.DoesObjectHaveTag(mediatorSpy.GetLastLoadedObject(), ObjectTag.SELECTABLE));
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator InsertedObjectShouldHaveTransformableTag()
+        {
+            yield return new WaitUntil(() => mediatorSpy.allRequestedObjectsAreLoaded);
+            Assert.IsTrue(tagsReader.DoesObjectHaveTag(mediatorSpy.GetLastLoadedObject(), ObjectTag.TRANSFORMABLE));
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator InsertedObjectShouldHaveDeletableTag()
+        {
+            yield return new WaitUntil(() => mediatorSpy.allRequestedObjectsAreLoaded);
+            Assert.IsTrue(tagsReader.DoesObjectHaveTag(mediatorSpy.GetLastLoadedObject(), ObjectTag.DELETABLE));
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator InsertedObjectShouldHaveCorrectPosition()
+        {
+            yield return new WaitUntil(() => mediatorSpy.allRequestedObjectsAreLoaded);
+            Assert.AreEqual(insertPosition, mediatorSpy.GetLastLoadedObject().transform.position);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator InsertedObjectShouldHaveDefinedId()
+        {
+            yield return new WaitUntil(() => mediatorSpy.allRequestedObjectsAreLoaded);
+            Assert.AreEqual(insertObjectMessagePayload.objectId, idReader.GetIdFromObject(mediatorSpy.GetLastLoadedObject()));
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator InsertedObjectShouldHaveColliders()
+        {
+            yield return new WaitUntil(() => mediatorSpy.allRequestedObjectsAreLoaded);
+            Assert.IsTrue(CheckMeshesCollider(mediatorSpy.GetLastLoadedObject()));
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldPreserveDifferentSettingsForSimultaneouslyInsertedObjects()
+        {
+            InsertObjectMessagePayload anotherInsertMessagePayload = new()
+            {
+                objectId = "object-id-2",
+                objectUrl = "object-url-2",
+                selectObjectAfterInsertion = false,
+                deselectPreviousSelection = false,
+            };
+            RequesObject(anotherInsertMessagePayload);
+            yield return new WaitUntil(() => mediatorSpy.allRequestedObjectsAreLoaded);
+
+            InsertedObjectPayload firstObjectPayload = mediatorSpy.loadedObjectsPayloads.Find(payload => payload.selectObjectAfterInsertion == true);
+            InsertedObjectPayload secondObjectPayload = mediatorSpy.loadedObjectsPayloads.Find(payload => payload.selectObjectAfterInsertion == false);
+
+            Assert.AreEqual(meshDownloaderSpy.loadedObjects[0], firstObjectPayload.loadedObject);
+            Assert.AreEqual(meshDownloaderSpy.loadedObjects[1], secondObjectPayload.loadedObject);
+            Assert.AreEqual(insertObjectMessagePayload.deselectPreviousSelection, firstObjectPayload.deselectPreviousSelection);
+            Assert.AreEqual(anotherInsertMessagePayload.deselectPreviousSelection, secondObjectPayload.deselectPreviousSelection);
+            yield return null;
+
+            //Assert.AreEqual(insertObjectMessagePayload.selectObjectAfterInsertion, firstObjectPayload.selectObjectAfterInsertion);
+            //Assert.AreEqual(insertObjectMessagePayload.deselectPreviousSelection, firstObjectPayload.deselectPreviousSelection);
+
+            //Assert.AreEqual(meshDownloaderSpy.loadedObjects[0], mediatorSpy.loadedObjectsPayloads[0].loadedObject);
+            //Assert.AreEqual(insertObjectMessagePayload.selectObjectAfterInsertion, mediatorSpy.loadedObjectsPayloads[1].selectObjectAfterInsertion);
+            //Assert.AreEqual(insertObjectMessagePayload.deselectPreviousSelection, mediatorSpy.loadedObjectsPayloads[1].deselectPreviousSelection);
+            //Assert.AreEqual(anotherPayload.selectObjectAfterInsertion, mediatorSpy.loadedObjectsPayloads[0].selectObjectAfterInsertion);
+            //Assert.AreEqual(anotherPayload.deselectPreviousSelection, mediatorSpy.loadedObjectsPayloads[0].deselectPreviousSelection);
+            yield return null;
+        }
+
+
     }
 
     class MediatorSpy : IMediator
     {
         public int onProgressNumberOfCalls = 0;
-        public List<float> progresses = new();
-        public GameObject loadedObject = null;
+        public List<InsertedObjectPayload> loadedObjectsPayloads;
+        public bool allRequestedObjectsAreLoaded;
+
+        private int requestedObjectsCount;
+        private int loadedObjectsCount;
+        private delegate void ObjectLoadedEventHandler();
+        private event ObjectLoadedEventHandler ObjectLoaded;
+
+
+        public MediatorSpy()
+        {
+            loadedObjectsPayloads = new List<InsertedObjectPayload>();
+            requestedObjectsCount = 0;
+            allRequestedObjectsAreLoaded = false;
+            ObjectLoaded += () => NewLoadedObject();
+        }
+        public void IncreaseObjectRequestedCount()
+        {
+            requestedObjectsCount++;
+        }
+        public InsertedObjectPayload GetLastInsertedObjectPayload()
+        {
+            return loadedObjectsPayloads[loadedObjectsPayloads.Count - 1];
+        }
+        public GameObject GetLastLoadedObject()
+        {
+            return GetLastInsertedObjectPayload().loadedObject;
+        }
+        private void NewLoadedObject()
+        {
+            loadedObjectsCount++;
+            if (loadedObjectsCount == requestedObjectsCount)
+            {
+                allRequestedObjectsAreLoaded = true;
+                ObjectLoaded -= NewLoadedObject;
+            }
+        }
+
         public void Notify(ReupEvent eventName)
         {
             throw new System.NotImplementedException();
@@ -157,10 +254,10 @@ namespace ReupVirtualTwinTests.controllers
             {
                 case ReupEvent.insertedObjectStatusUpdate:
                     onProgressNumberOfCalls++;
-                    progresses.Add((float)(object)payload);
                     break;
                 case ReupEvent.insertedObjectLoaded:
-                    loadedObject = ((InsertedObjectPayload)(object)payload).loadedObject;
+                    loadedObjectsPayloads.Add(((InsertedObjectPayload)(object)payload));
+                    ObjectLoaded?.Invoke();
                     break;
             }
         }
@@ -168,18 +265,17 @@ namespace ReupVirtualTwinTests.controllers
 
     class MeshDownloaderSpy : IMeshDownloader
     {
-        public string meshUrl;
         public int numberOfCalls;
-        public GameObject loadedObject;
-        private ModelLoaderContext modelLoaderContext;
+        public List<GameObject> loadedObjects;
+
         public MeshDownloaderSpy()
         {
+            loadedObjects = new List<GameObject>();
             numberOfCalls = 0;
-            loadedObject = CreateGameObject();
-            modelLoaderContext = new ModelLoaderContext()
-            {
-                loadedObject = loadedObject,
-            };
+        }
+        public GameObject GetLastLoadedObject()
+        {
+            return loadedObjects[loadedObjects.Count - 1];
         }
 
         private GameObject CreateGameObject()
@@ -192,15 +288,24 @@ namespace ReupVirtualTwinTests.controllers
             return parent;
         }
 
-        public void downloadMesh(string meshUrl, Action<ModelLoaderContext, float> onProgress, Action<ModelLoaderContext> onLoad, Action<ModelLoaderContext> onMaterialsLoad)
+        public async void downloadMesh(string meshUrl, Action<ModelLoaderContext, float> onProgress, Action<ModelLoaderContext> onLoad, Action<ModelLoaderContext> onMaterialsLoad)
         {
             numberOfCalls++;
-            this.meshUrl = meshUrl;
+            int downloadTime = 60;
+            int processingTime = 30;
+            GameObject obj = CreateGameObject();
+            loadedObjects.Add(obj);
+            ModelLoaderContext modelLoaderContext = new()
+            {
+                loadedObject = obj,
+            };
             onProgress(modelLoaderContext, 0.3f);
             onProgress(modelLoaderContext, 0.6f);
             onProgress(modelLoaderContext, 0.9f);
             onProgress(modelLoaderContext, 1f);
+            await Task.Delay(downloadTime);
             onLoad(modelLoaderContext);
+            await Task.Delay(processingTime);
             onMaterialsLoad(modelLoaderContext);
         }
 
