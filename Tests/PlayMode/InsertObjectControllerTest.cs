@@ -42,7 +42,7 @@ namespace ReupVirtualTwinTests.controllers
             mediatorSpy.IncreaseObjectRequestedCount();
             controller.InsertObject(message);
         }
-        private bool CheckMeshesCollider(GameObject obj)
+        private bool HasObjectTreeColliders(GameObject obj)
         {
             MeshFilter meshFilter = obj.GetComponent<MeshFilter>();
             Collider collider = obj.GetComponent<Collider>();
@@ -52,7 +52,7 @@ namespace ReupVirtualTwinTests.controllers
             }
             for (int i = 0; i < obj.transform.childCount; i++)
             {
-                if (!CheckMeshesCollider(obj.transform.GetChild(i).gameObject))
+                if (!HasObjectTreeColliders(obj.transform.GetChild(i).gameObject))
                 {
                     return false;
                 }
@@ -162,7 +162,7 @@ namespace ReupVirtualTwinTests.controllers
         public IEnumerator InsertedObjectShouldHaveColliders()
         {
             yield return new WaitUntil(() => mediatorSpy.allRequestedObjectsAreLoaded);
-            Assert.IsTrue(CheckMeshesCollider(mediatorSpy.GetLastLoadedObject()));
+            Assert.IsTrue(HasObjectTreeColliders(mediatorSpy.GetLastLoadedObject()));
             yield return null;
         }
 
@@ -186,16 +186,6 @@ namespace ReupVirtualTwinTests.controllers
             Assert.AreEqual(meshDownloaderSpy.loadedObjects[1], secondObjectPayload.loadedObject);
             Assert.AreEqual(insertObjectMessagePayload.deselectPreviousSelection, firstObjectPayload.deselectPreviousSelection);
             Assert.AreEqual(anotherInsertMessagePayload.deselectPreviousSelection, secondObjectPayload.deselectPreviousSelection);
-            yield return null;
-
-            //Assert.AreEqual(insertObjectMessagePayload.selectObjectAfterInsertion, firstObjectPayload.selectObjectAfterInsertion);
-            //Assert.AreEqual(insertObjectMessagePayload.deselectPreviousSelection, firstObjectPayload.deselectPreviousSelection);
-
-            //Assert.AreEqual(meshDownloaderSpy.loadedObjects[0], mediatorSpy.loadedObjectsPayloads[0].loadedObject);
-            //Assert.AreEqual(insertObjectMessagePayload.selectObjectAfterInsertion, mediatorSpy.loadedObjectsPayloads[1].selectObjectAfterInsertion);
-            //Assert.AreEqual(insertObjectMessagePayload.deselectPreviousSelection, mediatorSpy.loadedObjectsPayloads[1].deselectPreviousSelection);
-            //Assert.AreEqual(anotherPayload.selectObjectAfterInsertion, mediatorSpy.loadedObjectsPayloads[0].selectObjectAfterInsertion);
-            //Assert.AreEqual(anotherPayload.deselectPreviousSelection, mediatorSpy.loadedObjectsPayloads[0].deselectPreviousSelection);
             yield return null;
         }
 

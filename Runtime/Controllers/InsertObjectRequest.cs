@@ -74,11 +74,11 @@ namespace ReupVirtualTwin.controllers
 
         private void OnMaterialsLoad(ModelLoaderContext assetLoaderContext)
         {
-            var myLoadedGameObject = assetLoaderContext.loadedObject;
-            myLoadedGameObject.SetActive(true);
+            var obj = assetLoaderContext.loadedObject;
+            obj.SetActive(true);
             InsertedObjectPayload insertedObjectPayload = new()
             {
-                loadedObject = myLoadedGameObject,
+                loadedObject = obj,
                 selectObjectAfterInsertion = insertObjectMessagePayload.selectObjectAfterInsertion,
                 deselectPreviousSelection = insertObjectMessagePayload.deselectPreviousSelection,
             };

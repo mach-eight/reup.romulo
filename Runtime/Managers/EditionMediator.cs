@@ -34,10 +34,6 @@ namespace ReupVirtualTwin.managers
         private IObjectMapper _objectMapper;
         public IObjectMapper objectMapper { set => _objectMapper = value; }
 
-
-        //private bool selectObjectAfterInsertion;
-        //private bool deselectPreviousSelectionInInsertion;
-
         public string noInsertObjectIdErrorMessage = "No object id provided for insertion";
         public string noInsertObjectUrlErrorMessage = "No 3d model url provided for insertion";
 
@@ -108,8 +104,6 @@ namespace ReupVirtualTwin.managers
 
         public void ReceiveWebMessage(string serializedWebMessage)
         {
-            Debug.Log("serializedWebMessage");
-            Debug.Log(serializedWebMessage);
             WebMessage<string> message = JsonUtility.FromJson<WebMessage<string>>(serializedWebMessage);
             switch (message.type)
             {
@@ -295,8 +289,6 @@ namespace ReupVirtualTwin.managers
                 SendErrorMessage(noInsertObjectIdErrorMessage);
                 return;
             }
-            //selectObjectAfterInsertion = parsedPayload.selectObjectAfterInsertion;
-            //deselectPreviousSelectionInInsertion = parsedPayload.deselectPreviousSelection;
             _insertObjectsManager.InsertObject(parsedPayload);
         }
 
