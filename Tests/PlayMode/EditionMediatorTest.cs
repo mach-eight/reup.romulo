@@ -164,8 +164,11 @@ public class EditionMediatorTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldSendMessageOfLoadObjectSuccess()
     {
-        GameObject insertedObject = new GameObject("insertedObject");
-        editionMediator.Notify(ReupEvent.insertedObjectLoaded, insertedObject);
+        InsertedObjectPayload insertedObjectPayload = new()
+        {
+            loadedObject = new GameObject("insertedObject"),
+        };
+        editionMediator.Notify(ReupEvent.insertedObjectLoaded, insertedObjectPayload);
         WebMessage<ObjectDTO> sentMessage = (WebMessage<ObjectDTO>)mockWebMessageSender.sentMessage;
         Assert.AreEqual(WebMessageType.loadObjectSuccess, sentMessage.type);
         Assert.AreEqual(mockObjectMapper.objectDTOs[0], sentMessage.payload);
@@ -352,7 +355,13 @@ public class EditionMediatorTest : MonoBehaviour
             injectedObject = new GameObject("injected test object");
             calledToInsertObject = true;
             objectLoadString = insertObjectMessagePayload.objectUrl;
-            editionMediator.Notify(ReupEvent.insertedObjectLoaded, injectedObject);
+            InsertedObjectPayload insertedObjectPayload = new()
+            {
+                loadedObject = injectedObject,
+                selectObjectAfterInsertion = insertObjectMessagePayload.selectObjectAfterInsertion,
+                deselectPreviousSelection = insertObjectMessagePayload.deselectPreviousSelection,
+            };
+            editionMediator.Notify(ReupEvent.insertedObjectLoaded, insertedObjectPayload);
             requestedObjectId = insertObjectMessagePayload.objectId;
         }
     }

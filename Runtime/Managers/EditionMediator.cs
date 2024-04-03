@@ -87,11 +87,11 @@ namespace ReupVirtualTwin.managers
                     ProcessNewWrapper((ObjectWrapperDTO)(object)payload);
                     break;
                 case ReupEvent.insertedObjectLoaded:
-                    if (!(payload is GameObject))
+                    if (!(payload is InsertedObjectPayload))
                     {
-                        throw new ArgumentException($"Payload must be of type {nameof(GameObject)} for {eventName} events", nameof(payload));
+                        throw new ArgumentException($"Payload must be of type {nameof(InsertedObjectPayload)} for {eventName} events", nameof(payload));
                     }
-                    ProcessInsertedObjectLoaded((GameObject)(object)payload);
+                    ProcessInsertedObjectLoaded((InsertedObjectPayload)(object)payload);
                     break;
                 case ReupEvent.insertedObjectStatusUpdate:
                     if (!(payload is float))
@@ -259,13 +259,17 @@ namespace ReupVirtualTwin.managers
             _webMessageSender.SendWebMessage(message);
         }
 
-        private void ProcessInsertedObjectLoaded(GameObject obj)
+        private void ProcessInsertedObjectLoaded(InsertedObjectPayload insertedObjectPayload)
         {
-            SendInsertedObjectMessage(obj);
-            //if (selectObjectAfterInsertion)
-            //{
-            //    SelectInsertedObject(obj);
-            //}
+            SendInsertedObjectMessage(insertedObjectPayload.loadedObject);
+            if (insertedObjectPayload.selectObjectAfterInsertion)
+            {
+                if (insertedObjectPayload.deselectPreviousSelection)
+                {
+                    _selectedObjectsManager.ClearSelection();
+                }
+                _selectedObjectsManager.AddObjectToSelection(insertedObjectPayload.loadedObject);
+            }
         }
         private void SendInsertedObjectMessage(GameObject obj)
         {
@@ -276,14 +280,6 @@ namespace ReupVirtualTwin.managers
                 payload = objectDTO
             };
             _webMessageSender.SendWebMessage(message);
-        }
-        private void SelectInsertedObject(GameObject obj)
-        {
-            //if (deselectPreviousSelectionInInsertion)
-            //{
-            //    _selectedObjectsManager.ClearSelection();
-            //}
-            //_selectedObjectsManager.AddObjectToSelection(obj);
         }
 
         private void LoadObject(string payload)
