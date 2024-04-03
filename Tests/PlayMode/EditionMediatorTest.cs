@@ -346,13 +346,13 @@ public class EditionMediatorTest : MonoBehaviour
             editionMediator = mediator;
         }
 
-        public void InsertObjectFromUrl(string url, string objectId)
+        public void InsertObjectFromUrl(InsertObjectMessagePayload insertObjectMessagePayload)
         {
             injectedObject = new GameObject("injected test object");
             calledToInsertObject = true;
-            objectLoadString = url;
+            objectLoadString = insertObjectMessagePayload.objectUrl;
             editionMediator.Notify(ReupEvent.insertedObjectLoaded, injectedObject);
-            requestedObjectId = objectId;
+            requestedObjectId = insertObjectMessagePayload.objectId;
         }
     }
     private class MockObjectMapper : IObjectMapper

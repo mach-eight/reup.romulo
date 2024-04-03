@@ -7,6 +7,7 @@ using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.enums;
 using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.helperInterfaces;
+using ReupVirtualTwin.dataModels;
 
 namespace ReupVirtualTwin.managers
 {
@@ -23,24 +24,22 @@ namespace ReupVirtualTwin.managers
         private IMediator _mediator;
         public IMediator mediator { set => _mediator = value; }
 
-        private string objectId;
 
-        public void InsertObjectFromUrl(string url, string objectId)
+        public void InsertObjectFromUrl(InsertObjectMessagePayload insertObjectMessagePayload)
         {
-            this.objectId = objectId;
 
             // Creates an AssetLoaderOptions instance.
             // AssetLoaderOptions is a class used to configure many aspects of the loading process.
             // We won't change the default settings this time, so we can use the instance as it is.
-            var assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions();
+            //var assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions();
 
             // Creates the web-request.
             // The web-request contains information on how to download the model.
-            var webRequest = AssetDownloader.CreateWebRequest(url);
+            //var webRequest = AssetDownloader.CreateWebRequest(insertObjectMessagePayload.objectUrl);
 
             // Shows the model selection file-picker.
             // Important: If you're downloading models from files that are not Zipped, you must pass the model extension as the last parameter from this call (Eg: "fbx")
-            var r = AssetDownloader.LoadModelFromUri(webRequest, OnLoad, OnMaterialsLoad, OnProgress, OnError, null, assetLoaderOptions, null, "fbx");
+            //var r = AssetDownloader.LoadModelFromUri(webRequest, OnLoad, OnMaterialsLoad, OnProgress, OnError, null, assetLoaderOptions, null, "fbx");
         }
 
         private void OnProgress(AssetLoaderContext assetLoaderContext, float progress)
@@ -84,7 +83,7 @@ namespace ReupVirtualTwin.managers
         }
         private GameObject AssignIds(GameObject obj)
         {
-            _idAssigner.AssignIdsToTree(obj, objectId);
+            //_idAssigner.AssignIdsToTree(obj, objectId);
             return obj;
         }
 

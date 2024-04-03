@@ -1,7 +1,9 @@
+using ReupVirtualTwin.dataModels;
+
 namespace ReupVirtualTwin.managerInterfaces
 {
     public interface IInsertObjectsManager
     {
-        public void InsertObjectFromUrl(string url, string objectId);
+        public void InsertObjectFromUrl(InsertObjectMessagePayload insertObjectMessagePayload);
     }
 }

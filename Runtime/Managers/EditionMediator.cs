@@ -5,8 +5,6 @@ using ReupVirtualTwin.behaviourInterfaces;
 using ReupVirtualTwin.dataModels;
 using System;
 using System.Collections.Generic;
-using ReupVirtualTwin.modelInterfaces;
-using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.helperInterfaces;
 
 namespace ReupVirtualTwin.managers
@@ -36,8 +34,8 @@ namespace ReupVirtualTwin.managers
         public IObjectMapper objectMapper { set => _objectMapper = value; }
 
 
-        private bool selectObjectAfterInsertion;
-        private bool deselectPreviousSelectionInInsertion;
+        //private bool selectObjectAfterInsertion;
+        //private bool deselectPreviousSelectionInInsertion;
 
         public string noInsertObjectIdErrorMessage = "No object id provided for insertion";
         public string noInsertObjectUrlErrorMessage = "No 3d model url provided for insertion";
@@ -261,10 +259,10 @@ namespace ReupVirtualTwin.managers
         private void ProcessInsertedObjectLoaded(GameObject obj)
         {
             SendInsertedObjectMessage(obj);
-            if (selectObjectAfterInsertion)
-            {
-                SelectInsertedObject(obj);
-            }
+            //if (selectObjectAfterInsertion)
+            //{
+            //    SelectInsertedObject(obj);
+            //}
         }
         private void SendInsertedObjectMessage(GameObject obj)
         {
@@ -278,11 +276,11 @@ namespace ReupVirtualTwin.managers
         }
         private void SelectInsertedObject(GameObject obj)
         {
-            if (deselectPreviousSelectionInInsertion)
-            {
-                _selectedObjectsManager.ClearSelection();
-            }
-            _selectedObjectsManager.AddObjectToSelection(obj);
+            //if (deselectPreviousSelectionInInsertion)
+            //{
+            //    _selectedObjectsManager.ClearSelection();
+            //}
+            //_selectedObjectsManager.AddObjectToSelection(obj);
         }
 
         private void LoadObject(string payload)
@@ -298,9 +296,9 @@ namespace ReupVirtualTwin.managers
                 SendErrorMessage(noInsertObjectIdErrorMessage);
                 return;
             }
-            selectObjectAfterInsertion = parsedPayload.selectObjectAfterInsertion;
-            deselectPreviousSelectionInInsertion = parsedPayload.deselectPreviousSelection;
-            _insertObjectsManager.InsertObjectFromUrl(parsedPayload.objectUrl, parsedPayload.objectId);
+            //selectObjectAfterInsertion = parsedPayload.selectObjectAfterInsertion;
+            //deselectPreviousSelectionInInsertion = parsedPayload.deselectPreviousSelection;
+            //_insertObjectsManager.InsertObjectFromUrl(parsedPayload.objectUrl, parsedPayload.objectId);
         }
 
         private void ProcessLoadStatus(float status)

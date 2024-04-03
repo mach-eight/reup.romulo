@@ -7,8 +7,6 @@ using UnityEditor;
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.controllers;
 
-
-
 namespace ReupVirtualTwinTests.Registry
 {
     public class IdControllerTest : MonoBehaviour
