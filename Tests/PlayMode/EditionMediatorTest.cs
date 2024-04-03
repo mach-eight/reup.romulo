@@ -35,7 +35,7 @@ public class EditionMediatorTest : MonoBehaviour
         editionMediator.webMessageSender = mockWebMessageSender;
         mockTransformObjectsManager = new MockTransformObjectsManager();
         editionMediator.transformObjectsManager = mockTransformObjectsManager;
-        mockInsertObjectsManager = new MockInsertObjectsManager();
+        mockInsertObjectsManager = new MockInsertObjectsManager(editionMediator);
         editionMediator.insertObjectsManager = mockInsertObjectsManager;
         mockObjectMapper = new MockObjectMapper();
         editionMediator.objectMapper = mockObjectMapper;
@@ -128,12 +128,18 @@ public class EditionMediatorTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldOrderInsertObjectManagerToInsertObject()
     {
-        string mockUrl = "the mock url";
-        string message = dummyJsonCreator.createWebMessage(WebMessageType.loadObject, mockUrl);
+        InsertObjectMessagePayload payload = new InsertObjectMessagePayload
+        {
+            objectUrl = "test-3d-model-url",
+            objectId = "test-object-id",
+            selectObjectAfterInsertion = true,
+            deselectPreviousSelection = true,
+        };
+        string message = dummyJsonCreator.createWebMessage(WebMessageType.loadObject, payload);
         editionMediator.ReceiveWebMessage(message);
         yield return null;
         Assert.IsTrue(mockInsertObjectsManager.calledToInsertObject);
-        Assert.AreEqual(mockUrl, mockInsertObjectsManager.objectLoadString);
+        Assert.AreEqual(payload.objectUrl, mockInsertObjectsManager.objectLoadString);
         yield return null;
     }
 
@@ -165,6 +171,88 @@ public class EditionMediatorTest : MonoBehaviour
         yield return null;
     }
 
+    [UnityTest]
+    public IEnumerator ShouldNotSelectInsertedObjectByDefault()
+    {
+        InsertObjectMessagePayload payload = new InsertObjectMessagePayload
+        {
+            objectUrl = "test-3d-model-url",
+            objectId = "test-3d-model-url",
+        };
+        string message = dummyJsonCreator.createWebMessage(WebMessageType.loadObject, payload);
+        editionMediator.ReceiveWebMessage(message);
+        yield return null;
+        Assert.IsNull(mockSelectedObjectsManager.wrapperDTO.wrappedObjects);
+        Assert.IsNull(mockSelectedObjectsManager.wrapperDTO.wrappedObjects);
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldSendErrorMessageIfReceiveInsertObjectActionWithoutObjectUrl()
+    {
+        InsertObjectMessagePayload payload = new InsertObjectMessagePayload
+        {
+            objectId = "test-3d-model-url",
+        };
+        string message = dummyJsonCreator.createWebMessage(WebMessageType.loadObject, payload);
+        editionMediator.ReceiveWebMessage(message);
+        yield return null;
+        WebMessage<string> sentMessage = (WebMessage<string>)mockWebMessageSender.sentMessage;
+        Assert.AreEqual(WebMessageType.error, sentMessage.type);
+        Assert.AreEqual(editionMediator.noInsertObjectUrlErrorMessage, sentMessage.payload);
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldSendErrorMessageIfReceiveInsertObjectActionWithoutObjectId()
+    {
+        InsertObjectMessagePayload payload = new InsertObjectMessagePayload
+        {
+            objectUrl = "test-3d-model-url",
+        };
+        string message = dummyJsonCreator.createWebMessage(WebMessageType.loadObject, payload);
+        editionMediator.ReceiveWebMessage(message);
+        yield return null;
+        WebMessage<string> sentMessage = (WebMessage<string>)mockWebMessageSender.sentMessage;
+        Assert.AreEqual(WebMessageType.error, sentMessage.type);
+        Assert.AreEqual(editionMediator.noInsertObjectIdErrorMessage, sentMessage.payload);
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldSelectJustInsertedObject()
+    {
+        InsertObjectMessagePayload payload = new InsertObjectMessagePayload
+        {
+            objectUrl = "test-3d-model-url",
+            objectId = "test-object-id",
+            selectObjectAfterInsertion = true,
+            deselectPreviousSelection = true,
+        };
+        string message = dummyJsonCreator.createWebMessage(WebMessageType.loadObject, payload);
+        editionMediator.ReceiveWebMessage(message);
+        yield return null;
+        Assert.IsTrue(mockSelectedObjectsManager.wrapperDTO.wrappedObjects.Contains(mockInsertObjectsManager.injectedObject));
+        Assert.AreEqual(1, mockSelectedObjectsManager.wrapperDTO.wrappedObjects.Count);
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldRequestAddPredefinedIdToParentObject()
+    {
+        InsertObjectMessagePayload payload = new InsertObjectMessagePayload
+        {
+            objectUrl = "test-3d-model-url",
+            objectId = "test-object-id",
+            selectObjectAfterInsertion = true,
+            deselectPreviousSelection = true,
+        };
+        string message = dummyJsonCreator.createWebMessage(WebMessageType.loadObject, payload);
+        editionMediator.ReceiveWebMessage(message);
+        yield return null;
+        Assert.AreEqual(payload.objectId, mockInsertObjectsManager.requestedObjectId);
+    }
+
     private class MockEditModeManager : IEditModeManager
     {
         private bool _editMode;
@@ -190,7 +278,16 @@ public class EditionMediatorTest : MonoBehaviour
 
         public GameObject AddObjectToSelection(GameObject selectedObject)
         {
-            throw new System.NotImplementedException();
+            if (wrapperDTO.wrapper == null)
+            {
+                wrapperDTO = new ObjectWrapperDTO()
+                {
+                    wrapper = new GameObject("wrapper"),
+                    wrappedObjects = new List<GameObject>(),
+                };
+            }
+            wrapperDTO.wrappedObjects.Add(selectedObject);
+            return wrapperDTO.wrapper;
         }
 
         public void ClearSelection()
@@ -237,12 +334,25 @@ public class EditionMediatorTest : MonoBehaviour
 
     private class MockInsertObjectsManager : IInsertObjectsManager
     {
+        public GameObject injectedObject = null;
         public bool calledToInsertObject = false;
         public string objectLoadString = null;
-        public void InsertObjectFromUrl(string url)
+        public string requestedObjectId;
+        private IMediator editionMediator;
+        public MockInsertObjectsManager(IMediator mediator)
         {
+            calledToInsertObject = false;
+            objectLoadString = null;
+            editionMediator = mediator;
+        }
+
+        public void InsertObjectFromUrl(string url, string objectId)
+        {
+            injectedObject = new GameObject("injected test object");
             calledToInsertObject = true;
             objectLoadString = url;
+            editionMediator.Notify(ReupEvent.insertedObjectLoaded, injectedObject);
+            requestedObjectId = objectId;
         }
     }
     private class MockObjectMapper : IObjectMapper

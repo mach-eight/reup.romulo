@@ -140,6 +140,20 @@ public class DeleteObjectsManagerTest : MonoBehaviour
             return foundObjects;
         }
 
+        public void RemoveItem(GameObject item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int GetItemCount()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ClearRegistry()
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }

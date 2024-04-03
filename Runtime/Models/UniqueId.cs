@@ -6,7 +6,7 @@ namespace ReupVirtualTwin.models
 {
 	public class UniqueIdentifierAttribute : PropertyAttribute { }
 
-	public class UniqueId : MonoBehaviour, IUniqueIdentifer
+	public class UniqueId : MonoBehaviour, IUniqueIdentifier
 	{
 		[UniqueIdentifier]
 		public string uniqueId;
@@ -23,6 +23,16 @@ namespace ReupVirtualTwin.models
                 Guid guid = Guid.NewGuid();
                 uniqueId = guid.ToString();
             }
+            return uniqueId;
+        }
+
+        virtual public string AssignId(string id)
+        {
+            if (id == null || id == "")
+            {
+                throw new Exception("Id cannot be empty");
+            }
+            uniqueId = id;
             return uniqueId;
         }
 
