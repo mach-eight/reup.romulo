@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using TriLibCore;
-using System;
 
 using ReupVirtualTwin.enums;
 using ReupVirtualTwin.dataModels;
@@ -14,25 +10,19 @@ namespace ReupVirtualTwin.controllers
     public class InsertObjectRequest
     {
         private IMediator mediator;
+        private InsertObjectMessagePayload insertObjectMessagePayload;
         public InsertObjectRequest(IMediator mediator, IMeshDownloader meshDownloader, InsertObjectMessagePayload messagePayload)
         {
-            Debug.Log("InsertObjectRequest created");
             this.mediator = mediator;
+            this.insertObjectMessagePayload = messagePayload;
             meshDownloader.downloadMesh(
-            //meshDownloader.downloadMesh(
                 messagePayload.objectUrl,
                 OnProgress,
                 OnLoad,
                 OnMaterialsLoad
-                //OnError
             );
-            Debug.Log("downloadMesh called");
         }
 
-        private void OnProgressw(ModelLoaderContext assetLoaderContext, float progress)
-        {
-
-        }
         private void OnProgress(ModelLoaderContext assetLoaderContext, float progress)
         {
             mediator.Notify(ReupEvent.insertedObjectStatusUpdate, progress);
@@ -86,9 +76,15 @@ namespace ReupVirtualTwin.controllers
         //private void OnMaterialsLoad(AssetLoaderContext assetLoaderContext)
         private void OnMaterialsLoad(ModelLoaderContext assetLoaderContext)
         {
-            //var myLoadedGameObject = assetLoaderContext.RootGameObject;
-            //myLoadedGameObject.SetActive(true);
-            //_mediator.Notify(ReupEvent.insertedObjectLoaded, myLoadedGameObject);
+            var myLoadedGameObject = assetLoaderContext.loadedObject;
+            myLoadedGameObject.SetActive(true);
+            InsertedObjectPayload insertedObjectPayload = new()
+            {
+                loadedObject = myLoadedGameObject,
+                selectObjectAfterInsertion = insertObjectMessagePayload.selectObjectAfterInsertion,
+                deselectPreviousSelection = insertObjectMessagePayload.deselectPreviousSelection,
+            };
+            mediator.Notify(ReupEvent.insertedObjectLoaded, insertedObjectPayload);
         }
 
     }

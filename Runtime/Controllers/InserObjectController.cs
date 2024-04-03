@@ -16,7 +16,7 @@ namespace ReupVirtualTwin.controllers
         }
         public void InsertObject(InsertObjectMessagePayload message)
         {
-            InsertObjectRequest request = new InsertObjectRequest(mediator, meshDownloader, message);
+            new InsertObjectRequest(mediator, meshDownloader, message);
         }
     }
 }

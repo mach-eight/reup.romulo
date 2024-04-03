@@ -6,7 +6,6 @@
         "UnityEditor.TestRunner",
         "reup.romulo.helpers",
         "reup.romulo.enums",
-        "reup.romulo.charactermovement",
         "reup.modulo.managers",
         "reup.romulo.behaviours",
         "reup.romulo.models",
@@ -19,8 +18,7 @@
         "reup.romulo.controllers",
         "reup.romulo.modelInterfaces",
         "reup.romulo.webRequestersInterfaces",
-        "reup.romulo.webRequesters",
-        "TriLib"
+        "reup.romulo.webRequesters"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

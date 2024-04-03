@@ -6,7 +6,6 @@ using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.webRequestersInterfaces;
 using System;
 using System.Collections.Generic;
-using TriLibCore;
 using UnityEngine;
 
 namespace ReupVirtualTwinTests.controllers
@@ -55,12 +54,20 @@ namespace ReupVirtualTwinTests.controllers
             Assert.AreEqual(new List<float> { 0.3f, 0.6f, 0.9f, 1f }, mediatorSpy.progresses);
         }
 
+        [Test]
+        public void ShouldNotifyMediatorForLoad()
+        {
+            Assert.AreEqual(meshDownloaderSpy.loadedObject, mediatorSpy.loadedObject);
+            Assert.IsTrue(mediatorSpy.loadedObject.activeInHierarchy);
+        }
+
     }
 
     class MediatorSpy : IMediator
     {
         public int onProgressNumberOfCalls = 0;
         public List<float> progresses = new();
+        public GameObject loadedObject = null;
         public void Notify(ReupEvent eventName)
         {
             throw new System.NotImplementedException();
@@ -74,6 +81,9 @@ namespace ReupVirtualTwinTests.controllers
                     onProgressNumberOfCalls++;
                     progresses.Add((float)(object)payload);
                     break;
+                case ReupEvent.insertedObjectLoaded:
+                    loadedObject = ((InsertedObjectPayload)(object)payload).loadedObject;
+                    break;
             }
         }
     }
@@ -81,29 +91,29 @@ namespace ReupVirtualTwinTests.controllers
     class MeshDownloaderSpy : IMeshDownloader
     {
         public string meshUrl;
-        public int numberOfCalls = 0;
+        public int numberOfCalls;
+        public GameObject loadedObject;
+        private ModelLoaderContext modelLoaderContext;
+        public MeshDownloaderSpy()
+        {
+            numberOfCalls = 0;
+            loadedObject = new GameObject();
+            modelLoaderContext = new ModelLoaderContext()
+            {
+                loadedObject = loadedObject,
+            };
+        }
         //public void downloadMesh(string meshUrl, Action<T, float> onProgress, Action<T> onLoad, Action<T> onMaterialsLoad, Action<E> onError = null)
         public void downloadMesh(string meshUrl, Action<ModelLoaderContext, float> onProgress, Action<ModelLoaderContext> onLoad, Action<ModelLoaderContext> onMaterialsLoad)
         {
             numberOfCalls++;
             this.meshUrl = meshUrl;
-            onProgress(default, 0.3f);
-            onProgress(default, 0.6f);
-            onProgress(default, 0.9f);
-            onProgress(default, 1f);
-            //Debug.Log("on load is");
-            //Debug.Log(onLoad);
-            //var o = onLoad as Action<AssetLoaderContextStub>;
-            //Debug.Log("o is ");
-            //Debug.Log(o);
-            //o(new AssetLoaderContextStub() { RootGameObject = new GameObject("holi") });
-            ////onLoad(new AssetLoaderContextStub() { RootGameObject = new GameObject("holi") });
-            onLoad(new ModelLoaderContext()
-            {
-                loadedObject = new GameObject("holi")
-            });
-            ////onLoad(new AssetLoaderContextStub() { RootGameObject = new GameObject("holi")} as T);
-            onMaterialsLoad(default);
+            onProgress(modelLoaderContext, 0.3f);
+            onProgress(modelLoaderContext, 0.6f);
+            onProgress(modelLoaderContext, 0.9f);
+            onProgress(modelLoaderContext, 1f);
+            onLoad(modelLoaderContext);
+            onMaterialsLoad(modelLoaderContext);
         }
 
         //{
