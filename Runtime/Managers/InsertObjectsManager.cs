@@ -25,7 +25,7 @@ namespace ReupVirtualTwin.managers
         public IMediator mediator { set => _mediator = value; }
 
 
-        public void InsertObjectFromUrl(InsertObjectMessagePayload insertObjectMessagePayload)
+        public void InsertObject(InsertObjectMessagePayload insertObjectMessagePayload)
         {
 
             // Creates an AssetLoaderOptions instance.

@@ -6,6 +6,7 @@ using ReupVirtualTwin.dataModels;
 using System;
 using System.Collections.Generic;
 using ReupVirtualTwin.helperInterfaces;
+using ReupVirtualTwin.controllerInterfaces;
 
 namespace ReupVirtualTwin.managers
 {
@@ -25,8 +26,8 @@ namespace ReupVirtualTwin.managers
         private IDeleteObjectsManager _deleteObjectsManager;
         public IDeleteObjectsManager deleteObjectsManager { set => _deleteObjectsManager = value; }
 
-        private IInsertObjectsManager _insertObjectsManager;
-        public IInsertObjectsManager insertObjectsManager { set => _insertObjectsManager = value; }
+        private IInsertObjectsController _insertObjectsManager;
+        public IInsertObjectsController insertObjectsManager { set => _insertObjectsManager = value; }
 
         private IWebMessagesSender _webMessageSender;
         public IWebMessagesSender webMessageSender { set { _webMessageSender = value; } }
@@ -107,6 +108,8 @@ namespace ReupVirtualTwin.managers
 
         public void ReceiveWebMessage(string serializedWebMessage)
         {
+            Debug.Log("serializedWebMessage");
+            Debug.Log(serializedWebMessage);
             WebMessage<string> message = JsonUtility.FromJson<WebMessage<string>>(serializedWebMessage);
             switch (message.type)
             {
@@ -298,7 +301,7 @@ namespace ReupVirtualTwin.managers
             }
             //selectObjectAfterInsertion = parsedPayload.selectObjectAfterInsertion;
             //deselectPreviousSelectionInInsertion = parsedPayload.deselectPreviousSelection;
-            //_insertObjectsManager.InsertObjectFromUrl(parsedPayload.objectUrl, parsedPayload.objectId);
+            _insertObjectsManager.InsertObject(parsedPayload);
         }
 
         private void ProcessLoadStatus(float status)

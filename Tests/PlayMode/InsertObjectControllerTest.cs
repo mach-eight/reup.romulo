@@ -32,7 +32,7 @@ namespace ReupVirtualTwinTests.controllers
                 deselectPreviousSelection = true,
             };
             controller = new InserObjectController(mediatorSpy, meshDownloaderSpy);
-            controller.InsertObjectsController(insertObjectMessagePayload);
+            controller.InsertObject(insertObjectMessagePayload);
         }
 
         [Test]

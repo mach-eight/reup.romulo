@@ -4,6 +4,6 @@ namespace ReupVirtualTwin.controllerInterfaces
 {
     public interface IInsertObjectsController
     {
-        public void InsertObjectsController(InsertObjectMessagePayload message);
+        public void InsertObject(InsertObjectMessagePayload message);
     }
 }

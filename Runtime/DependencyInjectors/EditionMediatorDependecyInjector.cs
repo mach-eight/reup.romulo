@@ -5,6 +5,7 @@ using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.managers;
 using ReupVirtualTwin.controllers;
+using ReupVirtualTwin.webRequesters;
 
 namespace ReupVirtualTwin.dependencyInjectors
 {
@@ -39,7 +40,8 @@ namespace ReupVirtualTwin.dependencyInjectors
             }
             _editionMediator.webMessageSender = webMessageSender;
             _editionMediator.objectMapper = new ObjectMapper(new TagsController(), new IdController());
-            _editionMediator.insertObjectsManager = insertObjectsManager.GetComponent<IInsertObjectsManager>();
+            //_editionMediator.insertObjectsManager = insertObjectsManager.GetComponent<IInsertObjectsManager>();
+            _editionMediator.insertObjectsManager = new InserObjectController(_editionMediator, new MeshDownloader());
         }
     }
 }

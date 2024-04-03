@@ -10,6 +10,7 @@ using ReupVirtualTwin.behaviourInterfaces;
 using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.helperInterfaces;
 using System.Collections.Generic;
+using ReupVirtualTwin.controllerInterfaces;
 
 public class EditionMediatorTest : MonoBehaviour
 {
@@ -332,7 +333,7 @@ public class EditionMediatorTest : MonoBehaviour
         }
     }
 
-    private class MockInsertObjectsManager : IInsertObjectsManager
+    private class MockInsertObjectsManager : IInsertObjectsController
     {
         public GameObject injectedObject = null;
         public bool calledToInsertObject = false;
@@ -346,7 +347,7 @@ public class EditionMediatorTest : MonoBehaviour
             editionMediator = mediator;
         }
 
-        public void InsertObjectFromUrl(InsertObjectMessagePayload insertObjectMessagePayload)
+        public void InsertObject(InsertObjectMessagePayload insertObjectMessagePayload)
         {
             injectedObject = new GameObject("injected test object");
             calledToInsertObject = true;
