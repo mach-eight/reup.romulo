@@ -19,7 +19,8 @@
         "reup.romulo.controllers",
         "reup.romulo.modelInterfaces",
         "reup.romulo.webRequestersInterfaces",
-        "reup.romulo.webRequesters"
+        "reup.romulo.webRequesters",
+        "TriLib"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -1,39 +1,55 @@
-using ReupVirtualTwin.dataModels;
-using ReupVirtualTwin.managerInterfaces;
-using ReupVirtualTwin.webRequestersInterfaces;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TriLibCore;
 using System;
 
+using ReupVirtualTwin.enums;
+using ReupVirtualTwin.dataModels;
+using ReupVirtualTwin.managerInterfaces;
+using ReupVirtualTwin.webRequestersInterfaces;
+
 namespace ReupVirtualTwin.controllers
 {
     public class InsertObjectRequest
     {
+        private IMediator mediator;
         public InsertObjectRequest(IMediator mediator, IMeshDownloader meshDownloader, InsertObjectMessagePayload messagePayload)
         {
-            meshDownloader.downloadMesh<AssetLoaderContext, IContextualizedError>(
+            Debug.Log("InsertObjectRequest created");
+            this.mediator = mediator;
+            meshDownloader.downloadMesh(
+            //meshDownloader.downloadMesh(
                 messagePayload.objectUrl,
                 OnProgress,
                 OnLoad,
-                OnMaterialsLoad,
-                OnError
+                OnMaterialsLoad
+                //OnError
             );
+            Debug.Log("downloadMesh called");
         }
 
-        private void OnProgress(AssetLoaderContext assetLoaderContext, float progress)
+        private void OnProgressw(ModelLoaderContext assetLoaderContext, float progress)
         {
-            //_mediator.Notify(ReupEvent.insertedObjectStatusUpdate, progress);
+
+        }
+        private void OnProgress(ModelLoaderContext assetLoaderContext, float progress)
+        {
+            mediator.Notify(ReupEvent.insertedObjectStatusUpdate, progress);
         }
 
-        private void OnError(IContextualizedError contextualizedError)
-        {
-            //Debug.LogError(contextualizedError);
-        }
+        //private void OnError(IContextualizedError contextualizedError)
+        //{
+        //    //Debug.LogError(contextualizedError);
+        //}
 
-        private void OnLoad(AssetLoaderContext assetLoaderContext)
+        //private void OnLoad(AssetLoaderContext assetLoaderContext)
+        private void OnLoad(ModelLoaderContext assetLoaderContext)
         {
+
+            GameObject loadedObj = assetLoaderContext.loadedObject;
+            Debug.Log("loaded game object: " + loadedObj.name);
+
             //GameObject loadedObj = assetLoaderContext.RootGameObject;
             //AddTags(loadedObj);
             //SetLoadPosition(loadedObj);
@@ -67,7 +83,8 @@ namespace ReupVirtualTwin.controllers
             return obj;
         }
 
-        private void OnMaterialsLoad(AssetLoaderContext assetLoaderContext)
+        //private void OnMaterialsLoad(AssetLoaderContext assetLoaderContext)
+        private void OnMaterialsLoad(ModelLoaderContext assetLoaderContext)
         {
             //var myLoadedGameObject = assetLoaderContext.RootGameObject;
             //myLoadedGameObject.SetActive(true);
