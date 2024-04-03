@@ -17,7 +17,7 @@ namespace ReupVirtualTwin.webRequesters
                 (AssetLoaderContext context) => ExecuteOnLoad(onLoad, context),
                 (AssetLoaderContext context) => ExecuteOnMaterialsLoad(onMaterialsLoad, context),
                 (AssetLoaderContext context, float progress) => ExecuteOnProgress(onProgress, context, progress),
-                (IContextualizedError error) => { Debug.Log(error); },
+                (IContextualizedError error) => { Debug.LogError(error); },
                 null,
                 assetLoaderOptions,
                 null,

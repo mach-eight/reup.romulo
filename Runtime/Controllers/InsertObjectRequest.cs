@@ -4,6 +4,8 @@ using ReupVirtualTwin.enums;
 using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.webRequestersInterfaces;
+using ReupVirtualTwin.controllerInterfaces;
+using ReupVirtualTwin.modelInterfaces;
 
 namespace ReupVirtualTwin.controllers
 {
@@ -11,10 +13,11 @@ namespace ReupVirtualTwin.controllers
     {
         private IMediator mediator;
         private InsertObjectMessagePayload insertObjectMessagePayload;
+        private ITagSystemController tagSystemController = new TagSystemController();
         public InsertObjectRequest(IMediator mediator, IMeshDownloader meshDownloader, InsertObjectMessagePayload messagePayload)
         {
             this.mediator = mediator;
-            this.insertObjectMessagePayload = messagePayload;
+            insertObjectMessagePayload = messagePayload;
             meshDownloader.downloadMesh(
                 messagePayload.objectUrl,
                 OnProgress,
@@ -38,10 +41,8 @@ namespace ReupVirtualTwin.controllers
         {
 
             GameObject loadedObj = assetLoaderContext.loadedObject;
-            Debug.Log("loaded game object: " + loadedObj.name);
 
-            //GameObject loadedObj = assetLoaderContext.RootGameObject;
-            //AddTags(loadedObj);
+            AddTags(loadedObj);
             //SetLoadPosition(loadedObj);
             //AddColliders(loadedObj);
             //AssignIds(loadedObj);
@@ -49,12 +50,12 @@ namespace ReupVirtualTwin.controllers
         }
         private GameObject AddTags(GameObject obj)
         {
-            //IObjectTags objectTags = _tagSystemController.AssignTagSystemToObject(obj);
-            //objectTags.AddTags(new ObjectTag[3] {
-            //    ObjectTag.SELECTABLE,
-            //    ObjectTag.DELETABLE,
-            //    ObjectTag.TRANSFORMABLE,
-            //});
+            IObjectTags objectTags = tagSystemController.AssignTagSystemToObject(obj);
+            objectTags.AddTags(new ObjectTag[3] {
+                ObjectTag.SELECTABLE,
+                ObjectTag.DELETABLE,
+                ObjectTag.TRANSFORMABLE,
+            });
             return obj;
         }
         private GameObject SetLoadPosition(GameObject obj)

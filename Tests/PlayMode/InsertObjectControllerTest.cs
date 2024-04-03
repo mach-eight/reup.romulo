@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.enums;
@@ -17,6 +18,7 @@ namespace ReupVirtualTwinTests.controllers
         MeshDownloaderSpy meshDownloaderSpy;
         InsertObjectMessagePayload insertObjectMessagePayload;
         InserObjectController controller;
+        ITagsController tagsReader;
 
         [SetUp]
         public void SetUp()
@@ -32,6 +34,7 @@ namespace ReupVirtualTwinTests.controllers
             };
             controller = new InserObjectController(mediatorSpy, meshDownloaderSpy);
             controller.InsertObject(insertObjectMessagePayload);
+            tagsReader = new TagsController();
         }
 
         [Test]
@@ -59,6 +62,24 @@ namespace ReupVirtualTwinTests.controllers
         {
             Assert.AreEqual(meshDownloaderSpy.loadedObject, mediatorSpy.loadedObject);
             Assert.IsTrue(mediatorSpy.loadedObject.activeInHierarchy);
+        }
+
+        [Test]
+        public void InsertedObjectShouldHaveSelectableTag()
+        {
+            Assert.IsTrue(tagsReader.DoesObjectHaveTag(mediatorSpy.loadedObject, ObjectTag.SELECTABLE));
+        }
+
+        [Test]
+        public void InsertedObjectShouldHaveTransformableTag()
+        {
+            Assert.IsTrue(tagsReader.DoesObjectHaveTag(mediatorSpy.loadedObject, ObjectTag.TRANSFORMABLE));
+        }
+
+        [Test]
+        public void InsertedObjectShouldHaveDeletableTag()
+        {
+            Assert.IsTrue(tagsReader.DoesObjectHaveTag(mediatorSpy.loadedObject, ObjectTag.DELETABLE));
         }
 
     }
