@@ -18,10 +18,10 @@ public class ObjectTagsEditor : Editor
     private SerializedProperty tagsProperty;
     private Vector2 scrollPosition;
 
-    private int TAG_BUTTON_HEIGHT = 18;
-    private int MAX_BUTTONS_IN_SCROLL_VIEW = 10;
-    private int UNITY_BUTTON_MARGIN = 2; // This is a variable obtained by trial and error
-    private int BOTTOM_THRESHOLD_IN_PIXELS = 50;
+    private const int TAG_BUTTON_HEIGHT = 18;
+    private const int MAX_BUTTONS_IN_SCROLL_VIEW = 10;
+    private const int UNITY_BUTTON_MARGIN = 2; // This is a variable obtained by trial and error
+    private const int BOTTOM_THRESHOLD_IN_PIXELS = 50;
 
     private ITagsApiManager tagsApiManager;
     private List<string> allTags = new List<string>();
@@ -96,7 +96,7 @@ public class ObjectTagsEditor : Editor
 
     private IEnumerable<string> FilterTags()
     {
-        return allTags.Where(tag => !IsTagAlredyPresent(tag) && TagContainsText(tag, searchTagText));
+        return allTags.Where(tag => !IsTagAlreadyPresent(tag) && TagContainsText(tag, searchTagText));
     }
 
     private async Task GetTags()
@@ -125,14 +125,14 @@ public class ObjectTagsEditor : Editor
 
     private void AddTagIfNotPresent(string tag)
     {
-        if (!IsTagAlredyPresent(tag))
+        if (!IsTagAlreadyPresent(tag))
         {
             tagsProperty.arraySize++;
             tagsProperty.GetArrayElementAtIndex(tagsProperty.arraySize - 1).stringValue = tag;
         }
     }
 
-    private bool IsTagAlredyPresent(string tag)
+    private bool IsTagAlreadyPresent(string tag)
     {
         bool isPresent = false;
         for (int i = 0; i < tagsProperty.arraySize; i++)

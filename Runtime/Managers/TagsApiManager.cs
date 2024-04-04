@@ -50,7 +50,7 @@ namespace ReupVirtualTwin.managers
         }
 
         private void CheckIfThereIsStillTagsToFetch(PaginationResult<ObjectTag> fetchedTagsResult) { 
-            if(fetchedTagsResult.next == null || fetchedTagsResult.next == "")
+            if (string.IsNullOrEmpty(fetchedTagsResult.next))
             {
                 thereAreTagsToFetch = false;
             }
