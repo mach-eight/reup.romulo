@@ -26,6 +26,10 @@ namespace ReupVirtualTwin.managers
         public ITransformObjectsManager transformObjectsManager { set => _transformObjectsManager = value; }
         private IDeleteObjectsManager _deleteObjectsManager;
         public IDeleteObjectsManager deleteObjectsManager { set => _deleteObjectsManager = value; }
+ 
+        private IChangeColorManager _changeColorManager;
+        public IChangeColorManager changeColorManager { set => _changeColorManager = value; }
+      
 
         private IInsertObjectsManager _insertObjectsManager;
         public IInsertObjectsManager insertObjectsManager { set => _insertObjectsManager = value; }
@@ -63,7 +67,10 @@ namespace ReupVirtualTwin.managers
                     ProcessTranformModeDeactivation();
                     break;
                 case ReupEvent.objectsDeleted:
-                    ProcessDeleteObjects();
+                    ProcessDeletedObjects();
+                    break;
+                case ReupEvent.objectColorChanged:
+                    ProcessObjectColorChanged();
                     break;
                 default:
                     throw new ArgumentException($"no implementation without payload for event: {eventName}");
@@ -130,6 +137,9 @@ namespace ReupVirtualTwin.managers
                 case WebMessageType.loadObject:
                     LoadObject(message.payload);
                     break;
+                case WebMessageType.changeObjectColor:
+                    ChangeObjectsColor(message.payload);
+                    break;
                 default:
                     _webMessageSender.SendWebMessage(new WebMessage<string>
                     {
@@ -163,7 +173,7 @@ namespace ReupVirtualTwin.managers
         private void DeleteSelectedObjects(string stringIds)
         {
             List<GameObject> objectsToDelete = _deleteObjectsManager.GetDeletableObjects(stringIds);
-            if (objectsToDelete.Count != 0)
+            if (objectsToDelete.Count > 0)
             {
                 foreach( GameObject obj in objectsToDelete)
                 {
@@ -176,6 +186,28 @@ namespace ReupVirtualTwin.managers
                 SendErrorMessage("The selection is empty, or there is at least one non-deletable object selected");
             }
 
+        }
+
+        private void ChangeObjectsColor(string payload)
+        {
+            ChangeColorObjectMessagePayload parsedPayload = JsonUtility.FromJson<ChangeColorObjectMessagePayload>(payload);
+            List<GameObject> objectsToChangeColor = _changeColorManager.GetObjectsToChangeColor(parsedPayload.objectIds);
+            if (objectsToChangeColor.Count > 0)
+            {
+                Color? parsedColor = Utils.ParseColor(parsedPayload.color);
+                if (parsedColor != null)
+                {
+                    _changeColorManager.ChangeObjectsColor(objectsToChangeColor, (Color)parsedColor);
+                }
+                else
+                {
+                    SendErrorMessage("The color isn't valid");
+                }
+            }
+            else
+            {
+                SendErrorMessage("The selection is empty");
+            }
         }
 
         private void ProccessEditMode(bool editMode)
@@ -246,7 +278,7 @@ namespace ReupVirtualTwin.managers
             _webMessageSender.SendWebMessage(message);
         }
 
-        private void ProcessDeleteObjects()
+        private void ProcessDeletedObjects()
         {
             string webMessageType;
             webMessageType = WebMessageType.deleteObjectsSuccess;
@@ -256,6 +288,14 @@ namespace ReupVirtualTwin.managers
                 type = webMessageType,
             };
             _webMessageSender.SendWebMessage(message);
+        }
+
+        private void ProcessObjectColorChanged()
+        {
+            WebMessage<string> message = new WebMessage<string>
+            {
+                type = WebMessageType.changeObjectColorSuccess,
+            };
         }
 
         private void ProcessInsertedObjectLoaded(GameObject obj)
