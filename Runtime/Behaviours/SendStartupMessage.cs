@@ -24,10 +24,6 @@ namespace ReupVirtualTwin.behaviours
             LookForDependencySingletons();
         }
 
-        private void Start()
-        {
-            LookForDependencyComponents();
-        }
         private void LookForDependencySingletons()
         {
             setupBuilding = ObjectFinder.FindSetupBuilding()?.GetComponent<IOnBuildingSetup>();
@@ -40,6 +36,7 @@ namespace ReupVirtualTwin.behaviours
 
         public void SendMessage()
         {
+            LookForDependencyComponents();
             WebMessage<StartupMessage> message = ObtainStartupMessage();
             webMessagesSender.SendWebMessage(message);
         }

@@ -51,8 +51,13 @@ public class SendStartupMessageTest : MonoBehaviour
         Destroy((UnityEngine.Object)startupMessageContainerGameObject.GetComponent<IWebMessagesSender>());
         webMessageSenderSpy = startupMessageContainerGameObject.AddComponent<WebMessageSenderSpy>();
         yield return null;
-        startupMessageContainerGameObject.SetActive(true);
+        ActivateSetupBuildingFirstThenSendStartupMessage();
+    }
+
+    private void ActivateSetupBuildingFirstThenSendStartupMessage()
+    {
         setupBuildingGameObject.SetActive(true);
+        startupMessageContainerGameObject.SetActive(true);
     }
 
     [UnityTest]
