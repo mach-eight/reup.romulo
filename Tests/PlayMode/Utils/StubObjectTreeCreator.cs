@@ -26,11 +26,14 @@ public static class StubObjectTreeCreator
     {
         "grandChild0-tag-0", "grandChild0-tag-1", "grandChild0-tag-2"
     };
-    public static GameObject CreateMockBuilding()
-    {
-        IIdAssignerController idAssigner = new IdController();
-        ITagSystemController tagSystemController = new TagSystemController();
 
+    /// <summary>
+    /// Creates a mock building with a parent, two children, a grandchild.
+    /// Optionally creates a third child with a deep chained line of objects.
+    /// <paramref name="deepChildDepth"/> controls the depth of the third child.
+    /// </summary>
+    public static GameObject CreateMockBuilding(int deepChildDepth = 0)
+    {
         GameObject parent = new(parentId);
         GameObject child0 = new(child0Id);
         child0.transform.parent = parent.transform;
@@ -44,13 +47,44 @@ public static class StubObjectTreeCreator
         AssignIdToObject(child1, child1Id);
         AssignIdToObject(grandChild0, grandChild0Id);
 
-        tagSystemController.AssignTagSystemToTree(parent);
-        parent.GetComponent<IObjectTags>().AddTags(parentTags);
-        child0.GetComponent<IObjectTags>().AddTags(child0Tags);
-        child1.GetComponent<IObjectTags>().AddTags(child1Tags);
-        grandChild0.GetComponent<IObjectTags>().AddTags(grandChild0Tags);
+        AssignTagsToObject(parent, parentTags);
+        AssignTagsToObject(child0, child0Tags);
+        AssignTagsToObject(child1, child1Tags);
+        AssignTagsToObject(grandChild0, grandChild0Tags);
+
+        if (deepChildDepth > 0)
+        {
+            GameObject deepChild = CreateDeepChainedLineOfObjects(deepChildDepth);
+            deepChild.transform.parent = child1.transform;
+        }
 
         return parent;
+    }
+
+    private static GameObject CreateDeepChainedLineOfObjects(int depth, int objectIndex = 0)
+    {
+        if (depth == 0)
+        {
+            return null;
+        }
+        string objectId = $"object-{objectIndex}";
+        GameObject obj = new(objectId);
+        AssignIdToObject(obj, objectId);
+        AssignTagsToObject(obj, new string[1] { $"object-{objectIndex}-tag" });
+        GameObject child = CreateDeepChainedLineOfObjects(depth - 1, objectIndex + 1);
+        if (child != null)
+        {
+            child.transform.parent = obj.transform;
+        }
+        return obj;
+    }
+
+    private static void AssignTagsToObject(GameObject obj, string[] tags)
+    {
+        ITagSystemController tagSystemController = new TagSystemController();
+        tagSystemController.AssignTagSystemToObject(obj);
+        IObjectTags objectTags = obj.GetComponent<IObjectTags>();
+        objectTags.AddTags(tags);
     }
 
     private static void AssignIdToObject(GameObject obj, string id)

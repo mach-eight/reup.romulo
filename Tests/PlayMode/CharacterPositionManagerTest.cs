@@ -12,7 +12,7 @@ public class CharacterPositionManagerTest : MonoBehaviour
     private GameObject characterPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Assets/Quickstart/Character.prefab");
     private GameObject character;
     private CharacterPositionManager posManager;
-
+    private GameObject setupBuildingGameObject;
 
     float HEIGHT_CLOSENESS_THRESHOLD = 0.02f;
     float MOVEMENT_CLOSENESS_THRESHOLD = 0.02f;
@@ -21,7 +21,7 @@ public class CharacterPositionManagerTest : MonoBehaviour
     [SetUp]
     public void SetUp()
     {
-        StubOnSetupBuildingCreator.CreateOnSetupBuilding();
+        setupBuildingGameObject = StubOnSetupBuildingCreator.CreateImmediateOnSetupBuilding();
         character = (GameObject)PrefabUtility.InstantiatePrefab(characterPrefab);
         DestroyGameRelatedDependecyInjectors();
         character.transform.position = Vector3.zero;
@@ -29,10 +29,12 @@ public class CharacterPositionManagerTest : MonoBehaviour
         posManager.maxStepHeight = 0.25f;
     }
 
-    [TearDown]
-    public void TearDown()
+    [UnityTearDown]
+    public IEnumerator TearDown()
     {
         Destroy(character);
+        Destroy(setupBuildingGameObject);
+        yield return null;
     }
 
     [UnityTest]

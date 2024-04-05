@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 7691266782358625286}
   - component: {fileID: 726517977931092721}
   - component: {fileID: 8378137310830731447}
+  - component: {fileID: 6432659995187116412}
   m_Layer: 0
-  m_Name: StatusLoadMessage
+  m_Name: StartupMessage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -55,5 +56,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c7445fe7907c9154198057fe7ebda33e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6432659995187116412
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3828634763652253311}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba8d930d09cdf4340a680cb745110ee8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

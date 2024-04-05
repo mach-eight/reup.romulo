@@ -25,6 +25,6 @@ namespace ReupVirtualTwin.enums
         public const string loadObjectProcessUpdate = "[Load Objects] Load Object Process Update";
 
         public const string error = "[Error] Engine Error";
-        public const string statusLoad = "[Status Load] Status Load";
+        public const string startupMessage = "[Startup Message] Startup Message";
     }
 }

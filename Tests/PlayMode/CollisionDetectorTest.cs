@@ -15,11 +15,12 @@ public class CollisionDetectorTest : MonoBehaviour
     GameObject widePlatform;
     GameObject wall;
     CharacterPositionManager posManager;
+    private GameObject setupBuildingGameObject;
 
     [SetUp]
     public void SetUp()
     {
-        StubOnSetupBuildingCreator.CreateOnSetupBuilding();
+        setupBuildingGameObject = StubOnSetupBuildingCreator.CreateImmediateOnSetupBuilding();
         character = (GameObject)PrefabUtility.InstantiatePrefab(characterPrefab);
         DestroyGameRelatedDependecyInjectors();
         posManager = character.GetComponent<CharacterPositionManager>();
@@ -27,11 +28,13 @@ public class CollisionDetectorTest : MonoBehaviour
         SetPlatform();
     }
 
-    [TearDown]
-    public void TearDown()
+    [UnityTearDown]
+    public IEnumerator TearDown()
     {
         Destroy(character);
         Destroy(widePlatform);
+        Destroy(setupBuildingGameObject);
+        yield return null;
     }
 
     [UnityTest]

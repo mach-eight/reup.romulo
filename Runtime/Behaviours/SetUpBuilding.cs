@@ -10,7 +10,7 @@ namespace ReupVirtualTwin.behaviours
     {
         [SerializeField]
         GameObject _building;
-        public GameObject building { get => building;}
+        public GameObject building { get => _building; }
 
         private bool buildingSetup = false;
         private ITagSystemController _tagSystemController;

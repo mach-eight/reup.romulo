@@ -5,16 +5,19 @@ using UnityEngine;
 
 public static class StubOnSetupBuildingCreator
 {
-    public static void CreateOnSetupBuilding()
+    public static GameObject CreateImmediateOnSetupBuilding(bool enabled = true)
     {
         GameObject setupBuildingGameObject = new("fake setup building");
-        Debug.Log("just created setupBuildingGameObject " + setupBuildingGameObject.name);
+        setupBuildingGameObject.SetActive(enabled);
         setupBuildingGameObject.tag = TagsEnum.setupBuilding;
-        Debug.Log("just created setupBuildingGameObject tag " + setupBuildingGameObject.tag);
         setupBuildingGameObject.AddComponent<FakeSetupBuilding>();
+        return setupBuildingGameObject;
     }
-    private class FakeSetupBuilding : MonoBehaviour, IOnBuildingSetup
+    public class FakeSetupBuilding : MonoBehaviour, IOnBuildingSetup, IBuildingGetter
     {
+        GameObject _building;
+        public GameObject building { get => _building; set => _building = value; }
+
         event Action _onBuildingSetUp;
         public event Action onBuildingSetUp
         {

@@ -2,39 +2,75 @@ using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.behaviourInterfaces;
 using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.enums;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using ReupVirtualTwin.helperInterfaces;
 
 
 namespace ReupVirtualTwin.behaviours
 {
+    [RequireComponent(typeof(IWebMessagesSender))]
     public class SendStartupMessage: MonoBehaviour, ISendStartupMessage
     {
-        public string version_build { get => _version_build; }
+        public string buildVersion { get => _buildVersion; }
+        public IObjectMapper objectMapper { set => _objectMapper = value; }
 
-        IWebMessagesSender _webMessagesSender;
-        IOnBuildingSetup setUpBuilding;
+        string _buildVersion = "2024-04-05T19:56:03.550159";
+        IWebMessagesSender webMessagesSender;
+        IOnBuildingSetup setupBuilding;
+        IObjectMapper _objectMapper;
 
-        string _version_build = "write a date format here in next release";
+        private void Awake()
+        {
+            LookForDependencySingletons();
+        }
+
         private void Start()
         {
-            setUpBuilding = ObjectFinder.FindSetupBuilding()?.GetComponent<IOnBuildingSetup>();
-            _webMessagesSender = gameObject.GetComponent<IWebMessagesSender>();
-            setUpBuilding.onBuildingSetUp += SendMessage;
+            LookForDependencyComponents();
         }
+        private void LookForDependencySingletons()
+        {
+            setupBuilding = ObjectFinder.FindSetupBuilding()?.GetComponent<IOnBuildingSetup>();
+            setupBuilding.onBuildingSetUp += SendMessage;
+        }
+        private void LookForDependencyComponents()
+        {
+            webMessagesSender = gameObject.GetComponent<IWebMessagesSender>();
+        }
+
         public void SendMessage()
         {
+            WebMessage<StartupMessage> message = ObtainStartupMessage();
+            webMessagesSender.SendWebMessage(message);
+        }
+
+        private WebMessage<StartupMessage> ObtainStartupMessage()
+        {
+            StartupMessage messagePayload = ObtainMessagePayload();
+            WebMessage<StartupMessage> message = new()
+            {
+                type = WebMessageType.startupMessage,
+                payload = messagePayload,
+            };
+            return message;
+        }
+
+        private StartupMessage ObtainMessagePayload()
+        {
+            ObjectDTO buildingDTO = ObtainBuildingDTO();
             StartupMessage startupMessage = new()
             {
-                buildVersion = version_build,
+                buildVersion = buildVersion,
+                building = buildingDTO,
             };
-            WebMessage<string> message = new()
-            {
-                type = WebMessageType.statusLoad,
-                payload = version_build,
-            };
-            _webMessagesSender.SendWebMessage(message);
+            return startupMessage;
+        }
+
+        private ObjectDTO ObtainBuildingDTO()
+        {
+            GameObject buildingObject = ((IBuildingGetter)setupBuilding).building;
+            ObjectDTO buildingDTO = _objectMapper.MapObjectTree(buildingObject);
+            return buildingDTO;
         }
     }
 }

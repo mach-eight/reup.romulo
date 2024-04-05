@@ -66,7 +66,7 @@ public class tagsControllerTest : MonoBehaviour
     public IEnumerator ShouldRemoveTags()
     {
         Assert.IsTrue(tagsController.DoesObjectHaveTag(taggedObject0, tag0));
-        tagsController.RemoveTagFromOjbect(taggedObject0, tag0);
+        tagsController.RemoveTagFromObject(taggedObject0, tag0);
         yield return null;
         Assert.IsFalse(tagsController.DoesObjectHaveTag(taggedObject0, tag0));
         yield return null;

@@ -63,40 +63,4 @@ public class ObjectMapperTest : MonoBehaviour
         yield return null;
     }
 
-    //private class MockTagsController : ITagsController
-    //{
-    //    public string[] tags = new string[2] { "tag0", "tag1" };
-    //    public List<string> AddTagToObject(GameObject obj, string tag)
-    //    {
-    //        throw new System.NotImplementedException();
-    //    }
-
-    //    public bool DoesObjectHaveTag(GameObject obj, string tag)
-    //    {
-    //        throw new System.NotImplementedException();
-    //    }
-
-    //    public string[] GetTagNamesFromObject(GameObject obj)
-    //    {
-    //        return tags;
-    //    }
-
-    //    public List<string> GetTagsFromObject(GameObject obj)
-    //    {
-    //        throw new System.NotImplementedException();
-    //    }
-
-    //    public List<string> RemoveTagFromOjbect(GameObject obj, string tag)
-    //    {
-    //        throw new System.NotImplementedException();
-    //    }
-    //}
-    //private class MockIdController : IIdGetterController
-    //{
-    //    public string id = "the obj id";
-    //    public string GetIdFromObject(GameObject obj)
-    //    {
-    //        return id;
-    //    }
-    //}
 }

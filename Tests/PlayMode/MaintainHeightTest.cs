@@ -15,13 +15,14 @@ public class MaintainHeightTest : MonoBehaviour
     GameObject platformPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Tests/TestAssets/Platform.prefab");
     GameObject character;
     GameObject widePlatform;
+    GameObject setupBuildingGameObject;
 
     float HEIGHT_CLOSENESS_THRESHOLD = 0.02f;
 
     [SetUp]
     public void SetUp()
     {
-        StubOnSetupBuildingCreator.CreateOnSetupBuilding();
+        setupBuildingGameObject = StubOnSetupBuildingCreator.CreateImmediateOnSetupBuilding();
         character = (GameObject)PrefabUtility.InstantiatePrefab(characterPrefab);
         DestroyGameRelatedDependecyInjectors();
         var posManager = character.GetComponent<ICharacterPositionManager>();
@@ -30,11 +31,13 @@ public class MaintainHeightTest : MonoBehaviour
         SetPlatform();
     }
 
-    [TearDown]
-    public void TearDown()
+    [UnityTearDown]
+    public IEnumerator TearDown()
     {
         Destroy(character);
         Destroy(widePlatform);
+        Destroy(setupBuildingGameObject);
+        yield return null;
     }
 
     [UnityTest]
