@@ -6,10 +6,12 @@ using ReupVirtualTwin.controllerInterfaces;
 
 namespace ReupVirtualTwin.behaviours
 {
-    public class SetUpBuilding : MonoBehaviour , ISetUpBuilding, IOnBuildingSetup
+    public class SetUpBuilding : MonoBehaviour , ISetUpBuilding, IOnBuildingSetup, IBuildingGetter
     {
         [SerializeField]
-        GameObject building;
+        GameObject _building;
+        public GameObject building { get => building;}
+
         private bool buildingSetup = false;
         private ITagSystemController _tagSystemController;
         public ITagSystemController tagSystemController { get => _tagSystemController; set => _tagSystemController = value; }
@@ -36,9 +38,9 @@ namespace ReupVirtualTwin.behaviours
 
         void Start()
         {
-            if (building != null)
+            if (_building != null)
             {
-                _colliderAdder.AddCollidersToTree(building);
+                _colliderAdder.AddCollidersToTree(_building);
             }
             else
             {
@@ -50,12 +52,12 @@ namespace ReupVirtualTwin.behaviours
 
         public void AssignIdsToBuilding()
         {
-            _idAssignerController.AssignIdsToTree(building);
+            _idAssignerController.AssignIdsToTree(_building);
             Debug.Log("Ids added to tree");
         }
         public void RemoveIdsOfBuilding()
         {
-            _idAssignerController.RemoveIdsFromTree(building);
+            _idAssignerController.RemoveIdsFromTree(_building);
             Debug.Log("Ids removed from tree");
         }
         public void ResetIdsOfBuilding()
@@ -67,7 +69,7 @@ namespace ReupVirtualTwin.behaviours
 
         public void AddTagSystemToBuildingObjects()
         {
-            _tagSystemController.AssignTagSystemToTree(building);
+            _tagSystemController.AssignTagSystemToTree(_building);
             Debug.Log("tags script added to tree");
         }
     }
