@@ -4,8 +4,6 @@ using UnityEngine;
 using UnityEngine.TestTools;
 using UnityEditor;
 
-using ReupVirtualTwin.behaviours;
-using Packages.reup.romulo.Tests.PlayMode.Mocks;
 using ReupVirtualTwin.dependencyInjectors;
 using ReupVirtualTwin.managers;
 
@@ -14,7 +12,6 @@ public class CharacterPositionManagerTest : MonoBehaviour
     private GameObject characterPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Assets/Quickstart/Character.prefab");
     private GameObject character;
     private CharacterPositionManager posManager;
-    private InitialSpawn initialSpawn;
 
 
     float HEIGHT_CLOSENESS_THRESHOLD = 0.02f;
@@ -24,14 +21,12 @@ public class CharacterPositionManagerTest : MonoBehaviour
     [SetUp]
     public void SetUp()
     {
+        StubOnSetupBuildingCreator.CreateOnSetupBuilding();
         character = (GameObject)PrefabUtility.InstantiatePrefab(characterPrefab);
         DestroyGameRelatedDependecyInjectors();
         character.transform.position = Vector3.zero;
         posManager = character.GetComponent<CharacterPositionManager>();
         posManager.maxStepHeight = 0.25f;
-        initialSpawn = character.transform.Find("Behaviours").Find("HeightMediator").Find("InitialSpawn").GetComponent<InitialSpawn>();
-        MockSetUpBuilding mockSetUpBuilding = new MockSetUpBuilding();
-        initialSpawn.setUpBuilding = mockSetUpBuilding;
     }
 
     [TearDown]

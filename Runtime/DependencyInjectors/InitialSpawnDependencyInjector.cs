@@ -4,6 +4,7 @@ using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.behaviours;
 using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwin.managerInterfaces;
+using ReupVirtualTwin.behaviourInterfaces;
 
 namespace ReupVirtualTwin.dependencyInjectors
 {
@@ -16,7 +17,7 @@ namespace ReupVirtualTwin.dependencyInjectors
 
         void Awake() {
             InitialSpawn initialSpawn = GetComponent<InitialSpawn>();
-            SetUpBuilding setUpBuilding = ObjectFinder.FindSetupBuilding()?.GetComponent<SetUpBuilding>();
+            IOnBuildingSetup setUpBuilding = ObjectFinder.FindSetupBuilding()?.GetComponent<IOnBuildingSetup>();
             initialSpawn.characterPositionManager = characterPositionManager.GetComponent<ICharacterPositionManager>();
             if (setUpBuilding != null)
             {

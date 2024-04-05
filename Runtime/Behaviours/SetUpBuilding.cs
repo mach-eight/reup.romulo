@@ -6,7 +6,7 @@ using ReupVirtualTwin.controllerInterfaces;
 
 namespace ReupVirtualTwin.behaviours
 {
-    public class SetUpBuilding : MonoBehaviour , ISetUpBuilding
+    public class SetUpBuilding : MonoBehaviour , ISetUpBuilding, IOnBuildingSetup
     {
         [SerializeField]
         GameObject building;

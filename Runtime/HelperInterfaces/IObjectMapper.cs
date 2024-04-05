@@ -8,5 +8,6 @@ namespace ReupVirtualTwin.helperInterfaces
     {
         public ObjectDTO MapObjectToDTO(GameObject obj);
         public ObjectDTO[] MapObjectsToDTO(List<GameObject> objs);
+        public ObjectDTO MapObjectTree(GameObject obj);
     }
 }
