@@ -24,6 +24,9 @@ namespace ReupVirtualTwin.enums
         public const string loadObjectSuccess = "[Load Objects] Load Object Success";
         public const string loadObjectProcessUpdate = "[Load Objects] Load Object Process Update";
 
+        public const string changeObjectColor = "[Change Color] Change Object Color";
+        public const string changeObjectColorSuccess = "[Change Color] Change Object Color Success";
+
         public const string error = "[Error] Engine Error";
         public const string startupMessage = "[Startup Message] Startup Message";
     }
