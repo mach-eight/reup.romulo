@@ -22,10 +22,11 @@ namespace ReupVirtualTwin.managers
         public IMediator mediator { set => _mediator = value; }
         private ITagsController _tagsController;
         public ITagsController tagsController { set => _tagsController = value; }
+        
 
         public List<GameObject> GetDeletableObjects(string stringIDs)
         {
-            List<string> listIDs = ConvertStringToList(stringIDs);
+            List<string> listIDs = Utils.ConvertStringToList(stringIDs);
             List<GameObject> gameObjectsToDelete = new();
             if (listIDs != null && listIDs.Count != 0)
             {
@@ -48,24 +49,10 @@ namespace ReupVirtualTwin.managers
             }
 
         }
-        private List<string> ConvertStringToList(string idsString)
-        {
-            string[] idsArray;
-            if (idsString.Length > 0)
-            {
-                idsArray = idsString.Split(',');
-                List<string> idsList = new List<string>(idsArray);
-                return idsList;
-            }
-            else
-            {
-                return new List<string>();
-            }
-            
-        }
+        
         public bool CheckTag(List<GameObject> objects)
         {
-            return objects.All(obj => _tagsController.DoesObjectHaveTag(obj, ObjectTag.DELETABLE));
+            return objects.All(obj => _tagsController.DoesObjectHaveTag(obj, EditionTag.DELETABLE.ToString()));
         }
         public void DeleteObjects(List<GameObject> objectsToDelete)
         {     

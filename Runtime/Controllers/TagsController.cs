@@ -11,7 +11,7 @@ namespace ReupVirtualTwin.controllers
 {
     public class TagsController : ITagsController
     {
-        public List<ObjectTag> AddTagToObject(GameObject obj, ObjectTag tag)
+        public List<string> AddTagToObject(GameObject obj, string tag)
         {
             IObjectTags objectTags = obj.GetComponent<IObjectTags>();
             if (objectTags == null)
@@ -21,28 +21,28 @@ namespace ReupVirtualTwin.controllers
             return objectTags.AddTag(tag);
         }
 
-        public bool DoesObjectHaveTag(GameObject obj, ObjectTag tag)
+        public bool DoesObjectHaveTag(GameObject obj, string tag)
         {
-            List<ObjectTag> tags = GetTagsFromObject(obj);
+            List<string> tags = GetTagsFromObject(obj);
             if (tags == null) return false;
             return tags.Contains(tag);
         }
 
         public string[] GetTagNamesFromObject(GameObject obj)
         {
-            List<ObjectTag> tags = GetTagsFromObject(obj);
+            List<string> tags = GetTagsFromObject(obj);
             if (tags == null) return new string[0] { };
             return tags.Select(tag => tag.ToString()).ToArray();
         }
 
-        public List<ObjectTag> GetTagsFromObject(GameObject obj)
+        public List<string> GetTagsFromObject(GameObject obj)
         {
             IObjectTags objectTags = obj.GetComponent<IObjectTags>();
-            if (objectTags == null) return new List<ObjectTag>() { };
+            if (objectTags == null) return new List<string>() { };
             return objectTags.GetTags();
         }
 
-        public List<ObjectTag> RemoveTagFromOjbect(GameObject obj, ObjectTag tag)
+        public List<string> RemoveTagFromOjbect(GameObject obj, string tag)
         {
             IObjectTags objectTags = obj.GetComponent<IObjectTags>();
             if (objectTags == null)

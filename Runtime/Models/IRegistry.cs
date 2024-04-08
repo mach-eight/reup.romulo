@@ -5,8 +5,12 @@ namespace ReupVirtualTwin.models
 {
     public interface IRegistry
     {
-        public void AddItem(GameObject obj);
+        public void AddItem(GameObject item);
+        public void RemoveItem(GameObject item);
         public GameObject GetItemWithGuid(string guid);
         public List<GameObject> GetItemsWithGuids(string[] guids);
+        public List<GameObject> GetItemTreesWithParentGuids(List<string> stringIDs);
+        public int GetItemCount();
+        public void ClearRegistry();
     }
 }

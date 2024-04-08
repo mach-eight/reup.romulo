@@ -23,8 +23,12 @@ namespace ReupVirtualTwin.managers
         private IMediator _mediator;
         public IMediator mediator { set => _mediator = value; }
 
-        public void InsertObjectFromUrl(string url)
+        private string objectId;
+
+        public void InsertObjectFromUrl(string url, string objectId)
         {
+            this.objectId = objectId;
+
             // Creates an AssetLoaderOptions instance.
             // AssetLoaderOptions is a class used to configure many aspects of the loading process.
             // We won't change the default settings this time, so we can use the instance as it is.
@@ -61,10 +65,10 @@ namespace ReupVirtualTwin.managers
         private GameObject AddTags(GameObject obj)
         {
             IObjectTags objectTags = _tagSystemController.AssignTagSystemToObject(obj);
-            objectTags.AddTags(new ObjectTag[3] {
-                ObjectTag.SELECTABLE,
-                ObjectTag.DELETABLE,
-                ObjectTag.TRANSFORMABLE,
+            objectTags.AddTags(new string[3] {
+                EditionTag.SELECTABLE.ToString(),
+                EditionTag.DELETABLE.ToString(),
+                EditionTag.TRANSFORMABLE.ToString(),
             });
             return obj;
         }
@@ -80,7 +84,7 @@ namespace ReupVirtualTwin.managers
         }
         private GameObject AssignIds(GameObject obj)
         {
-            _idAssigner.AssignIdToObject(obj);
+            _idAssigner.AssignIdsToTree(obj, objectId);
             return obj;
         }
 

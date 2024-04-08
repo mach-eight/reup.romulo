@@ -10,7 +10,7 @@ namespace ReupVirtualTwin.models
     public class WebMaterialSelectionTrigger : MonoBehaviour, IWebMaterialSelectionTrigger
     {
         IWebMaterialContainerHandler _containerHandler;
-        IUniqueIdentifer triggerIdentifier;
+        IUniqueIdentifier triggerIdentifier;
 
         private void Start()
         {
@@ -24,7 +24,7 @@ namespace ReupVirtualTwin.models
 
         public WebMessage<string> GetCreateWebContainerMessage()
         {
-            triggerIdentifier = gameObject.GetComponent<IUniqueIdentifer>();
+            triggerIdentifier = gameObject.GetComponent<IUniqueIdentifier>();
             var message = new WebMessage<string>
             {
                 type = WebMessageType.showMaterialsOptions,
