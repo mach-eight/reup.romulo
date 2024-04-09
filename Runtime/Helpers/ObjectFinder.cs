@@ -2,6 +2,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using ReupVirtualTwin.enums;
+using ReupVirtualTwin.managerInterfaces;
 
 namespace ReupVirtualTwin.helpers
 {
@@ -46,5 +47,10 @@ namespace ReupVirtualTwin.helpers
         {
             return GameObject.FindGameObjectWithTag(TagsEnum.heightMediator);
         }
+        public static ITagsApiManager FindTagsApiManager()
+        {
+            return GameObject.FindGameObjectWithTag(TagsEnum.tagsApiManager).GetComponent<ITagsApiManager>();
+        }
+
     }
 }
