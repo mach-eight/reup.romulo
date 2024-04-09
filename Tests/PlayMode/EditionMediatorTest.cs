@@ -10,6 +10,7 @@ using ReupVirtualTwin.behaviourInterfaces;
 using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.helperInterfaces;
 using System.Collections.Generic;
+using ReupVirtualTwin.models;
 
 public class EditionMediatorTest : MonoBehaviour
 {
@@ -21,6 +22,8 @@ public class EditionMediatorTest : MonoBehaviour
     MockTransformObjectsManager mockTransformObjectsManager;
     MockInsertObjectsManager mockInsertObjectsManager;
     MockObjectMapper mockObjectMapper;
+    RegistrySpy registrySpy;
+    ChangeColorManagerSpy changeColorManagerSpy;
 
     [SetUp]
     public void SetUp()
@@ -39,6 +42,10 @@ public class EditionMediatorTest : MonoBehaviour
         editionMediator.insertObjectsManager = mockInsertObjectsManager;
         mockObjectMapper = new MockObjectMapper();
         editionMediator.objectMapper = mockObjectMapper;
+        registrySpy = new RegistrySpy();
+        editionMediator.registry = registrySpy;
+        changeColorManagerSpy = new ChangeColorManagerSpy();
+        editionMediator.changeColorManager = changeColorManagerSpy;
     }
 
     [UnityTest]
@@ -253,6 +260,40 @@ public class EditionMediatorTest : MonoBehaviour
         Assert.AreEqual(payload.objectId, mockInsertObjectsManager.requestedObjectId);
     }
 
+    [UnityTest]
+    public IEnumerator ShouldSendRequestToChangeObjectsColor_When_ReceiveChangeObjectColorMessage()
+    {
+        string color = "#00FF00";
+        Color expectedColor = Color.green;
+        ChangeColorObjectMessagePayload payload = new ChangeColorObjectMessagePayload
+        {
+            color = color,
+            objectIds = new string[] {"id-0", "id-1"},
+        };
+        string message = dummyJsonCreator.createWebMessage(WebMessageType.changeObjectColor, payload);
+        editionMediator.ReceiveWebMessage(message);
+        yield return null;
+        Assert.AreEqual(expectedColor, changeColorManagerSpy.color);
+        Assert.AreEqual(registrySpy.objects, changeColorManagerSpy.calledObjects);
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldSendErrorMessage_When_IncorrectColorCodeIsReceivedInChangeColorRequest()
+    {
+        string color = "this is not a proper color code";
+        ChangeColorObjectMessagePayload payload = new ChangeColorObjectMessagePayload
+        {
+            color = color,
+            objectIds = new string[] {"id-0", "id-1"},
+        };
+        string message = dummyJsonCreator.createWebMessage(WebMessageType.changeObjectColor, payload);
+        editionMediator.ReceiveWebMessage(message);
+        yield return null;
+        WebMessage<string> sentMessage = (WebMessage<string>)mockWebMessageSender.sentMessage;
+        Assert.AreEqual(WebMessageType.error, sentMessage.type);
+        Assert.AreEqual(editionMediator.InvalidColorErrorMessage(color), sentMessage.payload);
+    }
+
     private class MockEditModeManager : IEditModeManager
     {
         private bool _editMode;
@@ -417,6 +458,59 @@ public class EditionMediatorTest : MonoBehaviour
         static string ScapeSpecialChars(string str)
         {
             return str.Replace("\"", "\\\"");
+        }
+    }
+    private class RegistrySpy : IRegistry
+    {
+        public List<GameObject> objects = new List<GameObject>();
+        public RegistrySpy()
+        {
+            for (int i=0; i < 10; i++)
+            {
+                GameObject obj = new();
+                obj.AddComponent<UniqueId>().GenerateId();
+                objects.Add(obj);
+            }
+        }
+        public void AddItem(GameObject item)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void ClearRegistry()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public int GetItemCount()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<GameObject> GetItemsWithGuids(string[] guids)
+        {
+            return objects;
+        }
+
+        public GameObject GetItemWithGuid(string guid)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RemoveItem(GameObject item)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
+    private class ChangeColorManagerSpy : IChangeColorManager
+    {
+        public List<GameObject> calledObjects;
+        public Color color;
+        public void ChangeObjectsColor(List<GameObject> objectsToDelete, Color color)
+        {
+            calledObjects = objectsToDelete;
+            this.color = color;
         }
     }
 

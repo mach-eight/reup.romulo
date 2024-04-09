@@ -46,35 +46,6 @@ namespace ReupVirtualTwin.models
             return foundObjects;
         }
 
-        public List<GameObject> GetItemTreesWithParentGuids(List<string> stringIDs)
-        {
-            List<GameObject> gameObjects = new List<GameObject>();
-            List<GameObject> allGameObjectsToEdit = new List<GameObject>();
-            if (stringIDs != null && stringIDs.Count != 0)
-            {
-                gameObjects = GetItemsWithGuids(stringIDs.ToArray());
-                gameObjects.RemoveAll(obj => obj == null);
-                allGameObjectsToEdit.AddRange(gameObjects);
-                foreach (GameObject obj in gameObjects)
-                {
-                    AddChildrenToList(obj.transform, allGameObjectsToEdit);
-                }
-
-            }
-            return allGameObjectsToEdit;
-        }
-        private void AddChildrenToList(Transform parent, List<GameObject> list)
-        {
-            foreach (Transform childTransform in parent)
-            {
-                if (childTransform.gameObject != null)
-                {
-                    list.Add(childTransform.gameObject);
-                    AddChildrenToList(childTransform, list);
-                }
-            }
-        }
-
         public int GetItemCount()
         {
             return objects.Count;
