@@ -118,7 +118,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3828634763652253311, guid: 32f63487741cdce4bb57558042d379fd, type: 3}
       propertyPath: m_Name
-      value: StatusLoadMessage
+      value: StartupMessage
       objectReference: {fileID: 0}
     - target: {fileID: 7691266782358625286, guid: 32f63487741cdce4bb57558042d379fd, type: 3}
       propertyPath: m_RootOrder
