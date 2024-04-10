@@ -65,7 +65,7 @@ namespace ReupVirtualTwin.behaviours
 
         private ObjectDTO ObtainBuildingDTO()
         {
-            GameObject buildingObject = ((IBuildingGetter)setupBuilding).building;
+            GameObject buildingObject = ((IBuildingGetterSetter)setupBuilding).building;
             ObjectDTO buildingDTO = _objectMapper.MapObjectTree(buildingObject);
             return buildingDTO;
         }

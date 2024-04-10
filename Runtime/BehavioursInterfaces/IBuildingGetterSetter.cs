@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace ReupVirtualTwin.behaviourInterfaces
 {
-    public interface IBuildingGetter
+    public interface IBuildingGetterSetter
     {
-        public GameObject building { get; }
+        public GameObject building { get; set; } 
     }
 }

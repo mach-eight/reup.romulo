@@ -39,7 +39,7 @@ namespace ReupVirtualTwin.managers
         public IObjectMapper objectMapper { set => _objectMapper = value; }
 
         private IRegistry _registry;
-        public IRegistry registry { set => _registry = value; }
+        public IRegistry registry { set => _registry = value; get => _registry; }
 
 
         private bool selectObjectAfterInsertion;

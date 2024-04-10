@@ -2,7 +2,6 @@ using UnityEngine;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.enums;
 using System.Collections.Generic;
-using ReupVirtualTwin.models;
 
 namespace ReupVirtualTwin.managers
 {
@@ -10,22 +9,16 @@ namespace ReupVirtualTwin.managers
     {
         private IMediator _mediator;
         public IMediator mediator { set => _mediator = value; }
-        private IRegistry _registry;
-        public IRegistry registry { set => _registry = value; }
 
-        public List<GameObject> GetObjectsToChangeColor(List<string> stringIDs)
+        public void ChangeObjectsColor(List<GameObject> objects, Color color)
         {
-            return _registry.GetItemTreesWithParentGuids(stringIDs);
-        }
-
-        public void ChangeObjectsColor(List<GameObject> objectsToPaint, Color color)
-        {
-            foreach (var obj in objectsToPaint)
+            foreach (var obj in objects)
             {
                 ChangeObjectColor(obj, color);
             }
             _mediator.Notify(ReupEvent.objectColorChanged);           
         }
+
 
         private void ChangeObjectColor(GameObject obj, Color newColor)
         {
