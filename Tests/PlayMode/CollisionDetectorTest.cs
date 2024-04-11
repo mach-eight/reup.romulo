@@ -4,9 +4,7 @@ using UnityEngine.TestTools;
 using UnityEditor;
 using System.Collections;
 
-using ReupVirtualTwin.behaviours;
 using ReupVirtualTwin.dependencyInjectors;
-using Packages.reup.romulo.Tests.PlayMode.Mocks;
 using ReupVirtualTwin.managers;
 
 public class CollisionDetectorTest : MonoBehaviour
@@ -17,26 +15,26 @@ public class CollisionDetectorTest : MonoBehaviour
     GameObject widePlatform;
     GameObject wall;
     CharacterPositionManager posManager;
-    private InitialSpawn initialSpawn;
+    private GameObject setupBuildingGameObject;
 
     [SetUp]
     public void SetUp()
     {
+        setupBuildingGameObject = StubOnSetupBuildingCreator.CreateImmediateOnSetupBuilding();
         character = (GameObject)PrefabUtility.InstantiatePrefab(characterPrefab);
         DestroyGameRelatedDependecyInjectors();
         posManager = character.GetComponent<CharacterPositionManager>();
         widePlatform = (GameObject)PrefabUtility.InstantiatePrefab(cubePrefab);
         SetPlatform();
-        initialSpawn = character.transform.Find("Behaviours").Find("HeightMediator").Find("InitialSpawn").GetComponent<InitialSpawn>();
-        MockSetUpBuilding mockSetUpBuilding = new MockSetUpBuilding();
-        initialSpawn.setUpBuilding = mockSetUpBuilding;
     }
 
-    [TearDown]
-    public void TearDown()
+    [UnityTearDown]
+    public IEnumerator TearDown()
     {
         Destroy(character);
         Destroy(widePlatform);
+        Destroy(setupBuildingGameObject);
+        yield return null;
     }
 
     [UnityTest]

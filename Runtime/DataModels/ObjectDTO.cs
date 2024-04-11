@@ -1,4 +1,3 @@
-using ReupVirtualTwin.enums;
 using System;
 
 namespace ReupVirtualTwin.dataModels
@@ -8,5 +7,6 @@ namespace ReupVirtualTwin.dataModels
     {
         public string id;
         public string[] tags;
+        public ObjectDTO[] children;
     }
 }

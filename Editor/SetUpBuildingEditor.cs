@@ -6,7 +6,7 @@ using ReupVirtualTwin.controllers;
 
 namespace ReupVirtualTwin.editor
 {
-    [CustomEditor(typeof(SetUpBuilding))]
+    [CustomEditor(typeof(SetupBuilding))]
     public class SetUpBuildingEditor : Editor
     {
         bool showIdsOptions = false;
@@ -15,7 +15,7 @@ namespace ReupVirtualTwin.editor
         {
             base.OnInspectorGUI();
 
-            SetUpBuilding setUpBuilding = (SetUpBuilding)target;
+            SetupBuilding setUpBuilding = (SetupBuilding)target;
 
             showIdsOptions = EditorGUILayout.Foldout(showIdsOptions, "Objects Ids");
             if (showIdsOptions)

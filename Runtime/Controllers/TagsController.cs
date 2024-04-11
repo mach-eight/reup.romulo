@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-using ReupVirtualTwin.enums;
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.controllerInterfaces;
 
@@ -42,7 +41,7 @@ namespace ReupVirtualTwin.controllers
             return objectTags.GetTags();
         }
 
-        public List<string> RemoveTagFromOjbect(GameObject obj, string tag)
+        public List<string> RemoveTagFromObject(GameObject obj, string tag)
         {
             IObjectTags objectTags = obj.GetComponent<IObjectTags>();
             if (objectTags == null)
