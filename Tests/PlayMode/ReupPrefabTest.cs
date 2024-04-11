@@ -53,7 +53,7 @@ public class ReupPrefabTest : MonoBehaviour
     }
 
     [UnityTest]
-    public IEnumerator ShouldFindRegistry()
+    public IEnumerator EditionMediatorShouldFindTheRegistry()
     {
         Assert.AreEqual(objectRegistry, editionMediator.registry);
         yield return null;
