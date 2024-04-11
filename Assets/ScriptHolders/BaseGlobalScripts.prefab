@@ -411,7 +411,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7145843182074020279, guid: 281dfd7f67fa78441a885554dcd44052, type: 3}
       propertyPath: m_Name
-      value: SetUpBuilding
+      value: SetupBuilding
       objectReference: {fileID: 0}
     - target: {fileID: 7145843182074020279, guid: 281dfd7f67fa78441a885554dcd44052, type: 3}
       propertyPath: m_TagString

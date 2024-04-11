@@ -6,7 +6,7 @@ using ReupVirtualTwin.controllerInterfaces;
 
 namespace ReupVirtualTwin.behaviours
 {
-    public class SetUpBuilding : MonoBehaviour , ISetUpBuilding, IOnBuildingSetup, IBuildingGetterSetter
+    public class SetupBuilding : MonoBehaviour , ISetUpBuilding, IOnBuildingSetup, IBuildingGetterSetter
     {
 
         [SerializeField]
@@ -39,9 +39,9 @@ namespace ReupVirtualTwin.behaviours
 
         void Start()
         {
-            if (_building != null)
+            if (building != null)
             {
-                _colliderAdder.AddCollidersToTree(_building);
+                _colliderAdder.AddCollidersToTree(building);
             }
             else
             {
@@ -53,12 +53,12 @@ namespace ReupVirtualTwin.behaviours
 
         public void AssignIdsToBuilding()
         {
-            _idAssignerController.AssignIdsToTree(_building);
+            _idAssignerController.AssignIdsToTree(building);
             Debug.Log("Ids added to tree");
         }
         public void RemoveIdsOfBuilding()
         {
-            _idAssignerController.RemoveIdsFromTree(_building);
+            _idAssignerController.RemoveIdsFromTree(building);
             Debug.Log("Ids removed from tree");
         }
         public void ResetIdsOfBuilding()
@@ -70,7 +70,7 @@ namespace ReupVirtualTwin.behaviours
 
         public void AddTagSystemToBuildingObjects()
         {
-            _tagSystemController.AssignTagSystemToTree(_building);
+            _tagSystemController.AssignTagSystemToTree(building);
             Debug.Log("tags script added to tree");
         }
     }

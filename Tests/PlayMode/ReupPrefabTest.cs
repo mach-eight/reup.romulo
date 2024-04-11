@@ -7,6 +7,7 @@ using UnityEditor;
 using ReupVirtualTwin.managers;
 using ReupVirtualTwin.models;
 using ReupVirtualTwin.behaviours;
+using ReupVirtualTwin.behaviourInterfaces;
 
 
 public class ReupPrefabTest : MonoBehaviour
@@ -17,7 +18,7 @@ public class ReupPrefabTest : MonoBehaviour
 
     IRegistry objectRegistry;
     EditionMediator editionMediator;
-    SetUpBuilding setupBuilding;
+    IBuildingGetterSetter setupBuilding;
 
     [UnitySetUp]
     public IEnumerator SetUp()
@@ -33,7 +34,7 @@ public class ReupPrefabTest : MonoBehaviour
         GameObject baseGlobalScriptGameObject = reupGameObject.transform.Find("BaseGlobalScripts").gameObject;
         objectRegistry = baseGlobalScriptGameObject.transform.Find("ObjectRegistry").GetComponent<IRegistry>();
         editionMediator = baseGlobalScriptGameObject.transform.Find("EditionMediator").GetComponent<EditionMediator>();
-        setupBuilding = baseGlobalScriptGameObject.transform.Find("SetUpBuilding").GetComponent<SetUpBuilding>();
+        setupBuilding = baseGlobalScriptGameObject.transform.Find("SetupBuilding").GetComponent<IBuildingGetterSetter>();
     }
 
     private void CreateBuilding()

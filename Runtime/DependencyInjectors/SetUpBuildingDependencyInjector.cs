@@ -10,7 +10,7 @@ namespace ReupVirtualTwin.dependencyInjectors
     {
         private void Awake()
         {
-            SetUpBuilding setUpBuilding = GetComponent<SetUpBuilding>();
+            SetupBuilding setUpBuilding = GetComponent<SetupBuilding>();
             setUpBuilding.colliderAdder = new ColliderAdder();
             setUpBuilding.idAssignerController = new IdController();
         }
