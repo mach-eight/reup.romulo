@@ -4,6 +4,8 @@ using ReupVirtualTwin.models;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
+using System.Collections;
+using ReupVirtualTwin.modelInterfaces;
 
 namespace ReupVirtualTwinTests.Registry
 {
@@ -14,18 +16,11 @@ namespace ReupVirtualTwinTests.Registry
         IRegistry objectRegistry;
         GameObject testObj;
 
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
-        {
-            // we set the objectRegistry only once because some objects that depend on it are use the ObjectFinder class to find it
-            // if we create a different objectRegistry for each test in the SetUp method, the ObjectFinder sometimes finds
-            // an old objectRegistry why this happens is still unknown to me
-            objectRegistryGameObject = (GameObject)PrefabUtility.InstantiatePrefab(ObjectRegistryPrefab);
-            objectRegistry = objectRegistryGameObject.GetComponent<IRegistry>();
-        }
         [SetUp]
         public void SetUp()
         {
+            objectRegistryGameObject = (GameObject)PrefabUtility.InstantiatePrefab(ObjectRegistryPrefab);
+            objectRegistry = objectRegistryGameObject.GetComponent<IRegistry>();
             testObj = new GameObject("testObj");
             testObj.AddComponent<RegisteredIdentifier>();
         }
@@ -34,16 +29,13 @@ namespace ReupVirtualTwinTests.Registry
         {
             Destroy(testObj);
             objectRegistry.ClearRegistry();
-        }
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
             Destroy(objectRegistryGameObject);
         }
 
         [UnityTest]
         public IEnumerator TestObjHasAnId()
         {
+            yield return new WaitForSeconds(0.2f);
             var id = testObj.GetComponent<RegisteredIdentifier>().getId();
             Assert.IsNotNull(id);
             yield return null;
@@ -52,6 +44,7 @@ namespace ReupVirtualTwinTests.Registry
         [UnityTest]
         public IEnumerator ObjectRegistryContainsTestObj()
         {
+            yield return new WaitForSeconds(0.2f);
             var id = testObj.GetComponent<RegisteredIdentifier>().getId();
             var obtainedObj = objectRegistry.GetItemWithGuid(id);
             Assert.AreEqual(testObj, obtainedObj);
@@ -61,6 +54,7 @@ namespace ReupVirtualTwinTests.Registry
         [UnityTest]
         public IEnumerator NoObjectIsReturnedIfIncorrectId()
         {
+            yield return new WaitForSeconds(0.2f);
             var obtainedObj = objectRegistry.GetItemWithGuid("an-incorrect-id");
             Assert.IsNull(obtainedObj);
             yield return null;
@@ -68,7 +62,8 @@ namespace ReupVirtualTwinTests.Registry
         [UnityTest]
         public IEnumerator ObjectIsRegistryIsUpdatedIfNewIdIsAssigned()
         {
-            string currentId = testObj.GetComponent<RegisteredIdentifier>().getId();
+            yield return new WaitForSeconds(0.2f);
+            var currentId = testObj.GetComponent<RegisteredIdentifier>().getId();
             Assert.AreEqual(testObj, objectRegistry.GetItemWithGuid(currentId));
             Assert.AreEqual(1, objectRegistry.GetItemCount());
             string newId = "new-id";
@@ -82,6 +77,7 @@ namespace ReupVirtualTwinTests.Registry
         [UnityTest]
         public IEnumerator ShoulBeAbleToGenerateIdRightAfterCreatingTheUniqueIdComponent()
         {
+            yield return new WaitForSeconds(0.2f);
             GameObject gameObject = new GameObject("new-game-obj");
             RegisteredIdentifier registeredIdentifier = gameObject.AddComponent<RegisteredIdentifier>();
             registeredIdentifier.GenerateId();
@@ -92,6 +88,7 @@ namespace ReupVirtualTwinTests.Registry
         [UnityTest]
         public IEnumerator ShoulBeAbleToAssignIdRightAfterCreatingTheUniqueIdComponent()
         {
+            yield return new WaitForSeconds(0.2f);
             GameObject gameObject = new GameObject("new-game-obj");
             RegisteredIdentifier registeredIdentifier = gameObject.AddComponent<RegisteredIdentifier>();
             string assignedId = "assigned-id";

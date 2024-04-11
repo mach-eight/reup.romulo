@@ -37,6 +37,7 @@ namespace ReupVirtualTwinTests.Registry
             child1.transform.parent = parent.transform;
             grandchild00.transform.parent = child0.transform;
         }
+
         [TearDown]
         public void TearDown()
         {

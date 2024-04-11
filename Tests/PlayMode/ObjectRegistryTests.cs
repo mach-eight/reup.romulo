@@ -16,12 +16,9 @@ namespace ReupVirtualTwinTests.Registry
         GameObject testObj0;
         GameObject testObj1;
 
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
+        [SetUp]
+        public void SetUp()
         {
-            // we set the objectRegistry only once because some objects that depend on it are use the ObjectFinder class to find it
-            // if we create a different objectRegistry for each test in the SetUp method, the ObjectFinder sometimes finds
-            // an old objectRegistry why this happens is still unknown to me
             objectRegistryGameObject = (GameObject)PrefabUtility.InstantiatePrefab(ObjectRegistryPrefab);
             objectRegistry = objectRegistryGameObject.GetComponent<IRegistry>();
         }
@@ -32,11 +29,6 @@ namespace ReupVirtualTwinTests.Registry
             Destroy(testObj0);
             Destroy(testObj1);
             objectRegistry.ClearRegistry();
-        }
-
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
             Destroy(objectRegistryGameObject);
         }
 
