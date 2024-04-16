@@ -19,7 +19,6 @@ namespace ReupVirtualTwin.managers
             _mediator.Notify(ReupEvent.objectColorChanged);           
         }
 
-
         private void ChangeObjectColor(GameObject obj, Color newColor)
         {
             Renderer renderer = obj.GetComponent<Renderer>();
