@@ -49,10 +49,10 @@ namespace ReupVirtualTwin.controllers
         private GameObject AddTags(GameObject obj)
         {
             IObjectTags objectTags = tagSystemController.AssignTagSystemToObject(obj);
-            objectTags.AddTags(new ObjectTag[3] {
-                ObjectTag.SELECTABLE,
-                ObjectTag.DELETABLE,
-                ObjectTag.TRANSFORMABLE,
+            objectTags.AddTags(new string[3] {
+                EditionTag.DELETABLE.ToString(),
+                EditionTag.SELECTABLE.ToString(),
+                EditionTag.TRANSFORMABLE.ToString(),
             });
             return obj;
         }

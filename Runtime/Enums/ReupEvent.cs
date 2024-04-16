@@ -14,5 +14,6 @@ namespace ReupVirtualTwin.enums
         insertedObjectStatusUpdate,
         addToCharacterHeight,
         setCharacterHeight,
+        objectColorChanged,
     }
 }

@@ -389,6 +389,11 @@ public class EditionMediatorTest : MonoBehaviour
         {
             return objectDTOs[0];
         }
+
+        public ObjectDTO MapObjectTree(GameObject obj)
+        {
+            throw new System.NotImplementedException();
+        }
     }
     private static class dummyJsonCreator
     {
