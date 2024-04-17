@@ -10,6 +10,7 @@ using ReupVirtualTwin.behaviourInterfaces;
 using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.helperInterfaces;
 using System.Collections.Generic;
+using ReupVirtualTwin.controllerInterfaces;
 
 public class EditionMediatorTest : MonoBehaviour
 {
@@ -36,7 +37,7 @@ public class EditionMediatorTest : MonoBehaviour
         mockTransformObjectsManager = new MockTransformObjectsManager();
         editionMediator.transformObjectsManager = mockTransformObjectsManager;
         mockInsertObjectsManager = new MockInsertObjectsManager(editionMediator);
-        editionMediator.insertObjectsManager = mockInsertObjectsManager;
+        editionMediator.insertObjectsController = mockInsertObjectsManager;
         mockObjectMapper = new MockObjectMapper();
         editionMediator.objectMapper = mockObjectMapper;
     }
@@ -163,8 +164,11 @@ public class EditionMediatorTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldSendMessageOfLoadObjectSuccess()
     {
-        GameObject insertedObject = new GameObject("insertedObject");
-        editionMediator.Notify(ReupEvent.insertedObjectLoaded, insertedObject);
+        InsertedObjectPayload insertedObjectPayload = new()
+        {
+            loadedObject = new GameObject("insertedObject"),
+        };
+        editionMediator.Notify(ReupEvent.insertedObjectLoaded, insertedObjectPayload);
         WebMessage<ObjectDTO> sentMessage = (WebMessage<ObjectDTO>)mockWebMessageSender.sentMessage;
         Assert.AreEqual(WebMessageType.loadObjectSuccess, sentMessage.type);
         Assert.AreEqual(mockObjectMapper.objectDTOs[0], sentMessage.payload);
@@ -332,7 +336,7 @@ public class EditionMediatorTest : MonoBehaviour
         }
     }
 
-    private class MockInsertObjectsManager : IInsertObjectsManager
+    private class MockInsertObjectsManager : IInsertObjectsController
     {
         public GameObject injectedObject = null;
         public bool calledToInsertObject = false;
@@ -346,13 +350,19 @@ public class EditionMediatorTest : MonoBehaviour
             editionMediator = mediator;
         }
 
-        public void InsertObjectFromUrl(string url, string objectId)
+        public void InsertObject(InsertObjectMessagePayload insertObjectMessagePayload)
         {
             injectedObject = new GameObject("injected test object");
             calledToInsertObject = true;
-            objectLoadString = url;
-            editionMediator.Notify(ReupEvent.insertedObjectLoaded, injectedObject);
-            requestedObjectId = objectId;
+            objectLoadString = insertObjectMessagePayload.objectUrl;
+            InsertedObjectPayload insertedObjectPayload = new()
+            {
+                loadedObject = injectedObject,
+                selectObjectAfterInsertion = insertObjectMessagePayload.selectObjectAfterInsertion,
+                deselectPreviousSelection = insertObjectMessagePayload.deselectPreviousSelection,
+            };
+            editionMediator.Notify(ReupEvent.insertedObjectLoaded, insertedObjectPayload);
+            requestedObjectId = insertObjectMessagePayload.objectId;
         }
     }
     private class MockObjectMapper : IObjectMapper

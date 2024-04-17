@@ -1,8 +1,9 @@
 {
-    "name": "reup.romulo.modelInterfaces",
+    "name": "reup.romulo.webRequesters",
     "rootNamespace": "",
     "references": [
-        "GUID:3e29f3cf4a29b6f4a8ecdaccb3a3a2ba",
+        "GUID:2fff08516fe8b484ea0191f9747e8d2b",
+        "GUID:f33eeee41b733464e94ee9a139b85f8a",
         "GUID:ef71f4f9d4e9ed44987e6a7778893414"
     ],
     "includePlatforms": [],

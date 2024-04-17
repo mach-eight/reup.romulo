@@ -16,7 +16,9 @@
         "reup.romulo.dependecyInjectors",
         "reup.romulo.controllerInterfaces",
         "reup.romulo.controllers",
-        "reup.romulo.modelInterfaces"
+        "reup.romulo.modelInterfaces",
+        "reup.romulo.webRequestersInterfaces",
+        "reup.romulo.webRequesters"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
