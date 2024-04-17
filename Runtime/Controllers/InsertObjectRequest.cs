@@ -46,7 +46,7 @@ namespace ReupVirtualTwin.controllers
             AssignIds(loadedObj);
             loadedObj.SetActive(false);
         }
-        private GameObject AddTags(GameObject obj)
+        private void AddTags(GameObject obj)
         {
             IObjectTags objectTags = tagSystemController.AssignTagSystemToObject(obj);
             objectTags.AddTags(new string[3] {
@@ -54,22 +54,18 @@ namespace ReupVirtualTwin.controllers
                 EditionTag.SELECTABLE.ToString(),
                 EditionTag.TRANSFORMABLE.ToString(),
             });
-            return obj;
         }
-        private GameObject SetLoadPosition(GameObject obj)
+        private void SetLoadPosition(GameObject obj)
         {
             obj.transform.position = insertPosition;
-            return obj;
         }
-        private GameObject AddColliders(GameObject obj)
+        private void AddColliders(GameObject obj)
         {
             colliderAdder.AddCollidersToTree(obj);
-            return obj;
         }
-        private GameObject AssignIds(GameObject obj)
+        private void AssignIds(GameObject obj)
         {
             idAssigner.AssignIdsToTree(obj, insertObjectMessagePayload.objectId);
-            return obj;
         }
 
         private void OnMaterialsLoad(ModelLoaderContext assetLoaderContext)

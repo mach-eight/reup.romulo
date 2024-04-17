@@ -6,12 +6,12 @@ using UnityEngine;
 
 namespace ReupVirtualTwin.controllers
 {
-    public class InserObjectController : IInsertObjectsController
+    public class InsertObjectController : IInsertObjectsController
     {
-        IMeshDownloader meshDownloader;
-        IMediator mediator;
-        Vector3 insertPosition;
-        public InserObjectController(IMediator mediator, IMeshDownloader meshDownloader, Vector3 insertPosition)
+        private readonly IMeshDownloader meshDownloader;
+        private readonly IMediator mediator;
+        private readonly Vector3 insertPosition;
+        public InsertObjectController(IMediator mediator, IMeshDownloader meshDownloader, Vector3 insertPosition)
         {
             this.mediator = mediator;
             this.meshDownloader = meshDownloader;

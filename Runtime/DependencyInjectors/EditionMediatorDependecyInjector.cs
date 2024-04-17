@@ -44,13 +44,13 @@ namespace ReupVirtualTwin.dependencyInjectors
             }
             _editionMediator.webMessageSender = webMessageSender;
             _editionMediator.objectMapper = new ObjectMapper(new TagsController(), new IdController());
-            _editionMediator.insertObjectsController = new InserObjectController(
+            IRegistry registry = ObjectFinder.FindObjectRegistry().GetComponent<IRegistry>();
+            _editionMediator.registry = registry;
+            _editionMediator.insertObjectsController = new InsertObjectController(
                 _editionMediator,
                 new MeshDownloader(),
                 _insertPositionLocation.transform.position
             );
-            IRegistry registry = ObjectFinder.FindObjectRegistry().GetComponent<IRegistry>();
-            _editionMediator.registry = registry;
             _editionMediator.changeMaterialController = new ChangeMaterialController();
         }
     }
