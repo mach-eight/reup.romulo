@@ -10,9 +10,8 @@ using ReupVirtualTwin.behaviourInterfaces;
 using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.helperInterfaces;
 using System.Collections.Generic;
-using ReupVirtualTwin.modelInterfaces;
-using ReupVirtualTwin.models;
 using ReupVirtualTwin.controllerInterfaces;
+using Tests.PlayMode.Mocks;
 
 public class EditionMediatorTest : MonoBehaviour
 {
@@ -61,48 +60,6 @@ public class EditionMediatorTest : MonoBehaviour
         }
     }
 
-    private class RegistrySpy : IRegistry
-    {
-        public List<GameObject> objects = new List<GameObject>();
-        public RegistrySpy()
-        {
-            for (int i=0; i < 10; i++)
-            {
-                GameObject obj = new();
-                obj.AddComponent<UniqueId>().GenerateId();
-                objects.Add(obj);
-            }
-        }
-        public void AddItem(GameObject item)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void ClearRegistry()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public int GetItemCount()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<GameObject> GetItemsWithGuids(string[] guids)
-        {
-            return objects;
-        }
-
-        public GameObject GetItemWithGuid(string guid)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveItem(GameObject item)
-        {
-            throw new System.NotImplementedException();
-        }
-    }
     private class MockEditModeManager : IEditModeManager
     {
         private bool _editMode;
