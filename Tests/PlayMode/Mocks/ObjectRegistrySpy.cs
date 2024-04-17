@@ -5,10 +5,10 @@ using UnityEngine;
 
 namespace Tests.PlayMode.Mocks
 {
-    public class RegistrySpy : IRegistry
+    public class ObjectRegistrySpy : IObjectRegistry
     {
         public List<GameObject> objects = new List<GameObject>();
-        public RegistrySpy()
+        public ObjectRegistrySpy()
         {
             for (int i = 0; i < 10; i++)
             {
@@ -17,7 +17,7 @@ namespace Tests.PlayMode.Mocks
                 objects.Add(obj);
             }
         }
-        public void AddItem(GameObject item)
+        public void AddObject(GameObject item)
         {
             throw new System.NotImplementedException();
         }
@@ -27,22 +27,22 @@ namespace Tests.PlayMode.Mocks
             throw new System.NotImplementedException();
         }
 
-        public int GetItemCount()
+        public int GetObjectsCount()
         {
             throw new System.NotImplementedException();
         }
 
-        public List<GameObject> GetItemsWithGuids(string[] guids)
+        public List<GameObject> GetObjectsWithGuids(string[] guids)
         {
             return objects;
         }
 
-        public GameObject GetItemWithGuid(string guid)
+        public GameObject GetObjectWithGuid(string guid)
         {
             throw new System.NotImplementedException();
         }
 
-        public void RemoveItem(GameObject item)
+        public void RemoveObject(GameObject item)
         {
             throw new System.NotImplementedException();
         }

@@ -23,7 +23,7 @@ public class EditionMediatorTest : MonoBehaviour
     MockTransformObjectsManager mockTransformObjectsManager;
     MockInsertObjectsManager mockInsertObjectsManager;
     MockObjectMapper mockObjectMapper;
-    RegistrySpy registrySpy;
+    ObjectRegistrySpy registrySpy;
     ChangeColorManagerSpy changeColorManagerSpy;
 
     [SetUp]
@@ -43,7 +43,7 @@ public class EditionMediatorTest : MonoBehaviour
         editionMediator.insertObjectsController = mockInsertObjectsManager;
         mockObjectMapper = new MockObjectMapper();
         editionMediator.objectMapper = mockObjectMapper;
-        registrySpy = new RegistrySpy();
+        registrySpy = new ObjectRegistrySpy();
         editionMediator.registry = registrySpy;
         changeColorManagerSpy = new ChangeColorManagerSpy();
         editionMediator.changeColorManager = changeColorManagerSpy;

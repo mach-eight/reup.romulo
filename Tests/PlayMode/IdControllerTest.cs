@@ -15,7 +15,7 @@ namespace ReupVirtualTwinTests.Registry
     {
         GameObject ObjectRegistryPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Assets/ScriptHolders/ObjectRegistry.prefab");
         GameObject objectRegistryGameObject;
-        IRegistry objectRegistry;
+        IObjectRegistry objectRegistry;
         GameObject parent;
         GameObject child0;
         GameObject child1;
@@ -29,7 +29,7 @@ namespace ReupVirtualTwinTests.Registry
             // if we create a different objectRegistry for each test in the SetUp method, the ObjectFinder sometimes finds
             // an old objectRegistry why this happens is still unknown to me
             objectRegistryGameObject = (GameObject)PrefabUtility.InstantiatePrefab(ObjectRegistryPrefab);
-            objectRegistry = objectRegistryGameObject.GetComponent<IRegistry>();
+            objectRegistry = objectRegistryGameObject.GetComponent<IObjectRegistry>();
         }
         [SetUp]
         public void SetUp()
@@ -68,7 +68,7 @@ namespace ReupVirtualTwinTests.Registry
             yield return null;
             Assert.IsNotNull(registeredIdentifier0);
             string parentId = registeredIdentifier0.getId();
-            Assert.AreEqual(parent, objectRegistry.GetItemWithGuid(parentId));
+            Assert.AreEqual(parent, objectRegistry.GetObjectWithGuid(parentId));
             yield return null;
         }
 

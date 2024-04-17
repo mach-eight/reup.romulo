@@ -12,7 +12,7 @@ namespace ReupVirtualTwinTests.Registry
     {
         GameObject ObjectRegistryPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Assets/ScriptHolders/ObjectRegistry.prefab");
         GameObject objectRegistryGameObject;
-        IRegistry objectRegistry;
+        IObjectRegistry objectRegistry;
         GameObject testObj;
 
         [OneTimeSetUp]
@@ -22,7 +22,7 @@ namespace ReupVirtualTwinTests.Registry
             // if we create a different objectRegistry for each test in the SetUp method, the ObjectFinder sometimes finds
             // an old objectRegistry why this happens is still unknown to me
             objectRegistryGameObject = (GameObject)PrefabUtility.InstantiatePrefab(ObjectRegistryPrefab);
-            objectRegistry = objectRegistryGameObject.GetComponent<IRegistry>();
+            objectRegistry = objectRegistryGameObject.GetComponent<IObjectRegistry>();
         }
         [SetUp]
         public void SetUp()
@@ -54,7 +54,7 @@ namespace ReupVirtualTwinTests.Registry
         public IEnumerator ObjectRegistryContainsTestObj()
         {
             var id = testObj.GetComponent<RegisteredIdentifier>().getId();
-            var obtainedObj = objectRegistry.GetItemWithGuid(id);
+            var obtainedObj = objectRegistry.GetObjectWithGuid(id);
             Assert.AreEqual(testObj, obtainedObj);
             yield return null;
         }
@@ -62,7 +62,7 @@ namespace ReupVirtualTwinTests.Registry
         [UnityTest]
         public IEnumerator NoObjectIsReturnedIfIncorrectId()
         {
-            var obtainedObj = objectRegistry.GetItemWithGuid("an-incorrect-id");
+            var obtainedObj = objectRegistry.GetObjectWithGuid("an-incorrect-id");
             Assert.IsNull(obtainedObj);
             yield return null;
         }
@@ -70,14 +70,14 @@ namespace ReupVirtualTwinTests.Registry
         public IEnumerator ObjectIsRegistryIsUpdatedIfNewIdIsAssigned()
         {
             string currentId = testObj.GetComponent<RegisteredIdentifier>().getId();
-            Assert.AreEqual(testObj, objectRegistry.GetItemWithGuid(currentId));
-            Assert.AreEqual(1, objectRegistry.GetItemCount());
+            Assert.AreEqual(testObj, objectRegistry.GetObjectWithGuid(currentId));
+            Assert.AreEqual(1, objectRegistry.GetObjectsCount());
             string newId = "new-id";
             testObj.GetComponent<RegisteredIdentifier>().AssignId(newId);
             yield return null;
-            Assert.IsNull(objectRegistry.GetItemWithGuid(currentId));
-            Assert.AreEqual(testObj, objectRegistry.GetItemWithGuid(newId));
-            Assert.AreEqual(1, objectRegistry.GetItemCount());
+            Assert.IsNull(objectRegistry.GetObjectWithGuid(currentId));
+            Assert.AreEqual(testObj, objectRegistry.GetObjectWithGuid(newId));
+            Assert.AreEqual(1, objectRegistry.GetObjectsCount());
             yield return null;
         }
         [UnityTest]
@@ -87,7 +87,7 @@ namespace ReupVirtualTwinTests.Registry
             RegisteredIdentifier registeredIdentifier = gameObject.AddComponent<RegisteredIdentifier>();
             registeredIdentifier.GenerateId();
             Assert.IsNotNull(registeredIdentifier.getId());
-            Assert.AreEqual(gameObject, objectRegistry.GetItemWithGuid(registeredIdentifier.getId()));
+            Assert.AreEqual(gameObject, objectRegistry.GetObjectWithGuid(registeredIdentifier.getId()));
             yield return null;
         }
         [UnityTest]
@@ -98,7 +98,7 @@ namespace ReupVirtualTwinTests.Registry
             string assignedId = "assigned-id";
             registeredIdentifier.AssignId(assignedId);
             Assert.IsNotNull(registeredIdentifier.getId());
-            Assert.AreEqual(gameObject, objectRegistry.GetItemWithGuid(assignedId));
+            Assert.AreEqual(gameObject, objectRegistry.GetObjectWithGuid(assignedId));
             yield return null;
         }
     }

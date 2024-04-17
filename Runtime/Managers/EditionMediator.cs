@@ -39,8 +39,8 @@ namespace ReupVirtualTwin.managers
         private IObjectMapper _objectMapper;
         public IObjectMapper objectMapper { set => _objectMapper = value; }
 
-        private IRegistry _registry;
-        public IRegistry registry { set => _registry = value; get => _registry; }
+        private IObjectRegistry _registry;
+        public IObjectRegistry registry { set => _registry = value; get => _registry; }
         public string noInsertObjectIdErrorMessage = "No object id provided for insertion";
         [HideInInspector]
         public string noInsertObjectUrlErrorMessage = "No 3d model url provided for insertion";
@@ -191,7 +191,7 @@ namespace ReupVirtualTwin.managers
         private void ChangeObjectsColor(string payload)
         {
             ChangeColorObjectMessagePayload parsedPayload = JsonUtility.FromJson<ChangeColorObjectMessagePayload>(payload);
-            List<GameObject> objectsToChangeColor = _registry.GetItemsWithGuids(parsedPayload.objectIds);
+            List<GameObject> objectsToChangeColor = _registry.GetObjectsWithGuids(parsedPayload.objectIds);
             if (objectsToChangeColor.Count > 0)
             {
                 Color? parsedColor = Utils.ParseColor(parsedPayload.color);

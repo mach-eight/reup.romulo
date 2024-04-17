@@ -15,7 +15,7 @@ namespace ReupVirtualTwin.behaviours
         Material material;
         List<GameObject> objects;
 
-        IRegistry registry;
+        IObjectRegistry registry;
         IWebRequestTexture _webRequestTexture;
         IMaterialChanger _materialChanger;
 
@@ -30,7 +30,7 @@ namespace ReupVirtualTwin.behaviours
 
         private void Start()
         {
-            registry = ObjectFinder.FindObjectRegistry().GetComponent<IRegistry>();
+            registry = ObjectFinder.FindObjectRegistry().GetComponent<IObjectRegistry>();
             webRequestTexture = GetComponent<IWebRequestTexture>();
             materialChanger = GetComponent<IMaterialChanger>();
         }
@@ -62,7 +62,7 @@ namespace ReupVirtualTwin.behaviours
         }
         void FindObjects(string[] ids)
         {
-            objects = registry.GetItemsWithGuids(ids);
+            objects = registry.GetObjectsWithGuids(ids);
         }
     }
 }
