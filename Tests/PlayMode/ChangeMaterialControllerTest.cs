@@ -26,7 +26,7 @@ namespace ReupVirtualTwinTests.controllers
         [UnitySetUp]
         public IEnumerator SetUp()
         {
-            textureDownloaderSpy = new();
+            textureDownloaderSpy = new TextureDownloaderSpy();
             controller = new ChangeMaterialController(textureDownloaderSpy, objectRegistry);
             messagePayload = new()
             {
@@ -40,10 +40,11 @@ namespace ReupVirtualTwinTests.controllers
         {
             public string url;
             public Texture2D texture = new Texture2D(1,1);
-            public Task<Texture2D> DownloadTextureFromUrl(string url)
+            public async Task<Texture2D> DownloadTextureFromUrl(string url)
             {
                 this.url = url;
-                return Task.FromResult(texture);
+                await Task.Delay(1);
+                return texture;
             }
         }
         private List<Material> GetMaterialsFromObjects(List<GameObject> objects)
@@ -88,6 +89,17 @@ namespace ReupVirtualTwinTests.controllers
             yield return null;
         }
 
+        [UnityTest]
+        public IEnumerator ShouldAssignMaterialsWithDownloadedTexture()
+        {
+            controller.ChangeObjectMaterial(messagePayload);
+            List<Material> newMaterials = GetMaterialsFromObjects(objectRegistry.objects);
+            for(int i = 0; i < newMaterials.Count; i++)
+            {
+                Assert.AreEqual(textureDownloaderSpy.texture, newMaterials[i].GetTexture("_BaseMap"));
+            }
+            yield return null;
+        }
 
     }
 }
