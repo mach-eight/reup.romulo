@@ -1,9 +1,9 @@
 using ReupVirtualTwin.dataModels;
 using System.Threading.Tasks;
 
-namespace ReupVirtualTwin.controllerInterfaces
+namespace ReupVirtualTwin.webRequestersInterfaces
 {
-    public interface ITagsWebRequesterController
+    public interface ITagsApiConsumer
     {
         public Task<PaginationResult<ObjectTag>> GetTags();
         public Task<PaginationResult<ObjectTag>> GetTags(int page);

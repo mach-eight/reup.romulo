@@ -2,15 +2,15 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
-using ReupVirtualTwin.controllerInterfaces;
+using ReupVirtualTwin.webRequestersInterfaces;
 using ReupVirtualTwin.dataModels;
 
-namespace ReupVirtualTwin.controllers
+namespace ReupVirtualTwin.webRequesters
 {
-    public class TagsWebRequesterController : ITagsWebRequesterController
+    public class TagsApiConsumer : ITagsApiConsumer
     {
         private string baseUrl;
-        public TagsWebRequesterController(string baseUrl)
+        public TagsApiConsumer(string baseUrl)
         {
             this.baseUrl = baseUrl;
         }
