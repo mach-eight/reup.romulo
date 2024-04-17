@@ -58,4 +58,12 @@ public class ReupPrefabTest : MonoBehaviour
         Assert.AreEqual(objectRegistry, editionMediator.registry);
         yield return null;
     }
+
+    [UnityTest]
+    public IEnumerator EditionMediatorShouldHaveAChangeMaterialController()
+    {
+        Assert.IsNotNull(editionMediator.changeMaterialController);
+        yield return null;
+    }
+
 }

@@ -51,6 +51,7 @@ namespace ReupVirtualTwin.dependencyInjectors
             );
             IRegistry registry = ObjectFinder.FindObjectRegistry().GetComponent<IRegistry>();
             _editionMediator.registry = registry;
+            _editionMediator.changeMaterialController = new ChangeMaterialController();
         }
     }
 }

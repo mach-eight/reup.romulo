@@ -29,7 +29,6 @@ namespace ReupVirtualTwin.managers
  
         private IChangeColorManager _changeColorManager;
         public IChangeColorManager changeColorManager { set => _changeColorManager = value; }
-      
 
         private IInsertObjectsController _insertObjectsManager;
         public IInsertObjectsController insertObjectsController { set => _insertObjectsManager = value; }
@@ -41,9 +40,18 @@ namespace ReupVirtualTwin.managers
 
         private IRegistry _registry;
         public IRegistry registry { set => _registry = value; get => _registry; }
+
+        private IChangeMaterialController _changeMaterialController;
+        public IChangeMaterialController changeMaterialController
+        {
+            get => _changeMaterialController; set => _changeMaterialController = value;
+        }
+
+        [HideInInspector]
         public string noInsertObjectIdErrorMessage = "No object id provided for insertion";
         [HideInInspector]
         public string noInsertObjectUrlErrorMessage = "No 3d model url provided for insertion";
+
         public string InvalidColorErrorMessage(string colorCode) => $"Invalid color code {colorCode}";
 
 
