@@ -38,7 +38,9 @@ namespace ReupVirtualTwin.managers
         private IObjectMapper _objectMapper;
         public IObjectMapper objectMapper { set => _objectMapper = value; }
 
+        [HideInInspector]
         public string noInsertObjectIdErrorMessage = "No object id provided for insertion";
+        [HideInInspector]
         public string noInsertObjectUrlErrorMessage = "No 3d model url provided for insertion";
 
 

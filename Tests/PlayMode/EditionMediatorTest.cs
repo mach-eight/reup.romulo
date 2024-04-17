@@ -42,6 +42,179 @@ public class EditionMediatorTest : MonoBehaviour
         editionMediator.objectMapper = mockObjectMapper;
     }
 
+    private class MockEditModeManager : IEditModeManager
+    {
+        private bool _editMode;
+        public bool editMode { get => _editMode; set => _editMode = value; }
+    }
+    private class MockSelectedObjectsManager : ISelectedObjectsManager
+    {
+        public MockSelectedObjectsManager()
+        {
+            wrapperDTO = new ObjectWrapperDTO()
+            {
+                wrapper = null,
+                wrappedObjects = null,
+            };
+        }
+        private bool _allowSelection = false;
+        public bool allowSelection { get => _allowSelection; set => _allowSelection = value; }
+
+
+        public bool selectionCleared = false;
+        private ObjectWrapperDTO _wraperDTO;
+        public ObjectWrapperDTO wrapperDTO { get => _wraperDTO; set => _wraperDTO = value; }
+
+        public GameObject AddObjectToSelection(GameObject selectedObject)
+        {
+            if (wrapperDTO.wrapper == null)
+            {
+                wrapperDTO = new ObjectWrapperDTO()
+                {
+                    wrapper = new GameObject("wrapper"),
+                    wrappedObjects = new List<GameObject>(),
+                };
+            }
+            wrapperDTO.wrappedObjects.Add(selectedObject);
+            return wrapperDTO.wrapper;
+        }
+
+        public void ClearSelection()
+        {
+            selectionCleared = true;
+        }
+
+        public GameObject RemoveObjectFromSelection(GameObject selectedObject)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
+    private class MockWebMessageSender : IWebMessagesSender
+    {
+        public object sentMessage;
+        public void SendWebMessage<T>(WebMessage<T> webWessage)
+        {
+            sentMessage = webWessage;
+        }
+    }
+    private class MockTransformObjectsManager : ITransformObjectsManager
+    {
+        public bool _active = false;
+        public bool active => _active;
+
+        public ObjectWrapperDTO wrapper { set => throw new System.NotImplementedException(); }
+
+        public void ActivateTransformMode(GameObject wrapper, TransformMode mode)
+        {
+            _active = true;
+        }
+
+        public void ActivateTransformMode(ObjectWrapperDTO wrapper, TransformMode mode)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void DeactivateTransformMode()
+        {
+            _active = false;
+        }
+    }
+
+    private class MockInsertObjectsManager : IInsertObjectsController
+    {
+        public GameObject injectedObject = null;
+        public bool calledToInsertObject = false;
+        public string objectLoadString = null;
+        public string requestedObjectId;
+        private IMediator editionMediator;
+        public MockInsertObjectsManager(IMediator mediator)
+        {
+            calledToInsertObject = false;
+            objectLoadString = null;
+            editionMediator = mediator;
+        }
+
+        public void InsertObject(InsertObjectMessagePayload insertObjectMessagePayload)
+        {
+            injectedObject = new GameObject("injected test object");
+            calledToInsertObject = true;
+            objectLoadString = insertObjectMessagePayload.objectUrl;
+            InsertedObjectPayload insertedObjectPayload = new()
+            {
+                loadedObject = injectedObject,
+                selectObjectAfterInsertion = insertObjectMessagePayload.selectObjectAfterInsertion,
+                deselectPreviousSelection = insertObjectMessagePayload.deselectPreviousSelection,
+            };
+            editionMediator.Notify(ReupEvent.insertedObjectLoaded, insertedObjectPayload);
+            requestedObjectId = insertObjectMessagePayload.objectId;
+        }
+    }
+    private class MockObjectMapper : IObjectMapper
+    {
+        public ObjectDTO[] objectDTOs = new ObjectDTO[2]
+        {
+            new ObjectDTO
+            {
+                id = "id0",
+                tags = new string[2]{"tag0", "tag1"},
+            },
+            new ObjectDTO
+            {
+                id = "id1",
+                tags = new string[2]{"tag2", "tag3"},
+            },
+        };
+        public ObjectDTO[] MapObjectsToDTO(List<GameObject> objs)
+        {
+            return objectDTOs;
+        }
+
+        public ObjectDTO MapObjectToDTO(GameObject obj)
+        {
+            return objectDTOs[0];
+        }
+
+        public ObjectDTO MapObjectTree(GameObject obj)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+    private static class dummyJsonCreator
+    {
+        public static string createWebMessage(string type)
+        {
+            return $"{{\"type\":\"{type}\"}}";
+        }
+        public static string createWebMessage(string type, object payload)
+        {
+            if (payload is int || payload is float)
+            {
+                return $"{{\"type\":\"{type}\",\"payload\":{payload}}}";
+            }
+            string processedPayload;
+            if (payload is string)
+            {
+                processedPayload = payload.ToString();
+            }
+            else if (payload is bool)
+            {
+                processedPayload = payload.ToString().ToLower();
+            }
+            else
+            {
+                processedPayload = JsonUtility.ToJson(payload);
+            }
+            processedPayload = ScapeSpecialChars(processedPayload);
+            return $"{{\"type\":\"{type}\",\"payload\":\"{processedPayload}\"}}";
+
+        }
+        static string ScapeSpecialChars(string str)
+        {
+            return str.Replace("\"", "\\\"");
+        }
+    }
+
     [UnityTest]
     public IEnumerator ShouldSendMessageInSetEditModeToTrue()
     {
@@ -255,179 +428,6 @@ public class EditionMediatorTest : MonoBehaviour
         editionMediator.ReceiveWebMessage(message);
         yield return null;
         Assert.AreEqual(payload.objectId, mockInsertObjectsManager.requestedObjectId);
-    }
-
-    private class MockEditModeManager : IEditModeManager
-    {
-        private bool _editMode;
-        public bool editMode { get => _editMode; set => _editMode = value; }
-    }
-    private class MockSelectedObjectsManager : ISelectedObjectsManager
-    {
-        public MockSelectedObjectsManager()
-        {
-            wrapperDTO = new ObjectWrapperDTO()
-            {
-                wrapper = null,
-                wrappedObjects = null,
-            };
-        }
-        private bool _allowSelection = false;
-        public bool allowSelection { get => _allowSelection; set => _allowSelection = value; }
-
-
-        public bool selectionCleared = false;
-        private ObjectWrapperDTO _wraperDTO;
-        public ObjectWrapperDTO wrapperDTO { get => _wraperDTO; set => _wraperDTO = value; }
-
-        public GameObject AddObjectToSelection(GameObject selectedObject)
-        {
-            if (wrapperDTO.wrapper == null)
-            {
-                wrapperDTO = new ObjectWrapperDTO()
-                {
-                    wrapper = new GameObject("wrapper"),
-                    wrappedObjects = new List<GameObject>(),
-                };
-            }
-            wrapperDTO.wrappedObjects.Add(selectedObject);
-            return wrapperDTO.wrapper;
-        }
-
-        public void ClearSelection()
-        {
-            selectionCleared = true;
-        }
-
-        public GameObject RemoveObjectFromSelection(GameObject selectedObject)
-        {
-            throw new System.NotImplementedException();
-        }
-    }
-
-    private class MockWebMessageSender : IWebMessagesSender
-    {
-        public object sentMessage;
-        public void SendWebMessage<T>(WebMessage<T> webWessage)
-        {
-            sentMessage = webWessage;
-        }
-    }
-    private class MockTransformObjectsManager : ITransformObjectsManager
-    {
-        public bool _active = false;
-        public bool active => _active;
-
-        public ObjectWrapperDTO wrapper { set => throw new System.NotImplementedException(); }
-
-        public void ActivateTransformMode(GameObject wrapper, TransformMode mode)
-        {
-            _active = true;
-        }
-
-        public void ActivateTransformMode(ObjectWrapperDTO wrapper, TransformMode mode)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void DeactivateTransformMode()
-        {
-            _active = false;
-        }
-    }
-
-    private class MockInsertObjectsManager : IInsertObjectsController
-    {
-        public GameObject injectedObject = null;
-        public bool calledToInsertObject = false;
-        public string objectLoadString = null;
-        public string requestedObjectId;
-        private IMediator editionMediator;
-        public MockInsertObjectsManager(IMediator mediator)
-        {
-            calledToInsertObject = false;
-            objectLoadString = null;
-            editionMediator = mediator;
-        }
-
-        public void InsertObject(InsertObjectMessagePayload insertObjectMessagePayload)
-        {
-            injectedObject = new GameObject("injected test object");
-            calledToInsertObject = true;
-            objectLoadString = insertObjectMessagePayload.objectUrl;
-            InsertedObjectPayload insertedObjectPayload = new()
-            {
-                loadedObject = injectedObject,
-                selectObjectAfterInsertion = insertObjectMessagePayload.selectObjectAfterInsertion,
-                deselectPreviousSelection = insertObjectMessagePayload.deselectPreviousSelection,
-            };
-            editionMediator.Notify(ReupEvent.insertedObjectLoaded, insertedObjectPayload);
-            requestedObjectId = insertObjectMessagePayload.objectId;
-        }
-    }
-    private class MockObjectMapper : IObjectMapper
-    {
-        public ObjectDTO[] objectDTOs = new ObjectDTO[2]
-        {
-            new ObjectDTO
-            {
-                id = "id0",
-                tags = new string[2]{"tag0", "tag1"},
-            },
-            new ObjectDTO
-            {
-                id = "id1",
-                tags = new string[2]{"tag2", "tag3"},
-            },
-        };
-        public ObjectDTO[] MapObjectsToDTO(List<GameObject> objs)
-        {
-            return objectDTOs;
-        }
-
-        public ObjectDTO MapObjectToDTO(GameObject obj)
-        {
-            return objectDTOs[0];
-        }
-
-        public ObjectDTO MapObjectTree(GameObject obj)
-        {
-            throw new System.NotImplementedException();
-        }
-    }
-    private static class dummyJsonCreator
-    {
-        public static string createWebMessage(string type)
-        {
-            return $"{{\"type\":\"{type}\"}}";
-        }
-        public static string createWebMessage(string type, object payload)
-        {
-            if (payload is int || payload is float)
-            {
-                return $"{{\"type\":\"{type}\",\"payload\":{payload}}}";
-            }
-            string processedPayload;
-            if (payload is string)
-            {
-                processedPayload = payload.ToString();
-            }
-            else if (payload is bool)
-            {
-                processedPayload = payload.ToString().ToLower();
-            }
-            else
-            {
-                processedPayload = JsonUtility.ToJson(payload);
-            }
-            processedPayload = ScapeSpecialChars(processedPayload);
-            return $"{{\"type\":\"{type}\",\"payload\":\"{processedPayload}\"}}";
-
-        }
-        static string ScapeSpecialChars(string str)
-        {
-            return str.Replace("\"", "\\\"");
-        }
     }
 
 }
