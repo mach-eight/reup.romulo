@@ -32,6 +32,12 @@ namespace ReupVirtualTwinTests.Registry
             Destroy(objectRegistryGameObject);
         }
 
+        [UnityTearDown]
+        public IEnumerator TearDownCoroutine()
+        {
+            yield return new WaitForSeconds(0.2f);
+        }
+
         [UnityTest]
         public IEnumerator ShouldAddAnItemToRegistry()
         {

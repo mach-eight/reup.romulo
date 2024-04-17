@@ -4,7 +4,6 @@ using ReupVirtualTwin.models;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
-using System.Collections;
 using ReupVirtualTwin.modelInterfaces;
 
 namespace ReupVirtualTwinTests.Registry
@@ -24,18 +23,25 @@ namespace ReupVirtualTwinTests.Registry
             testObj = new GameObject("testObj");
             testObj.AddComponent<RegisteredIdentifier>();
         }
+
         [TearDown]
         public void TearDown()
         {
             Destroy(testObj);
             objectRegistry.ClearRegistry();
             Destroy(objectRegistryGameObject);
+
+        }
+
+        [UnityTearDown]
+        public IEnumerator TearDownCoroutine()
+        {
+            yield return new WaitForSeconds(0.2f);
         }
 
         [UnityTest]
         public IEnumerator TestObjHasAnId()
         {
-            yield return new WaitForSeconds(0.2f);
             var id = testObj.GetComponent<RegisteredIdentifier>().getId();
             Assert.IsNotNull(id);
             yield return null;
@@ -44,7 +50,6 @@ namespace ReupVirtualTwinTests.Registry
         [UnityTest]
         public IEnumerator ObjectRegistryContainsTestObj()
         {
-            yield return new WaitForSeconds(0.2f);
             var id = testObj.GetComponent<RegisteredIdentifier>().getId();
             var obtainedObj = objectRegistry.GetItemWithGuid(id);
             Assert.AreEqual(testObj, obtainedObj);
@@ -54,7 +59,7 @@ namespace ReupVirtualTwinTests.Registry
         [UnityTest]
         public IEnumerator NoObjectIsReturnedIfIncorrectId()
         {
-            yield return new WaitForSeconds(0.2f);
+            
             var obtainedObj = objectRegistry.GetItemWithGuid("an-incorrect-id");
             Assert.IsNull(obtainedObj);
             yield return null;
@@ -62,7 +67,6 @@ namespace ReupVirtualTwinTests.Registry
         [UnityTest]
         public IEnumerator ObjectIsRegistryIsUpdatedIfNewIdIsAssigned()
         {
-            yield return new WaitForSeconds(0.2f);
             var currentId = testObj.GetComponent<RegisteredIdentifier>().getId();
             Assert.AreEqual(testObj, objectRegistry.GetItemWithGuid(currentId));
             Assert.AreEqual(1, objectRegistry.GetItemCount());
@@ -77,7 +81,6 @@ namespace ReupVirtualTwinTests.Registry
         [UnityTest]
         public IEnumerator ShoulBeAbleToGenerateIdRightAfterCreatingTheUniqueIdComponent()
         {
-            yield return new WaitForSeconds(0.2f);
             GameObject gameObject = new GameObject("new-game-obj");
             RegisteredIdentifier registeredIdentifier = gameObject.AddComponent<RegisteredIdentifier>();
             registeredIdentifier.GenerateId();
@@ -88,7 +91,6 @@ namespace ReupVirtualTwinTests.Registry
         [UnityTest]
         public IEnumerator ShoulBeAbleToAssignIdRightAfterCreatingTheUniqueIdComponent()
         {
-            yield return new WaitForSeconds(0.2f);
             GameObject gameObject = new GameObject("new-game-obj");
             RegisteredIdentifier registeredIdentifier = gameObject.AddComponent<RegisteredIdentifier>();
             string assignedId = "assigned-id";
