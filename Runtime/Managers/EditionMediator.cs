@@ -6,7 +6,7 @@ using ReupVirtualTwin.dataModels;
 using System;
 using System.Collections.Generic;
 using ReupVirtualTwin.helperInterfaces;
-using ReupVirtualTwin.models;
+using ReupVirtualTwin.modelInterfaces;
 
 namespace ReupVirtualTwin.managers
 {

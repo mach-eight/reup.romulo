@@ -4,7 +4,7 @@ using RuntimeHandle;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.managers;
-using ReupVirtualTwin.models;
+using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.helpers;
 
 namespace ReupVirtualTwin.dependencyInjectors

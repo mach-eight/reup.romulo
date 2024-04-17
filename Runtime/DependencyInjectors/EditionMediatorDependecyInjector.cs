@@ -5,7 +5,7 @@ using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.managers;
 using ReupVirtualTwin.controllers;
-using ReupVirtualTwin.models;
+using ReupVirtualTwin.modelInterfaces;
 
 namespace ReupVirtualTwin.dependencyInjectors
 {

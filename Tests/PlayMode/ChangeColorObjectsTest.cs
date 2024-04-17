@@ -6,6 +6,7 @@ using ReupVirtualTwin.managers;
 using ReupVirtualTwin.enums;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.models;
+using ReupVirtualTwin.modelInterfaces;
 using NUnit.Framework;
 
 public class ChangeColorObjectsTest : MonoBehaviour

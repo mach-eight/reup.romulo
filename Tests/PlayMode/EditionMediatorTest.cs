@@ -10,6 +10,7 @@ using ReupVirtualTwin.behaviourInterfaces;
 using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.helperInterfaces;
 using System.Collections.Generic;
+using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.models;
 
 public class EditionMediatorTest : MonoBehaviour

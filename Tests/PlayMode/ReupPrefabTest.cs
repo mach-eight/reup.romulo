@@ -6,7 +6,7 @@ using UnityEditor;
 
 using ReupVirtualTwin.managers;
 using ReupVirtualTwin.models;
-using ReupVirtualTwin.behaviours;
+using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.behaviourInterfaces;
 
 
