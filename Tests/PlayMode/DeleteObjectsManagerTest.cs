@@ -8,6 +8,7 @@ using ReupVirtualTwin.enums;
 using ReupVirtualTwin.managerInterfaces;
 using System;
 using ReupVirtualTwin.models;
+using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.controllers;
 
 public class DeleteObjectsManagerTest : MonoBehaviour

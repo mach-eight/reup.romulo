@@ -1,6 +1,6 @@
 using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.helpers;
-using ReupVirtualTwin.models;
+using ReupVirtualTwin.modelInterfaces;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

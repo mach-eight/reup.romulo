@@ -2,7 +2,7 @@ using UnityEngine;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.enums;
 using System.Collections.Generic;
-using ReupVirtualTwin.models;
+using ReupVirtualTwin.modelInterfaces;
 
 namespace ReupVirtualTwin.managers
 {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ReupVirtualTwin.models
+namespace ReupVirtualTwin.modelInterfaces
 {
     public interface IRegistry
     {

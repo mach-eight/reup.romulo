@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using ReupVirtualTwin.controllerInterfaces;
-using ReupVirtualTwin.models;
+using ReupVirtualTwin.modelInterfaces;
 
 namespace ReupVirtualTwin.managers
 {
