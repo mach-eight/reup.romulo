@@ -23,7 +23,7 @@ namespace ReupVirtualTwinTests.controllers
         MediatorSpy mediatorSpy;
         MeshDownloaderSpy meshDownloaderSpy;
         InsertObjectMessagePayload insertObjectMessagePayload;
-        InserObjectController controller;
+        InsertObjectController controller;
         ITagsController tagsReader;
         IIdGetterController idReader;
         Vector3 insertPosition;
@@ -73,7 +73,7 @@ namespace ReupVirtualTwinTests.controllers
                 deselectPreviousSelection = true,
             };
             insertPosition = new Vector3(1, 2, 3);
-            controller = new InserObjectController(mediatorSpy, meshDownloaderSpy, insertPosition);
+            controller = new InsertObjectController(mediatorSpy, meshDownloaderSpy, insertPosition);
             RequesObject(insertObjectMessagePayload);
             tagsReader = new TagsController();
             idReader = new IdController();
