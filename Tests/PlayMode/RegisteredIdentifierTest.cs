@@ -1,6 +1,7 @@
 using System.Collections;
 using NUnit.Framework;
 using ReupVirtualTwin.models;
+using ReupVirtualTwin.modelInterfaces;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
