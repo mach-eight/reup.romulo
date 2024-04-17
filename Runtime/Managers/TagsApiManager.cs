@@ -1,4 +1,4 @@
-using ReupVirtualTwin.controllerInterfaces;
+using ReupVirtualTwin.webRequestersInterfaces;
 using ReupVirtualTwin.dataModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,9 +9,9 @@ namespace ReupVirtualTwin.managers
 {
     public class TagsApiManager : MonoBehaviour, ITagsApiManager
     {
-        public ITagsWebRequesterController webRequester { get => _webRequester; set => _webRequester = value; }
+        public ITagsApiConsumer webRequester { get => _webRequester; set => _webRequester = value; }
 
-        private ITagsWebRequesterController _webRequester;
+        private ITagsApiConsumer _webRequester;
         private List<ObjectTag> tags = new List<ObjectTag>();
         private bool thereAreTagsToFetch = true;
         private bool waitingForTagsResponse = false;

@@ -5,7 +5,7 @@ using UnityEngine;
 using System.Linq;
 using System.Threading.Tasks;
 using ReupVirtualTwin.managerInterfaces;
-using ReupVirtualTwin.controllers;
+using ReupVirtualTwin.webRequesters;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.enums;
@@ -32,7 +32,7 @@ public class ObjectTagsEditor : Editor
         tagsApiManager = ObjectFinder.FindTagsApiManager();
         if (tagsApiManager.webRequester == null)
         {
-            tagsApiManager.webRequester = new TagsWebRequesterController(ObjectTags.tagsUrl);
+            tagsApiManager.webRequester = new TagsApiConsumer(ObjectTags.tagsUrl);
         }
         await GetTags();
     }
