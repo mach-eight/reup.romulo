@@ -7,7 +7,7 @@ namespace ReupVirtualTwin.models
     public class RegisteredIdentifier : UniqueId
     {
         public string manualId = "";
-        IRegistry _objectRegistry;
+        IObjectRegistry _objectRegistry;
 
         override protected void Start()
         {
@@ -46,15 +46,15 @@ namespace ReupVirtualTwin.models
             {
                 uniqueId = manualId;
             }
-            _objectRegistry.AddItem(gameObject);
+            _objectRegistry.AddObject(gameObject);
         }
         private void UnRegisterObject()
         {
-            _objectRegistry.RemoveItem(gameObject);
+            _objectRegistry.RemoveObject(gameObject);
         }
         private void FindObjectRegistry()
         {
-            _objectRegistry = ObjectFinder.FindObjectRegistry().GetComponent<IRegistry>();
+            _objectRegistry = ObjectFinder.FindObjectRegistry().GetComponent<IObjectRegistry>();
         }
     }
 }

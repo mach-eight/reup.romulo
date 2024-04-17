@@ -16,7 +16,7 @@ public class ReupPrefabTest : MonoBehaviour
     GameObject reupGameObject;
     GameObject building;
 
-    IRegistry objectRegistry;
+    IObjectRegistry objectRegistry;
     EditionMediator editionMediator;
     IBuildingGetterSetter setupBuilding;
 
@@ -32,7 +32,7 @@ public class ReupPrefabTest : MonoBehaviour
     {
         reupGameObject = (GameObject)PrefabUtility.InstantiatePrefab(reupPrefab);
         GameObject baseGlobalScriptGameObject = reupGameObject.transform.Find("BaseGlobalScripts").gameObject;
-        objectRegistry = baseGlobalScriptGameObject.transform.Find("ObjectRegistry").GetComponent<IRegistry>();
+        objectRegistry = baseGlobalScriptGameObject.transform.Find("ObjectRegistry").GetComponent<IObjectRegistry>();
         editionMediator = baseGlobalScriptGameObject.transform.Find("EditionMediator").GetComponent<EditionMediator>();
         setupBuilding = baseGlobalScriptGameObject.transform.Find("SetupBuilding").GetComponent<IBuildingGetterSetter>();
     }

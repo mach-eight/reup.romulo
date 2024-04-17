@@ -86,7 +86,7 @@ public class DeleteObjectsManagerTest : MonoBehaviour
             throw new System.NotImplementedException();
         }
     }
-    private class MockRegistry : IRegistry
+    private class MockRegistry : IObjectRegistry
     {
         public List<GameObject> allObjects = new List<GameObject>();
         public MockRegistry()
@@ -105,11 +105,11 @@ public class DeleteObjectsManagerTest : MonoBehaviour
             allObjects.Add(nonDeletableObject);
         }
 
-        public void AddItem(GameObject obj)
+        public void AddObject(GameObject obj)
         {
             throw new NotImplementedException();
         }
-        public GameObject GetItemWithGuid(string guid)
+        public GameObject GetObjectWithGuid(string guid)
         {
             foreach (GameObject obj in allObjects)
             {
@@ -122,12 +122,12 @@ public class DeleteObjectsManagerTest : MonoBehaviour
             }
             return null;
         }
-        public List<GameObject> GetItemsWithGuids(string[] guids)
+        public List<GameObject> GetObjectsWithGuids(string[] guids)
         {
             var foundObjects = new List<GameObject>();
             foreach (string guid in guids)
             {
-                foundObjects.Add(GetItemWithGuid(guid));
+                foundObjects.Add(GetObjectWithGuid(guid));
             }
             return foundObjects;
         }
@@ -136,12 +136,12 @@ public class DeleteObjectsManagerTest : MonoBehaviour
             throw new NotImplementedException();
         }
 
-        public void RemoveItem(GameObject item)
+        public void RemoveObject(GameObject item)
         {
             throw new NotImplementedException();
         }
 
-        public int GetItemCount()
+        public int GetObjectsCount()
         {
             throw new NotImplementedException();
         }

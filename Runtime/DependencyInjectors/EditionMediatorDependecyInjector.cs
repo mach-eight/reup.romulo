@@ -44,7 +44,7 @@ namespace ReupVirtualTwin.dependencyInjectors
             }
             _editionMediator.webMessageSender = webMessageSender;
             _editionMediator.objectMapper = new ObjectMapper(new TagsController(), new IdController());
-            IRegistry registry = ObjectFinder.FindObjectRegistry().GetComponent<IRegistry>();
+            IObjectRegistry registry = ObjectFinder.FindObjectRegistry().GetComponent<IObjectRegistry>();
             _editionMediator.registry = registry;
             _editionMediator.insertObjectsController = new InsertObjectController(
                 _editionMediator,

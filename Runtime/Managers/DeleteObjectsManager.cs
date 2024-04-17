@@ -17,8 +17,8 @@ namespace ReupVirtualTwin.managers
 
     {
         private IMediator _mediator;
-        private IRegistry _registry;
-        public IRegistry registry { set => _registry = value; }
+        private IObjectRegistry _registry;
+        public IObjectRegistry registry { set => _registry = value; }
         public IMediator mediator { set => _mediator = value; }
         private ITagsController _tagsController;
         public ITagsController tagsController { set => _tagsController = value; }
@@ -30,7 +30,7 @@ namespace ReupVirtualTwin.managers
             List<GameObject> gameObjectsToDelete = new();
             if (listIDs != null && listIDs.Count != 0)
             {
-                gameObjectsToDelete = _registry.GetItemsWithGuids(listIDs.ToArray());
+                gameObjectsToDelete = _registry.GetObjectsWithGuids(listIDs.ToArray());
                 gameObjectsToDelete.RemoveAll(obj => obj == null);
                 if (CheckTag(gameObjectsToDelete))
                 {
