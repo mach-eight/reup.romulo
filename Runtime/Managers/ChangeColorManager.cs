@@ -24,7 +24,9 @@ namespace ReupVirtualTwin.managers
             Renderer renderer = obj.GetComponent<Renderer>();
             if (renderer != null)
             {
-                renderer.material.color = newColor;
+                Material material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+                material.color = newColor;
+                renderer.material = material;
             }
         }
     }
