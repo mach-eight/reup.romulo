@@ -5,6 +5,7 @@ using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.managers;
 using ReupVirtualTwin.controllers;
+using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.webRequesters;
 
 namespace ReupVirtualTwin.dependencyInjectors
@@ -48,6 +49,8 @@ namespace ReupVirtualTwin.dependencyInjectors
                 new MeshDownloader(),
                 _insertPositionLocation.transform.position
             );
+            IRegistry registry = ObjectFinder.FindObjectRegistry().GetComponent<IRegistry>();
+            _editionMediator.registry = registry;
         }
     }
 }

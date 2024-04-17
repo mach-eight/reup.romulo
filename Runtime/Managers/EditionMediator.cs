@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwin.controllerInterfaces;
+using ReupVirtualTwin.modelInterfaces;
 
 namespace ReupVirtualTwin.managers
 {
@@ -38,10 +39,12 @@ namespace ReupVirtualTwin.managers
         private IObjectMapper _objectMapper;
         public IObjectMapper objectMapper { set => _objectMapper = value; }
 
-        [HideInInspector]
+        private IRegistry _registry;
+        public IRegistry registry { set => _registry = value; get => _registry; }
         public string noInsertObjectIdErrorMessage = "No object id provided for insertion";
         [HideInInspector]
         public string noInsertObjectUrlErrorMessage = "No 3d model url provided for insertion";
+        public string InvalidColorErrorMessage(string colorCode) => $"Invalid color code {colorCode}";
 
 
         public void Notify(ReupEvent eventName)
@@ -188,7 +191,7 @@ namespace ReupVirtualTwin.managers
         private void ChangeObjectsColor(string payload)
         {
             ChangeColorObjectMessagePayload parsedPayload = JsonUtility.FromJson<ChangeColorObjectMessagePayload>(payload);
-            List<GameObject> objectsToChangeColor = _changeColorManager.GetObjectsToChangeColor(parsedPayload.objectIds);
+            List<GameObject> objectsToChangeColor = _registry.GetItemsWithGuids(parsedPayload.objectIds);
             if (objectsToChangeColor.Count > 0)
             {
                 Color? parsedColor = Utils.ParseColor(parsedPayload.color);
@@ -198,7 +201,7 @@ namespace ReupVirtualTwin.managers
                 }
                 else
                 {
-                    SendErrorMessage("The color isn't valid");
+                    SendErrorMessage(InvalidColorErrorMessage(parsedPayload.color));
                 }
             }
             else
@@ -257,7 +260,7 @@ namespace ReupVirtualTwin.managers
             }
             else
             {
-                throw new Exception($"unnown TransformMode {mode}");
+                throw new Exception($"unknown TransformMode {mode}");
             }
             WebMessage<string> message = new WebMessage<string>
             {

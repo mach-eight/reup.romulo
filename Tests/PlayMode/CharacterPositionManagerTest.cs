@@ -9,7 +9,7 @@ using ReupVirtualTwin.managers;
 
 public class CharacterPositionManagerTest : MonoBehaviour
 {
-    private GameObject characterPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Assets/Quickstart/Character.prefab");
+    private GameObject characterPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Assets/ScriptHolders/Character.prefab");
     private GameObject character;
     private CharacterPositionManager posManager;
     private GameObject setupBuildingGameObject;

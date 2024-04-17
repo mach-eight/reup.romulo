@@ -32,7 +32,7 @@ public class ObjectTagsEditor : Editor
         tagsApiManager = ObjectFinder.FindTagsApiManager();
         if (tagsApiManager.webRequester == null)
         {
-            tagsApiManager.webRequester = new TagsWebRequesterController("https://api-prod-reup.macheight.com/api/v1/");
+            tagsApiManager.webRequester = new TagsWebRequesterController(ObjectTags.tagsUrl);
         }
         await GetTags();
     }
