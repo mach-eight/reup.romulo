@@ -16,7 +16,7 @@ using System.Collections;
 
 namespace ReupVirtualTwinTests.controllers
 {
-    public class InsertObjectControllerTest: MonoBehaviour
+    public class InsertObjectControllerTest : MonoBehaviour
     {
         GameObject ObjectRegistryPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Assets/ScriptHolders/ObjectRegistry.prefab");
         GameObject objectRegistryGameObject;
@@ -189,119 +189,117 @@ namespace ReupVirtualTwinTests.controllers
             yield return null;
         }
 
+        private class MediatorSpy : IMediator
+        {
+            public int onProgressNumberOfCalls = 0;
+            public List<InsertedObjectPayload> loadedObjectsPayloads;
+            public bool allRequestedObjectsAreLoaded;
 
-    }
-
-    class MediatorSpy : IMediator
-    {
-        public int onProgressNumberOfCalls = 0;
-        public List<InsertedObjectPayload> loadedObjectsPayloads;
-        public bool allRequestedObjectsAreLoaded;
-
-        private int requestedObjectsCount;
-        private int loadedObjectsCount;
-        private delegate void ObjectLoadedEventHandler();
-        private event ObjectLoadedEventHandler ObjectLoaded;
+            private int requestedObjectsCount;
+            private int loadedObjectsCount;
+            private delegate void ObjectLoadedEventHandler();
+            private event ObjectLoadedEventHandler ObjectLoaded;
 
 
-        public MediatorSpy()
-        {
-            loadedObjectsPayloads = new List<InsertedObjectPayload>();
-            requestedObjectsCount = 0;
-            allRequestedObjectsAreLoaded = false;
-            ObjectLoaded += () => NewLoadedObject();
-        }
-        public void IncreaseObjectRequestedCount()
-        {
-            requestedObjectsCount++;
-        }
-        public InsertedObjectPayload GetLastInsertedObjectPayload()
-        {
-            return loadedObjectsPayloads[loadedObjectsPayloads.Count - 1];
-        }
-        public GameObject GetLastLoadedObject()
-        {
-            return GetLastInsertedObjectPayload().loadedObject;
-        }
-        private void NewLoadedObject()
-        {
-            loadedObjectsCount++;
-            if (loadedObjectsCount == requestedObjectsCount)
+            public MediatorSpy()
             {
-                allRequestedObjectsAreLoaded = true;
-                ObjectLoaded -= NewLoadedObject;
+                loadedObjectsPayloads = new List<InsertedObjectPayload>();
+                requestedObjectsCount = 0;
+                allRequestedObjectsAreLoaded = false;
+                ObjectLoaded += () => NewLoadedObject();
+            }
+            public void IncreaseObjectRequestedCount()
+            {
+                requestedObjectsCount++;
+            }
+            public InsertedObjectPayload GetLastInsertedObjectPayload()
+            {
+                return loadedObjectsPayloads[loadedObjectsPayloads.Count - 1];
+            }
+            public GameObject GetLastLoadedObject()
+            {
+                return GetLastInsertedObjectPayload().loadedObject;
+            }
+            private void NewLoadedObject()
+            {
+                loadedObjectsCount++;
+                if (loadedObjectsCount == requestedObjectsCount)
+                {
+                    allRequestedObjectsAreLoaded = true;
+                    ObjectLoaded -= NewLoadedObject;
+                }
+            }
+
+            public void Notify(ReupEvent eventName)
+            {
+                throw new System.NotImplementedException();
+            }
+
+            public void Notify<T>(ReupEvent eventName, T payload)
+            {
+                switch (eventName)
+                {
+                    case ReupEvent.insertedObjectStatusUpdate:
+                        onProgressNumberOfCalls++;
+                        break;
+                    case ReupEvent.insertedObjectLoaded:
+                        loadedObjectsPayloads.Add(((InsertedObjectPayload)(object)payload));
+                        ObjectLoaded?.Invoke();
+                        break;
+                }
             }
         }
 
-        public void Notify(ReupEvent eventName)
+        private class MeshDownloaderSpy : IMeshDownloader
         {
-            throw new System.NotImplementedException();
-        }
+            public int numberOfCalls;
+            public List<GameObject> loadedObjects;
 
-        public void Notify<T>(ReupEvent eventName, T payload)
-        {
-            switch (eventName)
+            public MeshDownloaderSpy()
             {
-                case ReupEvent.insertedObjectStatusUpdate:
-                    onProgressNumberOfCalls++;
-                    break;
-                case ReupEvent.insertedObjectLoaded:
-                    loadedObjectsPayloads.Add(((InsertedObjectPayload)(object)payload));
-                    ObjectLoaded?.Invoke();
-                    break;
+                loadedObjects = new List<GameObject>();
+                numberOfCalls = 0;
             }
-        }
-    }
-
-    class MeshDownloaderSpy : IMeshDownloader
-    {
-        public int numberOfCalls;
-        public List<GameObject> loadedObjects;
-
-        public MeshDownloaderSpy()
-        {
-            loadedObjects = new List<GameObject>();
-            numberOfCalls = 0;
-        }
-        public GameObject GetLastLoadedObject()
-        {
-            return loadedObjects[loadedObjects.Count - 1];
-        }
-
-        private GameObject CreateGameObject()
-        {
-            GameObject parent = new();
-            GameObject child = new();
-            MeshFilter meshFilter = child.AddComponent<MeshFilter>();
-            meshFilter.sharedMesh = new Mesh();
-            child.transform.parent = parent.transform;
-            return parent;
-        }
-
-        public async void downloadMesh(string meshUrl, Action<ModelLoaderContext, float> onProgress, Action<ModelLoaderContext> onLoad, Action<ModelLoaderContext> onMaterialsLoad)
-        {
-            numberOfCalls++;
-            int downloadTime = 60;
-            int processingTime = 30;
-            GameObject obj = CreateGameObject();
-            loadedObjects.Add(obj);
-            ModelLoaderContext modelLoaderContext = new()
+            public GameObject GetLastLoadedObject()
             {
-                loadedObject = obj,
-            };
-            onProgress(modelLoaderContext, 0.3f);
-            onProgress(modelLoaderContext, 0.6f);
-            onProgress(modelLoaderContext, 0.9f);
-            onProgress(modelLoaderContext, 1f);
-            await Task.Delay(downloadTime);
-            onLoad(modelLoaderContext);
-            await Task.Delay(processingTime);
-            onMaterialsLoad(modelLoaderContext);
-        }
+                return loadedObjects[loadedObjects.Count - 1];
+            }
 
-        private class AssetLoaderContextStub
-        {
-            public GameObject RootGameObject;
+            private GameObject CreateGameObject()
+            {
+                GameObject parent = new();
+                GameObject child = new();
+                MeshFilter meshFilter = child.AddComponent<MeshFilter>();
+                meshFilter.sharedMesh = new Mesh();
+                child.transform.parent = parent.transform;
+                return parent;
+            }
+
+            public async void downloadMesh(string meshUrl, Action<ModelLoaderContext, float> onProgress, Action<ModelLoaderContext> onLoad, Action<ModelLoaderContext> onMaterialsLoad)
+            {
+                numberOfCalls++;
+                int downloadTime = 60;
+                int processingTime = 30;
+                GameObject obj = CreateGameObject();
+                loadedObjects.Add(obj);
+                ModelLoaderContext modelLoaderContext = new()
+                {
+                    loadedObject = obj,
+                };
+                onProgress(modelLoaderContext, 0.3f);
+                onProgress(modelLoaderContext, 0.6f);
+                onProgress(modelLoaderContext, 0.9f);
+                onProgress(modelLoaderContext, 1f);
+                await Task.Delay(downloadTime);
+                onLoad(modelLoaderContext);
+                await Task.Delay(processingTime);
+                onMaterialsLoad(modelLoaderContext);
+            }
+
+            private class AssetLoaderContextStub
+            {
+                public GameObject RootGameObject;
+            }
         }
     }
 }
