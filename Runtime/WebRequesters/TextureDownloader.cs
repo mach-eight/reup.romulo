@@ -4,6 +4,7 @@ using UnityEngine;
 
 using ReupVirtualTwin.webRequestersInterfaces;
 using System.Threading.Tasks;
+using UnityEngine.Networking;
 
 namespace ReupVirtualTwin.webRequesters
 {
@@ -11,8 +12,13 @@ namespace ReupVirtualTwin.webRequesters
     {
         public async Task<Texture2D> DownloadTextureFromUrl(string url)
         {
-            throw new System.NotImplementedException();
+            using UnityWebRequest request = UnityWebRequestTexture.GetTexture(url);
+            await request.SendWebRequestTask();
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                throw new System.Exception($"Error: {request.error} for url: {url}");
+            }
+            return DownloadHandlerTexture.GetContent(request);
         }
-
     }
 }
