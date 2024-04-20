@@ -22,18 +22,12 @@ namespace ReupVirtualTwinTests.Registry
         GameObject grandchild00;
         IdController idController;
 
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
-        {
-            // we set the objectRegistry only once because some objects that depend on it are use the ObjectFinder class to find it
-            // if we create a different objectRegistry for each test in the SetUp method, the ObjectFinder sometimes finds
-            // an old objectRegistry why this happens is still unknown to me
-            objectRegistryGameObject = (GameObject)PrefabUtility.InstantiatePrefab(ObjectRegistryPrefab);
-            objectRegistry = objectRegistryGameObject.GetComponent<IRegistry>();
-        }
         [SetUp]
         public void SetUp()
         {
+            objectRegistryGameObject = (GameObject)PrefabUtility.InstantiatePrefab(ObjectRegistryPrefab);
+            objectRegistry = objectRegistryGameObject.GetComponent<IRegistry>();
+
             idController = new IdController();
             parent = new GameObject("testObj1");
             child0 = new GameObject("testObj1");
@@ -43,18 +37,16 @@ namespace ReupVirtualTwinTests.Registry
             child1.transform.parent = parent.transform;
             grandchild00.transform.parent = child0.transform;
         }
-        [TearDown]
-        public void TearDown()
+        
+        [UnityTearDown]
+        public IEnumerator TearDownCoroutine()
         {
             Destroy(parent);
             Destroy(child0);
             Destroy(child1);
             Destroy(grandchild00);
-        }
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
             Destroy(objectRegistryGameObject);
+            yield return new WaitForSeconds(0.2f);
         }
 
         [UnityTest]
