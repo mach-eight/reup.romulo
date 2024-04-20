@@ -14,8 +14,8 @@ namespace ReupVirtualTwin.dependencyInjectors
     public class EditionMediatorDependecyInjector : MonoBehaviour
     {
         [SerializeField]
-        private GameObject _insertPositionLocation;
-        EditionMediator _editionMediator;
+        GameObject insertPositionLocation;
+        EditionMediator editionMediator;
         [SerializeField]
         GameObject editModeManager;
         [SerializeField]
@@ -29,27 +29,27 @@ namespace ReupVirtualTwin.dependencyInjectors
 
         private void Awake()
         {
-            _editionMediator = GetComponent<EditionMediator>();
-            ICharacterRotationManager _characterRotationManager = ObjectFinder.FindCharacter().GetComponent<ICharacterRotationManager>();
-            _editionMediator.characterRotationManager = _characterRotationManager;
-            _editionMediator.editModeManager = editModeManager.GetComponent<IEditModeManager>();
-            _editionMediator.selectedObjectsManager = selectedObjectsManager.GetComponent<ISelectedObjectsManager>();
-            _editionMediator.transformObjectsManager = transformObjectsManager.GetComponent<ITransformObjectsManager>();
-            _editionMediator.deleteObjectsManager = deleteObjectsManager.GetComponent<IDeleteObjectsManager>();
-            _editionMediator.changeColorManager = changeColorManager.GetComponent<IChangeColorManager>();
+            editionMediator = GetComponent<EditionMediator>();
+            ICharacterRotationManager characterRotationManager = ObjectFinder.FindCharacter().GetComponent<ICharacterRotationManager>();
+            editionMediator.characterRotationManager = characterRotationManager;
+            editionMediator.editModeManager = editModeManager.GetComponent<IEditModeManager>();
+            editionMediator.selectedObjectsManager = selectedObjectsManager.GetComponent<ISelectedObjectsManager>();
+            editionMediator.transformObjectsManager = transformObjectsManager.GetComponent<ITransformObjectsManager>();
+            editionMediator.deleteObjectsManager = deleteObjectsManager.GetComponent<IDeleteObjectsManager>();
+            editionMediator.changeColorManager = changeColorManager.GetComponent<IChangeColorManager>();
             IWebMessagesSender webMessageSender = GetComponent<IWebMessagesSender>();
             if (webMessageSender == null )
             {
                 throw new System.Exception("WebMessageSender not found to inject to edition mediator");
             }
-            _editionMediator.webMessageSender = webMessageSender;
-            _editionMediator.objectMapper = new ObjectMapper(new TagsController(), new IdController());
+            editionMediator.webMessageSender = webMessageSender;
+            editionMediator.objectMapper = new ObjectMapper(new TagsController(), new IdController());
             IObjectRegistry registry = ObjectFinder.FindObjectRegistry().GetComponent<IObjectRegistry>();
-            _editionMediator.registry = registry;
-            _editionMediator.insertObjectsController = new InsertObjectController(
-                _editionMediator,
+            editionMediator.registry = registry;
+            editionMediator.insertObjectsController = new InsertObjectController(
+                editionMediator,
                 new MeshDownloader(),
-                _insertPositionLocation.transform.position
+                insertPositionLocation.transform.position
             );
             _editionMediator.changeMaterialController = new ChangeMaterialController(new TextureDownloader(), registry);
         }
