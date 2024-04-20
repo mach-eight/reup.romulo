@@ -75,30 +75,28 @@ namespace ReupVirtualTwinTests.controllers
             yield return null;
         }
 
-        [UnityTest]
-        public IEnumerator ShouldChangeMaterialsOfObjects()
+        [Test]
+        public async Task ShouldChangeMaterialsOfObjects()
         {
             List<Material> originalMaterials = GetMaterialsFromObjects(objectRegistry.objects);
-            controller.ChangeObjectMaterial(messagePayload);
+            await controller.ChangeObjectMaterial(messagePayload);
             List<Material> newMaterials = GetMaterialsFromObjects(objectRegistry.objects);
             Assert.AreEqual(originalMaterials.Count, newMaterials.Count);
             for (int i = 0; i < originalMaterials.Count; i++)
             {
                 Assert.AreNotEqual(originalMaterials[i], newMaterials[i]);
             }
-            yield return null;
         }
 
-        [UnityTest]
-        public IEnumerator ShouldAssignMaterialsWithDownloadedTexture()
+        [Test]
+        public async Task ShouldAssignMaterialsWithDownloadedTexture()
         {
-            controller.ChangeObjectMaterial(messagePayload);
+            await controller.ChangeObjectMaterial(messagePayload);
             List<Material> newMaterials = GetMaterialsFromObjects(objectRegistry.objects);
             for(int i = 0; i < newMaterials.Count; i++)
             {
                 Assert.AreEqual(textureDownloaderSpy.texture, newMaterials[i].GetTexture("_BaseMap"));
             }
-            yield return null;
         }
 
     }

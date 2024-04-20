@@ -6,6 +6,7 @@ using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.webRequestersInterfaces;
 using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.modelInterfaces;
+using System.Threading.Tasks;
 
 namespace ReupVirtualTwin.controllers
 {
@@ -19,11 +20,12 @@ namespace ReupVirtualTwin.controllers
             this.objectRegistry = objectRegistry;
         }
 
-        public void ChangeObjectMaterial(ChangeMaterialMessagePayload message)
+        public async Task ChangeObjectMaterial(ChangeMaterialMessagePayload message)
         {
-            this.textureDownloader.DownloadTextureFromUrl(message.material_url);
+            Texture2D texture = await this.textureDownloader.DownloadTextureFromUrl(message.material_url);
             List<GameObject> objects = this.objectRegistry.GetObjectsWithGuids(message.object_ids);
             Material newMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            newMaterial.SetTexture("_BaseMap", texture);
             for (int i = 0; i < objects.Count; i++)
             {
                 if (objects[i].GetComponent<Renderer>() != null)

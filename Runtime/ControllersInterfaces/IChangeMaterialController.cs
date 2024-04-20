@@ -1,9 +1,10 @@
 using ReupVirtualTwin.dataModels;
+using System.Threading.Tasks;
 
 namespace ReupVirtualTwin.controllerInterfaces
 {
     public interface IChangeMaterialController
     {
-        public void ChangeObjectMaterial(ChangeMaterialMessagePayload message);
+        public Task ChangeObjectMaterial(ChangeMaterialMessagePayload message);
     }
 }
