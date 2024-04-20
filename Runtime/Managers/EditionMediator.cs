@@ -148,6 +148,9 @@ namespace ReupVirtualTwin.managers
                 case WebMessageType.changeObjectColor:
                     ChangeObjectsColor(message.payload);
                     break;
+                case WebMessageType.changeObjectsMaterial:
+                    ChangeObjectsMaterial(message.payload);
+                    break;
                 default:
                     _webMessageSender.SendWebMessage(new WebMessage<string>
                     {
@@ -216,6 +219,12 @@ namespace ReupVirtualTwin.managers
             {
                 SendErrorMessage("The selection is empty");
             }
+        }
+
+        private void ChangeObjectsMaterial(string serializedPayload)
+        {
+            ChangeMaterialMessagePayload payload = JsonUtility.FromJson<ChangeMaterialMessagePayload>(serializedPayload);
+            _changeMaterialController.ChangeObjectMaterial(payload);
         }
 
         private void ProccessEditMode(bool editMode)

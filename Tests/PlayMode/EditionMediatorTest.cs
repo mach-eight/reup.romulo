@@ -12,6 +12,7 @@ using ReupVirtualTwin.helperInterfaces;
 using System.Collections.Generic;
 using ReupVirtualTwin.controllerInterfaces;
 using Tests.PlayMode.Mocks;
+using System.Threading.Tasks;
 
 public class EditionMediatorTest : MonoBehaviour
 {
@@ -25,6 +26,7 @@ public class EditionMediatorTest : MonoBehaviour
     MockObjectMapper mockObjectMapper;
     ObjectRegistrySpy registrySpy;
     ChangeColorManagerSpy changeColorManagerSpy;
+    ChangeMaterialControllerSpy changeMaterialControllerSpy;
 
     [SetUp]
     public void SetUp()
@@ -47,6 +49,8 @@ public class EditionMediatorTest : MonoBehaviour
         editionMediator.registry = registrySpy;
         changeColorManagerSpy = new ChangeColorManagerSpy();
         editionMediator.changeColorManager = changeColorManagerSpy;
+        changeMaterialControllerSpy = new ChangeMaterialControllerSpy();
+        editionMediator.changeMaterialController = changeMaterialControllerSpy;
     }
 
     private class ChangeColorManagerSpy : IChangeColorManager
@@ -57,6 +61,22 @@ public class EditionMediatorTest : MonoBehaviour
         {
             calledObjects = objectsToDelete;
             this.color = color;
+        }
+    }
+
+    private class ChangeMaterialControllerSpy : IChangeMaterialController
+    {
+        public ChangeMaterialMessagePayload receivedMessagePayload;
+        public int numberOfCalls;
+        public ChangeMaterialControllerSpy()
+        {
+            numberOfCalls = 0;
+        }
+        public Task ChangeObjectMaterial(ChangeMaterialMessagePayload message)
+        {
+            numberOfCalls++;
+            receivedMessagePayload = message;
+            return Task.CompletedTask;
         }
     }
 
@@ -480,6 +500,22 @@ public class EditionMediatorTest : MonoBehaviour
         WebMessage<string> sentMessage = (WebMessage<string>)mockWebMessageSender.sentMessage;
         Assert.AreEqual(WebMessageType.error, sentMessage.type);
         Assert.AreEqual(editionMediator.InvalidColorErrorMessage(color), sentMessage.payload);
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldRequestChangeMaterialOfObjects_When_ReceivesChangeMaterialRequest()
+    {
+        ChangeMaterialMessagePayload payload = new()
+        {
+            material_url = "material-url",
+            object_ids = new string[] { "id-0", "id-1" },
+        };
+        string message = dummyJsonCreator.createWebMessage(WebMessageType.changeObjectsMaterial, payload);
+        editionMediator.ReceiveWebMessage(message);
+        yield return null;
+        Assert.AreEqual(payload.material_url, changeMaterialControllerSpy.receivedMessagePayload.material_url);
+        Assert.AreEqual(payload.object_ids[0], changeMaterialControllerSpy.receivedMessagePayload.object_ids[0]);
+        Assert.AreEqual(payload.object_ids[1], changeMaterialControllerSpy.receivedMessagePayload.object_ids[1]);
     }
 
 }
