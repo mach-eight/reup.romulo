@@ -4,30 +4,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.TestTools;
-using UnityEditor;
 using System.Threading.Tasks;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.webRequestersInterfaces;
 using ReupVirtualTwin.dataModels;
 using Tests.PlayMode.Mocks;
-using ReupVirtualTwin.modelInterfaces;
-using System.Linq;
+using ReupVirtualTwin.managerInterfaces;
+using ReupVirtualTwin.enums;
 
 namespace ReupVirtualTwinTests.controllers
 {
     public class ChangeMaterialControllerTest
     {
-
         TextureDownloaderSpy textureDownloaderSpy;
         ChangeMaterialController controller;
         ChangeMaterialMessagePayload messagePayload;
-        SomeObjectWithMaterialRegistrySpy objectRegistry = new();
+        SomeObjectWithMaterialRegistrySpy objectRegistry;
+        MediatorSpy mediatorSpy;
 
         [UnitySetUp]
         public IEnumerator SetUp()
         {
+            mediatorSpy = new MediatorSpy();
             textureDownloaderSpy = new TextureDownloaderSpy();
-            controller = new ChangeMaterialController(textureDownloaderSpy, objectRegistry);
+            objectRegistry = new SomeObjectWithMaterialRegistrySpy();
+            controller = new ChangeMaterialController(textureDownloaderSpy, objectRegistry, mediatorSpy);
             messagePayload = new()
             {
                 material_url = "material-url.com",
@@ -47,6 +48,24 @@ namespace ReupVirtualTwinTests.controllers
                 return texture;
             }
         }
+
+        private class MediatorSpy : IMediator
+        {
+            public string[] changedObjectIds;
+            public void Notify(ReupEvent eventName)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void Notify<T>(ReupEvent eventName, T payload)
+            {
+                if (eventName == ReupEvent.objectMaterialChanged)
+                {
+                    changedObjectIds = (payload as string[]);
+                }
+            }
+        }
+
         private List<Material> GetMaterialsFromObjects(List<GameObject> objects)
         {
             List<Material> originalMaterials = new();
@@ -97,6 +116,13 @@ namespace ReupVirtualTwinTests.controllers
             {
                 Assert.AreEqual(textureDownloaderSpy.texture, newMaterials[i].GetTexture("_BaseMap"));
             }
+        }
+
+        [Test]
+        public async Task ShouldNotifyMediator_When_MaterialsChange()
+        {
+            await controller.ChangeObjectMaterial(messagePayload);
+            Assert.AreEqual(messagePayload.object_ids, mediatorSpy.changedObjectIds);
         }
 
     }

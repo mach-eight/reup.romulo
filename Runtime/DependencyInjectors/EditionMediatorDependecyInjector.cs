@@ -51,7 +51,11 @@ namespace ReupVirtualTwin.dependencyInjectors
                 new MeshDownloader(),
                 insertPositionLocation.transform.position
             );
-            _editionMediator.changeMaterialController = new ChangeMaterialController(new TextureDownloader(), registry);
+            editionMediator.changeMaterialController = new ChangeMaterialController(
+                new TextureDownloader(),
+                registry,
+                editionMediator
+            );
         }
     }
 }
