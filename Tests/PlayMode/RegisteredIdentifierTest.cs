@@ -24,18 +24,12 @@ namespace ReupVirtualTwinTests.Registry
             testObj.AddComponent<RegisteredIdentifier>();
         }
 
-        [TearDown]
-        public void TearDown()
+        [UnityTearDown]
+        public IEnumerator TearDownCoroutine()
         {
             Destroy(testObj);
             objectRegistry.ClearRegistry();
             Destroy(objectRegistryGameObject);
-
-        }
-
-        [UnityTearDown]
-        public IEnumerator TearDownCoroutine()
-        {
             yield return new WaitForSeconds(0.2f);
         }
 

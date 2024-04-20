@@ -37,20 +37,15 @@ namespace ReupVirtualTwinTests.Registry
             child1.transform.parent = parent.transform;
             grandchild00.transform.parent = child0.transform;
         }
-
-        [TearDown]
-        public void TearDown()
+        
+        [UnityTearDown]
+        public IEnumerator TearDownCoroutine()
         {
             Destroy(parent);
             Destroy(child0);
             Destroy(child1);
             Destroy(grandchild00);
             Destroy(objectRegistryGameObject);
-        }
-        
-        [UnityTearDown]
-        public IEnumerator TearDownCoroutine()
-        {
             yield return new WaitForSeconds(0.2f);
         }
 
