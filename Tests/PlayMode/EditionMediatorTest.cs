@@ -131,9 +131,9 @@ public class EditionMediatorTest : MonoBehaviour
     private class MockWebMessageSender : IWebMessagesSender
     {
         public object sentMessage;
-        public void SendWebMessage<T>(WebMessage<T> webWessage)
+        public void SendWebMessage<T>(WebMessage<T> webMessage)
         {
-            sentMessage = webWessage;
+            sentMessage = webMessage;
         }
     }
     private class MockTransformObjectsManager : ITransformObjectsManager
@@ -516,6 +516,17 @@ public class EditionMediatorTest : MonoBehaviour
         Assert.AreEqual(payload.material_url, changeMaterialControllerSpy.receivedMessagePayload.material_url);
         Assert.AreEqual(payload.object_ids[0], changeMaterialControllerSpy.receivedMessagePayload.object_ids[0]);
         Assert.AreEqual(payload.object_ids[1], changeMaterialControllerSpy.receivedMessagePayload.object_ids[1]);
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldSendSuccessMessage_When_NotifiedOfMaterialChangeSuccess()
+    {
+        string[] objectIds = new string[] { "id-0", "id-1" };
+        editionMediator.Notify(ReupEvent.objectMaterialChanged, objectIds);
+        WebMessage<string[]> sentMessage = (WebMessage<string[]>)mockWebMessageSender.sentMessage;
+        Assert.AreEqual(WebMessageType.changeObjectsMaterialSuccess, sentMessage.type);
+        Assert.AreEqual(objectIds, sentMessage.payload);
+        yield return null;
     }
 
 }
