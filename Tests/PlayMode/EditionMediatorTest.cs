@@ -67,14 +67,8 @@ public class EditionMediatorTest : MonoBehaviour
     private class ChangeMaterialControllerSpy : IChangeMaterialController
     {
         public ChangeMaterialMessagePayload receivedMessagePayload;
-        public int numberOfCalls;
-        public ChangeMaterialControllerSpy()
-        {
-            numberOfCalls = 0;
-        }
         public Task ChangeObjectMaterial(ChangeMaterialMessagePayload message)
         {
-            numberOfCalls++;
             receivedMessagePayload = message;
             return Task.CompletedTask;
         }
