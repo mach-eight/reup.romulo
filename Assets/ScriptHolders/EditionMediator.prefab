@@ -66,11 +66,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97e6951e34535f445b17ff6f8e359baa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _insertPositionLocation: {fileID: 7459117009516608047}
+  insertPositionLocation: {fileID: 7459117009516608047}
   editModeManager: {fileID: 1374396242202718384}
   selectedObjectsManager: {fileID: 1456155454685175151}
   transformObjectsManager: {fileID: 3276966702745460541}
-  insertObjectsManager: {fileID: 0}
   deleteObjectsManager: {fileID: 116487788499988255}
   changeColorManager: {fileID: 4771352667378813239}
 --- !u!114 &6976859030307673124
