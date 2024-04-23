@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace ReupVirtualTwin.controllers
 {
-    public class CharacterColliderBoxController : MonoBehaviour, ICharacterColliderController
+    public class CharacterColliderBoxController : ICharacterColliderController
 
     {
         GameObject character;
@@ -33,7 +33,7 @@ namespace ReupVirtualTwin.controllers
             Collider collider = character.GetComponent<Collider>();
             if (collider != null)
             {
-                Destroy(collider);
+                GameObject.Destroy(collider);
             }
         }
 

@@ -6,7 +6,8 @@
   "unity": "2019.1",
   "dependencies": {
     "com.unity.inputsystem": "1.5.1",
-    "com.unity.render-pipelines.universal": "12.1.11"
+    "com.unity.render-pipelines.universal": "12.1.11",
+    "com.unity.test-framework": "2.0.1-exp.1"
   },
   "keywords": [],
   "author": {

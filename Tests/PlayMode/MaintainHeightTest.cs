@@ -4,7 +4,6 @@ using UnityEngine.TestTools;
 using UnityEditor;
 using System.Collections;
 
-using Packages.reup.romulo.Tests.PlayMode.Mocks;
 using ReupVirtualTwin.behaviours;
 using ReupVirtualTwin.dependencyInjectors;
 using ReupVirtualTwin.managerInterfaces;
@@ -16,29 +15,29 @@ public class MaintainHeightTest : MonoBehaviour
     GameObject platformPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Tests/TestAssets/Platform.prefab");
     GameObject character;
     GameObject widePlatform;
-    private InitialSpawn initialSpawn;
+    GameObject setupBuildingGameObject;
 
     float HEIGHT_CLOSENESS_THRESHOLD = 0.02f;
 
     [SetUp]
     public void SetUp()
     {
+        setupBuildingGameObject = StubOnSetupBuildingCreator.CreateImmediateOnSetupBuilding();
         character = (GameObject)PrefabUtility.InstantiatePrefab(characterPrefab);
         DestroyGameRelatedDependecyInjectors();
         var posManager = character.GetComponent<ICharacterPositionManager>();
         posManager.maxStepHeight = 0.25f;
         widePlatform = (GameObject)PrefabUtility.InstantiatePrefab(platformPrefab);
         SetPlatform();
-        initialSpawn = character.transform.Find("Behaviours").Find("HeightMediator").Find("InitialSpawn").GetComponent<InitialSpawn>();
-        MockSetUpBuilding mockSetUpBuilding = new MockSetUpBuilding();
-        initialSpawn.setUpBuilding = mockSetUpBuilding;
     }
 
-    [TearDown]
-    public void TearDown()
+    [UnityTearDown]
+    public IEnumerator TearDown()
     {
         Destroy(character);
         Destroy(widePlatform);
+        Destroy(setupBuildingGameObject);
+        yield return null;
     }
 
     [UnityTest]

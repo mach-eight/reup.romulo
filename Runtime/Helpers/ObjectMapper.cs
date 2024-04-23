@@ -36,5 +36,16 @@ namespace ReupVirtualTwin.helpers
                 tags = _tagsController.GetTagNamesFromObject(obj)
             };
         }
+
+        public ObjectDTO MapObjectTree(GameObject obj)
+        {
+            ObjectDTO objectDTO = MapObjectToDTO(obj);
+            objectDTO.children = new ObjectDTO[obj.transform.childCount];
+            for(int i = 0; i < obj.transform.childCount; i++)
+            {
+                objectDTO.children[i] = MapObjectTree(obj.transform.GetChild(i).gameObject);
+            }
+            return objectDTO;
+        }
     }
 }

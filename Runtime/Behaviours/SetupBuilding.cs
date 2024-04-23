@@ -6,10 +6,12 @@ using ReupVirtualTwin.controllerInterfaces;
 
 namespace ReupVirtualTwin.behaviours
 {
-    public class SetUpBuilding : MonoBehaviour , ISetUpBuilding
+    public class SetupBuilding : MonoBehaviour , ISetUpBuilding, IOnBuildingSetup, IBuildingGetter
     {
         [SerializeField]
-        GameObject building;
+        GameObject _building;
+        public GameObject building { get => _building; }
+
         private bool buildingSetup = false;
         private ITagSystemController _tagSystemController;
         public ITagSystemController tagSystemController { get => _tagSystemController; set => _tagSystemController = value; }
