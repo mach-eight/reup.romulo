@@ -171,17 +171,6 @@
                 },
                 {
                     "name": "up",
-                    "id": "7d338a69-a683-453c-a9d3-db6d53786159",
-                    "path": "<Mouse>/scroll/up",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "KeyboardAndMouse",
-                    "action": "Movement",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "up",
                     "id": "6933eb39-19a2-47e6-a606-1d96d3bd3e01",
                     "path": "<Keyboard>/w",
                     "interactions": "",
@@ -195,17 +184,6 @@
                     "name": "down",
                     "id": "805eff14-9233-41a3-91c3-e2037ec14a8c",
                     "path": "<Keyboard>/s",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "KeyboardAndMouse",
-                    "action": "Movement",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "down",
-                    "id": "ee0cef53-16b1-42eb-ab9e-cc9ee4f50ccd",
-                    "path": "<Mouse>/scroll/down",
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardAndMouse",
