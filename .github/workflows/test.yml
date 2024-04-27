@@ -11,12 +11,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           sparse-checkout: .
-      - uses: actions/cache@v4
-        with:
-          path: Library
-          key: Library-${{ hashFiles('Assets/**', 'Editor/**', 'Runtime/**', 'Tests/**') }}
-          restore-keys: |
-            Library-
+      # - uses: actions/cache@v4
+      #   with:
+      #     path: Library
+      #     key: Library-${{ hashFiles('Assets/**', 'Editor/**', 'Runtime/**', 'Tests/**') }}
+      #     restore-keys: |
+      #       Library-
       - name: a list
         run: ls
       - name: move project to temporal folder
