@@ -17,8 +17,14 @@ jobs:
           key: Library-${{ hashFiles('Assets/**', 'Editor/**', 'Runtime/**', 'Tests/**') }}
           restore-keys: |
             Library-
+      - name: a list
+        run: ls
       - name: move project to temporal folder
-        run: mv . temporal_repo_folder
+        run: mkdir temporal_repo_folder && ls && find * -maxdepth 0 -not -name temporal_repo_folder -exec mv {} temporal_repo_folder/ \;
+      - name: another list
+        run: ls
+      - name: a list of temporal
+        run: ls temporal_repo_folder
       - name: Run tests
         uses: game-ci/unity-test-runner@v4
         env:
