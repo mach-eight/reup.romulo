@@ -32,17 +32,18 @@ jobs:
           packageMode: true
           unityVersion: '2021.3.24f1'
           projectPath: temporal_repo_folder
-          artifactsPath: 'TestResults'
+          artifactsPath: 'artifacts'
       - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: Test results
           path: ${{ steps.test-step.outputs.artifactsPath }}
       - name: end list
-        run: ls
+        if: always()
+        run: ls ${{ steps.test-step.outputs.artifactsPath }}
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
           files: |
-            ./**/*.xml
+            ./${{ steps.test-step.outputs.artifactsPath }}/*.xml
