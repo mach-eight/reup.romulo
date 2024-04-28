@@ -33,6 +33,7 @@ jobs:
           unityVersion: '2021.3.24f1'
           projectPath: temporal_repo_folder
           artifactsPath: 'TestResults'
+          coveragePath: 'CoverageResults'
       - uses: actions/upload-artifact@v3
         if: always()
         with:
@@ -45,3 +46,9 @@ jobs:
           path: ${{ steps.test-step.outputs.coveragePath }}
       - name: end list
         run: ls
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: |
+            ./**/*.xml
