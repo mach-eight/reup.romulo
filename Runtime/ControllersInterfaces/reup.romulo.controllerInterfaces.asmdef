@@ -1,0 +1,18 @@
+{
+    "name": "reup.romulo.controllerInterfaces",
+    "rootNamespace": "",
+    "references": [
+        "GUID:a94387ec035d5514c93dfbc1c4e15171",
+        "GUID:3e29f3cf4a29b6f4a8ecdaccb3a3a2ba",
+        "GUID:ef71f4f9d4e9ed44987e6a7778893414"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

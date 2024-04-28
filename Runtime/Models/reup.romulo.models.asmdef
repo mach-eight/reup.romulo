@@ -1,0 +1,20 @@
+{
+    "name": "reup.romulo.models",
+    "rootNamespace": "",
+    "references": [
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:f423d50bd16e5af44b5de6fb9aa6914c",
+        "GUID:3e29f3cf4a29b6f4a8ecdaccb3a3a2ba",
+        "GUID:ef71f4f9d4e9ed44987e6a7778893414",
+        "GUID:a94387ec035d5514c93dfbc1c4e15171"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
