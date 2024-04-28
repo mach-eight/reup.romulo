@@ -5,16 +5,13 @@ on:
   workflow_call:
 
 jobs:
-  tests:
+  test:
+    name: Package tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      # - uses: actions/cache@v4
-      #   with:
-      #     path: Library
-      #     key: Library-${{ hashFiles('Assets/**', 'Editor/**', 'Runtime/**', 'Tests/**') }}
-      #     restore-keys: |
-      #       Library-
+        with:
+          lfs: true
       - name: a list
         run: ls
       - name: move project to temporal folder
@@ -32,9 +29,5 @@ jobs:
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           packageMode: true
-          unityVersion: 2021.3.24f1
+          unityVersion: '2021.3.24f1'
           projectPath: temporal_repo_folder
-      
-
-
-
