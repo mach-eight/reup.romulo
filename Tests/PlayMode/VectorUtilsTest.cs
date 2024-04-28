@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using NUnit.Framework;
 using UnityEngine.TestTools;
-using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.helpers;
 
 public class VectorUtilsTest : MonoBehaviour
