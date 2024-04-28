@@ -43,3 +43,5 @@ jobs:
         with:
           name: Coverage results
           path: ${{ steps.test-step.outputs.coveragePath }}
+      - name: end list
+        run: ls
