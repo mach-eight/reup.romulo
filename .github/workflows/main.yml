@@ -33,17 +33,11 @@ jobs:
           unityVersion: '2021.3.24f1'
           projectPath: temporal_repo_folder
           artifactsPath: 'TestResults'
-          coveragePath: 'CoverageResults'
       - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: Test results
           path: ${{ steps.test-step.outputs.artifactsPath }}
-      - uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: Coverage results
-          path: ${{ steps.test-step.outputs.coveragePath }}
       - name: end list
         run: ls
       - name: Publish Test Results
