@@ -3,7 +3,6 @@ using UnityEditor;
 using UnityMeshSimplifier;
 using System;
 using TB;
-using UnityEngine.UIElements;
 using ReupVirtualTwin.helpers;
 
 namespace ReupVirtualTwin.editor
