@@ -3,6 +3,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 
+using ReupVirtualTwin.behaviourInterfaces;
+
 namespace ReupVirtualTwin.behaviours
 {
     public class WebRequestTexture : MonoBehaviour, IWebRequestTexture
