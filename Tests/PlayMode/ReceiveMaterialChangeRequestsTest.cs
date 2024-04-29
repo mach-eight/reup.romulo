@@ -9,6 +9,7 @@ using ReupVirtualTwin.behaviours;
 using ReupVirtualTwin.models;
 using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.helpers;
+using ReupVirtualTwin.behaviourInterfaces;
 
 public class ReceiveMaterialChangeRequestsTest : MonoBehaviour
 {

@@ -1,9 +1,11 @@
-using ReupVirtualTwin.dataModels;
-using ReupVirtualTwin.helpers;
-using ReupVirtualTwin.modelInterfaces;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+using ReupVirtualTwin.dataModels;
+using ReupVirtualTwin.helpers;
+using ReupVirtualTwin.modelInterfaces;
+using ReupVirtualTwin.behaviourInterfaces;
 
 namespace ReupVirtualTwin.behaviours
 {

@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-namespace ReupVirtualTwin.behaviours
+namespace ReupVirtualTwin.behaviourInterfaces
 {
     public interface IWebRequestTexture
     {
