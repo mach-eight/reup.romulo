@@ -18,5 +18,4 @@ public class VectorUtilsTest : MonoBehaviour
         Assert.AreEqual(new Vector3(1.5f, 3, 4.5f), mean);
         yield return null;
     }
-
 }

@@ -12,14 +12,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           lfs: true
-      - name: a list
-        run: ls
       - name: move project to temporal folder
         run: mkdir temporal_repo_folder && ls && find * -maxdepth 0 -not -name temporal_repo_folder -exec mv {} temporal_repo_folder/ \;
-      - name: another list
-        run: ls
-      - name: a list of temporal
-        run: ls temporal_repo_folder
       - name: Run tests
         uses: game-ci/unity-test-runner@v4
         id: test-step
@@ -38,9 +32,6 @@ jobs:
         with:
           name: Test results
           path: ${{ steps.test-step.outputs.artifactsPath }}
-      - name: end list
-        if: always()
-        run: ls ${{ steps.test-step.outputs.artifactsPath }}
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
