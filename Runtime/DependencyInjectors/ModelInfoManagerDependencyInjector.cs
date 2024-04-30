@@ -1,18 +1,18 @@
-using ReupVirtualTwin.behaviours;
+using ReupVirtualTwin.managers;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.helpers;
 using UnityEngine;
 
 namespace ReupVirtualTwin.dependencyInjectors
 {
-    public class SendStartupMessageDependencyInjector : MonoBehaviour
+    public class ModelInfoManagerDependencyInjector : MonoBehaviour
     {
         private void Awake()
         {
-            SendStartupMessage sendStartupMessage = GetComponent<SendStartupMessage>();
+            ModelInfoManager sendModelInfoMessage = GetComponent<ModelInfoManager>();
             IdController idGetterController = new IdController();
             TagsController tagsController = new TagsController();
-            sendStartupMessage.objectMapper = new ObjectMapper(tagsController, idGetterController);
+            sendModelInfoMessage.objectMapper = new ObjectMapper(tagsController, idGetterController);
         }
     }
 }

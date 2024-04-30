@@ -4,18 +4,17 @@ using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.enums;
 using UnityEngine;
 using ReupVirtualTwin.helperInterfaces;
+using ReupVirtualTwin.managerInterfaces;
 
 
-namespace ReupVirtualTwin.behaviours
+namespace ReupVirtualTwin.managers
 {
-    [RequireComponent(typeof(IWebMessagesSender))]
-    public class SendStartupMessage: MonoBehaviour, ISendStartupMessage
+    public class ModelInfoManager: MonoBehaviour, IModelInfoManager
     {
         public string buildVersion { get => _buildVersion; }
         public IObjectMapper objectMapper { set => _objectMapper = value; }
 
         string _buildVersion = "2024-04-05";
-        IWebMessagesSender webMessagesSender;
         IOnBuildingSetup setupBuilding;
         IObjectMapper _objectMapper;
 
@@ -27,35 +26,23 @@ namespace ReupVirtualTwin.behaviours
         private void LookForDependencySingletons()
         {
             setupBuilding = ObjectFinder.FindSetupBuilding()?.GetComponent<IOnBuildingSetup>();
-            setupBuilding.onBuildingSetUp += SendMessage;
-        }
-        private void LookForDependencyComponents()
-        {
-            webMessagesSender = gameObject.GetComponent<IWebMessagesSender>();
         }
 
-        public void SendMessage()
+        public WebMessage<ModelInfoMessage> ObtainModelInfoMessage()
         {
-            LookForDependencyComponents();
-            WebMessage<StartupMessage> message = ObtainStartupMessage();
-            webMessagesSender.SendWebMessage(message);
-        }
-
-        private WebMessage<StartupMessage> ObtainStartupMessage()
-        {
-            StartupMessage messagePayload = ObtainMessagePayload();
-            WebMessage<StartupMessage> message = new()
+            ModelInfoMessage messagePayload = ObtainMessagePayload();
+            WebMessage<ModelInfoMessage> message = new()
             {
-                type = WebMessageType.startupMessage,
+                type = WebMessageType.requestModelInfoSuccess,
                 payload = messagePayload,
             };
             return message;
         }
 
-        private StartupMessage ObtainMessagePayload()
+        private ModelInfoMessage ObtainMessagePayload()
         {
             ObjectDTO buildingDTO = ObtainBuildingDTO();
-            StartupMessage startupMessage = new()
+            ModelInfoMessage startupMessage = new()
             {
                 buildVersion = buildVersion,
                 building = buildingDTO,
@@ -66,6 +53,7 @@ namespace ReupVirtualTwin.behaviours
         private ObjectDTO ObtainBuildingDTO()
         {
             GameObject buildingObject = ((IBuildingGetter)setupBuilding).building;
+            Debug.Log(_objectMapper);
             ObjectDTO buildingDTO = _objectMapper.MapObjectTree(buildingObject);
             return buildingDTO;
         }

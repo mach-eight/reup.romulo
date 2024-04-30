@@ -28,6 +28,8 @@ namespace ReupVirtualTwin.enums
         public const string changeObjectColorSuccess = "[Change Color] Change Object Color Success";
 
         public const string error = "[Error] Engine Error";
-        public const string startupMessage = "[Startup Message] Startup Message";
+
+        public const string requestModelInfo = "[Initial Load Request] Request ModelInfo";
+        public const string requestModelInfoSuccess = "[Initial Load Request] Request ModelInfo Success";
     }
 }

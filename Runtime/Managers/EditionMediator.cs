@@ -41,6 +41,8 @@ namespace ReupVirtualTwin.managers
         public string noInsertObjectIdErrorMessage = "No object id provided for insertion";
         public string noInsertObjectUrlErrorMessage = "No 3d model url provided for insertion";
 
+        private IModelInfoManager _modelInfoManager;
+        public IModelInfoManager modelInfoManager { set => _modelInfoManager = value; }
 
         public void Notify(ReupEvent eventName)
         {
@@ -135,6 +137,9 @@ namespace ReupVirtualTwin.managers
                 case WebMessageType.changeObjectColor:
                     ChangeObjectsColor(message.payload);
                     break;
+                case WebMessageType.requestModelInfo:
+                    SendModelInfoMessage();
+                    break;
                 default:
                     _webMessageSender.SendWebMessage(new WebMessage<string>
                     {
@@ -143,6 +148,12 @@ namespace ReupVirtualTwin.managers
                     });
                     break;
             }
+        }
+
+        public void SendModelInfoMessage()
+        {
+            WebMessage<ModelInfoMessage> message = _modelInfoManager.ObtainModelInfoMessage();
+            _webMessageSender.SendWebMessage(message);
         }
 
         private void ActivateTransformMode(TransformMode mode)
