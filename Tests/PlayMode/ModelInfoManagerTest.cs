@@ -4,7 +4,6 @@ using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
-using ReupVirtualTwin.behaviourInterfaces;
 using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.helpers;
@@ -18,7 +17,6 @@ public class ModelInfoManagerTest : MonoBehaviour
    GameObject ModelInfoManagerContainerGameObject;
    GameObject setupBuildingGameObject;
    GameObject buildingGameObject;
-   WebMessageSenderSpy webMessageSenderSpy;
    const int BUILDING_CHILDREN_DEPTH = 30;
 
 
@@ -26,8 +24,8 @@ public class ModelInfoManagerTest : MonoBehaviour
    public IEnumerator SetUp()
    {
        CreateStubSetupBuilding();
-        ModelInfoManagerContainerGameObject = Instantiate(ModelInfoManagerPrefab);
-       yield return ConfigureAndSetTestSpys();
+       ModelInfoManagerContainerGameObject = Instantiate(ModelInfoManagerPrefab);
+       yield return null;
    }
    [UnityTearDown]
    public IEnumerator TearDown()
@@ -45,22 +43,6 @@ public class ModelInfoManagerTest : MonoBehaviour
        fakeSetupBuilding.building = buildingGameObject;
    }
 
-   private IEnumerator ConfigureAndSetTestSpys()
-   {
-       setupBuildingGameObject.SetActive(false);
-        ModelInfoManagerContainerGameObject.SetActive(false);
-       Destroy((UnityEngine.Object)ModelInfoManagerContainerGameObject.GetComponent<IWebMessagesSender>());
-       webMessageSenderSpy = ModelInfoManagerContainerGameObject.AddComponent<WebMessageSenderSpy>();
-       yield return null;
-       ActivateSetupBuildingFirstThenSendStartupMessage();
-   }
-
-   private void ActivateSetupBuildingFirstThenSendStartupMessage()
-   {
-       setupBuildingGameObject.SetActive(true);
-       ModelInfoManagerContainerGameObject.SetActive(true);
-   }
-
    [UnityTest]
    public IEnumerator ShouldObtainTheMessage()
    {
@@ -73,7 +55,7 @@ public class ModelInfoManagerTest : MonoBehaviour
    }
 
    [UnityTest]
-   public IEnumerator ShouldSendBuildingTreeDataStructure()
+   public IEnumerator ShouldObtainBuildingTreeDataStructure()
    {
        ObjectMapper objectMapper = new ObjectMapper(new TagsController(), new IdController());
        ObjectDTO expectedBuildingTreeDataStructure = objectMapper.MapObjectTree(buildingGameObject);
@@ -134,15 +116,6 @@ public class ModelInfoManagerTest : MonoBehaviour
            }
        }
        return true;
-   }
-
-   private class WebMessageSenderSpy : MonoBehaviour, IWebMessagesSender
-   {
-       public object sentMessage;
-       public void SendWebMessage<T>(WebMessage<T> webMessage)
-       {
-           sentMessage = webMessage;
-       }
    }
 
 }
