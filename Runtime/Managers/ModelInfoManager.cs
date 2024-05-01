@@ -53,7 +53,6 @@ namespace ReupVirtualTwin.managers
         private ObjectDTO ObtainBuildingDTO()
         {
             GameObject buildingObject = ((IBuildingGetter)setupBuilding).building;
-            Debug.Log(_objectMapper);
             ObjectDTO buildingDTO = _objectMapper.MapObjectTree(buildingObject);
             return buildingDTO;
         }
