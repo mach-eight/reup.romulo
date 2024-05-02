@@ -1,10 +1,10 @@
-using ReupVirtualTwin.controllerInterfaces;
+using ReupVirtualTwin.webRequestersInterfaces;
 using ReupVirtualTwin.dataModels;
 using System.Threading.Tasks;
 
 namespace Tests.PlayMode.Mocks
 {
-    public class EmptyStringsTagsWebRequesterSpy : ITagsWebRequesterController
+    public class EmptyStringsTagsWebRequesterSpy : ITagsApiConsumer
     {
         public int numberOfTimesFetched = 0;
 

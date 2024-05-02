@@ -1,7 +1,7 @@
 using UnityEngine.Networking;
 using System.Threading.Tasks;
 
-namespace ReupVirtualTwin.controllers
+namespace ReupVirtualTwin.webRequesters
 {
     public static class UnityWebRequestExtensions
     {

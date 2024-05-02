@@ -19,7 +19,7 @@ namespace ReupVirtualTwin.dependencyInjectors
             DeleteObjectsManager deleteObjectsManager = GetComponent<DeleteObjectsManager>();
             deleteObjectsManager.mediator = mediator.GetComponent<IMediator>();
             deleteObjectsManager.tagsController = new TagsController();
-            deleteObjectsManager.registry = ObjectFinder.FindObjectRegistry().GetComponent<IRegistry>();
+            deleteObjectsManager.registry = ObjectFinder.FindObjectRegistry().GetComponent<IObjectRegistry>();
 
         }
     }
