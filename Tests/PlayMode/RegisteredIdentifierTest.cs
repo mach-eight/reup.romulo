@@ -5,6 +5,7 @@ using ReupVirtualTwin.modelInterfaces;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
+using ReupVirtualTwin.modelInterfaces;
 
 namespace ReupVirtualTwinTests.Registry
 {
@@ -15,31 +16,23 @@ namespace ReupVirtualTwinTests.Registry
         IObjectRegistry objectRegistry;
         GameObject testObj;
 
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
-        {
-            // we set the objectRegistry only once because some objects that depend on it are use the ObjectFinder class to find it
-            // if we create a different objectRegistry for each test in the SetUp method, the ObjectFinder sometimes finds
-            // an old objectRegistry why this happens is still unknown to me
-            objectRegistryGameObject = (GameObject)PrefabUtility.InstantiatePrefab(ObjectRegistryPrefab);
-            objectRegistry = objectRegistryGameObject.GetComponent<IObjectRegistry>();
-        }
+
         [SetUp]
         public void SetUp()
         {
+            objectRegistryGameObject = (GameObject)PrefabUtility.InstantiatePrefab(ObjectRegistryPrefab);
+            objectRegistry = objectRegistryGameObject.GetComponent<IRegistry>();
             testObj = new GameObject("testObj");
             testObj.AddComponent<RegisteredIdentifier>();
         }
-        [TearDown]
-        public void TearDown()
+
+        [UnityTearDown]
+        public IEnumerator TearDownCoroutine()
         {
             Destroy(testObj);
             objectRegistry.ClearRegistry();
-        }
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
             Destroy(objectRegistryGameObject);
+            yield return new WaitForSeconds(0.2f);
         }
 
         [UnityTest]

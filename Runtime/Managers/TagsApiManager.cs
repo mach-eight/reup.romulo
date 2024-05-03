@@ -43,6 +43,7 @@ namespace ReupVirtualTwin.managers
         
         public void CleanTags()
         {
+            if (waitingForTagsResponse) return;
             tags = new List<ObjectTag>();
             currentPage = 0;
             thereAreTagsToFetch = true;
