@@ -21,7 +21,7 @@ namespace ReupVirtualTwinTests.Registry
         public void SetUp()
         {
             objectRegistryGameObject = (GameObject)PrefabUtility.InstantiatePrefab(ObjectRegistryPrefab);
-            objectRegistry = objectRegistryGameObject.GetComponent<IRegistry>();
+            objectRegistry = objectRegistryGameObject.GetComponent<IObjectRegistry>();
             testObj = new GameObject("testObj");
             testObj.AddComponent<RegisteredIdentifier>();
         }
