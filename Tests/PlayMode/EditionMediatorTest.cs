@@ -516,10 +516,16 @@ public class EditionMediatorTest : MonoBehaviour
     public IEnumerator ShouldSendSuccessMessage_When_NotifiedOfMaterialChangeSuccess()
     {
         string[] objectIds = new string[] { "id-0", "id-1" };
-        editionMediator.Notify(ReupEvent.objectMaterialChanged, objectIds);
-        WebMessage<string[]> sentMessage = (WebMessage<string[]>)mockWebMessageSender.sentMessage;
+        ChangeMaterialMessagePayload payload = new()
+        {
+            material_url = "material-url",
+            object_ids = objectIds,
+        };
+        editionMediator.Notify(ReupEvent.objectMaterialChanged, payload);
+        WebMessage<ChangeMaterialMessagePayload> sentMessage = (WebMessage<ChangeMaterialMessagePayload>)mockWebMessageSender.sentMessage;
         Assert.AreEqual(WebMessageType.changeObjectsMaterialSuccess, sentMessage.type);
-        Assert.AreEqual(objectIds, sentMessage.payload);
+        Assert.AreEqual(payload.material_url, sentMessage.payload.material_url);
+        Assert.AreEqual(payload.object_ids, sentMessage.payload.object_ids);
         yield return null;
     }
 

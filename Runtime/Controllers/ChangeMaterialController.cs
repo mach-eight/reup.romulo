@@ -36,7 +36,12 @@ namespace ReupVirtualTwin.controllers
                     objects[i].GetComponent<Renderer>().material = newMaterial;
                 }
             }
-            mediator.Notify(ReupEvent.objectMaterialChanged, message.object_ids);
+            ChangeMaterialMessagePayload materialChangeInfo = new()
+            {
+                object_ids = message.object_ids,
+                material_url = message.material_url,
+            };
+            mediator.Notify(ReupEvent.objectMaterialChanged, materialChangeInfo);
         }
     }
 }

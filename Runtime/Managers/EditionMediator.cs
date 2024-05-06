@@ -117,11 +117,11 @@ namespace ReupVirtualTwin.managers
                     ProcessLoadStatus((float)(object)payload);
                     break;
                 case ReupEvent.objectMaterialChanged:
-                    if (!(payload is string[]))
+                    if (!(payload is ChangeMaterialMessagePayload))
                     {
-                        throw new ArgumentException($"Payload must be of type string[] for {eventName} events", nameof(payload));
+                        throw new ArgumentException($"Payload must be of type ChangeMaterialMessagePayload for {eventName} events", nameof(payload));
                     }
-                    ProcessObjectMaterialsChange((string[])(object)payload);
+                    ProcessObjectMaterialsChange((ChangeMaterialMessagePayload)(object)payload);
                     break;
                 default:
                     throw new ArgumentException($"no implementation for event: {eventName}");
@@ -371,12 +371,12 @@ namespace ReupVirtualTwin.managers
             _webMessageSender.SendWebMessage(message);
         }
 
-        private void ProcessObjectMaterialsChange(string[] objectIds)
+        private void ProcessObjectMaterialsChange(ChangeMaterialMessagePayload materialsChangedInfo)
         {
-            WebMessage<string[]> message = new()
+            WebMessage<ChangeMaterialMessagePayload> message = new()
             {
                 type = WebMessageType.changeObjectsMaterialSuccess,
-                payload = objectIds
+                payload = materialsChangedInfo
             };
             _webMessageSender.SendWebMessage(message);
         }
