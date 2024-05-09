@@ -2,10 +2,11 @@ using ReupVirtualTwin.models;
 using UnityEngine;
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.controllerInterfaces;
+using System.Collections.Generic;
 
 namespace ReupVirtualTwin.controllers
 {
-    public class IdController : IIdGetterController, IIdAssignerController
+    public class IdController : IIdGetterController, IIdAssignerController, IIdSearchRepeatedController
     {
 
         public void AssignIdsToTree(GameObject tree, string parentTreeId = null)
@@ -67,6 +68,35 @@ namespace ReupVirtualTwin.controllers
         public string GetIdFromObject(GameObject obj)
         {
             return obj.GetComponent<IUniqueIdentifier>().getId();
+        }
+
+        public bool SearchRepeatedIds(GameObject tree)
+        {
+            HashSet<string> idSet = new HashSet<string>();
+            return CheckForRepeatedIds(tree, idSet);
+        }
+
+        private bool CheckForRepeatedIds(GameObject tree, HashSet<string> idSet)
+        {
+            IUniqueIdentifier identifier = tree.GetComponent<IUniqueIdentifier>();
+            if (identifier != null)
+            {
+                string id = identifier.getId();
+                if (idSet.Contains(id))
+                {
+                    return true;
+                }
+                idSet.Add(id);
+            }
+
+            foreach (Transform child in tree.transform)
+            {
+                if (CheckForRepeatedIds(child.gameObject, idSet))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
