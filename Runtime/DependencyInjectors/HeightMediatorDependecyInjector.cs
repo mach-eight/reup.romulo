@@ -1,8 +1,9 @@
 using ReupVirtualTwin.behaviours;
 using ReupVirtualTwin.controllers;
 using UnityEngine;
+using ReupVirtualTwin.behaviourInterfaces;
 
-namespace ReupVirtualTwin
+namespace ReupVirtualTwin.dependencyInjectors
 {
     public class HeightMediatorDependecyInjector : MonoBehaviour
     {
