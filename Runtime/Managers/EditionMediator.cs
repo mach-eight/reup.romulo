@@ -1,12 +1,15 @@
-using ReupVirtualTwin.managerInterfaces;
 using UnityEngine;
-using ReupVirtualTwin.enums;
-using ReupVirtualTwin.behaviourInterfaces;
-using ReupVirtualTwin.dataModels;
 using System;
 using System.Collections.Generic;
 using ReupVirtualTwin.helperInterfaces;
+using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.controllerInterfaces;
+using ReupVirtualTwin.dataModels;
+using ReupVirtualTwin.managerInterfaces;
+using ReupVirtualTwin.enums;
+using ReupVirtualTwin.behaviourInterfaces;
+using ReupVirtualTwin.helpers;
+
 
 namespace ReupVirtualTwin.managers
 {
@@ -28,7 +31,6 @@ namespace ReupVirtualTwin.managers
  
         private IChangeColorManager _changeColorManager;
         public IChangeColorManager changeColorManager { set => _changeColorManager = value; }
-      
 
         private IInsertObjectsController _insertObjectsManager;
         public IInsertObjectsController insertObjectsController { set => _insertObjectsManager = value; }
@@ -38,9 +40,24 @@ namespace ReupVirtualTwin.managers
         private IObjectMapper _objectMapper;
         public IObjectMapper objectMapper { set => _objectMapper = value; }
 
+        private IObjectRegistry _registry;
+        public IObjectRegistry registry { set => _registry = value; get => _registry; }
+
+        private IChangeMaterialController _changeMaterialController;
+        public IChangeMaterialController changeMaterialController
+        {
+            get => _changeMaterialController; set => _changeMaterialController = value;
+        }
+
+        [HideInInspector]
         public string noInsertObjectIdErrorMessage = "No object id provided for insertion";
+        [HideInInspector]
         public string noInsertObjectUrlErrorMessage = "No 3d model url provided for insertion";
 
+        public string InvalidColorErrorMessage(string colorCode) => $"Invalid color code {colorCode}";
+
+        private IModelInfoManager _modelInfoManager;
+        public IModelInfoManager modelInfoManager { set => _modelInfoManager = value; }
 
         public void Notify(ReupEvent eventName)
         {
@@ -103,6 +120,20 @@ namespace ReupVirtualTwin.managers
                     }
                     ProcessLoadStatus((float)(object)payload);
                     break;
+                case ReupEvent.objectMaterialChanged:
+                    if (!(payload is ChangeMaterialMessagePayload))
+                    {
+                        throw new ArgumentException($"Payload must be of type ChangeMaterialMessagePayload for {eventName} events", nameof(payload));
+                    }
+                    ProcessObjectMaterialsChange((ChangeMaterialMessagePayload)(object)payload);
+                    break;
+                case ReupEvent.error:
+                    if (!(payload is string))
+                    {
+                        throw new ArgumentException($"Payload must be of type string for {eventName} events", nameof(payload));
+                    }
+                    SendErrorMessage((string)(object)payload);
+                    break;
                 default:
                     throw new ArgumentException($"no implementation for event: {eventName}");
             }
@@ -135,6 +166,12 @@ namespace ReupVirtualTwin.managers
                 case WebMessageType.changeObjectColor:
                     ChangeObjectsColor(message.payload);
                     break;
+                case WebMessageType.requestModelInfo:
+                    SendModelInfoMessage();
+                    break;
+                case WebMessageType.changeObjectsMaterial:
+                    ChangeObjectsMaterial(message.payload);
+                    break;
                 default:
                     _webMessageSender.SendWebMessage(new WebMessage<string>
                     {
@@ -143,6 +180,12 @@ namespace ReupVirtualTwin.managers
                     });
                     break;
             }
+        }
+
+        public void SendModelInfoMessage()
+        {
+            WebMessage<ModelInfoMessage> message = _modelInfoManager.ObtainModelInfoMessage();
+            _webMessageSender.SendWebMessage(message);
         }
 
         private void ActivateTransformMode(TransformMode mode)
@@ -186,7 +229,7 @@ namespace ReupVirtualTwin.managers
         private void ChangeObjectsColor(string payload)
         {
             ChangeColorObjectMessagePayload parsedPayload = JsonUtility.FromJson<ChangeColorObjectMessagePayload>(payload);
-            List<GameObject> objectsToChangeColor = _changeColorManager.GetObjectsToChangeColor(parsedPayload.objectIds);
+            List<GameObject> objectsToChangeColor = _registry.GetObjectsWithGuids(parsedPayload.objectIds);
             if (objectsToChangeColor.Count > 0)
             {
                 Color? parsedColor = Utils.ParseColor(parsedPayload.color);
@@ -196,13 +239,19 @@ namespace ReupVirtualTwin.managers
                 }
                 else
                 {
-                    SendErrorMessage("The color isn't valid");
+                    SendErrorMessage(InvalidColorErrorMessage(parsedPayload.color));
                 }
             }
             else
             {
                 SendErrorMessage("The selection is empty");
             }
+        }
+
+        private void ChangeObjectsMaterial(string serializedPayload)
+        {
+            ChangeMaterialMessagePayload payload = JsonUtility.FromJson<ChangeMaterialMessagePayload>(serializedPayload);
+            _changeMaterialController.ChangeObjectMaterial(payload);
         }
 
         private void ProccessEditMode(bool editMode)
@@ -255,7 +304,7 @@ namespace ReupVirtualTwin.managers
             }
             else
             {
-                throw new Exception($"unnown TransformMode {mode}");
+                throw new Exception($"unknown TransformMode {mode}");
             }
             WebMessage<string> message = new WebMessage<string>
             {
@@ -338,6 +387,16 @@ namespace ReupVirtualTwin.managers
             {
                 type = WebMessageType.loadObjectProcessUpdate,
                 payload = status
+            };
+            _webMessageSender.SendWebMessage(message);
+        }
+
+        private void ProcessObjectMaterialsChange(ChangeMaterialMessagePayload materialsChangedInfo)
+        {
+            WebMessage<ChangeMaterialMessagePayload> message = new()
+            {
+                type = WebMessageType.changeObjectsMaterialSuccess,
+                payload = materialsChangedInfo
             };
             _webMessageSender.SendWebMessage(message);
         }

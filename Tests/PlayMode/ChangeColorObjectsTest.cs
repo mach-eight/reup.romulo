@@ -3,10 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.TestTools;
 using System.Linq;
+using System;
+using NUnit.Framework;
+
+using ReupVirtualTwin.models;
+using ReupVirtualTwin.modelInterfaces;
+using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.managers;
 using ReupVirtualTwin.enums;
 using ReupVirtualTwin.managerInterfaces;
-using System;
+using ReupVirtualTwin.managers;
+using ReupVirtualTwin.enums;
+using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.models;
 using ReupVirtualTwin.modelInterfaces;
 using NUnit.Framework;
@@ -14,21 +22,31 @@ using NUnit.Framework;
 public class ChangeColorObjectsTest : MonoBehaviour
 {
     GameObject containerGameObject;
-    GameObject changeColorWrapper;
     ChangeColorManager changeColorManager;
     MockMediator mockMediator;
-    MockRegistry mockRegistry;
+
+    GameObject meshedParent;
+    GameObject unmeshedParent;
+    GameObject unmeshedChild;
+    GameObject meshedChild;
 
     [SetUp]
     public void SetUp()
     {
         containerGameObject = new GameObject("containerGameObject");
-        changeColorWrapper = new GameObject("changeColorWrapper");
         changeColorManager = containerGameObject.AddComponent<ChangeColorManager>();
         mockMediator = new MockMediator();
-        mockRegistry = new MockRegistry();
         changeColorManager.mediator = mockMediator;
-        changeColorManager.registry = mockRegistry;
+        CreateObjects();
+    }
+    [TearDown]
+    public void TearDown()
+    {
+        Destroy(containerGameObject);
+        Destroy(meshedParent);
+        Destroy(unmeshedParent);
+        Destroy(meshedChild);
+        Destroy(unmeshedChild);
     }
     public List<string> GetIDsArray(List<GameObject> gameObjects)
     {
@@ -41,80 +59,26 @@ public class ChangeColorObjectsTest : MonoBehaviour
     }
 
     [UnityTest]
-    public IEnumerator ShouldReturnArrayWithObjects()
+    public IEnumerator ShouldNotComplain_When_TryingToChangeColorOfUnmeshedObjects()
     {
-        List<GameObject> gameObjects = new List<GameObject>() { mockRegistry.parentObjects[0], mockRegistry.parentObjects[1] };
-        List<string> stringIDs = GetIDsArray(gameObjects);
-        Assert.IsNotEmpty(changeColorManager.GetObjectsToChangeColor(stringIDs));
-        yield return null;
-
-    }
-
-    [UnityTest]
-    public IEnumerator ShouldReturnArrayWithObjectsAndChildren()
-    {
-        List<GameObject> gameObjects = new List<GameObject>() { mockRegistry.parentObjects[0], mockRegistry.parentObjects[1] };
-        List<string> stringIDs = GetIDsArray(gameObjects);
-        List<GameObject> objectsToChangeColor = changeColorManager.GetObjectsToChangeColor(stringIDs);
-        int expectedCount = gameObjects.Count + gameObjects.Sum(obj => obj.transform.childCount);
-        Assert.AreEqual(expectedCount, objectsToChangeColor.Count);
-        yield return null;
-
-    }
-
-    [UnityTest]
-    public IEnumerator ShouldReturnEmptyListWhenNull()
-    {
-        List<string> nullArray = null;
-        Assert.IsEmpty(changeColorManager.GetObjectsToChangeColor(nullArray));
+        List<GameObject> gameObjects = new List<GameObject>() { unmeshedParent, unmeshedChild };
+        changeColorManager.ChangeObjectsColor(gameObjects, Color.blue);
         yield return null;
     }
 
-    [UnityTest]
-    public IEnumerator ShouldReturnEmptyListWhenEmpty()
-    {
-        List<string> emptyArray = new();
-        Assert.IsEmpty(changeColorManager.GetObjectsToChangeColor(emptyArray));
-        yield return null;
-    }
 
     [UnityTest]
-    public IEnumerator ShouldParseStringToColor()
+    public IEnumerator ShouldChangeColorObjects()
     {
-        Color? parsedColor = Utils.ParseColor("#0000FF");
-        Assert.IsInstanceOf<Color>(parsedColor);
-        yield return null;
-    }
-
-    [UnityTest]
-    public IEnumerator ShouldFailWhenStringIsNotHex()
-    {
-        Color? parsedColor = Utils.ParseColor("NotAnHex");
-        Assert.IsNull(parsedColor);
-        yield return null;
-    }
-
-    [UnityTest]
-    public IEnumerator ShouldChangeColorObjectsAndChildren()
-    {
-        List<GameObject> gameObjects = new List<GameObject>() { mockRegistry.parentObjects[0], mockRegistry.parentObjects[1] };
-        List<string> stringIDs = GetIDsArray(gameObjects);
-        List<GameObject> objectsToChangeColor = changeColorManager.GetObjectsToChangeColor(stringIDs);
-        changeColorManager.ChangeObjectsColor(objectsToChangeColor, Color.blue);
+        List<GameObject> gameObjects = new() { meshedParent, meshedChild, unmeshedParent, unmeshedChild};
+        changeColorManager.ChangeObjectsColor(gameObjects, Color.blue);
 
         yield return null;
 
-        Renderer renderer0 = mockRegistry.parent0.GetComponent<Renderer>();
-        Assert.AreEqual(renderer0.material.color, Color.blue);
+        Assert.AreEqual(Color.blue, meshedParent.GetComponent<Renderer>().material.color);
+        Assert.AreEqual(Color.blue, meshedChild.GetComponent<Renderer>().material.color);
 
-        Renderer renderer1 = mockRegistry.parent1.GetComponent<Renderer>();
-        Assert.AreEqual(renderer1.material.color, Color.blue);
-
-        Renderer renderer2 = mockRegistry.child0.GetComponent<Renderer>();
-        Assert.AreEqual(renderer2.material.color, Color.blue);
-
-        Renderer renderer3 = mockRegistry.child1.GetComponent<Renderer>();
-        Assert.AreEqual(renderer3.material.color, Color.blue);
+        yield return null;
     }
 
     private class MockMediator : IMediator
@@ -135,99 +99,24 @@ public class ChangeColorObjectsTest : MonoBehaviour
             throw new System.NotImplementedException();
         }
     }
-    public class MockRegistry : IRegistry
+
+    private void CreateObjects()
     {
-        public GameObject parent0 = new GameObject();
-        public GameObject parent1 = new GameObject();
-        public GameObject child0 = new GameObject();
-        public GameObject child1 = new GameObject();
-        public List<GameObject> parentObjects = new List<GameObject>();
-        public MockRegistry()
-        {
-            parent0.AddComponent<UniqueId>().GenerateId();
-            parent0.AddComponent<MeshRenderer>();
+        meshedParent = new GameObject();
+        unmeshedParent = new GameObject();
+        unmeshedChild = new GameObject();
+        meshedChild = new GameObject();
 
-            parent1.AddComponent<UniqueId>().GenerateId();
-            parent1.AddComponent<MeshRenderer>();
+        meshedParent.AddComponent<UniqueId>().GenerateId();
+        meshedParent.AddComponent<MeshRenderer>();
 
-            child0.AddComponent<UniqueId>().GenerateId();
-            child0.AddComponent<MeshRenderer>();
-            child0.transform.parent = parent0.transform;
+        unmeshedParent.AddComponent<UniqueId>().GenerateId();
 
-            child1.AddComponent<UniqueId>().GenerateId();
-            child1.AddComponent<MeshRenderer>();
-            child1.transform.parent = parent1.transform;
+        unmeshedChild.AddComponent<UniqueId>().GenerateId();
+        unmeshedChild.transform.parent = meshedParent.transform;
 
-            parentObjects.Add(parent0);
-            parentObjects.Add(parent1);
-        }
-
-        public void RemoveItem(GameObject item)
-        {
-            throw new System.NotImplementedException();
-        }
-        public int GetItemCount()
-        {
-            throw new System.NotImplementedException();
-        }
-        public void ClearRegistry()
-        {
-            throw new System.NotImplementedException();
-        }
-        public void AddItem(GameObject obj)
-        {
-            throw new NotImplementedException();
-        }
-        public GameObject GetItemWithGuid(string guid)
-        {
-            foreach (GameObject obj in parentObjects)
-            {
-                if (obj == null) continue;
-                var uniqueIdentifier = obj.GetComponent<UniqueId>();
-                if (uniqueIdentifier.isIdCorrect(guid))
-                {
-                    return obj;
-                }
-            }
-            return null;
-        }
-        public List<GameObject> GetItemsWithGuids(string[] guids)
-        {
-            var foundObjects = new List<GameObject>();
-            foreach (string guid in guids)
-            {
-                foundObjects.Add(GetItemWithGuid(guid));
-            }
-            return foundObjects;
-        }
-
-        public List<GameObject> GetItemTreesWithParentGuids(List<string> stringIDs)
-        {
-            List<GameObject> gameObjects = new List<GameObject>();
-            List<GameObject> allGameObjectsToEdit = new List<GameObject>();
-            if (stringIDs != null && stringIDs.Count != 0)
-            {
-                gameObjects = GetItemsWithGuids(stringIDs.ToArray());
-                gameObjects.RemoveAll(obj => obj == null);
-                allGameObjectsToEdit.AddRange(gameObjects);
-                foreach (GameObject obj in gameObjects)
-                {
-                    AddChildrenToList(obj.transform, allGameObjectsToEdit);
-                }
-
-            }
-            return allGameObjectsToEdit;
-        }
-        private void AddChildrenToList(Transform parent, List<GameObject> list)
-        {
-            foreach (Transform childTransform in parent)
-            {
-                if (childTransform.gameObject != null)
-                {
-                    list.Add(childTransform.gameObject);
-                    AddChildrenToList(childTransform, list);
-                }
-            }
-        }
+        meshedChild.AddComponent<UniqueId>().GenerateId();
+        meshedChild.AddComponent<MeshRenderer>();
+        meshedChild.transform.parent = unmeshedParent.transform;
     }
 }

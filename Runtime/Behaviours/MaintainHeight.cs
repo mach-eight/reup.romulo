@@ -2,6 +2,7 @@ using UnityEngine;
 
 using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwin.managerInterfaces;
+using ReupVirtualTwin.behaviourInterfaces;
 
 namespace ReupVirtualTwin.behaviours
 {

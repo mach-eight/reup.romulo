@@ -15,7 +15,7 @@ namespace ReupVirtualTwinTests.Registry
     {
         GameObject ObjectRegistryPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Assets/ScriptHolders/ObjectRegistry.prefab");
         GameObject objectRegistryGameObject;
-        IRegistry objectRegistry;
+        IObjectRegistry objectRegistry;
         GameObject parent;
         GameObject child0;
         GameObject child1;
@@ -26,7 +26,7 @@ namespace ReupVirtualTwinTests.Registry
         public void SetUp()
         {
             objectRegistryGameObject = (GameObject)PrefabUtility.InstantiatePrefab(ObjectRegistryPrefab);
-            objectRegistry = objectRegistryGameObject.GetComponent<IRegistry>();
+            objectRegistry = objectRegistryGameObject.GetComponent<IObjectRegistry>();
 
             idController = new IdController();
             parent = new GameObject("testObj1");
@@ -60,7 +60,7 @@ namespace ReupVirtualTwinTests.Registry
             yield return null;
             Assert.IsNotNull(registeredIdentifier0);
             string parentId = registeredIdentifier0.getId();
-            Assert.AreEqual(parent, objectRegistry.GetItemWithGuid(parentId));
+            Assert.AreEqual(parent, objectRegistry.GetObjectWithGuid(parentId));
             yield return null;
         }
 

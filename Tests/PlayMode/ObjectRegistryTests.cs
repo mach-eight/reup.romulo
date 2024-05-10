@@ -12,7 +12,7 @@ namespace ReupVirtualTwinTests.Registry
     {
         GameObject ObjectRegistryPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Assets/ScriptHolders/ObjectRegistry.prefab");
         GameObject objectRegistryGameObject;
-        IRegistry objectRegistry;
+        IObjectRegistry objectRegistry;
         GameObject testObj0;
         GameObject testObj1;
 
@@ -20,7 +20,7 @@ namespace ReupVirtualTwinTests.Registry
         public void SetUp()
         {
             objectRegistryGameObject = (GameObject)PrefabUtility.InstantiatePrefab(ObjectRegistryPrefab);
-            objectRegistry = objectRegistryGameObject.GetComponent<IRegistry>();
+            objectRegistry = objectRegistryGameObject.GetComponent<IObjectRegistry>();
         }
 
         [UnityTearDown]
@@ -39,10 +39,10 @@ namespace ReupVirtualTwinTests.Registry
             testObj0 = new GameObject("testObj");
             IUniqueIdentifier uniqueIdentifier = testObj0.AddComponent<UniqueId>();
             string id = uniqueIdentifier.GenerateId();
-            objectRegistry.AddItem(testObj0);
-            var retrievedObj = objectRegistry.GetItemWithGuid(id);
+            objectRegistry.AddObject(testObj0);
+            var retrievedObj = objectRegistry.GetObjectWithGuid(id);
             Assert.AreEqual(testObj0, retrievedObj);
-            Assert.AreEqual(1, objectRegistry.GetItemCount());
+            Assert.AreEqual(1, objectRegistry.GetObjectsCount());
             yield return null;
         }
 
@@ -50,7 +50,7 @@ namespace ReupVirtualTwinTests.Registry
         public IEnumerator ShouldNotAddAnItemWithNoIdentifierToRegistry()
         {
             testObj0 = new GameObject("testObj");
-            Assert.That(() => objectRegistry.AddItem(testObj0), Throws.Exception);
+            Assert.That(() => objectRegistry.AddObject(testObj0), Throws.Exception);
             yield return null;
         }
 
@@ -59,7 +59,7 @@ namespace ReupVirtualTwinTests.Registry
         {
             testObj0 = new GameObject("testObj");
             testObj0.AddComponent<UniqueId>();
-            Assert.That(() => objectRegistry.AddItem(testObj0), Throws.Exception);
+            Assert.That(() => objectRegistry.AddObject(testObj0), Throws.Exception);
             yield return null;
         }
 
@@ -69,18 +69,18 @@ namespace ReupVirtualTwinTests.Registry
             testObj0 = new GameObject("testObj0");
             IUniqueIdentifier uniqueIdentifier0 = testObj0.AddComponent<UniqueId>();
             string id0 = uniqueIdentifier0.GenerateId();
-            objectRegistry.AddItem(testObj0);
-            var retrievedObj0 = objectRegistry.GetItemWithGuid(id0);
+            objectRegistry.AddObject(testObj0);
+            var retrievedObj0 = objectRegistry.GetObjectWithGuid(id0);
             Assert.AreEqual(testObj0, retrievedObj0);
-            Assert.AreEqual(1, objectRegistry.GetItemCount());
+            Assert.AreEqual(1, objectRegistry.GetObjectsCount());
             yield return null;
             testObj1 = new GameObject("testObj1");
             IUniqueIdentifier uniqueIdentifier1 = testObj1.AddComponent<UniqueId>();
             string id1 = uniqueIdentifier1.GenerateId();
-            objectRegistry.AddItem(testObj1);
-            var retrievedObj1 = objectRegistry.GetItemWithGuid(id1);
+            objectRegistry.AddObject(testObj1);
+            var retrievedObj1 = objectRegistry.GetObjectWithGuid(id1);
             Assert.AreEqual(testObj1, retrievedObj1);
-            Assert.AreEqual(2, objectRegistry.GetItemCount());
+            Assert.AreEqual(2, objectRegistry.GetObjectsCount());
             yield return null;
         }
 
@@ -90,15 +90,15 @@ namespace ReupVirtualTwinTests.Registry
             testObj0 = new GameObject("testObj0");
             IUniqueIdentifier uniqueIdentifier0 = testObj0.AddComponent<UniqueId>();
             string id = uniqueIdentifier0.GenerateId();
-            objectRegistry.AddItem(testObj0);
-            var retrievedObj = objectRegistry.GetItemWithGuid(id);
+            objectRegistry.AddObject(testObj0);
+            var retrievedObj = objectRegistry.GetObjectWithGuid(id);
             Assert.AreEqual(testObj0, retrievedObj);
-            Assert.AreEqual(1, objectRegistry.GetItemCount());
+            Assert.AreEqual(1, objectRegistry.GetObjectsCount());
             yield return null;
 
-            objectRegistry.RemoveItem(testObj0);
-            Assert.AreEqual(0, objectRegistry.GetItemCount());
-            Assert.IsNull(objectRegistry.GetItemWithGuid(id));
+            objectRegistry.RemoveObject(testObj0);
+            Assert.AreEqual(0, objectRegistry.GetObjectsCount());
+            Assert.IsNull(objectRegistry.GetObjectWithGuid(id));
             yield return null;
         }
         [UnityTest]
@@ -107,15 +107,15 @@ namespace ReupVirtualTwinTests.Registry
             testObj0 = new GameObject("testObj0");
             IUniqueIdentifier uniqueIdentifier0 = testObj0.AddComponent<UniqueId>();
             uniqueIdentifier0.GenerateId();
-            objectRegistry.AddItem(testObj0);
+            objectRegistry.AddObject(testObj0);
             testObj1 = new GameObject("testObj1");
             IUniqueIdentifier uniqueIdentifier1 = testObj1.AddComponent<UniqueId>();
             uniqueIdentifier1.GenerateId();
-            objectRegistry.AddItem(testObj1);
-            Assert.AreEqual(2, objectRegistry.GetItemCount());
+            objectRegistry.AddObject(testObj1);
+            Assert.AreEqual(2, objectRegistry.GetObjectsCount());
             yield return null;
             objectRegistry.ClearRegistry();
-            Assert.AreEqual(0, objectRegistry.GetItemCount());
+            Assert.AreEqual(0, objectRegistry.GetObjectsCount());
             yield return null;
         }
         [UnityTest]
@@ -124,11 +124,11 @@ namespace ReupVirtualTwinTests.Registry
             testObj0 = new GameObject("testObj0");
             testObj0.AddComponent<UniqueId>().GenerateId();
             testObj1 = new GameObject("testObj1");
-            objectRegistry.AddItem(testObj0);
-            Assert.AreEqual(1, objectRegistry.GetItemCount());
+            objectRegistry.AddObject(testObj0);
+            Assert.AreEqual(1, objectRegistry.GetObjectsCount());
             yield return null;
-            objectRegistry.RemoveItem(testObj1);
-            Assert.AreEqual(1, objectRegistry.GetItemCount());
+            objectRegistry.RemoveObject(testObj1);
+            Assert.AreEqual(1, objectRegistry.GetObjectsCount());
             yield return null;
         }
 
