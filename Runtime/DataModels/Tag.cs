@@ -1,9 +1,11 @@
+using System;
+
 namespace ReupVirtualTwin.dataModels
 {
-    [System.Serializable]
-    public class ObjectTag
+    [Serializable]
+    public class Tag
     {
-        public int id;
+        public string id;
         public string name;
         public string description;
     }

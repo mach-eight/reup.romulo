@@ -15,27 +15,27 @@ namespace ReupVirtualTwin.webRequesters
             this.baseUrl = baseUrl;
         }
 
-        public Task<PaginationResult<ObjectTag>> GetTags()
+        public Task<PaginationResult<Tag>> GetTags()
         {
             return FetchTags();
         }
 
-        public Task<PaginationResult<ObjectTag>> GetTags(int page)
+        public Task<PaginationResult<Tag>> GetTags(int page)
         {
             return FetchTags($"page={page}");
         }
 
-        private async Task<PaginationResult<ObjectTag>> FetchTags(string queryParams="")
+        private async Task<PaginationResult<Tag>> FetchTags(string queryParams="")
         {
             string url = $"{baseUrl}tags/?{queryParams}";
             using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
             {
-                await webRequest.SendWebRequestTask();
-                if (webRequest.result != UnityWebRequest.Result.Success)
+                WebRequestResult result = await webRequest.SendWebRequestTask();
+                if (result.IsSuccess)
                 {
-                    throw new System.Exception($"Error: {webRequest.error} for url: {url}");
+                    return JsonUtility.FromJson<PaginationResult<Tag>>(webRequest.downloadHandler.text);
                 }
-                return JsonUtility.FromJson<PaginationResult<ObjectTag>>(webRequest.downloadHandler.text);
+                throw new System.Exception($"Error: {webRequest.error} for url: {url}");
             }
         }
     }

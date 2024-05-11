@@ -29,8 +29,8 @@ public class TagsApiManagerTest : MonoBehaviour
     [Test]
     public async Task GetInitialLoadOfTags()
     {
-        tagsApiManager.webRequester = tagsWebRequesterSpy;
-        List<ObjectTag> initialTags = await tagsApiManager.GetTags();
+        tagsApiManager.tagsApiConsumer = tagsWebRequesterSpy;
+        List<Tag> initialTags = await tagsApiManager.GetTags();
         Assert.AreEqual(3, initialTags.Count);
         Assert.AreEqual("tag0", initialTags[0].name);
         Assert.AreEqual("tag1", initialTags[1].name);
@@ -42,11 +42,11 @@ public class TagsApiManagerTest : MonoBehaviour
     [Test]
     public async Task ShouldGetAlreadyFetchedTagsWithoutFetchingMore()
     {
-        tagsApiManager.webRequester = tagsWebRequesterSpy;
+        tagsApiManager.tagsApiConsumer = tagsWebRequesterSpy;
         await tagsApiManager.GetTags();
         Assert.AreEqual(1, tagsWebRequesterSpy.timesFetched);
         Assert.AreEqual(1, tagsWebRequesterSpy.lastPageRequested);
-        List<ObjectTag> initialTags = await tagsApiManager.GetTags();
+        List<Tag> initialTags = await tagsApiManager.GetTags();
         Assert.AreEqual(3, initialTags.Count);
         Assert.AreEqual("tag0", initialTags[0].name);
         Assert.AreEqual("tag1", initialTags[1].name);
@@ -58,15 +58,15 @@ public class TagsApiManagerTest : MonoBehaviour
     [Test]
     public async Task GetSecondLoadOfTags()
     {
-        tagsApiManager.webRequester = tagsWebRequesterSpy;
-        List<ObjectTag> initialTags = await tagsApiManager.GetTags();
+        tagsApiManager.tagsApiConsumer = tagsWebRequesterSpy;
+        List<Tag> initialTags = await tagsApiManager.GetTags();
         Assert.AreEqual(3, initialTags.Count);
         Assert.AreEqual("tag0", initialTags[0].name);
         Assert.AreEqual("tag1", initialTags[1].name);
         Assert.AreEqual("tag2", initialTags[2].name);
         Assert.AreEqual(1, tagsWebRequesterSpy.lastPageRequested);
         Assert.AreEqual(1, tagsWebRequesterSpy.timesFetched);
-        List<ObjectTag> moreTags = await tagsApiManager.LoadMoreTags();
+        List<Tag> moreTags = await tagsApiManager.LoadMoreTags();
         Assert.AreEqual(6, moreTags.Count);
         Assert.AreEqual("tag0", moreTags[0].name);
         Assert.AreEqual("tag1", moreTags[1].name);
@@ -81,14 +81,14 @@ public class TagsApiManagerTest : MonoBehaviour
     [Test]
     public async Task GetThirdLoadOfTags()
     {
-        tagsApiManager.webRequester = tagsWebRequesterSpy;
+        tagsApiManager.tagsApiConsumer = tagsWebRequesterSpy;
         await tagsApiManager.GetTags();
         Assert.AreEqual(1, tagsWebRequesterSpy.lastPageRequested);
         Assert.AreEqual(1, tagsWebRequesterSpy.timesFetched);
         await tagsApiManager.LoadMoreTags();
         Assert.AreEqual(2, tagsWebRequesterSpy.lastPageRequested);
         Assert.AreEqual(2, tagsWebRequesterSpy.timesFetched);
-        List<ObjectTag> moreTags = await tagsApiManager.LoadMoreTags();
+        List<Tag> moreTags = await tagsApiManager.LoadMoreTags();
         Assert.AreEqual("tag0", moreTags[0].name);
         Assert.AreEqual("tag1", moreTags[1].name);
         Assert.AreEqual("tag2", moreTags[2].name);
@@ -104,7 +104,7 @@ public class TagsApiManagerTest : MonoBehaviour
     [Test]
     public async Task ShouldNotFetchApiIfNoMoreTagsAreAvailable()
     {
-        tagsApiManager.webRequester = tagsWebRequesterSpy;
+        tagsApiManager.tagsApiConsumer = tagsWebRequesterSpy;
         await tagsApiManager.LoadMoreTags();
         await tagsApiManager.LoadMoreTags();
         await tagsApiManager.LoadMoreTags();
@@ -119,7 +119,7 @@ public class TagsApiManagerTest : MonoBehaviour
     public async Task ShouldNotFetchMoreTagsIfNextIsEmptyString()
     {
         EmptyStringsTagsWebRequesterSpy emptyStringWebRequesterSpy = new EmptyStringsTagsWebRequesterSpy();
-        tagsApiManager.webRequester = emptyStringWebRequesterSpy;
+        tagsApiManager.tagsApiConsumer = emptyStringWebRequesterSpy;
         await tagsApiManager.LoadMoreTags();
         await tagsApiManager.LoadMoreTags();
         await tagsApiManager.LoadMoreTags();
@@ -130,7 +130,7 @@ public class TagsApiManagerTest : MonoBehaviour
     public async Task ShouldNotFetchIfPreviousResponseIsStillWaiting()
     {
         DelayTagsWebRequesterSpy delayTagsWebRequesterSpy = new DelayTagsWebRequesterSpy(1000);
-        tagsApiManager.webRequester = delayTagsWebRequesterSpy;
+        tagsApiManager.tagsApiConsumer = delayTagsWebRequesterSpy;
 
         await tagsApiManager.LoadMoreTags();
         Assert.AreEqual(1, delayTagsWebRequesterSpy.numberOfTimesFetched);

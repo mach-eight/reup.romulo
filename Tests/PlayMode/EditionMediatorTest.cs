@@ -189,12 +189,12 @@ public class EditionMediatorTest : MonoBehaviour
             new ObjectDTO
             {
                 id = "id0",
-                tags = new string[2]{"tag0", "tag1"},
+                tags = new Tag[2]{ new Tag() { id = "tag0"},  new Tag() { id = "tag1"} },
             },
             new ObjectDTO
             {
                 id = "id1",
-                tags = new string[2]{"tag2", "tag3"},
+                tags = new Tag[2]{ new Tag() { id = "tag2"},  new Tag() { id = "tag3"} },
             },
         };
         public ObjectDTO[] MapObjectsToDTO(List<GameObject> objs)

@@ -8,14 +8,13 @@ using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.webRequesters;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.dataModels;
-using ReupVirtualTwin.enums;
 
 [CustomEditor(typeof(ObjectTags))]
 public class ObjectTagsEditor : Editor
 {
 
-    private string searchTagText = "";
-    private SerializedProperty tagsProperty;
+    private ObjectTags objectTags;
+    private List<Tag> tagsProperty;
     private Vector2 scrollPosition;
 
     private const int TAG_BUTTON_HEIGHT = 18;
@@ -24,22 +23,22 @@ public class ObjectTagsEditor : Editor
     private const int BOTTOM_THRESHOLD_IN_PIXELS = 50;
 
     private ITagsApiManager tagsApiManager;
-    private List<string> allTags = new List<string>();
+    private List<Tag> allTags = new List<Tag>();
 
     private async void OnEnable()
     {
-        tagsProperty = serializedObject.FindProperty("tags");
         tagsApiManager = ObjectFinder.FindTagsApiManager();
-        if (tagsApiManager.webRequester == null)
+        if (tagsApiManager.tagsApiConsumer == null)
         {
-            tagsApiManager.webRequester = new TagsApiConsumer(ObjectTags.tagsUrl);
+            tagsApiManager.tagsApiConsumer = new TagsApiConsumer(ObjectTags.tagsUrl);
         }
         await GetTags();
     }
 
     public override async void OnInspectorGUI()
     {
-        serializedObject.Update();
+        objectTags = (ObjectTags)target;
+        tagsProperty = objectTags.tags;
         EditorGUILayout.PropertyField(serializedObject.FindProperty("m_Script"), true, new GUILayoutOption[0]);
         ShowResetTagsButton();
         ShowCurrentTags();
@@ -49,14 +48,17 @@ public class ObjectTagsEditor : Editor
         {
             await GetMoreTags();
         }
-        serializedObject.ApplyModifiedProperties();
+        if(GUI.changed)
+        {
+            EditorUtility.SetDirty(objectTags);
+        }
     }
 
     private async void ShowResetTagsButton()
     {
         if (GUILayout.Button("Re fetch tags"))
         {
-            allTags = new List<string>();
+            allTags = new List<Tag>();
             tagsApiManager.CleanTags();
             await GetTags();
         }
@@ -65,28 +67,29 @@ public class ObjectTagsEditor : Editor
     private void ShowCurrentTags()
     {
         EditorGUILayout.LabelField("Current tags:");
-        for (int i = tagsProperty.arraySize - 1; i >= 0; i--)
+        List<Tag> tempTags = new List<Tag>(tagsProperty);
+        tempTags.ForEach(tag =>
         {
             EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField(tagsProperty.GetArrayElementAtIndex(i).stringValue);
+            EditorGUILayout.LabelField(tag.name);
             if (GUILayout.Button("Remove"))
             {
-                tagsProperty.DeleteArrayElementAtIndex(i);
+                tagsProperty.Remove(tag);
             }
             EditorGUILayout.EndHorizontal();
-        }
+        });
     }
 
     private void ShowTagsToAdd()
     {
-        searchTagText = EditorGUILayout.TextField("Search for tag to add:", searchTagText);
+        tagsApiManager.searchTagText = EditorGUILayout.TextField("Search for tag to add:", tagsApiManager.searchTagText);
         EditorGUILayout.Space();
         int scrollHeight = MAX_BUTTONS_IN_SCROLL_VIEW * (TAG_BUTTON_HEIGHT + UNITY_BUTTON_MARGIN);
         scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, GUILayout.Height(scrollHeight));
         var filteredTags = FilterTags();
-        foreach (string tag in filteredTags)
+        foreach (Tag tag in filteredTags)
         {
-            if (GUILayout.Button(tag, GUILayout.Height(TAG_BUTTON_HEIGHT)))
+            if (GUILayout.Button(tag.name, GUILayout.Height(TAG_BUTTON_HEIGHT)))
             {
                 AddTagIfNotPresent(tag);
             }
@@ -94,9 +97,9 @@ public class ObjectTagsEditor : Editor
         EditorGUILayout.EndScrollView();
     }
 
-    private IEnumerable<string> FilterTags()
+    private IEnumerable<Tag> FilterTags()
     {
-        return allTags.Where(tag => !IsTagAlreadyPresent(tag) && TagContainsText(tag, searchTagText));
+        return allTags.Where(tag => !IsTagAlreadyPresent(tag) && TagContainsText(tag.name, tagsApiManager.searchTagText));
     }
 
     private async Task GetTags()
@@ -109,41 +112,27 @@ public class ObjectTagsEditor : Editor
         allTags = ApplyEditionTags(await tagsApiManager.LoadMoreTags());
     }
 
-    private List<string> ApplyEditionTags(List<ObjectTag> objectTags)
+    private List<Tag> ApplyEditionTags(List<Tag> tags)
     {
-        return new List<string>()
-        {
-            EditionTag.DELETABLE.ToString(),EditionTag.SELECTABLE.ToString(), EditionTag.TRANSFORMABLE.ToString()
-        }
-        .Concat(objectTags.Select(tag => tag.name)).ToList();
+        return EditionTagsCreator.CreateEditionTags().Concat(tags).ToList();
     }
 
-    private bool TagContainsText(string tag, string text)
+    private bool TagContainsText(string tagName, string text)
     {
-        return tag.ToLower().Contains(text.ToLower());
+        return tagName.ToLower().Contains(text.ToLower());
     }
 
-    private void AddTagIfNotPresent(string tag)
+    private void AddTagIfNotPresent(Tag tag)
     {
         if (!IsTagAlreadyPresent(tag))
         {
-            tagsProperty.arraySize++;
-            tagsProperty.GetArrayElementAtIndex(tagsProperty.arraySize - 1).stringValue = tag;
+            tagsProperty.Add(tag);
         }
     }
 
-    private bool IsTagAlreadyPresent(string tag)
+    private bool IsTagAlreadyPresent(Tag tag)
     {
-        bool isPresent = false;
-        for (int i = 0; i < tagsProperty.arraySize; i++)
-        {
-            if (tagsProperty.GetArrayElementAtIndex(i).stringValue == tag)
-            {
-                isPresent = true;
-                break;
-            }
-        }
-        return isPresent;
+        return tagsProperty.Exists(presentTag => presentTag.name == tag.name);
     }
 
     private bool IsUserAtTheBottomOfScrollView(int numberOfTags)

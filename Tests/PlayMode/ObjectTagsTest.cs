@@ -1,23 +1,25 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.TestTools;
 using NUnit.Framework;
 
 using ReupVirtualTwin.models;
 using ReupVirtualTwin.enums;
+using ReupVirtualTwin.dataModels;
 
 
 public class ObjectTagsTest : MonoBehaviour
 {
     GameObject containerGameObject;
     ObjectTags objectTags;
+    Tag tag;
 
     [SetUp]
     public void SetUp()
     {
         containerGameObject = new GameObject("container");
         objectTags = containerGameObject.AddComponent<ObjectTags>();
+        tag = new Tag() { id = "tag-id" };
     }
     [TearDown]
     public void TearDown()
@@ -33,7 +35,6 @@ public class ObjectTagsTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldAddOneTag()
     {
-        string tag = "a-tag";
         objectTags.AddTag(tag);
         Assert.AreEqual(1, objectTags.GetTags().Count);
         Assert.IsTrue(objectTags.GetTags().Contains(tag));
@@ -42,7 +43,6 @@ public class ObjectTagsTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldRemoveOneTag()
     {
-        string tag = "a-tag";
         objectTags.AddTag(tag);
         Assert.AreEqual(1, objectTags.GetTags().Count);
         Assert.IsTrue(objectTags.GetTags().Contains(tag));
