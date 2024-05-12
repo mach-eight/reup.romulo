@@ -6,7 +6,7 @@ namespace ReupVirtualTwin.dataModels
     public class ObjectDTO
     {
         public string id;
-        public string[] tags;
+        public Tag[] tags;
         public ObjectDTO[] children;
     }
 }

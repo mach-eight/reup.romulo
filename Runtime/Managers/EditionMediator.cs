@@ -1,13 +1,15 @@
-using ReupVirtualTwin.managerInterfaces;
 using UnityEngine;
-using ReupVirtualTwin.enums;
-using ReupVirtualTwin.behaviourInterfaces;
-using ReupVirtualTwin.dataModels;
 using System;
 using System.Collections.Generic;
 using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.controllerInterfaces;
+using ReupVirtualTwin.dataModels;
+using ReupVirtualTwin.managerInterfaces;
+using ReupVirtualTwin.enums;
+using ReupVirtualTwin.behaviourInterfaces;
+using ReupVirtualTwin.helpers;
+
 
 namespace ReupVirtualTwin.managers
 {
@@ -54,6 +56,8 @@ namespace ReupVirtualTwin.managers
 
         public string InvalidColorErrorMessage(string colorCode) => $"Invalid color code {colorCode}";
 
+        private IModelInfoManager _modelInfoManager;
+        public IModelInfoManager modelInfoManager { set => _modelInfoManager = value; }
 
         public void Notify(ReupEvent eventName)
         {
@@ -162,6 +166,9 @@ namespace ReupVirtualTwin.managers
                 case WebMessageType.changeObjectColor:
                     ChangeObjectsColor(message.payload);
                     break;
+                case WebMessageType.requestModelInfo:
+                    SendModelInfoMessage();
+                    break;
                 case WebMessageType.changeObjectsMaterial:
                     ChangeObjectsMaterial(message.payload);
                     break;
@@ -173,6 +180,12 @@ namespace ReupVirtualTwin.managers
                     });
                     break;
             }
+        }
+
+        public void SendModelInfoMessage()
+        {
+            WebMessage<ModelInfoMessage> message = _modelInfoManager.ObtainModelInfoMessage();
+            _webMessageSender.SendWebMessage(message);
         }
 
         private void ActivateTransformMode(TransformMode mode)

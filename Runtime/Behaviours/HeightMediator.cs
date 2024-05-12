@@ -1,9 +1,12 @@
+using System;
+using UnityEngine;
+
 using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.enums;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.managerInterfaces;
-using System;
-using UnityEngine;
+using ReupVirtualTwin.behaviourInterfaces;
+
 
 namespace ReupVirtualTwin.behaviours
 {

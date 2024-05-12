@@ -26,6 +26,8 @@ namespace ReupVirtualTwin.dependencyInjectors
         GameObject deleteObjectsManager;
         [SerializeField]
         GameObject changeColorManager;
+        [SerializeField]
+        GameObject modelInfoManager;
 
         private void Awake()
         {
@@ -37,6 +39,7 @@ namespace ReupVirtualTwin.dependencyInjectors
             editionMediator.transformObjectsManager = transformObjectsManager.GetComponent<ITransformObjectsManager>();
             editionMediator.deleteObjectsManager = deleteObjectsManager.GetComponent<IDeleteObjectsManager>();
             editionMediator.changeColorManager = changeColorManager.GetComponent<IChangeColorManager>();
+            editionMediator.modelInfoManager = modelInfoManager.GetComponent<IModelInfoManager>();
             IWebMessagesSender webMessageSender = GetComponent<IWebMessagesSender>();
             if (webMessageSender == null )
             {

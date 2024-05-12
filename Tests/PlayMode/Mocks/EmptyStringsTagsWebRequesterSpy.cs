@@ -8,20 +8,20 @@ namespace Tests.PlayMode.Mocks
     {
         public int numberOfTimesFetched = 0;
 
-        private PaginationResult<ObjectTag> returnPage = new PaginationResult<ObjectTag>()
+        private PaginationResult<Tag> returnPage = new PaginationResult<Tag>()
         {
             count = 0,
             next = "",
             previous = "",
-            results = new ObjectTag[0],
+            results = new Tag[0],
         };
-        public Task<PaginationResult<ObjectTag>> GetTags()
+        public Task<PaginationResult<Tag>> GetTags()
         {
             numberOfTimesFetched++;
             return Task.FromResult(returnPage);
         }
 
-        public Task<PaginationResult<ObjectTag>> GetTags(int page)
+        public Task<PaginationResult<Tag>> GetTags(int page)
         {
             numberOfTimesFetched++;
             return Task.FromResult(returnPage);
@@ -29,3 +29,4 @@ namespace Tests.PlayMode.Mocks
 
     }
 }
+

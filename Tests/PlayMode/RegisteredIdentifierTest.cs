@@ -5,7 +5,6 @@ using ReupVirtualTwin.modelInterfaces;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
-using ReupVirtualTwin.modelInterfaces;
 
 namespace ReupVirtualTwinTests.Registry
 {

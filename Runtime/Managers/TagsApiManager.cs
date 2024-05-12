@@ -9,16 +9,19 @@ namespace ReupVirtualTwin.managers
 {
     public class TagsApiManager : MonoBehaviour, ITagsApiManager
     {
-        public ITagsApiConsumer webRequester { get => _webRequester; set => _webRequester = value; }
+        public ITagsApiConsumer tagsApiConsumer { get => _tagsApiConsumer; set => _tagsApiConsumer = value; }
 
-        private ITagsApiConsumer _webRequester;
-        private List<ObjectTag> tags = new List<ObjectTag>();
+        public string searchTagText { get => _searchText; set => _searchText = value; }
+
+        public bool waitingForTagsResponse = false;
+
+        private string _searchText = "";
+        private ITagsApiConsumer _tagsApiConsumer;
+        private List<Tag> tags = new List<Tag>();
         private bool thereAreTagsToFetch = true;
-        private bool waitingForTagsResponse = false;
         private int currentPage = 0;
 
-
-        public async Task<List<ObjectTag>> GetTags()
+        public async Task<List<Tag>> GetTags()
         {
             if (currentPage == 0 && !waitingForTagsResponse)
             {
@@ -27,14 +30,14 @@ namespace ReupVirtualTwin.managers
             return tags;
         }
 
-        public async Task<List<ObjectTag>> LoadMoreTags()
+        public async Task<List<Tag>> LoadMoreTags()
         {
             if (!thereAreTagsToFetch || waitingForTagsResponse)
             {
                 return tags;
             }
             waitingForTagsResponse = true;
-            PaginationResult<ObjectTag> fetchedTagsResult = await _webRequester.GetTags(++currentPage);
+            PaginationResult<Tag> fetchedTagsResult = await _tagsApiConsumer.GetTags(++currentPage);
             CheckIfThereIsStillTagsToFetch(fetchedTagsResult);
             AddNewTags(fetchedTagsResult.results);
             waitingForTagsResponse = false;
@@ -44,22 +47,22 @@ namespace ReupVirtualTwin.managers
         public void CleanTags()
         {
             if (waitingForTagsResponse) return;
-            tags = new List<ObjectTag>();
+            tags = new List<Tag>();
             currentPage = 0;
             thereAreTagsToFetch = true;
             waitingForTagsResponse = false;
         }
 
-        private void CheckIfThereIsStillTagsToFetch(PaginationResult<ObjectTag> fetchedTagsResult) { 
+        private void CheckIfThereIsStillTagsToFetch(PaginationResult<Tag> fetchedTagsResult) {
             if (string.IsNullOrEmpty(fetchedTagsResult.next))
             {
                 thereAreTagsToFetch = false;
             }
         }
 
-        private List<ObjectTag> AddNewTags(ObjectTag[] newTags)
+        private List<Tag> AddNewTags(Tag[] newTags)
         {
-            tags = new List<ObjectTag>(tags);
+            tags = new List<Tag>(tags);
             tags.AddRange(newTags);
             return tags;
         }

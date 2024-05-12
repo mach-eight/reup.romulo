@@ -5,12 +5,13 @@ using UnityEngine;
 
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.controllerInterfaces;
+using ReupVirtualTwin.dataModels;
 
 namespace ReupVirtualTwin.controllers
 {
     public class TagsController : ITagsController
     {
-        public List<string> AddTagToObject(GameObject obj, string tag)
+        public List<Tag> AddTagToObject(GameObject obj, Tag tag)
         {
             IObjectTags objectTags = obj.GetComponent<IObjectTags>();
             if (objectTags == null)
@@ -20,28 +21,29 @@ namespace ReupVirtualTwin.controllers
             return objectTags.AddTag(tag);
         }
 
-        public bool DoesObjectHaveTag(GameObject obj, string tag)
+        public bool DoesObjectHaveTag(GameObject obj, string tagId)
         {
-            List<string> tags = GetTagsFromObject(obj);
+            List<Tag> tags = GetTagsFromObject(obj);
             if (tags == null) return false;
-            return tags.Contains(tag);
+            return tags.Select(tag => tag.id).Contains(tagId);
         }
+
 
         public string[] GetTagNamesFromObject(GameObject obj)
         {
-            List<string> tags = GetTagsFromObject(obj);
+            List<Tag> tags = GetTagsFromObject(obj);
             if (tags == null) return new string[0] { };
-            return tags.Select(tag => tag.ToString()).ToArray();
+            return tags.Select(tag => tag.name).ToArray();
         }
 
-        public List<string> GetTagsFromObject(GameObject obj)
+        public List<Tag> GetTagsFromObject(GameObject obj)
         {
             IObjectTags objectTags = obj.GetComponent<IObjectTags>();
-            if (objectTags == null) return new List<string>() { };
+            if (objectTags == null) return new List<Tag>() { };
             return objectTags.GetTags();
         }
 
-        public List<string> RemoveTagFromObject(GameObject obj, string tag)
+        public List<Tag> RemoveTagFromObject(GameObject obj, Tag tag)
         {
             IObjectTags objectTags = obj.GetComponent<IObjectTags>();
             if (objectTags == null)

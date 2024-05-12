@@ -1,30 +1,40 @@
 using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.controllers;
+using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.models;
 using UnityEngine;
 
 public static class StubObjectTreeCreator
 {
-    public static string parentId = "parent-id"; 
+    public static string parentId = "parent-id";
     public static string child0Id = "child0-id";
     public static string child1Id = "child1-id";
     public static string grandChild0Id = "grandChild0-id";
-    public static string[] parentTags = new string[3]
+
+    public static Tag[] parentTags = new Tag[3]
     {
-        "parent-tag-0", "parent-tag-1", "parent-tag-2"
+        new Tag(){id="parent-tag-0"},
+        new Tag(){id="parent-tag-1"},
+        new Tag(){id="parent-tag-2"},
     };
-    public static string[] child0Tags = new string[3]
+    public static Tag[] child0Tags = new Tag[3]
     {
-        "child0-tag-0", "child0-tag-1", "child0-tag-2"
+        new Tag(){id="child0-tag-0"},
+        new Tag(){id="child0-tag-1"},
+        new Tag(){id="child0-tag-2"},
     };
-    public static string[] child1Tags = new string[3]
+    public static Tag[] child1Tags = new Tag[3]
     {
-        "child1-tag-0", "child1-tag-1", "child1-tag-2"
+        new Tag(){id="child1-tag-0"},
+        new Tag(){id="child1-tag-1"},
+        new Tag(){id="child1-tag-2"},
     };
-    public static string[] grandChild0Tags = new string[3]
+    public static Tag[] grandChild0Tags = new Tag[3]
     {
-        "grandChild0-tag-0", "grandChild0-tag-1", "grandChild0-tag-2"
+        new Tag(){id="grandChild0-tag-0"},
+        new Tag(){id="grandChild0-tag-1"},
+        new Tag(){id="grandChild0-tag-2"},
     };
 
     /// <summary>
@@ -70,7 +80,7 @@ public static class StubObjectTreeCreator
         string objectId = $"object-{objectIndex}";
         GameObject obj = new(objectId);
         AssignIdToObject(obj, objectId);
-        AssignTagsToObject(obj, new string[1] { $"object-{objectIndex}-tag" });
+        AssignTagsToObject(obj, new Tag[1] { new Tag() { id =  $"object-{objectIndex}-tag", name = $"object-{objectIndex}-tag"  } });
         GameObject child = CreateDeepChainedLineOfObjects(depth - 1, objectIndex + 1);
         if (child != null)
         {
@@ -79,7 +89,7 @@ public static class StubObjectTreeCreator
         return obj;
     }
 
-    private static void AssignTagsToObject(GameObject obj, string[] tags)
+    private static void AssignTagsToObject(GameObject obj, Tag[] tags)
     {
         ITagSystemController tagSystemController = new TagSystemController();
         tagSystemController.AssignTagSystemToObject(obj);

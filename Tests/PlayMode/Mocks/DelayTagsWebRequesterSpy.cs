@@ -8,12 +8,12 @@ namespace Tests.PlayMode.Mocks
     {
         public int numberOfTimesFetched = 0;
         public int lastPageFetched;
-        private PaginationResult<ObjectTag> returnPage = new PaginationResult<ObjectTag>()
+        private PaginationResult<Tag> returnPage = new PaginationResult<Tag>()
         {
             count = 100000,
             next = "some-next-page-url",
             previous = "some-previous-page-url",
-            results = new ObjectTag[1] { new ObjectTag(){name = "tag0", id = 0, description="description0"}, },
+            results = new Tag[1] { new Tag(){name = "tag0", id = "0", description="description0"}, },
         };
         private int delay;
 
@@ -22,7 +22,7 @@ namespace Tests.PlayMode.Mocks
             this.delay = delay;
         }
 
-        public async Task<PaginationResult<ObjectTag>> GetTags()
+        public async Task<PaginationResult<Tag>> GetTags()
         {
             lastPageFetched = 1;
             numberOfTimesFetched++;
@@ -30,7 +30,7 @@ namespace Tests.PlayMode.Mocks
             return returnPage;
         }
 
-        public async Task<PaginationResult<ObjectTag>> GetTags(int page)
+        public async Task<PaginationResult<Tag>> GetTags(int page)
         {
             lastPageFetched = page;
             numberOfTimesFetched++;
@@ -39,3 +39,4 @@ namespace Tests.PlayMode.Mocks
         }
     }
 }
+
