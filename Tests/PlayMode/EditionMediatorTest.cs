@@ -2,17 +2,19 @@ using System.Collections;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
+using Tests.PlayMode.Mocks;
 using ReupVirtualTwin.managers;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.enums;
 using ReupVirtualTwin.behaviourInterfaces;
 using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.helperInterfaces;
-using System.Collections.Generic;
 using ReupVirtualTwin.controllerInterfaces;
-using Tests.PlayMode.Mocks;
-using System.Threading.Tasks;
+using ReupVirtualTwin.helpers;
 
 public class EditionMediatorTest : MonoBehaviour
 {
@@ -499,12 +501,39 @@ public class EditionMediatorTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldRequestChangeMaterialOfObjects_When_ReceivesChangeMaterialRequest()
     {
+
+        Dictionary<string, object> newMessage = new Dictionary<string, object>
+        {
+            { "type", WebMessageType.changeObjectsMaterial },
+            { "payload", new Dictionary<string, object>
+                {
+                    {"material_url", "material-url"},
+                    {"object_ids", new string[] { "id-0", "id-1" } },
+                }
+            }
+        };
+        //Debug.Log("newMessage");
+        var serializedMessage = JsonConvert.SerializeObject(newMessage);
+        //Debug.Log(serializedMessage);
+        var deserializedMessage = JsonConvert.DeserializeObject<Dictionary<string, object>>(serializedMessage);
+        //Debug.Log(deserializedMessage["type"]);
+        //Debug.Log(deserializedMessage["payload"]);
+        //Debug.Log("deserializedMessage[\"payload\"] is string");
+        //Debug.Log(deserializedMessage["payload"] is string);
+        //Debug.Log("deserializedMessage[\"payload\"] is Dictionary");
+        //Debug.Log(deserializedMessage["payload"] is Dictionary<string, object>);
+
+        Debug.Log(DataManipulationHelpers.GetValueAtPath(deserializedMessage, new string[] {"type"}));
+        Debug.Log("*******************");
+        Debug.Log(DataManipulationHelpers.GetValueAtPath(deserializedMessage, new string[] {"payload", "material_url"}));
+
         ChangeMaterialMessagePayload payload = new()
         {
             material_url = "material-url",
             object_ids = new string[] { "id-0", "id-1" },
         };
         string message = dummyJsonCreator.createWebMessage(WebMessageType.changeObjectsMaterial, payload);
+        Debug.Log(message);
         editionMediator.ReceiveWebMessage(message);
         yield return null;
         Assert.AreEqual(payload.material_url, changeMaterialControllerSpy.receivedMessagePayload.material_url);
