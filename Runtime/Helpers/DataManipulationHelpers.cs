@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using System.Linq;
 using UnityEngine;
+using System;
 
 namespace ReupVirtualTwin.helpers
 {
@@ -45,7 +46,7 @@ namespace ReupVirtualTwin.helpers
                 case JValue jValue:
                     return ConvertJValue(jValue);
                 default:
-                    return input;
+                    return ForceInt32AndFloatTypes(input);
             }
         }
 
@@ -79,6 +80,21 @@ namespace ReupVirtualTwin.helpers
                 default:
                     return jValue.Value;
             }
+        }
+
+        // Todo: We should not need this method here.
+        // We should be able to use the JsonConverter in NewtonSoft to handle this types by default.
+        private static object ForceInt32AndFloatTypes(object value)
+        {
+            if (value is Int64)
+            {
+                return Convert.ToInt32(value);
+            }
+            if (value is Double)
+            {
+                return Convert.ToSingle(value);
+            }
+            return value;
         }
     }
 }

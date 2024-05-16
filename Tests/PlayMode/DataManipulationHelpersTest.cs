@@ -1,11 +1,8 @@
 using Newtonsoft.Json;
 using NUnit.Framework;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReupVirtualTwin.helpers;
-using System;
-using UnityEngine.TestTools;
 
 namespace ReupVirtualTwinTests.helpers
 {
@@ -27,6 +24,7 @@ namespace ReupVirtualTwinTests.helpers
                 myFloat = 1.5f,
                 myFloatArray = new float[] { 1.5f, 2.5f, 3.5f },
                 myStringArray = new string[] { "1", "2", "3" },
+                myBool = true,
                 myNest = new()
                 {
                     myString = "2",
@@ -35,6 +33,7 @@ namespace ReupVirtualTwinTests.helpers
                     myFloat = 1.5f,
                     myFloatArray = new float[] { 1.5f, 2.5f, 3.5f },
                     myStringArray = new string[] { "1", "2", "3" },
+                    myBool = false,
                     myNestNest = new()
                     {
                         myString = "3",
@@ -43,6 +42,7 @@ namespace ReupVirtualTwinTests.helpers
                         myFloat = 1.5f,
                         myFloatArray = new float[] { 1.5f, 2.5f, 3.5f },
                         myStringArray = new string[] { "1", "2", "3" },
+                        myBool = true,
                     }
                 }
             };
@@ -60,6 +60,7 @@ namespace ReupVirtualTwinTests.helpers
             public int[] myIntArray;
             public float[] myFloatArray;
             public string[] myStringArray;
+            public bool myBool;
             public NestedDummyDataStructure myNest;
             public class NestedDummyDataStructure
             {
@@ -69,6 +70,7 @@ namespace ReupVirtualTwinTests.helpers
                 public int[] myIntArray;
                 public float[] myFloatArray;
                 public string[] myStringArray;
+                public bool myBool;
                 public NestedNestedDummyDataStructure myNestNest;
 
                 public class NestedNestedDummyDataStructure
@@ -79,6 +81,7 @@ namespace ReupVirtualTwinTests.helpers
                     public int[] myIntArray;
                     public float[] myFloatArray;
                     public string[] myStringArray;
+                    public bool myBool;
                 }
             }
 
@@ -93,15 +96,35 @@ namespace ReupVirtualTwinTests.helpers
             var myFloat = deserializedData.GetValueAtPath(new string[] { "myFloat" });
             var myFloatArray = deserializedData.GetValueAtPath(new string[] { "myFloatArray" });
             var myStringArray = deserializedData.GetValueAtPath(new string[] { "myStringArray" });
+            var myBool = deserializedData.GetValueAtPath(new string[] { "myBool" });
             Assert.IsTrue(myString is string);
-            Assert.IsTrue(myInt is Int64); // I don't understand why this is Int64 instead of normal Int32
+            Assert.IsTrue(myInt is int);
             Assert.IsTrue(myIntArray is int[]);
-            Assert.IsTrue(myFloat is double); // I don't understand why this is double instead of float
+            Assert.IsTrue(myFloat is float);
             Assert.IsTrue(myFloatArray is float[]);
             Assert.IsTrue(myStringArray is string[]);
-
+            Assert.IsTrue(myBool is bool);
         }
 
+        [Test]
+        public void ShouldReadNestedFieldAndReturnWithCorrectTypes()
+        {
+            var myString = deserializedData.GetValueAtPath(new string[] { "myNest", "myString" });
+            var myInt = deserializedData.GetValueAtPath(new string[] { "myNest", "myInt" });
+            var myIntArray = deserializedData.GetValueAtPath(new string[] { "myNest", "myIntArray" });
+            var myFloat = deserializedData.GetValueAtPath(new string[] { "myNest", "myFloat" });
+            var myFloatArray = deserializedData.GetValueAtPath(new string[] { "myNest", "myFloatArray" });
+            var myStringArray = deserializedData.GetValueAtPath(new string[] { "myNest", "myStringArray" });
+            var myBool = deserializedData.GetValueAtPath(new string[] { "myNest", "myBool" });
+
+            Assert.IsTrue(myString is string);
+            Assert.IsTrue(myInt is int);
+            Assert.IsTrue(myIntArray is int[]);
+            Assert.IsTrue(myFloat is float);
+            Assert.IsTrue(myFloatArray is float[]);
+            Assert.IsTrue(myStringArray is string[]);
+            Assert.IsTrue(myBool is bool);
+        }
 
         [Test]
         public void ShouldReadFieldFromDeserializedObject()
