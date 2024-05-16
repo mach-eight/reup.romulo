@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
+using System.Linq;
 using UnityEngine;
 
 namespace ReupVirtualTwin.helpers
@@ -35,24 +36,34 @@ namespace ReupVirtualTwin.helpers
         }
         private static object CastValue(object input)
         {
-            //Debug.Log("inside casst");
             switch (input)
             {
                 case JObject jObject:
-                    //Debug.Log("its an object");
                     return jObject.ToObject<Dictionary<string, object>>();
                 case JArray jArray:
-                    //Debug.Log("its an array");
-                    return jArray.ToObject<object[]>();
+                    return ConvertJArray(jArray);
                 case JValue jValue:
-                    //Debug.Log("its a value");
                     return ConvertJValue(jValue);
                 default:
-                    //Debug.Log("its a default");
                     return input;
             }
         }
 
+        private static object ConvertJArray(JArray jArray)
+        {
+            var isStringArray = jArray.All(x => x.Type == JTokenType.String);
+            var isIntArray = jArray.All(x => x.Type == JTokenType.Integer);
+            var isFloatArray = jArray.All(x => x.Type == JTokenType.Float);
+
+            if (isStringArray)
+                return jArray.ToObject<string[]>();
+            else if (isIntArray)
+                return jArray.ToObject<int[]>();
+            else if (isFloatArray)
+                return jArray.ToObject<float[]>();
+            else
+                return jArray.ToObject<object[]>();
+        }
         private static object ConvertJValue(JValue jValue)
         {
             switch (jValue.Type)
@@ -60,7 +71,7 @@ namespace ReupVirtualTwin.helpers
                 case JTokenType.String:
                     return jValue.Value<string>();
                 case JTokenType.Integer:
-                    return jValue.Value<int>();
+                    return (jValue.Value<int>());
                 case JTokenType.Float:
                     return jValue.Value<float>();
                 case JTokenType.Boolean:

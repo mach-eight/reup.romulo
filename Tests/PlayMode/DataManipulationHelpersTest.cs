@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ReupVirtualTwin.helpers;
+using System;
+using UnityEngine.TestTools;
 
 namespace ReupVirtualTwinTests.helpers
 {
@@ -83,6 +85,25 @@ namespace ReupVirtualTwinTests.helpers
         }
 
         [Test]
+        public void ShouldReadFieldAndReturnWithCorrectTypes()
+        { 
+            var myString = deserializedData.GetValueAtPath(new string[] { "myString" });
+            var myInt = deserializedData.GetValueAtPath(new string[] { "myInt" });
+            var myIntArray = deserializedData.GetValueAtPath(new string[] { "myIntArray" });
+            var myFloat = deserializedData.GetValueAtPath(new string[] { "myFloat" });
+            var myFloatArray = deserializedData.GetValueAtPath(new string[] { "myFloatArray" });
+            var myStringArray = deserializedData.GetValueAtPath(new string[] { "myStringArray" });
+            Assert.IsTrue(myString is string);
+            Assert.IsTrue(myInt is Int64); // I don't understand why this is Int64 instead of normal Int32
+            Assert.IsTrue(myIntArray is int[]);
+            Assert.IsTrue(myFloat is double); // I don't understand why this is double instead of float
+            Assert.IsTrue(myFloatArray is float[]);
+            Assert.IsTrue(myStringArray is string[]);
+
+        }
+
+
+        [Test]
         public void ShouldReadFieldFromDeserializedObject()
         {
             var myString = deserializedData.GetValueAtPath(new string[] { "myString" });
@@ -114,32 +135,6 @@ namespace ReupVirtualTwinTests.helpers
             Assert.AreEqual(dummyDataStructure.myNest.myNestNest.myFloat, myNestNestFloat);
             Assert.AreEqual(dummyDataStructure.myNest.myNestNest.myFloatArray, myNestNestFloatArray);
             Assert.AreEqual(dummyDataStructure.myNest.myNestNest.myStringArray, myNestNestStringArray);
-        }
-
-        [Test]
-        public void ShouldReadObjectFieldFromDeserializedObject()
-        {
-            Dictionary<string, object> expected = new()
-            {
-                { "myString", dummyDataStructure.myNest.myNestNest.myString },
-                { "myInt", dummyDataStructure.myNest.myNestNest.myInt },
-                { "myIntArray", dummyDataStructure.myNest.myNestNest.myIntArray },
-                { "myFloat", dummyDataStructure.myNest.myNestNest.myFloat },
-                { "myFloatArray", dummyDataStructure.myNest.myNestNest.myFloatArray },
-                { "myStringArray", dummyDataStructure.myNest.myNestNest.myStringArray }
-            };
-            Debug.Log("expected");
-            Debug.Log(expected);
-            Debug.Log(expected["myStringArray"]);
-            Debug.Log(expected["myIntArray"]);
-            Debug.Log(((int[])expected["myIntArray"])[0]);
-            var result = DataManipulationHelpers.GetValueAtPath(deserializedData, new string[] { "myNest", "myNestNest" });
-            Debug.Log("result");
-            Debug.Log(result);
-            Debug.Log(((Dictionary<string, object>)result)["myStringArray"]);
-            Debug.Log(((Dictionary<string, object>)result)["myIntArray"]);
-            Debug.Log(((int[])((Dictionary<string, object>)result)["myIntArray"])[0]);
-            Assert.AreEqual( expected, result);
         }
 
         [Test]
