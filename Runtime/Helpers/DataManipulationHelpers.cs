@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
+using UnityEngine;
 
 namespace ReupVirtualTwin.helpers
 {
@@ -32,34 +33,41 @@ namespace ReupVirtualTwin.helpers
             }
             return CastValue(current);
         }
-    private static object CastValue(object input)
-    {
-        switch (input)
+        private static object CastValue(object input)
         {
-            case JObject jObject:
-                return jObject.ToObject<Dictionary<string, object>>();
-            case JValue jValue:
-                return ConvertJValue(jValue);
-            default:
-                return input;
+            //Debug.Log("inside casst");
+            switch (input)
+            {
+                case JObject jObject:
+                    //Debug.Log("its an object");
+                    return jObject.ToObject<Dictionary<string, object>>();
+                case JArray jArray:
+                    //Debug.Log("its an array");
+                    return jArray.ToObject<object[]>();
+                case JValue jValue:
+                    //Debug.Log("its a value");
+                    return ConvertJValue(jValue);
+                default:
+                    //Debug.Log("its a default");
+                    return input;
+            }
         }
-    }
 
-private static object ConvertJValue(JValue jValue)
-    {
-        switch (jValue.Type)
+        private static object ConvertJValue(JValue jValue)
         {
-            case JTokenType.String:
-                return jValue.Value<string>();
-            case JTokenType.Integer:
-                return jValue.Value<int>();
-            case JTokenType.Float:
-                return jValue.Value<float>();
-            case JTokenType.Boolean:
-                return jValue.Value<bool>();
-            default:
-                return jValue.Value;
+            switch (jValue.Type)
+            {
+                case JTokenType.String:
+                    return jValue.Value<string>();
+                case JTokenType.Integer:
+                    return jValue.Value<int>();
+                case JTokenType.Float:
+                    return jValue.Value<float>();
+                case JTokenType.Boolean:
+                    return jValue.Value<bool>();
+                default:
+                    return jValue.Value;
+            }
         }
-    }
     }
 }
