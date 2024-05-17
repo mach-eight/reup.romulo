@@ -7,6 +7,7 @@ namespace ReupVirtualTwin.dataSchemas
     {
         public static JSchema BoolPayloadWebMessageSchema = new JSchema
         {
+            SchemaVersion = new System.Uri("http://json-schema.org/draft-07/schema#"),
             Type = JSchemaType.Object,
             Properties =
             {
@@ -19,6 +20,7 @@ namespace ReupVirtualTwin.dataSchemas
         };
         public static JSchema StringPayloadWebMessageSchema = new JSchema
         {
+            SchemaVersion = new System.Uri("http://json-schema.org/draft-07/schema#"),
             Type = JSchemaType.Object,
             Properties =
             {
@@ -35,6 +37,7 @@ namespace ReupVirtualTwin.dataSchemas
         };
         public static JSchema OnlyTypeWebMessageSchema = new JSchema
         {
+            SchemaVersion = new System.Uri("http://json-schema.org/draft-07/schema#"),
             Type = JSchemaType.Object,
             Properties =
             {
@@ -50,6 +53,7 @@ namespace ReupVirtualTwin.dataSchemas
         };
         public static JSchema RequestChangeMaterialSchema = new JSchema
         {
+            SchemaVersion = new System.Uri("http://json-schema.org/draft-07/schema#"),
             Type = JSchemaType.Object,
             Properties =
             {
