@@ -18,7 +18,6 @@ namespace ReupVirtualTwinTests.controllers
     {
         TextureDownloaderSpy textureDownloaderSpy;
         ChangeMaterialController controller;
-        //Dictionary<string, object> messagePayload;
         JObject messagePayload;
         SomeObjectWithMaterialRegistrySpy objectRegistry;
         MediatorSpy mediatorSpy;
@@ -30,11 +29,6 @@ namespace ReupVirtualTwinTests.controllers
             textureDownloaderSpy = new TextureDownloaderSpy();
             objectRegistry = new SomeObjectWithMaterialRegistrySpy();
             controller = new ChangeMaterialController(textureDownloaderSpy, objectRegistry, mediatorSpy);
-            //messagePayload = new Dictionary<string, object>()
-            //{
-            //    { "material_url", "material-url.com" },
-            //    { "object_ids", new string[] { "id-0", "id-1" } }
-            //};
             messagePayload = new JObject()
             {
                 { "material_url", "material-url.com" },
@@ -57,7 +51,6 @@ namespace ReupVirtualTwinTests.controllers
 
         private class MediatorSpy : IMediator
         {
-            //public Dictionary<string, object> changeMaterialInfo;
             public JObject changeMaterialInfo;
             public void Notify(ReupEvent eventName)
             {
@@ -66,12 +59,8 @@ namespace ReupVirtualTwinTests.controllers
 
             public void Notify<T>(ReupEvent eventName, T payload)
             {
-                Debug.Log("the notification");
-                Debug.Log(eventName);
-                Debug.Log(payload.GetType());
                 if (eventName == ReupEvent.objectMaterialChanged)
                 {
-                    Debug.Log("assigning thing");
                     changeMaterialInfo = payload as JObject;
                 }
             }

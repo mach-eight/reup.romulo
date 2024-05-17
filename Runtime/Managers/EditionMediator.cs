@@ -148,16 +148,9 @@ namespace ReupVirtualTwin.managers
 
         public void ReceiveWebMessage(string serializedWebMessage)
         {
-            Debug.Log("serializedWebMessage");
-            Debug.Log(serializedWebMessage);
-            //Dictionary<string, object> message = JsonConvert.DeserializeObject<Dictionary<string, object>>(serializedWebMessage);
             JObject message = JObject.Parse(serializedWebMessage);
-            //string type = (string) DataManipulationHelpers.GetValueAtPath(message, new string[] { "type" });
-            //object payload = DataManipulationHelpers.GetValueAtPath(message, new string[] { "payload" });
             string type = message["type"].ToString();
             object payload = message["payload"];
-            //Debug.Log("payload.GetType()");
-            //Debug.Log(payload.GetType());
             switch (type)
             {
                 case WebMessageType.setEditMode:
@@ -185,10 +178,7 @@ namespace ReupVirtualTwin.managers
                     SendModelInfoMessage();
                     break;
                 case WebMessageType.changeObjectsMaterial:
-                    Debug.Log("2");
-                    Debug.Log("payload.GetType()");
-                    Debug.Log(payload.GetType());
-                    ChangeObjectsMaterial((JObject)payload);
+                    _changeMaterialController.ChangeObjectMaterial((JObject)payload);
                     break;
                 default:
                     _webMessageSender.SendWebMessage(new WebMessage<string>
@@ -264,11 +254,6 @@ namespace ReupVirtualTwin.managers
             {
                 SendErrorMessage("The selection is empty");
             }
-        }
-
-        private void ChangeObjectsMaterial(JObject payload)
-        {
-            _changeMaterialController.ChangeObjectMaterial(payload);
         }
 
         private void ProccessEditMode(bool editMode)
