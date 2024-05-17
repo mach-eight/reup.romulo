@@ -133,7 +133,7 @@ namespace ReupVirtualTwin.managers
                             return;
                         }
                     }
-                    ProcessObjectMaterialsChange((Dictionary<string, object>)(object)payload);
+                    ProcessObjectMaterialsChange((JObject)(object)payload);
                     break;
                 case ReupEvent.error:
                     if (!(payload is string))
@@ -153,10 +153,10 @@ namespace ReupVirtualTwin.managers
             IList<string> errorMessages;
             if (!message.IsValid(RomuloExternalSchema.IncomingMessageSchema, out errorMessages))
             {
-                Debug.Log("Invalid message received");
+                Debug.LogWarning("Invalid message received");
                 for (int i = 0; i < errorMessages.Count; i++)
                 {
-                    Debug.Log(errorMessages[i]);
+                    Debug.LogWarning(errorMessages[i]);
                 }
                 _webMessageSender.SendWebMessage(new WebMessage<IList<string>>
                 {
@@ -196,13 +196,6 @@ namespace ReupVirtualTwin.managers
                 case WebMessageType.changeObjectsMaterial:
                     _changeMaterialController.ChangeObjectMaterial((JObject)payload);
                     break;
-                //default:
-                //    _webMessageSender.SendWebMessage(new WebMessage<string>
-                //    {
-                //        type = WebMessageType.error,
-                //        payload = $"message type:'{type}' not supported",
-                //    });
-                //    break;
             }
         }
 
@@ -409,9 +402,9 @@ namespace ReupVirtualTwin.managers
             _webMessageSender.SendWebMessage(message);
         }
 
-        private void ProcessObjectMaterialsChange(Dictionary<string, object> materialsChangedInfo)
+        private void ProcessObjectMaterialsChange(JObject materialsChangedInfo)
         {
-            WebMessage<Dictionary<string, object>> message = new()
+            WebMessage<JObject> message = new()
             {
                 type = WebMessageType.changeObjectsMaterialSuccess,
                 payload = materialsChangedInfo
