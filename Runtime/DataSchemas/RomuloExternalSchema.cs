@@ -5,13 +5,24 @@ namespace ReupVirtualTwin.dataSchemas
 {
     public class RomuloExternalSchema
     {
-        public static JSchema StringPayloadWebMessageSchema = new JSchema
+        public static JSchema BoolPayloadWebMessageSchema = new JSchema
         {
             Type = JSchemaType.Object,
             Properties =
             {
                 { "type", new JSchema { Enum = {
                     WebMessageType.setEditMode,
+                } } },
+                { "payload", new JSchema { Type = JSchemaType.Boolean } }
+            },
+            Required = { "type", }
+        };
+        public static JSchema StringPayloadWebMessageSchema = new JSchema
+        {
+            Type = JSchemaType.Object,
+            Properties =
+            {
+                { "type", new JSchema { Enum = {
                     WebMessageType.setSelectedObjects,
                     WebMessageType.deleteObjects,
                     WebMessageType.loadObject,
@@ -50,6 +61,7 @@ namespace ReupVirtualTwin.dataSchemas
         {
             OneOf =
             {
+                BoolPayloadWebMessageSchema,
                 OnlyTypeWebMessageSchema,
                 StringPayloadWebMessageSchema,
                 RequestChangeMaterialSchema

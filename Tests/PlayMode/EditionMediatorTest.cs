@@ -271,11 +271,13 @@ public class EditionMediatorTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldSetEditModeWhenReceiveRequest()
     {
-        string message = dummyJsonCreator.createWebMessage(WebMessageType.setEditMode, true);
+        string message = JObject.FromObject(new { type = WebMessageType.setEditMode, payload = true }).ToString();
+        Debug.Log("message");
+        Debug.Log(message);
         editionMediator.ReceiveWebMessage(message);
         Assert.AreEqual(mockEditModeManager.editMode, true);
         yield return null;
-        message = dummyJsonCreator.createWebMessage(WebMessageType.setEditMode, false);
+        message = JObject.FromObject(new { type = WebMessageType.setEditMode, payload = false }).ToString();
         editionMediator.ReceiveWebMessage(message);
         Assert.AreEqual(mockEditModeManager.editMode, false);
         yield return null;
@@ -547,7 +549,7 @@ public class EditionMediatorTest : MonoBehaviour
     }
 
     [UnityTest]
-    public IEnumerator ShouldReturnErrorMessageWith2Errors_when_ReceiveWrongRequestMaterialChangeMessage()
+    public IEnumerator ShouldReturnErrorMessage_when_ReceiveWrongRequestMaterialChangeMessage()
     {
         JObject message = new JObject(
             new JProperty("type", WebMessageType.changeObjectsMaterial),

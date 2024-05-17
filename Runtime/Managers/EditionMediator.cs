@@ -170,7 +170,7 @@ namespace ReupVirtualTwin.managers
             switch (type)
             {
                 case WebMessageType.setEditMode:
-                    _editModeManager.editMode = payload.ToString().ToLower() == "true";
+                    _editModeManager.editMode = ((JValue)payload).Value<bool>();
                     break;
                 case WebMessageType.activatePositionTransform:
                     ActivateTransformMode(TransformMode.PositionMode);
