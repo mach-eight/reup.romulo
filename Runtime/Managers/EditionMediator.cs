@@ -1,6 +1,8 @@
 using UnityEngine;
 using System;
+using Newtonsoft.Json;
 using System.Collections.Generic;
+
 using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.controllerInterfaces;
@@ -9,8 +11,8 @@ using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.enums;
 using ReupVirtualTwin.behaviourInterfaces;
 using ReupVirtualTwin.helpers;
-using Newtonsoft.Json;
-
+using ReupVirtualTwin.romuloEnvironment;
+using ReupVirtualTwin.dataSchemas;
 
 namespace ReupVirtualTwin.managers
 {
@@ -122,11 +124,14 @@ namespace ReupVirtualTwin.managers
                     ProcessLoadStatus((float)(object)payload);
                     break;
                 case ReupEvent.objectMaterialChanged:
-                    if (!(payload is ChangeMaterialMessagePayload))
+                    if (RomuloEnvironment.development)
                     {
-                        throw new ArgumentException($"Payload must be of type ChangeMaterialMessagePayload for {eventName} events", nameof(payload));
+                        if (!DataValidator.ValidateObjectToSchema(payload, InternalSchema.materialChangeInfo))
+                        {
+                            return;
+                        }
                     }
-                    ProcessObjectMaterialsChange((ChangeMaterialMessagePayload)(object)payload);
+                    ProcessObjectMaterialsChange((Dictionary<string, object>)(object)payload);
                     break;
                 case ReupEvent.error:
                     if (!(payload is string))
@@ -140,9 +145,10 @@ namespace ReupVirtualTwin.managers
             }
         }
 
-
         public void ReceiveWebMessage(string serializedWebMessage)
         {
+            Debug.Log("serializedWebMessage");
+            Debug.Log(serializedWebMessage);
             Dictionary<string, object> message = JsonConvert.DeserializeObject<Dictionary<string, object>>(serializedWebMessage);
             string type = (string) DataManipulationHelpers.GetValueAtPath(message, new string[] { "type" });
             object payload = DataManipulationHelpers.GetValueAtPath(message, new string[] { "payload" });
@@ -173,6 +179,9 @@ namespace ReupVirtualTwin.managers
                     SendModelInfoMessage();
                     break;
                 case WebMessageType.changeObjectsMaterial:
+                    Debug.Log("2");
+                    Debug.Log("payload.GetType()");
+                    Debug.Log(payload.GetType());
                     ChangeObjectsMaterial((Dictionary<string, object>)payload);
                     break;
                 default:
@@ -253,21 +262,7 @@ namespace ReupVirtualTwin.managers
 
         private void ChangeObjectsMaterial(Dictionary<string, object> payload)
         {
-            var materialUrl = payload.GetValueAtPath(new string[] { "material_url" });
-            var objectIds = payload.GetValueAtPath(new string[] { "object_ids" });
-            Debug.Log("materialUrl");
-            Debug.Log(materialUrl is string);
-            Debug.Log(materialUrl);
-            Debug.Log("objectIds");
-            Debug.Log(objectIds is string[]);
-            Debug.Log(objectIds is object[]);
-            Debug.Log(((object[])objectIds).Length);
-            ChangeMaterialMessagePayload a = new()
-            {
-                material_url = (string)materialUrl,
-                object_ids = (string[])objectIds,
-            };
-            _changeMaterialController.ChangeObjectMaterial(a);
+            _changeMaterialController.ChangeObjectMaterial(payload);
         }
 
         private void ProccessEditMode(bool editMode)
@@ -407,9 +402,9 @@ namespace ReupVirtualTwin.managers
             _webMessageSender.SendWebMessage(message);
         }
 
-        private void ProcessObjectMaterialsChange(ChangeMaterialMessagePayload materialsChangedInfo)
+        private void ProcessObjectMaterialsChange(Dictionary<string, object> materialsChangedInfo)
         {
-            WebMessage<ChangeMaterialMessagePayload> message = new()
+            WebMessage<Dictionary<string, object>> message = new()
             {
                 type = WebMessageType.changeObjectsMaterialSuccess,
                 payload = materialsChangedInfo

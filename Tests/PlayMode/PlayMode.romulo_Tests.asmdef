@@ -26,7 +26,8 @@
     "overrideReferences": true,
     "precompiledReferences": [
         "nunit.framework.dll",
-        "Newtonsoft.Json.dll"
+        "Newtonsoft.Json.dll",
+        "Newtonsoft.Json.Schema.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [

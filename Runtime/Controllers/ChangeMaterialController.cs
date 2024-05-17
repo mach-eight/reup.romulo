@@ -8,6 +8,10 @@ using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.enums;
+using ReupVirtualTwin.helpers;
+using System;
+using ReupVirtualTwin.romuloEnvironment;
+using ReupVirtualTwin.dataSchemas;
 
 namespace ReupVirtualTwin.controllers
 {
@@ -23,30 +27,62 @@ namespace ReupVirtualTwin.controllers
             this.mediator = mediator;
         }
 
-        public async Task ChangeObjectMaterial(ChangeMaterialMessagePayload message)
+        public async Task ChangeObjectMaterial(Dictionary<string, object> message)
         {
-            Texture2D texture = await textureDownloader.DownloadTextureFromUrl(message.material_url);
+            Debug.Log(message.GetType());
+            if (RomuloEnvironment.development)
+            {
+                Debug.Log("validating");
+                if (!DataValidator.ValidateObjectToSchema(message, InternalSchema.materialChangeInfo))
+                {
+                    Debug.Log("paila");
+                    return;
+                }
+                    Debug.Log("all good");
+            }
+            string materialUrl = message["material_url"].ToString();
+            Debug.Log("materialUrl");
+            Debug.Log(materialUrl);
+            string[] objectIds = message["object_ids"] as string[];
+            Debug.Log("objectIds");
+            Debug.Log(objectIds);
+            Debug.Log(objectIds.GetType());
+            for (int i = 0; i < objectIds.Length; i++)
+            {
+                Debug.Log(objectIds[i]);
+            }
+            Texture2D texture = await textureDownloader.DownloadTextureFromUrl(materialUrl);
             if (!texture)
             {
-                mediator.Notify(ReupEvent.error, $"Error downloading image from {message.material_url}");
+                Debug.Log("there is no texture");
+                mediator.Notify(ReupEvent.error, $"Error downloading image from {materialUrl}");
                 return;
             }
-            List<GameObject> objects = objectRegistry.GetObjectsWithGuids(message.object_ids);
+            Debug.Log("3");
+            List<GameObject> objects = objectRegistry.GetObjectsWithGuids(objectIds);
+            Debug.Log("4");
             Material newMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            Debug.Log("5");
             newMaterial.SetTexture("_BaseMap", texture);
+            Debug.Log("6");
             for (int i = 0; i < objects.Count; i++)
             {
+            Debug.Log("7");
                 if (objects[i].GetComponent<Renderer>() != null)
                 {
+            Debug.Log("8");
                     objects[i].GetComponent<Renderer>().material = newMaterial;
                 }
             }
-            ChangeMaterialMessagePayload materialChangeInfo = new()
+            Debug.Log("9");
+            //mediator.Notify(ReupEvent.objectMaterialChanged, message);
+            Dictionary<string, object> keyValuePairs = new Dictionary<string, object>
             {
-                object_ids = message.object_ids,
-                material_url = message.material_url,
+                { "material_urls", materialUrl },
+                { "object_id", objectIds }
             };
-            mediator.Notify(ReupEvent.objectMaterialChanged, materialChangeInfo);
+            Debug.Log("notifiying");
+            mediator.Notify(ReupEvent.objectMaterialChanged, keyValuePairs);
         }
     }
 }

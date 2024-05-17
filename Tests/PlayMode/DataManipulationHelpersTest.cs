@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
 using ReupVirtualTwin.helpers;
+using Newtonsoft.Json.Linq;
 
 namespace ReupVirtualTwinTests.helpers
 {
@@ -97,6 +98,7 @@ namespace ReupVirtualTwinTests.helpers
             var myFloatArray = deserializedData.GetValueAtPath(new string[] { "myFloatArray" });
             var myStringArray = deserializedData.GetValueAtPath(new string[] { "myStringArray" });
             var myBool = deserializedData.GetValueAtPath(new string[] { "myBool" });
+            var myNest = deserializedData.GetValueAtPath(new string[] { "myNest" });
             Assert.IsTrue(myString is string);
             Assert.IsTrue(myInt is int);
             Assert.IsTrue(myIntArray is int[]);
@@ -104,6 +106,7 @@ namespace ReupVirtualTwinTests.helpers
             Assert.IsTrue(myFloatArray is float[]);
             Assert.IsTrue(myStringArray is string[]);
             Assert.IsTrue(myBool is bool);
+            Assert.IsTrue(myNest is Dictionary<string, object>);
         }
 
         [Test]

@@ -68,8 +68,8 @@ public class EditionMediatorTest : MonoBehaviour
 
     private class ChangeMaterialControllerSpy : IChangeMaterialController
     {
-        public ChangeMaterialMessagePayload receivedMessagePayload;
-        public Task ChangeObjectMaterial(ChangeMaterialMessagePayload message)
+        public Dictionary<string, object> receivedMessagePayload;
+        public Task ChangeObjectMaterial(Dictionary<string, object> message)
         {
             receivedMessagePayload = message;
             return Task.CompletedTask;
@@ -517,15 +517,15 @@ public class EditionMediatorTest : MonoBehaviour
         yield return null;
         Assert.AreEqual(
             ((Dictionary<string,object>)message["payload"])["material_url"],
-            changeMaterialControllerSpy.receivedMessagePayload.material_url
+            changeMaterialControllerSpy.receivedMessagePayload["material_url"]
         );
         Assert.AreEqual(
             ((string[])((Dictionary<string,object>)message["payload"])["object_ids"])[0],
-            changeMaterialControllerSpy.receivedMessagePayload.object_ids[0]
+            ((string[])changeMaterialControllerSpy.receivedMessagePayload.GetValueAtPath(new string[] {"object_ids"}))[0]
         );
         Assert.AreEqual(
             ((string[])((Dictionary<string,object>)message["payload"])["object_ids"])[1],
-            changeMaterialControllerSpy.receivedMessagePayload.object_ids[1]
+            ((string[])changeMaterialControllerSpy.receivedMessagePayload.GetValueAtPath(new string[] {"object_ids"}))[1]
         );
     }
 
@@ -533,16 +533,16 @@ public class EditionMediatorTest : MonoBehaviour
     public IEnumerator ShouldSendSuccessMessage_When_NotifiedOfMaterialChangeSuccess()
     {
         string[] objectIds = new string[] { "id-0", "id-1" };
-        ChangeMaterialMessagePayload payload = new()
+        Dictionary<string, object> payload = new()
         {
-            material_url = "material-url",
-            object_ids = objectIds,
+            { "material_url", "material-url" },
+            { "object_ids", objectIds },
         };
         editionMediator.Notify(ReupEvent.objectMaterialChanged, payload);
-        WebMessage<ChangeMaterialMessagePayload> sentMessage = (WebMessage<ChangeMaterialMessagePayload>)mockWebMessageSender.sentMessage;
+        WebMessage<Dictionary<string, object>> sentMessage = (WebMessage<Dictionary<string, object>>)mockWebMessageSender.sentMessage;
         Assert.AreEqual(WebMessageType.changeObjectsMaterialSuccess, sentMessage.type);
-        Assert.AreEqual(payload.material_url, sentMessage.payload.material_url);
-        Assert.AreEqual(payload.object_ids, sentMessage.payload.object_ids);
+        Assert.AreEqual(payload["material_url"], sentMessage.payload["material_url"]);
+        Assert.AreEqual(payload["object_ids"], sentMessage.payload["object_ids"]);
         yield return null;
     }
 

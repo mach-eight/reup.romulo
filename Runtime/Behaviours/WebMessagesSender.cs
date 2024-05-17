@@ -2,6 +2,7 @@ using System.Runtime.InteropServices;
 using ReupVirtualTwin.dataModels;
 using UnityEngine;
 using ReupVirtualTwin.behaviourInterfaces;
+using Newtonsoft.Json;
 
 namespace ReupVirtualTwin.behaviours
 {
@@ -13,7 +14,7 @@ namespace ReupVirtualTwin.behaviours
 
         public void SendWebMessage<T>(WebMessage<T> webMessage)
         {
-            string serializedMessage = JsonUtility.ToJson(webMessage);
+            string serializedMessage = JsonConvert.SerializeObject(webMessage);
             try
             {
                 SendStringToWeb(serializedMessage);
