@@ -10,6 +10,7 @@ using ReupVirtualTwin.webRequestersInterfaces;
 using Tests.PlayMode.Mocks;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.enums;
+using Newtonsoft.Json.Linq;
 
 namespace ReupVirtualTwinTests.controllers
 {
@@ -17,7 +18,8 @@ namespace ReupVirtualTwinTests.controllers
     {
         TextureDownloaderSpy textureDownloaderSpy;
         ChangeMaterialController controller;
-        Dictionary<string, object> messagePayload;
+        //Dictionary<string, object> messagePayload;
+        JObject messagePayload;
         SomeObjectWithMaterialRegistrySpy objectRegistry;
         MediatorSpy mediatorSpy;
 
@@ -28,10 +30,15 @@ namespace ReupVirtualTwinTests.controllers
             textureDownloaderSpy = new TextureDownloaderSpy();
             objectRegistry = new SomeObjectWithMaterialRegistrySpy();
             controller = new ChangeMaterialController(textureDownloaderSpy, objectRegistry, mediatorSpy);
-            messagePayload = new Dictionary<string, object>()
+            //messagePayload = new Dictionary<string, object>()
+            //{
+            //    { "material_url", "material-url.com" },
+            //    { "object_ids", new string[] { "id-0", "id-1" } }
+            //};
+            messagePayload = new JObject()
             {
                 { "material_url", "material-url.com" },
-                { "object_ids", new string[] { "id-0", "id-1" } }
+                { "object_ids", new JArray(new string[] { "id-0", "id-1" }) }
             };
             yield return null;
         }
@@ -50,7 +57,8 @@ namespace ReupVirtualTwinTests.controllers
 
         private class MediatorSpy : IMediator
         {
-            public Dictionary<string, object> changeMaterialInfo;
+            //public Dictionary<string, object> changeMaterialInfo;
+            public JObject changeMaterialInfo;
             public void Notify(ReupEvent eventName)
             {
                 throw new NotImplementedException();
@@ -64,7 +72,7 @@ namespace ReupVirtualTwinTests.controllers
                 if (eventName == ReupEvent.objectMaterialChanged)
                 {
                     Debug.Log("assigning thing");
-                    changeMaterialInfo = payload as Dictionary<string, object>;
+                    changeMaterialInfo = payload as JObject;
                 }
             }
         }
@@ -89,12 +97,11 @@ namespace ReupVirtualTwinTests.controllers
             yield return null;
         }
 
-        [UnityTest]
-        public IEnumerator ShouldRequestDownloadMaterialTexture()
+        [Test]
+        public async Task ShouldRequestDownloadMaterialTexture()
         {
-            controller.ChangeObjectMaterial(messagePayload);
-            Assert.AreEqual(messagePayload["material_url"], textureDownloaderSpy.url);
-            yield return null;
+            await controller.ChangeObjectMaterial(messagePayload);
+            Assert.AreEqual(messagePayload["material_url"].ToString(), textureDownloaderSpy.url);
         }
 
         [Test]

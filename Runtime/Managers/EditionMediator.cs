@@ -13,6 +13,7 @@ using ReupVirtualTwin.behaviourInterfaces;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.romuloEnvironment;
 using ReupVirtualTwin.dataSchemas;
+using Newtonsoft.Json.Linq;
 
 namespace ReupVirtualTwin.managers
 {
@@ -262,7 +263,7 @@ namespace ReupVirtualTwin.managers
 
         private void ChangeObjectsMaterial(Dictionary<string, object> payload)
         {
-            _changeMaterialController.ChangeObjectMaterial(payload);
+            _changeMaterialController.ChangeObjectMaterial((JObject)(object)payload);
         }
 
         private void ProccessEditMode(bool editMode)

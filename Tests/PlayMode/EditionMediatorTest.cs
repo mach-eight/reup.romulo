@@ -15,6 +15,7 @@ using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.helpers;
+using Newtonsoft.Json.Linq;
 
 public class EditionMediatorTest : MonoBehaviour
 {
@@ -68,8 +69,8 @@ public class EditionMediatorTest : MonoBehaviour
 
     private class ChangeMaterialControllerSpy : IChangeMaterialController
     {
-        public Dictionary<string, object> receivedMessagePayload;
-        public Task ChangeObjectMaterial(Dictionary<string, object> message)
+        public JObject receivedMessagePayload;
+        public Task ChangeObjectMaterial(JObject message)
         {
             receivedMessagePayload = message;
             return Task.CompletedTask;
@@ -521,11 +522,12 @@ public class EditionMediatorTest : MonoBehaviour
         );
         Assert.AreEqual(
             ((string[])((Dictionary<string,object>)message["payload"])["object_ids"])[0],
-            ((string[])changeMaterialControllerSpy.receivedMessagePayload.GetValueAtPath(new string[] {"object_ids"}))[0]
+            changeMaterialControllerSpy.receivedMessagePayload["object_ids"][0]
         );
         Assert.AreEqual(
             ((string[])((Dictionary<string,object>)message["payload"])["object_ids"])[1],
-            ((string[])changeMaterialControllerSpy.receivedMessagePayload.GetValueAtPath(new string[] {"object_ids"}))[1]
+            //((string[])changeMaterialControllerSpy.receivedMessagePayload.GetValueAtPath(new string[] {"object_ids"}))[1]
+            changeMaterialControllerSpy.receivedMessagePayload["object_ids"][1]
         );
     }
 

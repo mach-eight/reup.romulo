@@ -12,6 +12,7 @@ using ReupVirtualTwin.helpers;
 using System;
 using ReupVirtualTwin.romuloEnvironment;
 using ReupVirtualTwin.dataSchemas;
+using Newtonsoft.Json.Linq;
 
 namespace ReupVirtualTwin.controllers
 {
@@ -27,7 +28,7 @@ namespace ReupVirtualTwin.controllers
             this.mediator = mediator;
         }
 
-        public async Task ChangeObjectMaterial(Dictionary<string, object> message)
+        public async Task ChangeObjectMaterial(JObject message)
         {
             Debug.Log(message.GetType());
             if (RomuloEnvironment.development)
@@ -43,7 +44,7 @@ namespace ReupVirtualTwin.controllers
             string materialUrl = message["material_url"].ToString();
             Debug.Log("materialUrl");
             Debug.Log(materialUrl);
-            string[] objectIds = message["object_ids"] as string[];
+            string[] objectIds = message["object_ids"].ToObject<string[]>();
             Debug.Log("objectIds");
             Debug.Log(objectIds);
             Debug.Log(objectIds.GetType());
@@ -75,14 +76,14 @@ namespace ReupVirtualTwin.controllers
                 }
             }
             Debug.Log("9");
-            //mediator.Notify(ReupEvent.objectMaterialChanged, message);
-            Dictionary<string, object> keyValuePairs = new Dictionary<string, object>
-            {
-                { "material_urls", materialUrl },
-                { "object_id", objectIds }
-            };
-            Debug.Log("notifiying");
-            mediator.Notify(ReupEvent.objectMaterialChanged, keyValuePairs);
+            mediator.Notify(ReupEvent.objectMaterialChanged, message);
+            //Dictionary<string, object> keyValuePairs = new Dictionary<string, object>
+            //{
+            //    { "material_urls", materialUrl },
+            //    { "object_id", objectIds }
+            //};
+            //Debug.Log("notifiying");
+            //mediator.Notify(ReupEvent.objectMaterialChanged, keyValuePairs);
         }
     }
 }
