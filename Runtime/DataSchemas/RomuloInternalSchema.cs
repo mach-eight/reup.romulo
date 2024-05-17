@@ -2,7 +2,7 @@ using Newtonsoft.Json.Schema;
 
 namespace ReupVirtualTwin.dataSchemas
 {
-    public class InternalSchema
+    public class RomuloInternalSchema
     {
         public static JSchema materialChangeInfo = JSchema.Parse(@"
         {

@@ -14,6 +14,7 @@ using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.romuloEnvironment;
 using ReupVirtualTwin.dataSchemas;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
 
 namespace ReupVirtualTwin.managers
 {
@@ -127,7 +128,7 @@ namespace ReupVirtualTwin.managers
                 case ReupEvent.objectMaterialChanged:
                     if (RomuloEnvironment.development)
                     {
-                        if (!DataValidator.ValidateObjectToSchema(payload, InternalSchema.materialChangeInfo))
+                        if (!DataValidator.ValidateObjectToSchema(payload, RomuloInternalSchema.materialChangeInfo))
                         {
                             return;
                         }
@@ -149,6 +150,21 @@ namespace ReupVirtualTwin.managers
         public void ReceiveWebMessage(string serializedWebMessage)
         {
             JObject message = JObject.Parse(serializedWebMessage);
+            IList<string> errorMessages;
+            if (!message.IsValid(RomuloExternalSchema.IncomingMessageSchema, out errorMessages))
+            {
+                Debug.Log("Invalid message received");
+                for (int i = 0; i < errorMessages.Count; i++)
+                {
+                    Debug.Log(errorMessages[i]);
+                }
+                _webMessageSender.SendWebMessage(new WebMessage<IList<string>>
+                {
+                    type = WebMessageType.error,
+                    payload = errorMessages
+                });
+                return;
+            }
             string type = message["type"].ToString();
             object payload = message["payload"];
             switch (type)
@@ -180,13 +196,13 @@ namespace ReupVirtualTwin.managers
                 case WebMessageType.changeObjectsMaterial:
                     _changeMaterialController.ChangeObjectMaterial((JObject)payload);
                     break;
-                default:
-                    _webMessageSender.SendWebMessage(new WebMessage<string>
-                    {
-                        type = WebMessageType.error,
-                        payload = $"message type:'{type}' not supported",
-                    });
-                    break;
+                //default:
+                //    _webMessageSender.SendWebMessage(new WebMessage<string>
+                //    {
+                //        type = WebMessageType.error,
+                //        payload = $"message type:'{type}' not supported",
+                //    });
+                //    break;
             }
         }
 

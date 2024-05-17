@@ -14,7 +14,6 @@ using ReupVirtualTwin.behaviourInterfaces;
 using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwin.controllerInterfaces;
-using ReupVirtualTwin.helpers;
 using Newtonsoft.Json.Linq;
 
 public class EditionMediatorTest : MonoBehaviour
@@ -544,6 +543,23 @@ public class EditionMediatorTest : MonoBehaviour
         Assert.AreEqual(WebMessageType.changeObjectsMaterialSuccess, sentMessage.type);
         Assert.AreEqual(payload["material_url"], sentMessage.payload["material_url"]);
         Assert.AreEqual(payload["object_ids"], sentMessage.payload["object_ids"]);
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldReturnErrorMessageWith2Errors_when_ReceiveWrongRequestMaterialChangeMessage()
+    {
+        JObject message = new JObject(
+            new JProperty("type", WebMessageType.changeObjectsMaterial),
+            new JProperty("payload", new JObject(
+                new JProperty("misspelled_material_url", "material-url"),
+                new JProperty("misspelled_object_ids", new JArray(new string[] { "id-0", "id-1" }))
+            ))
+        );
+        editionMediator.ReceiveWebMessage(message.ToString());
+        yield return null;
+        WebMessage<IList<string>> sentMessage = (WebMessage<IList<string>>)mockWebMessageSender.sentMessage;
+        Assert.AreEqual(WebMessageType.error, sentMessage.type);
         yield return null;
     }
 

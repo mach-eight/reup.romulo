@@ -30,7 +30,7 @@ namespace ReupVirtualTwin.controllers
         {
             if (RomuloEnvironment.development)
             {
-                if (!DataValidator.ValidateObjectToSchema(message, InternalSchema.materialChangeInfo))
+                if (!DataValidator.ValidateObjectToSchema(message, RomuloInternalSchema.materialChangeInfo))
                 {
                     return;
                 }

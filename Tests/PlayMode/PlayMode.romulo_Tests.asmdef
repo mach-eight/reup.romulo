@@ -18,7 +18,8 @@
         "reup.romulo.controllers",
         "reup.romulo.modelInterfaces",
         "reup.romulo.webRequestersInterfaces",
-        "reup.romulo.webRequesters"
+        "reup.romulo.webRequesters",
+        "reup.romulo.dataSchemas"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
