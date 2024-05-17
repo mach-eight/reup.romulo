@@ -518,16 +518,15 @@ public class EditionMediatorTest : MonoBehaviour
         yield return null;
         Assert.AreEqual(
             ((Dictionary<string,object>)message["payload"])["material_url"],
-            changeMaterialControllerSpy.receivedMessagePayload["material_url"]
+            changeMaterialControllerSpy.receivedMessagePayload["material_url"].ToString()
         );
         Assert.AreEqual(
             ((string[])((Dictionary<string,object>)message["payload"])["object_ids"])[0],
-            changeMaterialControllerSpy.receivedMessagePayload["object_ids"][0]
+            changeMaterialControllerSpy.receivedMessagePayload["object_ids"][0].ToString()
         );
         Assert.AreEqual(
             ((string[])((Dictionary<string,object>)message["payload"])["object_ids"])[1],
-            //((string[])changeMaterialControllerSpy.receivedMessagePayload.GetValueAtPath(new string[] {"object_ids"}))[1]
-            changeMaterialControllerSpy.receivedMessagePayload["object_ids"][1]
+            changeMaterialControllerSpy.receivedMessagePayload["object_ids"][1].ToString()
         );
     }
 

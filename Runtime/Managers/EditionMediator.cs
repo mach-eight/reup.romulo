@@ -150,13 +150,18 @@ namespace ReupVirtualTwin.managers
         {
             Debug.Log("serializedWebMessage");
             Debug.Log(serializedWebMessage);
-            Dictionary<string, object> message = JsonConvert.DeserializeObject<Dictionary<string, object>>(serializedWebMessage);
-            string type = (string) DataManipulationHelpers.GetValueAtPath(message, new string[] { "type" });
-            object payload = DataManipulationHelpers.GetValueAtPath(message, new string[] { "payload" });
+            //Dictionary<string, object> message = JsonConvert.DeserializeObject<Dictionary<string, object>>(serializedWebMessage);
+            JObject message = JObject.Parse(serializedWebMessage);
+            //string type = (string) DataManipulationHelpers.GetValueAtPath(message, new string[] { "type" });
+            //object payload = DataManipulationHelpers.GetValueAtPath(message, new string[] { "payload" });
+            string type = message["type"].ToString();
+            object payload = message["payload"];
+            //Debug.Log("payload.GetType()");
+            //Debug.Log(payload.GetType());
             switch (type)
             {
                 case WebMessageType.setEditMode:
-                    _editModeManager.editMode = ((string)payload).ToLower() == "true";
+                    _editModeManager.editMode = payload.ToString().ToLower() == "true";
                     break;
                 case WebMessageType.activatePositionTransform:
                     ActivateTransformMode(TransformMode.PositionMode);
@@ -168,13 +173,13 @@ namespace ReupVirtualTwin.managers
                     DeactivateTransformMode();
                     break;
                 case WebMessageType.deleteObjects:
-                    DeleteSelectedObjects((string)payload);
+                    DeleteSelectedObjects(payload.ToString());
                     break;
                 case WebMessageType.loadObject:
-                    LoadObject((string)payload);
+                    LoadObject(payload.ToString());
                     break;
                 case WebMessageType.changeObjectColor:
-                    ChangeObjectsColor((string)payload);
+                    ChangeObjectsColor(payload.ToString());
                     break;
                 case WebMessageType.requestModelInfo:
                     SendModelInfoMessage();
@@ -183,7 +188,7 @@ namespace ReupVirtualTwin.managers
                     Debug.Log("2");
                     Debug.Log("payload.GetType()");
                     Debug.Log(payload.GetType());
-                    ChangeObjectsMaterial((Dictionary<string, object>)payload);
+                    ChangeObjectsMaterial((JObject)payload);
                     break;
                 default:
                     _webMessageSender.SendWebMessage(new WebMessage<string>
@@ -261,9 +266,9 @@ namespace ReupVirtualTwin.managers
             }
         }
 
-        private void ChangeObjectsMaterial(Dictionary<string, object> payload)
+        private void ChangeObjectsMaterial(JObject payload)
         {
-            _changeMaterialController.ChangeObjectMaterial((JObject)(object)payload);
+            _changeMaterialController.ChangeObjectMaterial(payload);
         }
 
         private void ProccessEditMode(bool editMode)
