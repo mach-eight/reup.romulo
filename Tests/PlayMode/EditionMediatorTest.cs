@@ -2,17 +2,19 @@ using System.Collections;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
+using Tests.PlayMode.Mocks;
 using ReupVirtualTwin.managers;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.enums;
 using ReupVirtualTwin.behaviourInterfaces;
 using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.helperInterfaces;
-using System.Collections.Generic;
 using ReupVirtualTwin.controllerInterfaces;
-using Tests.PlayMode.Mocks;
-using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 public class EditionMediatorTest : MonoBehaviour
 {
@@ -66,8 +68,8 @@ public class EditionMediatorTest : MonoBehaviour
 
     private class ChangeMaterialControllerSpy : IChangeMaterialController
     {
-        public ChangeMaterialMessagePayload receivedMessagePayload;
-        public Task ChangeObjectMaterial(ChangeMaterialMessagePayload message)
+        public JObject receivedMessagePayload;
+        public Task ChangeObjectMaterial(JObject message)
         {
             receivedMessagePayload = message;
             return Task.CompletedTask;
@@ -269,11 +271,13 @@ public class EditionMediatorTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldSetEditModeWhenReceiveRequest()
     {
-        string message = dummyJsonCreator.createWebMessage(WebMessageType.setEditMode, true);
+        string message = JObject.FromObject(new { type = WebMessageType.setEditMode, payload = true }).ToString();
+        Debug.Log("message");
+        Debug.Log(message);
         editionMediator.ReceiveWebMessage(message);
         Assert.AreEqual(mockEditModeManager.editMode, true);
         yield return null;
-        message = dummyJsonCreator.createWebMessage(WebMessageType.setEditMode, false);
+        message = JObject.FromObject(new { type = WebMessageType.setEditMode, payload = false }).ToString();
         editionMediator.ReceiveWebMessage(message);
         Assert.AreEqual(mockEditModeManager.editMode, false);
         yield return null;
@@ -499,33 +503,63 @@ public class EditionMediatorTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldRequestChangeMaterialOfObjects_When_ReceivesChangeMaterialRequest()
     {
-        ChangeMaterialMessagePayload payload = new()
+
+        Dictionary<string, object> message = new Dictionary<string, object>
         {
-            material_url = "material-url",
-            object_ids = new string[] { "id-0", "id-1" },
+            { "type", WebMessageType.changeObjectsMaterial },
+            { "payload", new Dictionary<string, object>
+                {
+                    {"material_url", "material-url"},
+                    {"object_ids", new string[] { "id-0", "id-1" } },
+                }
+            }
         };
-        string message = dummyJsonCreator.createWebMessage(WebMessageType.changeObjectsMaterial, payload);
-        editionMediator.ReceiveWebMessage(message);
+        var serializedMessage = JsonConvert.SerializeObject(message);
+        editionMediator.ReceiveWebMessage(serializedMessage);
         yield return null;
-        Assert.AreEqual(payload.material_url, changeMaterialControllerSpy.receivedMessagePayload.material_url);
-        Assert.AreEqual(payload.object_ids[0], changeMaterialControllerSpy.receivedMessagePayload.object_ids[0]);
-        Assert.AreEqual(payload.object_ids[1], changeMaterialControllerSpy.receivedMessagePayload.object_ids[1]);
+        Assert.AreEqual(
+            ((Dictionary<string,object>)message["payload"])["material_url"],
+            changeMaterialControllerSpy.receivedMessagePayload["material_url"].ToString()
+        );
+        Assert.AreEqual(
+            ((string[])((Dictionary<string,object>)message["payload"])["object_ids"])[0],
+            changeMaterialControllerSpy.receivedMessagePayload["object_ids"][0].ToString()
+        );
+        Assert.AreEqual(
+            ((string[])((Dictionary<string,object>)message["payload"])["object_ids"])[1],
+            changeMaterialControllerSpy.receivedMessagePayload["object_ids"][1].ToString()
+        );
     }
 
     [UnityTest]
     public IEnumerator ShouldSendSuccessMessage_When_NotifiedOfMaterialChangeSuccess()
     {
-        string[] objectIds = new string[] { "id-0", "id-1" };
-        ChangeMaterialMessagePayload payload = new()
-        {
-            material_url = "material-url",
-            object_ids = objectIds,
-        };
-        editionMediator.Notify(ReupEvent.objectMaterialChanged, payload);
-        WebMessage<ChangeMaterialMessagePayload> sentMessage = (WebMessage<ChangeMaterialMessagePayload>)mockWebMessageSender.sentMessage;
+        JObject materialChangeInfo = new JObject(
+            new JProperty("material_url", "material-url"),
+            new JProperty("object_ids", new JArray(new string[] { "id-0", "id-1" }))
+        );
+        editionMediator.Notify(ReupEvent.objectMaterialChanged, materialChangeInfo);
+        WebMessage<JObject> sentMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessage;
         Assert.AreEqual(WebMessageType.changeObjectsMaterialSuccess, sentMessage.type);
-        Assert.AreEqual(payload.material_url, sentMessage.payload.material_url);
-        Assert.AreEqual(payload.object_ids, sentMessage.payload.object_ids);
+        Assert.AreEqual(materialChangeInfo["material_url"], sentMessage.payload["material_url"]);
+        Assert.AreEqual(materialChangeInfo["object_ids"], sentMessage.payload["object_ids"]);
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldReturnErrorMessage_when_ReceiveWrongRequestMaterialChangeMessage()
+    {
+        JObject message = new JObject(
+            new JProperty("type", WebMessageType.changeObjectsMaterial),
+            new JProperty("payload", new JObject(
+                new JProperty("misspelled_material_url", "material-url"),
+                new JProperty("misspelled_object_ids", new JArray(new string[] { "id-0", "id-1" }))
+            ))
+        );
+        editionMediator.ReceiveWebMessage(message.ToString());
+        yield return null;
+        WebMessage<IList<string>> sentMessage = (WebMessage<IList<string>>)mockWebMessageSender.sentMessage;
+        Assert.AreEqual(WebMessageType.error, sentMessage.type);
         yield return null;
     }
 

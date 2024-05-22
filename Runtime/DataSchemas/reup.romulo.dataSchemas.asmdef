@@ -1,0 +1,16 @@
+{
+    "name": "reup.romulo.dataSchemas",
+    "rootNamespace": "",
+    "references": [
+        "GUID:3e29f3cf4a29b6f4a8ecdaccb3a3a2ba"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
