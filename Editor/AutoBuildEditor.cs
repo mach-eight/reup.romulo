@@ -101,5 +101,7 @@ public class AutoBuildEditor : MonoBehaviour
     {
         idAssignerController.RemoveIdsFromTree(building);
         idAssignerController.AssignIdsToTree(building);
+        UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(building.scene);
+        UnityEditor.SceneManagement.EditorSceneManager.SaveScene(building.scene);
     }
 }
