@@ -14,7 +14,6 @@ using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.romuloEnvironment;
 using ReupVirtualTwin.dataSchemas;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Schema;
 
 namespace ReupVirtualTwin.managers
 {

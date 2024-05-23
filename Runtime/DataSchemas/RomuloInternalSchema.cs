@@ -1,9 +1,15 @@
-using Newtonsoft.Json.Schema;
+using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 
 namespace ReupVirtualTwin.dataSchemas
 {
     public class RomuloInternalSchema
     {
+        //public static Dictionary<string, object> materialChangeInfo = new()
+        //{
+        //    { "material_url", JTokenType.String },
+        //    { "object_ids",  }
+        //};
         //public static JSchema materialChangeInfo = new JSchema
         //{
         //    SchemaVersion = new System.Uri("http://json-schema.org/draft-07/schema#"),

@@ -7,52 +7,110 @@ namespace ReupVirtualTwin.helpers
 {
     public static class DataValidator
     {
-        public static bool ValidateObjectToSchemaKeys(object obj, Dictionary<string, object> schemaKeys)
+        public const string intType = "int";
+        public const string stringType = "string";
+        public const string objectType = "object";
+        public const string arrayType = "array";
+
+        public static bool ValidateObjectToSchema(object obj, JObject schemaKeys)
         {
             string json = JsonConvert.SerializeObject(obj);
-            return ValidateJsonStringTooSchemaKeys(json, schemaKeys);
+            return ValidateJsonStringToSchema(json, schemaKeys);
         }
 
-        public static bool ValidateJsonStringTooSchemaKeys(string json, Dictionary<string, object> schemaKeys)
+        public static bool ValidateJsonStringToSchema(string json, JObject schema)
         {
             JObject jsonObj = JObject.Parse(json);
+            return ValidateJTokenToSchema(jsonObj, schema);
+        }
 
-            foreach(KeyValuePair<string, object> pair in schemaKeys)
+        static private bool ValidateJTokenToSchema(JToken obj, JObject schema)
+        {
+            Debug.Log("expected type is " + schema["type"]);
+            switch ((string)schema["type"])
             {
-                if (jsonObj[pair.Key] == null)
+                case intType:
+                    Debug.Log("it was int type");
+                    return ValidateJObjectType(obj, JTokenType.Integer);
+                case stringType:
+                    Debug.Log("it was string type");
+                    return ValidateJObjectType(obj, JTokenType.String);
+                case objectType:
+                    Debug.Log("it was object type");
+                    return ValidateJObjectProperties((JObject)obj, (JObject)schema["properties"]);
+                default:
+                    Debug.LogWarning($"Type {schema["type"]} not supported");
+                    return false;
+            }
+        }
+        static private bool ValidateJObjectProperties(JObject obj, JObject properties)
+        {
+            foreach (KeyValuePair<string, JToken> pair in properties)
+            {
+                Debug.Log("validating key " + pair.Key);
+                if (obj[pair.Key] == null)
                 {
-                    Debug.LogWarning($"Key {pair.Key} not found in json object");
+                    Debug.LogWarning($"Key {pair.Key} not found in object");
                     return false;
                 }
-                if (!ValidateObjectKeyType(jsonObj, pair.Key, pair.Value)){
+                if (!ValidateJTokenToSchema(obj[pair.Key], (JObject)pair.Value))
+                {
+                    Debug.LogWarning($"Key {pair.Key} is not of type {pair.Value["type"]}");
                     return false;
                 }
             }
             return true;
         }
 
-        static private bool ValidateObjectKeyType(JObject obj, string key, object expectedValueType)
+        static private bool ValidateJObjectType(JToken obj, JTokenType expectedType)
         {
-                if (TypeIsNestedObject(expectedValueType))
-                {
-                    if (!ValidateJsonStringTooSchemaKeys(obj[key].ToString(), (Dictionary<string, object>)expectedValueType))
-                    {
-                        Debug.LogWarning($"Nested validation failed for value in {key}");
-                        return false;
-                    }
-                }
-                else if (obj[key].Type != (JTokenType)expectedValueType)
-                {
-                    Debug.LogWarning($"Key {key} is not of type {expectedValueType}");
-                    return false;
-                }
+            if (obj.Type != expectedType)
+            {
+                Debug.Log($"that was not a {expectedType}");
+                Debug.Log($"it was {obj.GetType()}");
+                Debug.Log($"it was {obj.Type}");
+                return false;
+            }
+            Debug.Log($"todo bien");
             return true;
         }
 
-        static private bool TypeIsNestedObject(object type)
-        {
-            return type is Dictionary<string, object>;
-        }
+
+        //static private bool ValidateObjectKeyType(JObject obj, string key, JObject schema)
+        //{
+        //    Debug.Log("validating key " + key + " with schema " + schema["type"]);
+        //    switch ((string)schema["type"])
+        //    {
+        //        case intType:
+        //            Debug.Log("it was int type");
+        //            return ValidateObjectKeyType(obj, key, JTokenType.Integer);
+        //        case stringType:
+        //            Debug.Log("it was string type");
+        //            return ValidateObjectKeyType(obj, key, JTokenType.String);
+        //        case objectType:
+        //            return ValidateJsonStringToSchema(
+        //                obj[key].ToString(),
+        //                (JObject)schema["properties"]);
+        //        default:
+        //            Debug.LogWarning($"Type {schema["type"]} not supported");
+        //            return false;
+        //    }
+        //}
+
+        //static private bool ValidateObjectKeyType(JObject obj, string key, JTokenType expectedType)
+        //{
+        //    if (obj[key].Type != expectedType)
+        //    {
+        //        Debug.LogWarning($"Key {key} is not of type {expectedType}");
+        //        return false;
+        //    }
+        //    return true;
+        //}
+
+        //static private bool TypeIsNestedObject(object type)
+        //{
+        //    return type is Dictionary<string, object>;
+        //}
 
         //public static bool ValidateObjectToSchema(object obj, JSchema schema)
         //{
