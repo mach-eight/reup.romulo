@@ -37,6 +37,7 @@ namespace ReupVirtualTwin.helpers
                 {
                     if (!ValidateJsonStringTooSchemaKeys(obj[key].ToString(), (Dictionary<string, object>)expectedValueType))
                     {
+                        Debug.LogWarning($"Nested validation failed for value in {key}");
                         return false;
                     }
                 }
