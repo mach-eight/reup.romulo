@@ -1,26 +1,21 @@
 using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
-using Newtonsoft.Json.Schema;
 
 using ReupVirtualTwin.helpers;
+using Newtonsoft.Json.Linq;
 
 
 public class DataValidatorTest : MonoBehaviour
 {
     [Test]
-    public void ValidateSchema_should_success()
+    public void ValidateStringAndIntSchema_should_success()
     {
-        JSchema schema = JSchema.Parse(@"
+        Dictionary<string, object> schemaKeys = new Dictionary<string, object>
         {
-          '$schema': 'http://json-schema.org/draft-07/schema#',
-          'type': 'object',
-          'properties': {
-            'name': {'type': 'string'},
-            'age': {'type': 'integer', 'minimum': 0}
-          },
-          'required': ['name', 'age']
-        }");
+            { "name", JTokenType.String },
+            { "age", JTokenType.Integer }
+        };
 
         Dictionary<string, object> data = new Dictionary<string, object>
         {
@@ -28,35 +23,58 @@ public class DataValidatorTest : MonoBehaviour
             { "age", 25 }
         };
 
-        bool result = DataValidator.ValidateObjectToSchema(data, schema);
+        bool result = DataValidator.ValidateObjectToSchemaKeys(data, schemaKeys);
 
         Assert.IsTrue(result);
 
     }
 
     [Test]
-    public void ValidateSchema_should_fail()
+    public void IfNotAnInt_should_fail()
     {
-        JSchema schema = JSchema.Parse(@"
+        Dictionary<string, object> schemaKeys = new Dictionary<string, object>
         {
-          '$schema': 'http://json-schema.org/draft-07/schema#',
-          'type': 'object',
-          'properties': {
-            'name': {'enum': ['juan', 'pedro']},
-            'age': {'type': 'integer', 'minimum': 30}
-          },
-          'required': ['name', 'age']
-        }");
+            { "name", JTokenType.String },
+            { "age", JTokenType.Integer }
+        };
 
         Dictionary<string, object> data = new Dictionary<string, object>
         {
             { "name", "John Doe" },
-            { "age", 25 }
+            { "age", "25" }
         };
 
-        bool result = DataValidator.ValidateObjectToSchema(data, schema);
+        bool result = DataValidator.ValidateObjectToSchemaKeys(data, schemaKeys);
 
         Assert.IsFalse(result);
+    }
 
+    [Test]
+    public void NestedValidation_should_success()
+    {
+        Dictionary<string, object> schemaKeys = new Dictionary<string, object>
+        {
+            { "name", JTokenType.String },
+            { "age", JTokenType.Integer },
+            { "nested_object", new Dictionary<string, object>()
+                {
+                    { "nested_name", JTokenType.String },
+                    { "nested_age", JTokenType.Integer }
+                }
+            }
+        };
+        Dictionary<string, object> nestedData = new Dictionary<string, object>
+        {
+            { "nested_name", "Jane Doe" },
+            { "nested_age", 30 }
+        };
+        Dictionary<string, object> data = new Dictionary<string, object>
+        {
+            { "name", "John Doe" },
+            { "age", 25 },
+            { "nested_object", nestedData }
+        };
+        bool result = DataValidator.ValidateObjectToSchemaKeys(data, schemaKeys);
+        Assert.IsTrue(result);
     }
 }

@@ -128,10 +128,10 @@ namespace ReupVirtualTwin.managers
                 case ReupEvent.objectMaterialChanged:
                     if (RomuloEnvironment.development)
                     {
-                        if (!DataValidator.ValidateObjectToSchema(payload, RomuloInternalSchema.materialChangeInfo))
-                        {
-                            return;
-                        }
+                        //if (!DataValidator.ValidateObjectToSchema(payload, RomuloInternalSchema.materialChangeInfo))
+                        //{
+                        //    return;
+                        //}
                     }
                     ProcessObjectMaterialsChange((JObject)(object)payload);
                     break;
@@ -151,20 +151,20 @@ namespace ReupVirtualTwin.managers
         {
             JObject message = JObject.Parse(serializedWebMessage);
             IList<string> errorMessages;
-            if (!message.IsValid(RomuloExternalSchema.IncomingMessageSchema, out errorMessages))
-            {
-                Debug.LogWarning("Invalid message received");
-                for (int i = 0; i < errorMessages.Count; i++)
-                {
-                    Debug.LogWarning(errorMessages[i]);
-                }
-                _webMessageSender.SendWebMessage(new WebMessage<IList<string>>
-                {
-                    type = WebMessageType.error,
-                    payload = errorMessages
-                });
-                return;
-            }
+            //if (!message.IsValid(RomuloExternalSchema.IncomingMessageSchema, out errorMessages))
+            //{
+            //    Debug.LogWarning("Invalid message received");
+            //    for (int i = 0; i < errorMessages.Count; i++)
+            //    {
+            //        Debug.LogWarning(errorMessages[i]);
+            //    }
+            //    _webMessageSender.SendWebMessage(new WebMessage<IList<string>>
+            //    {
+            //        type = WebMessageType.error,
+            //        payload = errorMessages
+            //    });
+            //    return;
+            //}
             string type = message["type"].ToString();
             object payload = message["payload"];
             switch (type)
