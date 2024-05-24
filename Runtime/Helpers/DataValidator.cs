@@ -50,17 +50,21 @@ namespace ReupVirtualTwin.helpers
                     return ValidateJObjectType(obj, JTokenType.String, key);
                 case objectType:
                     Debug.Log("it was object type");
-                    return ValidateJObjectProperties((JObject)obj, (JObject)schema["properties"]);
+                    return ValidateJObjectProperties(obj, (JObject)schema["properties"]);
                 case arrayType:
                     Debug.Log("it was an array type");
-                    return ValidateJArrayItems((JArray)obj, (JArray)schema["items"]);
+                    return ValidateJArrayItems(obj, (JArray)schema["items"]);
                 default:
                     Debug.LogWarning($"Type {schema["type"]} not supported");
                     return false;
             }
         }
-        static private bool ValidateJArrayItems(JArray array, JArray acceptedSchemas)
+        static private bool ValidateJArrayItems(JToken array, JArray acceptedSchemas)
         {
+            if (!ValidateJObjectType(array, JTokenType.Array))
+            {
+                return false;
+            }
             foreach (JToken item in array)
             {
                 Debug.Log("validating item " + item);
@@ -84,8 +88,12 @@ namespace ReupVirtualTwin.helpers
             }
             return false;
         }
-        static private bool ValidateJObjectProperties(JObject obj, JObject properties)
+        static private bool ValidateJObjectProperties(JToken obj, JObject properties)
         {
+            if (!ValidateJObjectType(obj, JTokenType.Object))
+            {
+                return false;
+            }
             foreach (KeyValuePair<string, JToken> pair in properties)
             {
                 Debug.Log("validating key " + pair.Key);

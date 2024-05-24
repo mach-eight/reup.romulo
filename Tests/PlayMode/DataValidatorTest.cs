@@ -238,4 +238,25 @@ public class DataValidatorTest : MonoBehaviour
         Assert.IsFalse(result);
     }
 
+    [Test]
+    public void ValidateArray_should_success()
+    {
+        bool result = DataValidator.ValidateObjectToSchema(new string[] { "1", "2" }, intStringArraySchema);
+        Assert.IsTrue(result);
+    }
+
+    [Test]
+    public void ValidateArray_should_fail_ifWrongTypeIsGiven()
+    {
+        bool result = DataValidator.ValidateObjectToSchema("this is not an array", intStringArraySchema);
+        Assert.IsFalse(result);
+    }
+
+    [Test]
+    public void ValidateObject_should_fail_ifWrongTypeIsGiven()
+    {
+        bool result = DataValidator.ValidateObjectToSchema("this is not an object", parentSchema);
+        Assert.IsFalse(result);
+    }
+
 }
