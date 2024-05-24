@@ -7,8 +7,13 @@ namespace ReupVirtualTwin.dataSchemas
     {
         public static readonly JObject materialChangeInfo = new()
         {
-            { "material_url", DataValidator.stringSchema },
-            { "object_ids",  DataValidator.CreateArraySchema(new JObject[] { DataValidator.stringSchema })}
+            { "type", DataValidator.objectType },
+            { "properties", new JObject
+                {
+                    { "material_url", DataValidator.stringSchema },
+                    { "object_ids",  DataValidator.CreateArraySchema(new JObject[] { DataValidator.stringSchema })}
+                }
+            },
         };
     }
 }

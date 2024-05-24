@@ -30,10 +30,10 @@ namespace ReupVirtualTwin.controllers
         {
             if (RomuloEnvironment.development)
             {
-                //if (!DataValidator.ValidateObjectToSchema(message, RomuloInternalSchema.materialChangeInfo))
-                //{
-                //    return;
-                //}
+                if (!DataValidator.ValidateObjectToSchema(message, RomuloInternalSchema.materialChangeInfo))
+                {
+                    return;
+                }
             }
             string materialUrl = message["material_url"].ToString();
             string[] objectIds = message["object_ids"].ToObject<string[]>();

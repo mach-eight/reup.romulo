@@ -22,15 +22,21 @@ namespace ReupVirtualTwin.helpers
         {
             public string type;
             public JObject schema;
-            public RegisteredMessage(string type, JObject schema)
+        }
+        public void RegisterMessage(string type)
+        {
+            registeredMessages.Add(new RegisteredMessage
             {
-                this.type = type;
-                this.schema = schema;
-            }
+                type = type,
+            });
         }
         public void RegisterMessage(string type, JObject schema)
         {
-            registeredMessages.Add(new RegisteredMessage(type, schema));
+            registeredMessages.Add(new RegisteredMessage
+            {
+                type = type,
+                schema = schema
+            });
         }
         public bool ValidateMessage(string message)
         {
@@ -46,6 +52,10 @@ namespace ReupVirtualTwin.helpers
             {
                 if (messageType == registeredMessage.type)
                 {
+                    if (registeredMessage.schema == null)
+                    {
+                        return true;
+                    }
                     return DataValidator.ValidateObjectToSchema(messageObject["payload"], registeredMessage.schema);
                 }
             }

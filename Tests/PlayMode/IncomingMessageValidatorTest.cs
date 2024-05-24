@@ -7,30 +7,35 @@ using Newtonsoft.Json.Linq;
 
 public class IncomingMessageValidatorTest
 {
+    string messageWithBoolPayloadType;
     IncomingMessageValidator incomingMessageValidator;
     JObject invalidTypeMessage;
-    JObject messageA;
-    JObject messageAPayloadSchema;
-    JObject messageAWithIncorrectPayload;
+    JObject messageWithBoolPayload;
+    JObject messageWithIncorrectPayload;
+    JObject messageWithNoPayload;
 
     [SetUp]
     public void SetUp()
     {
+        messageWithBoolPayloadType = "message with bool payload";
         incomingMessageValidator = new IncomingMessageValidator();
         invalidTypeMessage = new JObject
         {
             { "type", "this is an invalid type" },
         };
-        messageA = new JObject
+        messageWithBoolPayload = new JObject
         {
-            { "type", "messageA" },
+            { "type", messageWithBoolPayloadType },
             { "payload", true }
         };
-        messageAPayloadSchema = DataValidator.boolSchema;
-        messageAWithIncorrectPayload = new JObject
+        messageWithIncorrectPayload = new JObject
         {
-            { "type", "messageA" },
+            { "type", messageWithBoolPayloadType },
             { "payload", "I am supposed to be a boolean, not a string" }
+        };
+        messageWithNoPayload = new JObject
+        {
+            { "type", "message with no payload" }
         };
     }
 
@@ -43,7 +48,7 @@ public class IncomingMessageValidatorTest
     [Test]
     public void ShouldFailAllMessageByDefault()
     {
-        Assert.IsFalse(incomingMessageValidator.ValidateMessage(messageA.ToString()));
+        Assert.IsFalse(incomingMessageValidator.ValidateMessage(messageWithBoolPayload.ToString()));
     }
 
     [Test]
@@ -55,10 +60,18 @@ public class IncomingMessageValidatorTest
     [Test]
     public void ShouldApproveMessage_if_typeAndPayloadSchemaIsRegistered()
     {
-        incomingMessageValidator.RegisterMessage((string)messageA["type"], messageAPayloadSchema);
-        Assert.IsTrue(incomingMessageValidator.ValidateMessage(messageA.ToString()));
+        incomingMessageValidator.RegisterMessage((string)messageWithBoolPayload["type"], DataValidator.boolSchema);
+        Assert.IsTrue(incomingMessageValidator.ValidateMessage(messageWithBoolPayload.ToString()));
         Assert.IsFalse(incomingMessageValidator.ValidateMessage(invalidTypeMessage.ToString()));
-        Assert.IsFalse(incomingMessageValidator.ValidateMessage(messageAWithIncorrectPayload.ToString()));
+        Assert.IsFalse(incomingMessageValidator.ValidateMessage(messageWithIncorrectPayload.ToString()));
+    }
+
+    [Test]
+    public void ShouldApproveMessageWithNoPayload()
+    {
+        Assert.IsFalse(incomingMessageValidator.ValidateMessage(messageWithNoPayload.ToString()));
+        incomingMessageValidator.RegisterMessage((string)messageWithNoPayload["type"]);
+        Assert.IsTrue(incomingMessageValidator.ValidateMessage(messageWithNoPayload.ToString()));
     }
 
 }

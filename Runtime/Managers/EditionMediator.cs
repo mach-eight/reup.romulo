@@ -52,6 +52,8 @@ namespace ReupVirtualTwin.managers
             get => _changeMaterialController; set => _changeMaterialController = value;
         }
 
+        private IncomingMessageValidator incomingMessageValidator;
+
         [HideInInspector]
         public string noInsertObjectIdErrorMessage = "No object id provided for insertion";
         [HideInInspector]
@@ -62,11 +64,30 @@ namespace ReupVirtualTwin.managers
         private IModelInfoManager _modelInfoManager;
         public IModelInfoManager modelInfoManager { set => _modelInfoManager = value; }
 
+        private void Awake()
+        {
+            incomingMessageValidator = new IncomingMessageValidator();
+
+            incomingMessageValidator.RegisterMessage(WebMessageType.activatePositionTransform);
+            incomingMessageValidator.RegisterMessage(WebMessageType.activateRotationTransform);
+            incomingMessageValidator.RegisterMessage(WebMessageType.deactivateTransformMode);
+            incomingMessageValidator.RegisterMessage(WebMessageType.requestModelInfo);
+
+            incomingMessageValidator.RegisterMessage(WebMessageType.setEditMode, DataValidator.boolSchema);
+
+            incomingMessageValidator.RegisterMessage(WebMessageType.deleteObjects, DataValidator.stringSchema);
+            incomingMessageValidator.RegisterMessage(WebMessageType.loadObject, DataValidator.stringSchema);
+            incomingMessageValidator.RegisterMessage(WebMessageType.changeObjectColor, DataValidator.stringSchema);
+
+            incomingMessageValidator.RegisterMessage(WebMessageType.changeObjectsMaterial, RomuloExternalSchema.changeObjectMaterialPayloadSchema);
+
+        }
+
         public void Notify(ReupEvent eventName)
         {
             switch (eventName)
             {
-                case ReupEvent.transformHandleStartItneraction:
+                case ReupEvent.transformHandleStartInteraction:
                     _characterRotationManager.allowRotation = false;
                     break;
                 case ReupEvent.transformHandleStopInteraction:
@@ -124,6 +145,7 @@ namespace ReupVirtualTwin.managers
                     ProcessLoadStatus((float)(object)payload);
                     break;
                 case ReupEvent.objectMaterialChanged:
+                    Debug.Log("I was notified of material changed");
                     if (RomuloEnvironment.development)
                     {
                         if (!DataValidator.ValidateObjectToSchema(payload, RomuloInternalSchema.materialChangeInfo))
@@ -150,7 +172,7 @@ namespace ReupVirtualTwin.managers
             JObject message = JObject.Parse(serializedWebMessage);
             //IList<string> errorMessages;
             //if (!message.IsValid(RomuloExternalSchema.IncomingMessageSchema, out errorMessages))
-            if (!ValidateIncomingJsonMessage(serializedWebMessage))
+            if (!incomingMessageValidator.ValidateMessage(serializedWebMessage))
             {
                 _webMessageSender.SendWebMessage(new WebMessage<string>
                 {
@@ -193,10 +215,7 @@ namespace ReupVirtualTwin.managers
             }
         }
 
-        private bool ValidateIncomingJsonMessage(string json)
-        {
-            return false;
-        }
+
 
         public void SendModelInfoMessage()
         {
