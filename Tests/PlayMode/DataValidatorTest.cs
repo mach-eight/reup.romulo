@@ -8,9 +8,6 @@ using Newtonsoft.Json.Linq;
 
 public class DataValidatorTest : MonoBehaviour
 {
-    JObject stringSchema;
-    JObject intSchema;
-    JObject boolSchema;
     JObject parentSchema;
     JObject nestedObjectSchema;
     JObject nestedNestedObjectschema;
@@ -19,25 +16,13 @@ public class DataValidatorTest : MonoBehaviour
     [SetUp]
     public void Setup()
     {
-        stringSchema = new JObject
-        {
-            { "type", DataValidator.stringType }
-        };
-        intSchema = new JObject
-        {
-            { "type", DataValidator.intType }
-        };
-        boolSchema = new JObject
-        {
-            { "type", DataValidator.boolType }
-        };
         parentSchema = new JObject
         {
             { "type", DataValidator.objectType },
             { "properties", new JObject()
                 {
-                    { "a_string", stringSchema},
-                    { "an_int", intSchema},
+                    { "a_string", DataValidator.stringSchema},
+                    { "an_int", DataValidator.intSchema},
                 }
             }
         };
@@ -46,8 +31,8 @@ public class DataValidatorTest : MonoBehaviour
             { "type", DataValidator.objectType },
             { "properties",  new JObject
                 {
-                    { "nested_string", stringSchema },
-                    { "nested_int", intSchema},
+                    { "nested_string", DataValidator.stringSchema },
+                    { "nested_int", DataValidator.intSchema},
                 }
             }
         };
@@ -56,20 +41,12 @@ public class DataValidatorTest : MonoBehaviour
             { "type", DataValidator.objectType },
             { "properties",  new JObject
                 {
-                    { "nested_nested_string", stringSchema },
-                    { "nested_nested_int", intSchema }
+                    { "nested_nested_string", DataValidator.stringSchema },
+                    { "nested_nested_int", DataValidator.intSchema }
                 }
             }
         };
-        intStringArraySchema = new JObject
-        {
-            { "type", DataValidator.arrayType },
-            { "items", new JArray
-                (
-                    new JObject[] { intSchema, stringSchema }
-                )
-            }
-        };
+        intStringArraySchema = DataValidator.CreateArraySchema(new JObject[] { DataValidator.intSchema, DataValidator.stringSchema });
     }
 
     [Test]
@@ -213,28 +190,28 @@ public class DataValidatorTest : MonoBehaviour
     [Test]
     public void ValidateString_should_success()
     {
-        bool result = DataValidator.ValidateObjectToSchema("John Doe", stringSchema);
+        bool result = DataValidator.ValidateObjectToSchema("John Doe", DataValidator.stringSchema);
         Assert.IsTrue(result);
     }
 
     [Test]
     public void ValidateString_should_fail_ifWrongTypeIsGiven()
     {
-        bool result = DataValidator.ValidateObjectToSchema(5, stringSchema);
+        bool result = DataValidator.ValidateObjectToSchema(5, DataValidator.stringSchema);
         Assert.IsFalse(result);
     }
 
     [Test]
     public void ValidateBool_should_success()
     {
-        bool result = DataValidator.ValidateObjectToSchema(true, boolSchema);
+        bool result = DataValidator.ValidateObjectToSchema(true, DataValidator.boolSchema);
         Assert.IsTrue(result);
     }
 
     [Test]
     public void ValidateBool_should_fail_ifWrongTypeIsGiven()
     {
-        bool result = DataValidator.ValidateObjectToSchema("this is not a boolean", boolSchema);
+        bool result = DataValidator.ValidateObjectToSchema("this is not a boolean", DataValidator.boolSchema);
         Assert.IsFalse(result);
     }
 

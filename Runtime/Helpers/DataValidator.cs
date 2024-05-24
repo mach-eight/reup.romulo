@@ -13,7 +13,29 @@ namespace ReupVirtualTwin.helpers
         public const string objectType = "object";
         public const string arrayType = "array";
 
-        public static bool ValidateObjectToSchema(object obj, JObject schemaKeys)
+        public static readonly JObject stringSchema = new()
+        {
+            { "type", stringType }
+        };
+        public static readonly JObject intSchema = new JObject
+        {
+            { "type", intType }
+        };
+        public static readonly JObject boolSchema = new JObject
+        {
+            { "type", boolType }
+        };
+
+        static public JObject CreateArraySchema(JObject[] itemSchemas)
+        {
+            return new JObject
+            {
+                { "type", arrayType },
+                { "items", new JArray ( itemSchemas ) }
+            };
+        }
+
+        static public bool ValidateObjectToSchema(object obj, JObject schemaKeys)
         {
             string json = JsonConvert.SerializeObject(obj);
             Debug.Log("json");
@@ -21,7 +43,7 @@ namespace ReupVirtualTwin.helpers
             return ValidateJsonStringToSchema(json, schemaKeys);
         }
 
-        public static bool ValidateJsonStringToSchema(string json, JObject schema)
+        static public bool ValidateJsonStringToSchema(string json, JObject schema)
         {
             JToken jsonObj = JsonConvert.DeserializeObject<JToken>(json);
             Debug.Log("jsonObj");
