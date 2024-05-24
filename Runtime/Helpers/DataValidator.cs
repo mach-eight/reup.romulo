@@ -26,15 +26,20 @@ namespace ReupVirtualTwin.helpers
 
         static private bool ValidateJTokenToSchema(JToken obj, JObject schema)
         {
+            return ValidateJTokenToSchema(obj, schema, "");
+        }
+
+        static private bool ValidateJTokenToSchema(JToken obj, JObject schema, string key)
+        {
             Debug.Log("expected type is " + schema["type"]);
             switch ((string)schema["type"])
             {
                 case intType:
                     Debug.Log("it was int type");
-                    return ValidateJObjectType(obj, JTokenType.Integer);
+                    return ValidateJObjectType(obj, JTokenType.Integer, key);
                 case stringType:
                     Debug.Log("it was string type");
-                    return ValidateJObjectType(obj, JTokenType.String);
+                    return ValidateJObjectType(obj, JTokenType.String, key);
                 case objectType:
                     Debug.Log("it was object type");
                     return ValidateJObjectProperties((JObject)obj, (JObject)schema["properties"]);
@@ -53,25 +58,31 @@ namespace ReupVirtualTwin.helpers
                     Debug.LogWarning($"Key {pair.Key} not found in object");
                     return false;
                 }
-                if (!ValidateJTokenToSchema(obj[pair.Key], (JObject)pair.Value))
+                if (!ValidateJTokenToSchema(obj[pair.Key], (JObject)pair.Value, pair.Key))
                 {
-                    Debug.LogWarning($"Key {pair.Key} is not of type {pair.Value["type"]}");
+                    Debug.LogWarning($"Validation of key {pair.Key} failed");
                     return false;
                 }
             }
             return true;
         }
 
+        static private bool ValidateJObjectType(JToken obj, JTokenType expectedType, string key)
+        {
+            bool valid = ValidateJObjectType(obj, expectedType);
+            if (!valid && !string.IsNullOrEmpty(key))
+            {
+                Debug.LogWarning($"Key {key} is not of type {expectedType}");
+            }
+            return valid;
+        }
+
         static private bool ValidateJObjectType(JToken obj, JTokenType expectedType)
         {
             if (obj.Type != expectedType)
             {
-                Debug.Log($"that was not a {expectedType}");
-                Debug.Log($"it was {obj.GetType()}");
-                Debug.Log($"it was {obj.Type}");
                 return false;
             }
-            Debug.Log($"todo bien");
             return true;
         }
 
