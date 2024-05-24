@@ -7,6 +7,7 @@ namespace ReupVirtualTwin.helpers
 {
     public static class DataValidator
     {
+        public const string boolType = "bool";
         public const string intType = "int";
         public const string stringType = "string";
         public const string objectType = "object";
@@ -15,12 +16,16 @@ namespace ReupVirtualTwin.helpers
         public static bool ValidateObjectToSchema(object obj, JObject schemaKeys)
         {
             string json = JsonConvert.SerializeObject(obj);
+            Debug.Log("json");
+            Debug.Log(json);
             return ValidateJsonStringToSchema(json, schemaKeys);
         }
 
         public static bool ValidateJsonStringToSchema(string json, JObject schema)
         {
-            JObject jsonObj = JObject.Parse(json);
+            JToken jsonObj = JsonConvert.DeserializeObject<JToken>(json);
+            Debug.Log("jsonObj");
+            Debug.Log(jsonObj);
             return ValidateJTokenToSchema(jsonObj, schema);
         }
 
@@ -34,6 +39,9 @@ namespace ReupVirtualTwin.helpers
             Debug.Log("expected type is " + schema["type"]);
             switch ((string)schema["type"])
             {
+                case boolType:
+                    Debug.Log("it was bool type");
+                    return ValidateJObjectType(obj, JTokenType.Boolean, key);
                 case intType:
                     Debug.Log("it was int type");
                     return ValidateJObjectType(obj, JTokenType.Integer, key);
@@ -43,10 +51,38 @@ namespace ReupVirtualTwin.helpers
                 case objectType:
                     Debug.Log("it was object type");
                     return ValidateJObjectProperties((JObject)obj, (JObject)schema["properties"]);
+                case arrayType:
+                    Debug.Log("it was an array type");
+                    return ValidateJArrayItems((JArray)obj, (JArray)schema["items"]);
                 default:
                     Debug.LogWarning($"Type {schema["type"]} not supported");
                     return false;
             }
+        }
+        static private bool ValidateJArrayItems(JArray array, JArray acceptedSchemas)
+        {
+            foreach (JToken item in array)
+            {
+                Debug.Log("validating item " + item);
+                if (!ValidateJTokenToAnySchema(item, acceptedSchemas))
+                {
+                    Debug.LogWarning($"Validation of item {item} failed");
+                    return false;
+                }
+            }
+            return true;
+        }
+        static private bool ValidateJTokenToAnySchema(JToken obj, JArray schemas)
+        {
+            foreach (JToken schema in schemas)
+            {
+                if (ValidateJTokenToSchema(obj, (JObject)schema))
+                {
+                    Debug.Log($"{obj} item was {((JObject)schema)["type"]}");
+                    return true;
+                }
+            }
+            return false;
         }
         static private bool ValidateJObjectProperties(JObject obj, JObject properties)
         {
@@ -81,63 +117,11 @@ namespace ReupVirtualTwin.helpers
         {
             if (obj.Type != expectedType)
             {
+                Debug.LogWarning($"Expected object to be of type {expectedType}, but actual type is {obj.Type}");
                 return false;
             }
             return true;
         }
 
-
-        //static private bool ValidateObjectKeyType(JObject obj, string key, JObject schema)
-        //{
-        //    Debug.Log("validating key " + key + " with schema " + schema["type"]);
-        //    switch ((string)schema["type"])
-        //    {
-        //        case intType:
-        //            Debug.Log("it was int type");
-        //            return ValidateObjectKeyType(obj, key, JTokenType.Integer);
-        //        case stringType:
-        //            Debug.Log("it was string type");
-        //            return ValidateObjectKeyType(obj, key, JTokenType.String);
-        //        case objectType:
-        //            return ValidateJsonStringToSchema(
-        //                obj[key].ToString(),
-        //                (JObject)schema["properties"]);
-        //        default:
-        //            Debug.LogWarning($"Type {schema["type"]} not supported");
-        //            return false;
-        //    }
-        //}
-
-        //static private bool ValidateObjectKeyType(JObject obj, string key, JTokenType expectedType)
-        //{
-        //    if (obj[key].Type != expectedType)
-        //    {
-        //        Debug.LogWarning($"Key {key} is not of type {expectedType}");
-        //        return false;
-        //    }
-        //    return true;
-        //}
-
-        //static private bool TypeIsNestedObject(object type)
-        //{
-        //    return type is Dictionary<string, object>;
-        //}
-
-        //public static bool ValidateObjectToSchema(object obj, JSchema schema)
-        //{
-        //    string json = JsonConvert.SerializeObject(obj);
-        //    JObject deserializedObject = JObject.Parse(json);
-        //    IList<string> errors;
-        //    bool isValid = deserializedObject.IsValid(schema, out errors);
-        //    if (!isValid)
-        //    {
-        //        Debug.LogWarning("Validation errors:");
-        //        foreach (string error in errors)
-        //        {
-        //            Debug.LogWarning(error);
-        //        }
-        //    }
-        //    return isValid;
-        //}
     }
 }

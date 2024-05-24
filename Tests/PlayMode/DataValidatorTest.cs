@@ -8,29 +8,36 @@ using Newtonsoft.Json.Linq;
 
 public class DataValidatorTest : MonoBehaviour
 {
-
+    JObject stringSchema;
+    JObject intSchema;
+    JObject boolSchema;
     JObject parentSchema;
     JObject nestedObjectSchema;
     JObject nestedNestedObjectschema;
+    JObject intStringArraySchema;
 
     [SetUp]
     public void Setup()
     {
-        nestedNestedObjectschema = new JObject
+        stringSchema = new JObject
+        {
+            { "type", DataValidator.stringType }
+        };
+        intSchema = new JObject
+        {
+            { "type", DataValidator.intType }
+        };
+        boolSchema = new JObject
+        {
+            { "type", DataValidator.boolType }
+        };
+        parentSchema = new JObject
         {
             { "type", DataValidator.objectType },
-            { "properties",  new JObject
+            { "properties", new JObject()
                 {
-                    { "nested_nested_string", new JObject
-                        {
-                            { "type", DataValidator.stringType }
-                        }
-                    },
-                    { "nested_nested_int", new JObject
-                        {
-                            { "type", DataValidator.intType }
-                        }
-                    }
+                    { "a_string", stringSchema},
+                    { "an_int", intSchema},
                 }
             }
         };
@@ -39,35 +46,28 @@ public class DataValidatorTest : MonoBehaviour
             { "type", DataValidator.objectType },
             { "properties",  new JObject
                 {
-                    { "nested_string", new JObject
-                        {
-                            { "type", DataValidator.stringType }
-                        }
-                    },
-                    { "nested_int", new JObject
-                        {
-                            { "type", DataValidator.intType }
-                        }
-                    },
+                    { "nested_string", stringSchema },
+                    { "nested_int", intSchema},
                 }
             }
         };
-        parentSchema = new JObject
+        nestedNestedObjectschema = new JObject
         {
             { "type", DataValidator.objectType },
-            { "properties", new JObject()
+            { "properties",  new JObject
                 {
-                    { "a_string", new JObject
-                        {
-                            { "type", DataValidator.stringType }
-                        }
-                    },
-                    { "an_int", new JObject
-                        {
-                            { "type", DataValidator.intType }
-                        }
-                    },
+                    { "nested_nested_string", stringSchema },
+                    { "nested_nested_int", intSchema }
                 }
+            }
+        };
+        intStringArraySchema = new JObject
+        {
+            { "type", DataValidator.arrayType },
+            { "items", new JArray
+                (
+                    new JObject[] { intSchema, stringSchema }
+                )
             }
         };
     }
@@ -182,18 +182,60 @@ public class DataValidatorTest : MonoBehaviour
         Assert.IsFalse(result);
     }
 
-    //[Test]
-    //public void ShouldValidateArrays()
-    //{
-    //    Dictionary<string, object> schemaKeys = new Dictionary<string, object>
-    //    {
-    //        { "int_array", new Dictionary<string, object> 
-    //            {
-    //            { "s", JTokenType.Ara }
-    //            }
-    //        },
-    //        { "age", JTokenType.Integer },
-    //    };
-    //}
+    [Test]
+    public void ValidateArraysShould_success()
+    {
+        parentSchema["properties"]["nested_array"] = intStringArraySchema;
+        Dictionary<string, object> data = new Dictionary<string, object>()
+        {
+            { "a_string", "John Doe" },
+            { "an_int", 25 },
+            { "nested_array", new object[] { "Jane Doe", 1234, "this is a string int mixed array" } }
+        };
+        bool result = DataValidator.ValidateObjectToSchema(data, parentSchema);
+        Assert.IsTrue(result);
+    }
+
+    [Test]
+    public void ValidateArraysShould_fail_if_wrongItemsInArray()
+    {
+        parentSchema["properties"]["nested_array"] = intStringArraySchema;
+        Dictionary<string, object> data = new Dictionary<string, object>()
+        {
+            { "a_string", "John Doe" },
+            { "an_int", 25 },
+            { "nested_array", new object[] { "Jane Doe", 1234, "this is a string int mixed array", false } }
+        };
+        bool result = DataValidator.ValidateObjectToSchema(data, parentSchema);
+        Assert.IsFalse(result);
+    }
+
+    [Test]
+    public void ValidateString_should_success()
+    {
+        bool result = DataValidator.ValidateObjectToSchema("John Doe", stringSchema);
+        Assert.IsTrue(result);
+    }
+
+    [Test]
+    public void ValidateString_should_fail_ifWrongTypeIsGiven()
+    {
+        bool result = DataValidator.ValidateObjectToSchema(5, stringSchema);
+        Assert.IsFalse(result);
+    }
+
+    [Test]
+    public void ValidateBool_should_success()
+    {
+        bool result = DataValidator.ValidateObjectToSchema(true, boolSchema);
+        Assert.IsTrue(result);
+    }
+
+    [Test]
+    public void ValidateBool_should_fail_ifWrongTypeIsGiven()
+    {
+        bool result = DataValidator.ValidateObjectToSchema("this is not a boolean", boolSchema);
+        Assert.IsFalse(result);
+    }
 
 }
