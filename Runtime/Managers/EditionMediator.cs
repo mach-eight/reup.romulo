@@ -148,19 +148,14 @@ namespace ReupVirtualTwin.managers
         public void ReceiveWebMessage(string serializedWebMessage)
         {
             JObject message = JObject.Parse(serializedWebMessage);
-            IList<string> errorMessages;
+            //IList<string> errorMessages;
             //if (!message.IsValid(RomuloExternalSchema.IncomingMessageSchema, out errorMessages))
-            if (!message.IsValid(RomuloExternalSchema.IncomingMessageSchema, out errorMessages))
+            if (!ValidateIncomingJsonMessage(serializedWebMessage))
             {
-                Debug.LogWarning("Invalid message received");
-                for (int i = 0; i < errorMessages.Count; i++)
-                {
-                    Debug.LogWarning(errorMessages[i]);
-                }
-                _webMessageSender.SendWebMessage(new WebMessage<IList<string>>
+                _webMessageSender.SendWebMessage(new WebMessage<string>
                 {
                     type = WebMessageType.error,
-                    payload = errorMessages
+                    payload = $"Invalid message received at {this.GetType()}"
                 });
                 return;
             }
@@ -196,6 +191,11 @@ namespace ReupVirtualTwin.managers
                     _changeMaterialController.ChangeObjectMaterial((JObject)payload);
                     break;
             }
+        }
+
+        private bool ValidateIncomingJsonMessage(string json)
+        {
+            return false;
         }
 
         public void SendModelInfoMessage()
@@ -420,6 +420,7 @@ namespace ReupVirtualTwin.managers
                 payload = message,
             });
         }
+
     }
 
 }

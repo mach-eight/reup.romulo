@@ -558,9 +558,23 @@ public class EditionMediatorTest : MonoBehaviour
         );
         editionMediator.ReceiveWebMessage(message.ToString());
         yield return null;
-        WebMessage<IList<string>> sentMessage = (WebMessage<IList<string>>)mockWebMessageSender.sentMessage;
+        WebMessage<string> sentMessage = (WebMessage<string>)mockWebMessageSender.sentMessage;
         Assert.AreEqual(WebMessageType.error, sentMessage.type);
         yield return null;
     }
 
+    [UnityTest]
+    public IEnumerator ShouldReturnErrorMessage_when_receiveInvalidTypeInMessage()
+    {
+        JObject message = new JObject
+        {
+            { "type", "invalid-type" }
+        };
+        editionMediator.ReceiveWebMessage(message.ToString());
+        yield return null;
+        WebMessage<string> sentMessage = (WebMessage<string>)mockWebMessageSender.sentMessage;
+        Debug.Log(sentMessage.payload);
+        Assert.AreEqual(WebMessageType.error, sentMessage.type);
+        yield return null;
+    }
 }

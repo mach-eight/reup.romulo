@@ -6,7 +6,7 @@ using ReupVirtualTwin.helpers;
 using Newtonsoft.Json.Linq;
 
 
-public class DataValidatorTest : MonoBehaviour
+public class DataValidatorTest
 {
     JObject parentSchema;
     JObject nestedObjectSchema;
