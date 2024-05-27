@@ -2,32 +2,33 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using ReupVirtualTwin.modelInterfaces;
+using ReupVirtualTwin.dataModels;
 
 namespace ReupVirtualTwin.models
 {
     public class ObjectTags : MonoBehaviour, IObjectTags 
     {
         static public string tagsUrl = "https://api-prod-reup.macheight.com/api/v1/";
-        public List<string> tags = new List<string>();
+        public List<Tag> tags = new List<Tag>();
 
-        public List<string> GetTags()
+        public List<Tag> GetTags()
         {
             return tags;
         }
 
-        public List<string> AddTag(string tag)
+        public List<Tag> AddTag(Tag tag)
         {
             tags.Add(tag);
             return tags;
         }
 
-        public List<string> RemoveTag(string tag)
+        public List<Tag> RemoveTag(Tag tag)
         {
             tags.Remove(tag);
             return tags;
         }
 
-        public List<string> AddTags(string[] tagsList)
+        public List<Tag> AddTags(Tag[] tagsList)
         {
             tags.AddRange(tagsList);
             return tags;

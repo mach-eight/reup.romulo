@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ReupVirtualTwin.controllerInterfaces;
+using ReupVirtualTwin.helpers;
 
 namespace ReupVirtualTwin.managers
 {
@@ -92,7 +93,7 @@ namespace ReupVirtualTwin.managers
         private bool AreWrappedObjectsTransformable(List<GameObject> objects)
         {
             if (objects.Count == 0) return false;
-            return objects.All(obj => _tagsController.DoesObjectHaveTag(obj, EditionTag.TRANSFORMABLE.ToString()));
+            return objects.All(obj => _tagsController.DoesObjectHaveTag(obj, EditionTagsCreator.CreateTransformableTag().id));
         }
     }
 }

@@ -4,10 +4,13 @@ using System.Threading.Tasks;
 
 using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.webRequestersInterfaces;
-using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.enums;
+using ReupVirtualTwin.helpers;
+using ReupVirtualTwin.romuloEnvironment;
+using ReupVirtualTwin.dataSchemas;
+using Newtonsoft.Json.Linq;
 
 namespace ReupVirtualTwin.controllers
 {
@@ -23,15 +26,24 @@ namespace ReupVirtualTwin.controllers
             this.mediator = mediator;
         }
 
-        public async Task ChangeObjectMaterial(ChangeMaterialMessagePayload message)
+        public async Task ChangeObjectMaterial(JObject message)
         {
-            Texture2D texture = await textureDownloader.DownloadTextureFromUrl(message.material_url);
+            if (RomuloEnvironment.development)
+            {
+                if (!DataValidator.ValidateObjectToSchema(message, RomuloInternalSchema.materialChangeInfo))
+                {
+                    return;
+                }
+            }
+            string materialUrl = message["material_url"].ToString();
+            string[] objectIds = message["object_ids"].ToObject<string[]>();
+            Texture2D texture = await textureDownloader.DownloadTextureFromUrl(materialUrl);
             if (!texture)
             {
-                mediator.Notify(ReupEvent.error, $"Error downloading image from {message.material_url}");
+                mediator.Notify(ReupEvent.error, $"Error downloading image from {materialUrl}");
                 return;
             }
-            List<GameObject> objects = objectRegistry.GetObjectsWithGuids(message.object_ids);
+            List<GameObject> objects = objectRegistry.GetObjectsWithGuids(objectIds);
             Material newMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));
             newMaterial.SetTexture("_BaseMap", texture);
             for (int i = 0; i < objects.Count; i++)
@@ -41,12 +53,7 @@ namespace ReupVirtualTwin.controllers
                     objects[i].GetComponent<Renderer>().material = newMaterial;
                 }
             }
-            ChangeMaterialMessagePayload materialChangeInfo = new()
-            {
-                object_ids = message.object_ids,
-                material_url = message.material_url,
-            };
-            mediator.Notify(ReupEvent.objectMaterialChanged, materialChangeInfo);
+            mediator.Notify(ReupEvent.objectMaterialChanged, message);
         }
     }
 }

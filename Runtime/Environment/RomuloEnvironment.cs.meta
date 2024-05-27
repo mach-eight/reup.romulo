@@ -1,9 +1,5 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Runtime/DataModels/ObjectTag.cs.meta
-guid: c4bdeb20ab186da4a8990577db1d84ca
-========
-guid: 52b358a20cf85774b8a7226466f3d361
->>>>>>>> RefactorBeforeReup225:Runtime/Enums/EditionTag.cs.meta
+guid: 5bb00909fcfc0714789e2731523077db
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
