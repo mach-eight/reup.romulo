@@ -9,7 +9,6 @@ permissions:
   actions: write
   checks: write
   issues: write
-  pull-requests: write
 
 jobs:
   test:
@@ -47,3 +46,9 @@ jobs:
         with:
           name: Test results
           path: ${{ steps.test-step.outputs.artifactsPath }}
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: |
+            ./${{ steps.test-step.outputs.artifactsPath }}/*.xml
