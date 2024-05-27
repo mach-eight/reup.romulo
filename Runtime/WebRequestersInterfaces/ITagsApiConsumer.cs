@@ -5,7 +5,7 @@ namespace ReupVirtualTwin.webRequestersInterfaces
 {
     public interface ITagsApiConsumer
     {
-        public Task<PaginationResult<ObjectTag>> GetTags();
-        public Task<PaginationResult<ObjectTag>> GetTags(int page);
+        public Task<PaginationResult<Tag>> GetTags();
+        public Task<PaginationResult<Tag>> GetTags(int page);
     }
 }

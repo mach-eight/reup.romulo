@@ -155,5 +155,26 @@ namespace ReupVirtualTwinTests.Registry
             yield return null;
         }
 
+        [UnityTest]
+        public IEnumerator ShouldNotFindRepeatedIds()
+        {
+            idController.AssignIdsToTree(parent);
+            bool hasRepeteaded = idController.HasRepeatedIds(parent);
+            Assert.IsFalse(hasRepeteaded);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldFindRepeatedIds()
+        {
+            idController.AssignIdsToTree(parent);
+            IUniqueIdentifier identifierParent = parent.GetComponent<IUniqueIdentifier>();
+            IUniqueIdentifier identifierChild0 = child0.GetComponent<IUniqueIdentifier>();
+            string repeatedId = identifierParent.getId();
+            identifierChild0.AssignId(repeatedId);
+            bool hasRepeteaded = idController.HasRepeatedIds(parent);
+            Assert.IsTrue(hasRepeteaded);
+            yield return null;
+        }
     }
 }

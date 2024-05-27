@@ -11,6 +11,7 @@ using ReupVirtualTwin.dataModels;
 using System;
 using ReupVirtualTwin.models;
 using ReupVirtualTwin.controllers;
+using ReupVirtualTwin.helpers;
 
 public class TransformObjectsManagerTest : MonoBehaviour
 {
@@ -36,11 +37,11 @@ public class TransformObjectsManagerTest : MonoBehaviour
         mockMediator = new MockMediator();
         transformObjectsManager.mediator = mockMediator;
         transformableObject0 = new GameObject("transformableObject0");
-        transformableObject0.AddComponent<ObjectTags>().AddTags(new string[2] {EditionTag.SELECTABLE.ToString(), EditionTag.TRANSFORMABLE.ToString()});
+        transformableObject0.AddComponent<ObjectTags>().AddTags(new Tag[2] {EditionTagsCreator.CreateSelectableTag(), EditionTagsCreator.CreateTransformableTag()});
         transformableObject1 = new GameObject("transformableObject1");
-        transformableObject1.AddComponent<ObjectTags>().AddTags(new string[2] {EditionTag.SELECTABLE.ToString(), EditionTag.TRANSFORMABLE.ToString()});
+        transformableObject1.AddComponent<ObjectTags>().AddTags(new Tag[2] {EditionTagsCreator.CreateSelectableTag(), EditionTagsCreator.CreateTransformableTag()});
         nonTransformableObject = new GameObject("nonTransformableObject");
-        nonTransformableObject.AddComponent<ObjectTags>().AddTags(new string[1] {EditionTag.SELECTABLE.ToString()});
+        nonTransformableObject.AddComponent<ObjectTags>().AddTags(new Tag[1] {EditionTagsCreator.CreateSelectableTag()});
     }
 
     [UnityTest]

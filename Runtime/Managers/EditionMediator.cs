@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+
 using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.controllerInterfaces;
@@ -9,7 +10,9 @@ using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.enums;
 using ReupVirtualTwin.behaviourInterfaces;
 using ReupVirtualTwin.helpers;
-
+using ReupVirtualTwin.romuloEnvironment;
+using ReupVirtualTwin.dataSchemas;
+using Newtonsoft.Json.Linq;
 
 namespace ReupVirtualTwin.managers
 {
@@ -49,6 +52,8 @@ namespace ReupVirtualTwin.managers
             get => _changeMaterialController; set => _changeMaterialController = value;
         }
 
+        private IncomingMessageValidator incomingMessageValidator;
+
         [HideInInspector]
         public string noInsertObjectIdErrorMessage = "No object id provided for insertion";
         [HideInInspector]
@@ -59,11 +64,30 @@ namespace ReupVirtualTwin.managers
         private IModelInfoManager _modelInfoManager;
         public IModelInfoManager modelInfoManager { set => _modelInfoManager = value; }
 
+        private void Awake()
+        {
+            incomingMessageValidator = new IncomingMessageValidator();
+
+            incomingMessageValidator.RegisterMessage(WebMessageType.activatePositionTransform);
+            incomingMessageValidator.RegisterMessage(WebMessageType.activateRotationTransform);
+            incomingMessageValidator.RegisterMessage(WebMessageType.deactivateTransformMode);
+            incomingMessageValidator.RegisterMessage(WebMessageType.requestModelInfo);
+
+            incomingMessageValidator.RegisterMessage(WebMessageType.setEditMode, DataValidator.boolSchema);
+
+            incomingMessageValidator.RegisterMessage(WebMessageType.deleteObjects, DataValidator.stringSchema);
+            incomingMessageValidator.RegisterMessage(WebMessageType.loadObject, DataValidator.stringSchema);
+            incomingMessageValidator.RegisterMessage(WebMessageType.changeObjectColor, DataValidator.stringSchema);
+
+            incomingMessageValidator.RegisterMessage(WebMessageType.changeObjectsMaterial, RomuloExternalSchema.changeObjectMaterialPayloadSchema);
+
+        }
+
         public void Notify(ReupEvent eventName)
         {
             switch (eventName)
             {
-                case ReupEvent.transformHandleStartItneraction:
+                case ReupEvent.transformHandleStartInteraction:
                     _characterRotationManager.allowRotation = false;
                     break;
                 case ReupEvent.transformHandleStopInteraction:
@@ -121,11 +145,15 @@ namespace ReupVirtualTwin.managers
                     ProcessLoadStatus((float)(object)payload);
                     break;
                 case ReupEvent.objectMaterialChanged:
-                    if (!(payload is ChangeMaterialMessagePayload))
+                    Debug.Log("I was notified of material changed");
+                    if (RomuloEnvironment.development)
                     {
-                        throw new ArgumentException($"Payload must be of type ChangeMaterialMessagePayload for {eventName} events", nameof(payload));
+                        if (!DataValidator.ValidateObjectToSchema(payload, RomuloInternalSchema.materialChangeInfo))
+                        {
+                            return;
+                        }
                     }
-                    ProcessObjectMaterialsChange((ChangeMaterialMessagePayload)(object)payload);
+                    ProcessObjectMaterialsChange((JObject)(object)payload);
                     break;
                 case ReupEvent.error:
                     if (!(payload is string))
@@ -139,14 +167,24 @@ namespace ReupVirtualTwin.managers
             }
         }
 
-
         public void ReceiveWebMessage(string serializedWebMessage)
         {
-            WebMessage<string> message = JsonUtility.FromJson<WebMessage<string>>(serializedWebMessage);
-            switch (message.type)
+            JObject message = JObject.Parse(serializedWebMessage);
+            if (!incomingMessageValidator.ValidateMessage(serializedWebMessage))
+            {
+                _webMessageSender.SendWebMessage(new WebMessage<string>
+                {
+                    type = WebMessageType.error,
+                    payload = $"Invalid message received at {this.GetType()}"
+                });
+                return;
+            }
+            string type = message["type"].ToString();
+            object payload = message["payload"];
+            switch (type)
             {
                 case WebMessageType.setEditMode:
-                    _editModeManager.editMode = bool.Parse(message.payload);
+                    _editModeManager.editMode = ((JValue)payload).Value<bool>();
                     break;
                 case WebMessageType.activatePositionTransform:
                     ActivateTransformMode(TransformMode.PositionMode);
@@ -158,29 +196,24 @@ namespace ReupVirtualTwin.managers
                     DeactivateTransformMode();
                     break;
                 case WebMessageType.deleteObjects:
-                    DeleteSelectedObjects(message.payload);
+                    DeleteSelectedObjects(payload.ToString());
                     break;
                 case WebMessageType.loadObject:
-                    LoadObject(message.payload);
+                    LoadObject(payload.ToString());
                     break;
                 case WebMessageType.changeObjectColor:
-                    ChangeObjectsColor(message.payload);
+                    ChangeObjectsColor(payload.ToString());
                     break;
                 case WebMessageType.requestModelInfo:
                     SendModelInfoMessage();
                     break;
                 case WebMessageType.changeObjectsMaterial:
-                    ChangeObjectsMaterial(message.payload);
-                    break;
-                default:
-                    _webMessageSender.SendWebMessage(new WebMessage<string>
-                    {
-                        type = WebMessageType.error,
-                        payload = $"message type:'{message.type}' not supported",
-                    });
+                    _changeMaterialController.ChangeObjectMaterial((JObject)payload);
                     break;
             }
         }
+
+
 
         public void SendModelInfoMessage()
         {
@@ -246,12 +279,6 @@ namespace ReupVirtualTwin.managers
             {
                 SendErrorMessage("The selection is empty");
             }
-        }
-
-        private void ChangeObjectsMaterial(string serializedPayload)
-        {
-            ChangeMaterialMessagePayload payload = JsonUtility.FromJson<ChangeMaterialMessagePayload>(serializedPayload);
-            _changeMaterialController.ChangeObjectMaterial(payload);
         }
 
         private void ProccessEditMode(bool editMode)
@@ -340,6 +367,7 @@ namespace ReupVirtualTwin.managers
             {
                 type = WebMessageType.changeObjectColorSuccess,
             };
+            _webMessageSender.SendWebMessage(message);
         }
 
         private void ProcessInsertedObjectLoaded(InsertedObjectPayload insertedObjectPayload)
@@ -391,9 +419,9 @@ namespace ReupVirtualTwin.managers
             _webMessageSender.SendWebMessage(message);
         }
 
-        private void ProcessObjectMaterialsChange(ChangeMaterialMessagePayload materialsChangedInfo)
+        private void ProcessObjectMaterialsChange(JObject materialsChangedInfo)
         {
-            WebMessage<ChangeMaterialMessagePayload> message = new()
+            WebMessage<JObject> message = new()
             {
                 type = WebMessageType.changeObjectsMaterialSuccess,
                 payload = materialsChangedInfo
@@ -409,6 +437,7 @@ namespace ReupVirtualTwin.managers
                 payload = message,
             });
         }
+
     }
 
 }
