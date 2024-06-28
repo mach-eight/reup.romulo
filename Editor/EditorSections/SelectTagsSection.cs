@@ -45,10 +45,10 @@ namespace ReupVirtualTwin.editor
             EditorGUILayout.Space();
             int scrollHeight = MAX_BUTTONS_IN_SCROLL_VIEW * (TAG_BUTTON_HEIGHT + UNITY_BUTTON_MARGIN);
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, GUILayout.Height(scrollHeight));
-            var filteredTags = FilterTagsByNameAndIfNotPresent();
+            IEnumerable<Tag> filteredTags = FilterTagsByNameAndIfNotPresent();
             foreach (Tag tag in filteredTags)
             {
-                if (GUILayout.Button(tag.name, GUILayout.Height(TAG_BUTTON_HEIGHT)))
+                if (GUILayout.Button(tag.str, GUILayout.Height(TAG_BUTTON_HEIGHT)))
                 {
                     AddTagIfNotPresent(tag);
                 }

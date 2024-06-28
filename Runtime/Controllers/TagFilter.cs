@@ -22,7 +22,7 @@ namespace ReupVirtualTwin.controllers
         public TagFilter(Tag tag)
         {
             this.tag = tag;
-            _displayText = tag.name;
+            _displayText = tag.str;
         }
 
         private bool FilterFunction(GameObject gameObject)
