@@ -6,8 +6,6 @@ using NUnit.Framework;
 
 using ReupVirtualTwin.models;
 using ReupVirtualTwin.managers;
-using ReupVirtualTwin.enums;
-using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.helpers;
 using Newtonsoft.Json.Linq;
@@ -16,7 +14,6 @@ public class ChangeColorObjectsTest : MonoBehaviour
 {
     ReupSceneInstantiator.SceneObjects sceneObjects;
     ChangeColorManager changeColorManager;
-    MockMediator mockMediator;
 
     GameObject meshedParent;
     GameObject unmeshedParent;
@@ -28,8 +25,6 @@ public class ChangeColorObjectsTest : MonoBehaviour
     {
         sceneObjects = ReupSceneInstantiator.InstantiateScene();
         changeColorManager = sceneObjects.changeColorManager;
-        mockMediator = new MockMediator();
-        changeColorManager.mediator = mockMediator;
         CreateObjects();
     }
     [TearDown]
@@ -69,24 +64,6 @@ public class ChangeColorObjectsTest : MonoBehaviour
             stringIDs.Add(obj.GetComponent<IUniqueIdentifier>().getId());
         }
         return stringIDs;
-    }
-    private class MockMediator : IMediator
-    {
-        public bool deleteModeActive = false;
-        public bool notified = false;
-
-        public void Notify(ReupEvent eventName)
-        {
-            if (eventName == ReupEvent.objectsDeleted)
-            {
-                notified = true;
-            }
-        }
-
-        public void Notify<T>(ReupEvent eventName, T payload)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 
     [UnityTest]

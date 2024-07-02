@@ -15,6 +15,7 @@ using ReupVirtualTwin.dataSchemas;
 using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ReupVirtualTwin.managers
 {
@@ -170,7 +171,7 @@ namespace ReupVirtualTwin.managers
             }
         }
 
-        public void ReceiveWebMessage(string serializedWebMessage)
+        public async Task ReceiveWebMessage(string serializedWebMessage)
         {
             JObject message = JObject.Parse(serializedWebMessage);
             if (!incomingMessageValidator.ValidateMessage(serializedWebMessage))
@@ -211,18 +212,18 @@ namespace ReupVirtualTwin.managers
                     SendModelInfoMessage();
                     break;
                 case WebMessageType.changeObjectsMaterial:
-                    _changeMaterialController.ChangeObjectMaterial((JObject)payload);
+                    await _changeMaterialController.ChangeObjectMaterial((JObject)payload);
                     break;
                 case WebMessageType.requestSceneState:
                     StartCoroutine(SendSceneStateMessage((JObject)payload));
                     break;
                 case WebMessageType.requestSceneLoad:
-                    LoadObjectsState(payload.ToObject<JArray>().Cast<JObject>().ToList());
+                    await LoadObjectsState(payload.ToObject<JArray>().Cast<JObject>().ToList());
                     break;
             }
         }
 
-        private void LoadObjectsState(List<JObject> objectStates)
+        private async Task LoadObjectsState(List<JObject> objectStates)
         {
             IEnumerable<IGrouping<string, JObject>> objectStatesByColor = objectStates
                 .Where(objectState => objectState["color"] != null)
@@ -231,7 +232,8 @@ namespace ReupVirtualTwin.managers
             IEnumerable<IGrouping<int, JObject>> objectStatesByMaterial = objectStates
                 .Where(objectState => objectState["material_id"] != null && objectState["material_url"] != null)
                 .GroupBy(objectState => objectState["material_id"].ToObject<int>());
-            ApplyMaterialsToSceneObjects(objectStatesByMaterial);
+            await ApplyMaterialsToSceneObjects(objectStatesByMaterial);
+
         }
 
         private void PaintSceneObjects(IEnumerable<IGrouping<string, JObject>> objectStatesByColor)
@@ -250,7 +252,7 @@ namespace ReupVirtualTwin.managers
             }
         }
 
-        private void ApplyMaterialsToSceneObjects(IEnumerable<IGrouping<int, JObject>> objectStatesByMaterial)
+        private async Task ApplyMaterialsToSceneObjects(IEnumerable<IGrouping<int, JObject>> objectStatesByMaterial)
         {
             foreach(var objectsByMaterial in objectStatesByMaterial)
             {
@@ -263,7 +265,7 @@ namespace ReupVirtualTwin.managers
                     { "material_url", materilUrl },
                     { "object_ids", new JArray(objectIds) },
                 };
-                _changeMaterialController.ChangeObjectMaterial(materialChangeInfo);
+                await _changeMaterialController.ChangeObjectMaterial(materialChangeInfo, false);
             }
         }
 
@@ -336,6 +338,7 @@ namespace ReupVirtualTwin.managers
                 if (parsedColor != null)
                 {
                     _changeColorManager.ChangeObjectsColor(objectsToChangeColor, (Color)parsedColor);
+                    Notify(ReupEvent.objectColorChanged);
                 }
                 else
                 {

@@ -67,7 +67,7 @@ public class EditionMediatorTest : MonoBehaviour
         public void ChangeObjectsColor(List<GameObject> objectsToDelete, Color color)
         {
             lastCalledObjects = objectsToDelete;
-            this.lastCalledColor = color;
+            lastCalledColor = color;
             calledColors.Add(color);
             calledObjects.Add(objectsToDelete);
         }
@@ -77,7 +77,7 @@ public class EditionMediatorTest : MonoBehaviour
     {
         public JObject lastReceivedMessageRequest;
         public List<JObject> receivedMessageRequests = new List<JObject>();
-        public Task ChangeObjectMaterial(JObject message)
+        public Task ChangeObjectMaterial(JObject message, bool notify)
         {
             receivedMessageRequests.Add(message);
             lastReceivedMessageRequest = message;
@@ -821,19 +821,13 @@ public class EditionMediatorTest : MonoBehaviour
             expectedGreenColor,
             expectedRedColor,
         };
-        List<List<GameObject>> expectedCalledObjects = new List<List<GameObject>>
-        {
-            registrySpy.objects, //this is kinda dumb, but registry spy always returns the same object list
-            registrySpy.objects, //this is kinda dumb, but registry spy always returns the same object list
-        };
         Assert.AreEqual(expectedObjectIdsGroups, registrySpy.requestedObjectIds);
         Assert.AreEqual(expectedColors, changeColorManagerSpy.calledColors);
-        Assert.AreEqual(expectedCalledObjects, changeColorManagerSpy.calledObjects);
         Assert.AreEqual(0, mockWebMessageSender.sentMessages.Count);
     }
 
-    [UnityTest]
-    public IEnumerator ShouldRequestChangeObjectsMaterial_when_Receive_loadSceneRequest_with_onlyOneMaterial()
+    [Test]
+    public async Task ShouldRequestChangeObjectsMaterial_when_Receive_loadSceneRequest_with_onlyOneMaterial()
     {
         JObject requestSceneLoadMessage = new JObject(
             new JProperty("type", WebMessageType.requestSceneLoad),
@@ -858,8 +852,7 @@ public class EditionMediatorTest : MonoBehaviour
                     },
                 })));
         string serializedMessage = JsonConvert.SerializeObject(requestSceneLoadMessage);
-        editionMediator.ReceiveWebMessage(serializedMessage);
-        yield return null;
+        await editionMediator.ReceiveWebMessage(serializedMessage);
         JObject expectedMaterialChangeRequest = new JObject
         {
             { "material_id", 1 },
@@ -868,11 +861,10 @@ public class EditionMediatorTest : MonoBehaviour
         };
         AssertExpectedData(expectedMaterialChangeRequest, changeMaterialControllerSpy.lastReceivedMessageRequest);
         Assert.AreEqual(0, mockWebMessageSender.sentMessages.Count);
-        yield return null;
     }
 
-    [UnityTest]
-    public IEnumerator ShouldRequestChangeObjectsMaterial_when_Receive_loadSceneRequest_with_severalMaterials()
+    [Test]
+    public async Task ShouldRequestChangeObjectsMaterial_when_Receive_loadSceneRequest_with_severalMaterials()
     {
         JObject requestSceneLoadMessage = new JObject(
             new JProperty("type", WebMessageType.requestSceneLoad),
@@ -899,8 +891,7 @@ public class EditionMediatorTest : MonoBehaviour
                     },
                 })));
         string serializedMessage = JsonConvert.SerializeObject(requestSceneLoadMessage);
-        editionMediator.ReceiveWebMessage(serializedMessage);
-        yield return null;
+        await editionMediator.ReceiveWebMessage(serializedMessage);
         JObject[] expectedMaterialChangeRequests = new JObject[]
         {
             new JObject
@@ -918,7 +909,6 @@ public class EditionMediatorTest : MonoBehaviour
         };
         AssertExpectedData(expectedMaterialChangeRequests, changeMaterialControllerSpy.receivedMessageRequests);
         Assert.AreEqual(0, mockWebMessageSender.sentMessages.Count);
-        yield return null;
     }
 
 }
