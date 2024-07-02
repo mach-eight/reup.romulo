@@ -224,18 +224,46 @@ namespace ReupVirtualTwin.managers
 
         private void LoadObjectsState(List<JObject> objectStates)
         {
-            IEnumerable<IGrouping<JToken, JObject>> objectStatesByColor = objectStates.GroupBy(objectState => objectState["color"]);
+            IEnumerable<IGrouping<string, JObject>> objectStatesByColor = objectStates
+                .Where(objectState => objectState["color"] != null)
+                .GroupBy(objectState => objectState["color"].ToString());
+            PaintSceneObjects(objectStatesByColor);
+            IEnumerable<IGrouping<int, JObject>> objectStatesByMaterial = objectStates
+                .Where(objectState => objectState["material_id"] != null && objectState["material_url"] != null)
+                .GroupBy(objectState => objectState["material_id"].ToObject<int>());
+            ApplyMaterialsToSceneObjects(objectStatesByMaterial);
+        }
+
+        private void PaintSceneObjects(IEnumerable<IGrouping<string, JObject>> objectStatesByColor)
+        {
             foreach(var objectsByColor in objectStatesByColor)
             {
-                Color? color = Utils.ParseColor(objectsByColor.Key.ToString());
+                Color? color = Utils.ParseColor(objectsByColor.Key);
                 if (color == null)
                 {
-                    SendErrorMessage(InvalidColorErrorMessage(objectsByColor.Key.ToString()));
+                    SendErrorMessage(InvalidColorErrorMessage(objectsByColor.Key));
                     return;
                 }
                 string[] objectIds = objectsByColor.Select(objectState => objectState["object_id"].ToString()).ToArray();
                 List<GameObject> objectsToPaint = _registry.GetObjectsWithGuids(objectIds);
                 _changeColorManager.ChangeObjectsColor(objectsToPaint, (Color) color);
+            }
+        }
+
+        private void ApplyMaterialsToSceneObjects(IEnumerable<IGrouping<int, JObject>> objectStatesByMaterial)
+        {
+            foreach(var objectsByMaterial in objectStatesByMaterial)
+            {
+                int materialId = objectsByMaterial.Key;
+                string materilUrl = objectsByMaterial.First()["material_url"].ToString();
+                var objectIds = objectsByMaterial.Select(objectState => objectState["object_id"].ToString());
+                JObject materialChangeInfo = new()
+                {
+                    { "material_id", materialId },
+                    { "material_url", materilUrl },
+                    { "object_ids", new JArray(objectIds) },
+                };
+                _changeMaterialController.ChangeObjectMaterial(materialChangeInfo);
             }
         }
 
