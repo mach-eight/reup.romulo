@@ -65,7 +65,14 @@ namespace ReupVirtualTwin.editor
         public void RemoveTag(Tag tag)
         {
             selectedTags.Remove(tag);
+            _onTagsChange?.Invoke(selectedTags);
         }
+
+        public void RemoveAllTags()
+        {
+            selectedTags.Clear();
+            _onTagsChange?.Invoke(selectedTags);
+        }   
 
         private async void ShowRefetchTagsButton()
         {
