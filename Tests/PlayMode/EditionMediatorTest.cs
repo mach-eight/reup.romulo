@@ -75,10 +75,12 @@ public class EditionMediatorTest : MonoBehaviour
 
     private class ChangeMaterialControllerSpy : IChangeMaterialController
     {
-        public JObject receivedMessagePayload;
+        public JObject lastReceivedMessageRequest;
+        public List<JObject> receivedMessageRequests = new List<JObject>();
         public Task ChangeObjectMaterial(JObject message)
         {
-            receivedMessagePayload = message;
+            receivedMessageRequests.Add(message);
+            lastReceivedMessageRequest = message;
             return Task.CompletedTask;
         }
     }
@@ -321,12 +323,8 @@ public class EditionMediatorTest : MonoBehaviour
 
     private void AssertExpectedData(object expected, object obtained)
     {
-        var proccessedExpected = JObject.Parse(JsonConvert.SerializeObject(expected));
-        var proccessedObtained = JObject.Parse(JsonConvert.SerializeObject(obtained));
-        Debug.Log("proccessedExpected");
-        Debug.Log(proccessedExpected);
-        Debug.Log("proccessedObtained");
-        Debug.Log(proccessedObtained);
+        var proccessedExpected = JToken.Parse(JsonConvert.SerializeObject(expected));
+        var proccessedObtained = JToken.Parse(JsonConvert.SerializeObject(obtained));
         Assert.AreEqual(proccessedExpected, proccessedObtained);
     }
 
@@ -601,7 +599,7 @@ public class EditionMediatorTest : MonoBehaviour
         var serializedMessage = JsonConvert.SerializeObject(message);
         editionMediator.ReceiveWebMessage(serializedMessage);
         yield return null;
-        AssertExpectedData(message["payload"], changeMaterialControllerSpy.receivedMessagePayload);
+        AssertExpectedData(message["payload"], changeMaterialControllerSpy.lastReceivedMessageRequest);
     }
 
 
@@ -868,7 +866,57 @@ public class EditionMediatorTest : MonoBehaviour
             { "material_url", "material-1-url" },
             { "object_ids", new JArray(new string[] { "object-id-1", "object-id-3" }) },
         };
-        AssertExpectedData(expectedMaterialChangeRequest, changeMaterialControllerSpy.receivedMessagePayload);
+        AssertExpectedData(expectedMaterialChangeRequest, changeMaterialControllerSpy.lastReceivedMessageRequest);
+        Assert.AreEqual(0, mockWebMessageSender.sentMessages.Count);
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldRequestChangeObjectsMaterial_when_Receive_loadSceneRequest_with_severalMaterials()
+    {
+        JObject requestSceneLoadMessage = new JObject(
+            new JProperty("type", WebMessageType.requestSceneLoad),
+            new JProperty("payload", new JArray(
+                new JObject[]
+                {
+                    new JObject()
+                    {
+                        { "object_id", "object-id-1" },
+                        { "material_id", 1 },
+                        { "material_url", "material-1-url" },
+                    },
+                    new JObject()
+                    {
+                        { "object_id", "object-id-2" },
+                        { "material_id", 2 },
+                        { "material_url", "material-2-url" },
+                    },
+                    new JObject()
+                    {
+                        { "object_id", "object-id-3" },
+                        { "material_id", 1 },
+                        { "material_url", "material-1-url" },
+                    },
+                })));
+        string serializedMessage = JsonConvert.SerializeObject(requestSceneLoadMessage);
+        editionMediator.ReceiveWebMessage(serializedMessage);
+        yield return null;
+        JObject[] expectedMaterialChangeRequests = new JObject[]
+        {
+            new JObject
+            {
+                { "material_id", 1 },
+                { "material_url", "material-1-url" },
+                { "object_ids", new JArray(new string[] { "object-id-1", "object-id-3" }) },
+            },
+            new JObject
+            {
+                { "material_id", 2 },
+                { "material_url", "material-2-url" },
+                { "object_ids", new JArray(new string[] { "object-id-2" }) },
+            },
+        };
+        AssertExpectedData(expectedMaterialChangeRequests, changeMaterialControllerSpy.receivedMessageRequests);
         Assert.AreEqual(0, mockWebMessageSender.sentMessages.Count);
         yield return null;
     }
