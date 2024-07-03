@@ -945,4 +945,33 @@ public class EditionMediatorTest : MonoBehaviour
         Assert.AreEqual(12345, sentMessage.payload["scene_id"].ToObject<int>());
     }
 
+    [Test]
+    public async Task ShouldNotPaintOrRequestMaterialChange_when_objectHaveColorAndMaterialIdSetToNull()
+    {
+        requestSceneLoadMessage["payload"]["objects"] = new JArray(
+            new JObject[]
+            {
+                new JObject()
+                {
+                    { "object_id", "object-id-1" },
+                    { "color", null },
+                    { "material_id", null },
+                    { "material_url", null },
+                },
+                new JObject()
+                {
+                    { "object_id", "object-id-2" },
+                    { "color", null },
+                    { "material_id", null },
+                    { "material_url", null },
+                },
+            }
+        );
+        string serializedMessage = JsonConvert.SerializeObject(requestSceneLoadMessage);
+        await editionMediator.ReceiveWebMessage(serializedMessage);
+        Assert.AreEqual(1, mockWebMessageSender.sentMessages.Count);
+        Assert.AreEqual(0, changeColorManagerSpy.calledColors.Count);
+        Assert.AreEqual(0, changeMaterialControllerSpy.receivedMessageRequests.Count);
+    }
+
 }

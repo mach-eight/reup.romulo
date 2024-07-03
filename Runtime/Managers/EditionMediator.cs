@@ -228,11 +228,11 @@ namespace ReupVirtualTwin.managers
         {
             List<JObject> objectStates = requestPayload["objects"].ToObject<JArray>().Cast<JObject>().ToList();
             var objectStatesByColor = objectStates
-                .Where(objectState => objectState["color"] != null)
+                .Where(objectState => TypeHelpers.NotNull(objectState["color"]))
                 .GroupBy(objectState => objectState["color"].ToString());
             PaintSceneObjects(objectStatesByColor);
             var objectStatesByMaterial = objectStates
-                .Where(objectState => objectState["material_id"] != null && objectState["material_url"] != null)
+                .Where(objectState => TypeHelpers.NotNull(objectState["material_id"]) && TypeHelpers.NotNull(objectState["material_url"]))
                 .GroupBy(objectState => objectState["material_id"].ToObject<int>());
             await ApplyMaterialsToSceneObjects(objectStatesByMaterial);
 
