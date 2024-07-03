@@ -176,6 +176,7 @@ namespace ReupVirtualTwin.managers
             JObject message = JObject.Parse(serializedWebMessage);
             if (!incomingMessageValidator.ValidateMessage(serializedWebMessage))
             {
+                Debug.Log("Invalid message received");
                 _webMessageSender.SendWebMessage(new WebMessage<string>
                 {
                     type = WebMessageType.error,
@@ -218,22 +219,32 @@ namespace ReupVirtualTwin.managers
                     StartCoroutine(SendSceneStateMessage((JObject)payload));
                     break;
                 case WebMessageType.requestSceneLoad:
-                    await LoadObjectsState(payload.ToObject<JArray>().Cast<JObject>().ToList());
+                    await LoadObjectsState((JObject)payload);
                     break;
             }
         }
 
-        private async Task LoadObjectsState(List<JObject> objectStates)
+        private async Task LoadObjectsState(JObject requestPayload)
         {
-            IEnumerable<IGrouping<string, JObject>> objectStatesByColor = objectStates
+            List<JObject> objectStates = requestPayload["objects"].ToObject<JArray>().Cast<JObject>().ToList();
+            var objectStatesByColor = objectStates
                 .Where(objectState => objectState["color"] != null)
                 .GroupBy(objectState => objectState["color"].ToString());
             PaintSceneObjects(objectStatesByColor);
-            IEnumerable<IGrouping<int, JObject>> objectStatesByMaterial = objectStates
+            var objectStatesByMaterial = objectStates
                 .Where(objectState => objectState["material_id"] != null && objectState["material_url"] != null)
                 .GroupBy(objectState => objectState["material_id"].ToObject<int>());
             await ApplyMaterialsToSceneObjects(objectStatesByMaterial);
 
+            WebMessage<JObject> successMessage = new()
+            {
+                type = WebMessageType.requestSceneLoadSuccess,
+                payload = new JObject(
+                    new JProperty("scene_name", requestPayload["scene_name"]),
+                    new JProperty("scene_id", requestPayload["scene_id"])
+                )
+            };
+            _webMessageSender.SendWebMessage(successMessage);
         }
 
         private void PaintSceneObjects(IEnumerable<IGrouping<string, JObject>> objectStatesByColor)
