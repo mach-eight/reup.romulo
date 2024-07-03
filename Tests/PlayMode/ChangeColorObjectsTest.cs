@@ -96,7 +96,7 @@ public class ChangeColorObjectsTest : MonoBehaviour
         changeColorManager.ChangeObjectsColor(gameObjects, Color.blue);
         yield return null;
 
-        string blueColorRGBA = ColorUtility.ToHtmlStringRGBA(Color.blue);
+        string blueColorRGBA = "#" + ColorUtility.ToHtmlStringRGBA(Color.blue);
         AssertUtils.AssertAllObjectsWithMeshRendererHaveMetaDataValue<string>(
             gameObjects,
             "appearance.color",
@@ -106,7 +106,7 @@ public class ChangeColorObjectsTest : MonoBehaviour
         changeColorManager.ChangeObjectsColor(gameObjects, Color.red);
         yield return null;
 
-        string redColorRGBA = ColorUtility.ToHtmlStringRGBA(Color.red);
+        string redColorRGBA = "#" + ColorUtility.ToHtmlStringRGBA(Color.red);
         AssertUtils.AssertAllObjectsWithMeshRendererHaveMetaDataValue<string>(
             gameObjects,
             "appearance.color",
@@ -138,7 +138,7 @@ public class ChangeColorObjectsTest : MonoBehaviour
         AssertUtils.AssertAllObjectsWithMeshRendererHaveMetaDataValue<string>(
             gameObjects,
             "appearance.color",
-            ColorUtility.ToHtmlStringRGBA(Color.blue));
+            "#" + ColorUtility.ToHtmlStringRGBA(Color.blue));
         yield return null;
     }
 

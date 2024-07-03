@@ -10,7 +10,7 @@ namespace ReupVirtualTwin.managers
 
         public void ChangeObjectsColor(List<GameObject> objects, Color color)
         {
-            string rgbaColor = ColorUtility.ToHtmlStringRGBA(color);
+            string rgbaColor = "#" + ColorUtility.ToHtmlStringRGBA(color);
             foreach (var obj in objects)
             {
                 bool changed = ChangeObjectColor(obj, color);
