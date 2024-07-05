@@ -41,7 +41,7 @@ namespace ReupVirtualTwin.editor
             tempTags.ForEach(tag =>
             {
                 EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField(tag.name);
+                EditorGUILayout.LabelField(tag.str);
                 if (GUILayout.Button("Remove"))
                 {
                     selectTagsSection.RemoveTag(tag);
