@@ -50,7 +50,7 @@ public class DataValidatorTest
                 }
             }
         };
-        intStringArraySchema = DataValidator.CreateArraySchema(new JObject[] { DataValidator.intSchema, DataValidator.stringSchema });
+        intStringArraySchema = DataValidator.CreateArraySchema(DataValidator.intSchema, DataValidator.stringSchema);
     }
 
     [Test]
@@ -313,4 +313,88 @@ public class DataValidatorTest
         Assert.IsFalse(result);
     }
 
+    [Test]
+    public void ValidateObjectShouldSuccess_for_multiOptionTypes()
+    {
+        JObject multiSchema = DataValidator.MultiSchema(DataValidator.intSchema, DataValidator.stringSchema);
+        bool result;
+        result = DataValidator.ValidateObjectToSchema(5, multiSchema);
+        Assert.IsTrue(result);
+        result = DataValidator.ValidateObjectToSchema("this is a string", multiSchema);
+        Assert.IsTrue(result);
+        result = DataValidator.ValidateObjectToSchema(null, multiSchema);
+        Assert.IsFalse(result);
+    }
+
+    [Test]
+    public void ValidateShouldAcceptNullSchema()
+    {
+        bool result;
+        result = DataValidator.ValidateObjectToSchema("this is a string", DataValidator.nullSchema);
+        Assert.IsFalse(result);
+        result = DataValidator.ValidateObjectToSchema(null, DataValidator.nullSchema);
+        Assert.IsTrue(result);
+    }
+
+    [Test]
+    public void ShouldSuccessValidation_when_nullIsOptionOfMultiSchema()
+    {
+        JObject multiSchema = DataValidator.MultiSchema(DataValidator.intSchema, DataValidator.nullSchema);
+        bool result;
+        result = DataValidator.ValidateObjectToSchema(5, multiSchema);
+        Assert.IsTrue(result);
+        result = DataValidator.ValidateObjectToSchema(null, multiSchema);
+        Assert.IsTrue(result);
+    }
+
+    [Test]
+    public void ShouldFailValidation_when_nullIsOptionOfMultiSchema()
+    {
+        JObject multiSchema = DataValidator.MultiSchema(DataValidator.intSchema, DataValidator.nullSchema);
+        bool result;
+        result = DataValidator.ValidateObjectToSchema("this is a string", multiSchema);
+        Assert.IsFalse(result);
+    }
+
+    [Test]
+    public void ShouldSuccessValidation_when_MultiSchemaIsInObjectKey()
+    {
+        JObject schema = new JObject
+        {
+            { "type", DataValidator.objectType },
+            { "properties", new JObject
+                {
+                    { "the_int", DataValidator.MultiSchema(DataValidator.intSchema, DataValidator.nullSchema) },
+                    { "the_null", DataValidator.MultiSchema(DataValidator.intSchema, DataValidator.nullSchema) },
+                }
+            }
+        };
+        Dictionary<string, object> data = new Dictionary<string, object>
+        {
+            { "the_int", 5 },
+            { "the_null", null }
+        };
+        bool result = DataValidator.ValidateObjectToSchema(data, schema);
+        Assert.IsTrue(result);
+    }
+
+    [Test]
+    public void ShouldFailValidation_when_MultiSchemaIsInObjectKey()
+    {
+        JObject schema = new JObject
+        {
+            { "type", DataValidator.objectType },
+            { "properties", new JObject
+                {
+                    { "the_float", DataValidator.MultiSchema(DataValidator.intSchema, DataValidator.nullSchema) },
+                }
+            }
+        };
+        Dictionary<string, object> data = new Dictionary<string, object>
+        {
+            { "the_float", 5.1 },
+        };
+        bool result = DataValidator.ValidateObjectToSchema(data, schema);
+        Assert.IsFalse(result);
+    }
 }

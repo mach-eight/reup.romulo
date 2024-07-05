@@ -18,7 +18,7 @@ namespace ReupVirtualTwin.dataSchemas
                     {
                         { "material_id", DataValidator.intSchema },
                         { "material_url", DataValidator.stringSchema },
-                        { "object_ids",  DataValidator.CreateArraySchema(new JObject[] { DataValidator.stringSchema })},
+                        { "object_ids",  DataValidator.CreateArraySchema(DataValidator.stringSchema)},
                     }
                 },
                 { "required", new JArray { "material_url", "object_ids", "material_id" } }
@@ -43,8 +43,7 @@ namespace ReupVirtualTwin.dataSchemas
                     {
                         { "id", DataValidator.stringSchema },
                         { "appearance", sceneStateAppearanceSchema },
-                        { "children", DataValidator.CreateArraySchema(new JObject[]
-                            { DataValidator.CreateRefSchema("sceneStateSchema") })
+                        { "children", DataValidator.CreateArraySchema(DataValidator.CreateRefSchema("sceneStateSchema"))
                         },
                     }
                 },
