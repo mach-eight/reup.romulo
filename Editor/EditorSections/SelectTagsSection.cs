@@ -15,10 +15,17 @@ namespace ReupVirtualTwin.editor
     {
         public List<Tag> selectedTags;
         public Action<List<Tag>> onTagsChange { set => _onTagsChange = value; }
+        public Action<Tag> onTagDeletion { set => _onTagDeletion = value; }
+        public Action<Tag> onTagAddition { set => _onTagAddition = value; }
+        public Action<List<Tag>> onTagReset { set => _onTagReset = value; }
+
 
         private ITagsApiManager tagsApiManager;
         private List<Tag> allTags = new List<Tag>();
         private Action<List<Tag>> _onTagsChange;
+        private Action<Tag> _onTagDeletion;
+        private Action<Tag> _onTagAddition;
+        private Action<List<Tag>> _onTagReset;
 
         private Vector2 scrollPosition;
         private const int TAG_BUTTON_HEIGHT = 18;
@@ -26,6 +33,8 @@ namespace ReupVirtualTwin.editor
         private const int UNITY_BUTTON_MARGIN = 2; // This is a variable obtained by trial and error
         private const int BOTTOM_THRESHOLD_IN_PIXELS = 50;
         private const int RE_FETCH_BUTTON_WIDTH = 95;
+
+        public string searchTagText = "";
 
         public async static Task<SelectTagsSection> Create(ITagsApiManager tagsApiManager, List<Tag> referenceToSelectedTags)
         {
@@ -39,7 +48,7 @@ namespace ReupVirtualTwin.editor
         public async void ShowTagsToAdd()
         {
             EditorGUILayout.BeginHorizontal();
-                tagsApiManager.searchTagText = EditorGUILayout.TextField("Search for tag to add:", tagsApiManager.searchTagText);
+                searchTagText = EditorGUILayout.TextField("Search for tag to add:", searchTagText);
                 ShowRefetchTagsButton();
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.Space();
@@ -65,13 +74,13 @@ namespace ReupVirtualTwin.editor
         public void RemoveTag(Tag tag)
         {
             selectedTags.Remove(tag);
-            _onTagsChange?.Invoke(selectedTags);
+            _onTagDeletion?.Invoke(tag);
         }
 
         public void RemoveAllTags()
         {
             selectedTags.Clear();
-            _onTagsChange?.Invoke(selectedTags);
+            _onTagReset?.Invoke(selectedTags);
         }   
 
         private async void ShowRefetchTagsButton()
@@ -90,6 +99,7 @@ namespace ReupVirtualTwin.editor
             {
                 selectedTags.Add(tag);
                 _onTagsChange?.Invoke(selectedTags);
+                _onTagAddition?.Invoke(tag);
             }
         }
 
@@ -107,7 +117,7 @@ namespace ReupVirtualTwin.editor
 
         private IEnumerable<Tag> FilterTagsByNameAndIfNotPresent()
         {
-            return allTags.Where(tag => !IsTagAlreadyPresent(tag) && TagContainsText(tag.name, tagsApiManager.searchTagText));
+            return allTags.Where(tag => !IsTagAlreadyPresent(tag) && TagContainsText(tag.name, searchTagText));
         }
 
         private async Task GetTags()

@@ -21,7 +21,9 @@ namespace ReupVirtualTwin.editor
             objectTagsList = targets.Cast<ObjectTags>().ToList();
             ITagsApiManager tagsApiManager = TagsApiManagerEditorFinder.FindTagApiManager();
             selectTagsSection = await SelectTagsSection.Create(tagsApiManager, GetCommonTags());
-            selectTagsSection.onTagsChange = OnTagsChange;
+            selectTagsSection.onTagDeletion = OnTagDeletion;
+            selectTagsSection.onTagAddition = OnTagAddition;
+            selectTagsSection.onTagReset = OnTagReset;
         }
 
         public override void OnInspectorGUI()
@@ -38,12 +40,34 @@ namespace ReupVirtualTwin.editor
             serializedObject.ApplyModifiedProperties();
         }
 
-        private void OnTagsChange(List<Tag> newTags)
+        private void OnTagDeletion(Tag deletedTag)
         {
-            objectTagsList.ForEach(obj =>
+            objectTagsList.ForEach(objectTags =>
             {
-                obj.tags = newTags;
-                EditorUtility.SetDirty(obj);
+                objectTags.RemoveTag(deletedTag);
+                EditorUtility.SetDirty(objectTags);
+            });
+        }
+
+        private void OnTagAddition(Tag addedTag)
+        {
+            objectTagsList.ForEach(objectTags =>
+            {
+                bool isTagAlready = objectTags.tags.Any(t => t.id == addedTag.id);
+                if (!isTagAlready)
+                {
+                    objectTags.AddTag(addedTag);
+                    EditorUtility.SetDirty(objectTags);
+                }
+            });
+        }
+
+        private void OnTagReset(List<Tag> resetTags)
+        {
+            objectTagsList.ForEach(objectTags =>
+            {
+                objectTags.tags = new List<Tag>();
+                EditorUtility.SetDirty(objectTags);
             });
         }
 
@@ -63,9 +87,9 @@ namespace ReupVirtualTwin.editor
         private bool AreAllTagsListsEqual()
         {
             List<Tag> firstObjectTags = objectTagsList[0].tags;
-            foreach (var obj in objectTagsList)
+            foreach (var objectTags in objectTagsList)
             {
-                if (!AreTagsListsEqual(firstObjectTags, obj.tags))
+                if (!AreTagsListsEqual(firstObjectTags, objectTags.tags))
                 {
                     return false;
                 }
@@ -79,12 +103,12 @@ namespace ReupVirtualTwin.editor
             {
                 return false;
             }
-            return firstObjectTags.All(t => ObjectTags.Any(t2 => t2.name == t.name));
+            return firstObjectTags.All(t => ObjectTags.Any(t2 => t2.id == t.id));
         }
 
         private void ShowCurrentTags()
         {
-            EditorGUILayout.LabelField("Current tags:");
+            EditorGUILayout.LabelField(ShowTextLabel());
             List<Tag> tempTags = GetCommonTags();
             tempTags.ForEach(tag =>
             {
@@ -98,11 +122,22 @@ namespace ReupVirtualTwin.editor
             });
         }
 
+        private string ShowTextLabel()
+        {
+            if (objectTagsList.Count > 1) {
+                return "Common Tags:";
+            }
+            return "Current Tags:"; ;
+        }
+
         private void ShowWarning()
         {
-            EditorGUILayout.HelpBox("The selected objects have different tags. Once you start editing the tags, they will be overwritten", MessageType.Warning);
+            EditorGUILayout.HelpBox(
+                "The selected objects have different tags.\n " +
+                "If you want to create a new set of tags for the selected objects click the " +
+                "'Create New Set Of Tags' button", MessageType.Warning);
             EditorGUILayout.Space();
-            if (GUILayout.Button("Remove tags from all objects"))
+            if (GUILayout.Button("Create New Set Of Tags"))
             {
                 selectTagsSection.RemoveAllTags();
             }
