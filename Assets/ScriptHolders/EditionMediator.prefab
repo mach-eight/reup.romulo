@@ -72,6 +72,7 @@ MonoBehaviour:
   transformObjectsManager: {fileID: 3276966702745460541}
   deleteObjectsManager: {fileID: 116487788499988255}
   changeColorManager: {fileID: 4771352667378813239}
+  modelInfoManager: {fileID: 0}
 --- !u!114 &6976859030307673124
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -268,31 +269,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 8285869464298341719, guid: 3beae702f8425e8469d751a007e8c954, type: 3}
   m_PrefabInstance: {fileID: 3515742959791787104}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1505214860949278016
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4771352667378813239}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26c3b98c4dfeee64fab4d0ae804181ad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &8541626590715874609
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4771352667378813239}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5522a58b046b48647b9f81a7110c9b98, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mediator: {fileID: 3831656627378006908}
 --- !u!1001 &4105527248293762398
 PrefabInstance:
   m_ObjectHideFlags: 0

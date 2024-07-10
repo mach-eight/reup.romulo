@@ -8,6 +8,8 @@ namespace Tests.PlayMode.Mocks
     public class ObjectRegistrySpy : IObjectRegistry
     {
         public List<GameObject> objects = new List<GameObject>();
+        public string[] lastRequestedObjectIds;
+        public List<string[]> requestedObjectIds;
         public ObjectRegistrySpy()
         {
             for (int i = 0; i < 10; i++)
@@ -16,6 +18,7 @@ namespace Tests.PlayMode.Mocks
                 obj.AddComponent<UniqueId>().GenerateId();
                 objects.Add(obj);
             }
+            requestedObjectIds = new List<string[]>();
         }
         public void AddObject(GameObject item)
         {
@@ -34,6 +37,8 @@ namespace Tests.PlayMode.Mocks
 
         public List<GameObject> GetObjectsWithGuids(string[] guids)
         {
+            lastRequestedObjectIds = guids;
+            requestedObjectIds.Add(guids);
             return objects;
         }
 

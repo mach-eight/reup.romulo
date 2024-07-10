@@ -28,5 +28,18 @@ namespace ReupVirtualTwin.dataSchemas
             },
             { "required", new JArray { "scene_name" } },
         };
+
+        public static readonly JObject requestLoadScenePayloadSchema = new JObject()
+        {
+            {"type", DataValidator.objectType },
+            {"properties", new JObject
+                {
+                    { "scene_name", DataValidator.stringSchema },
+                    { "scene_id", DataValidator.intSchema },
+                { "objects", DataValidator.CreateArraySchema(RomuloInternalSchema.objectSceneSchema) },
+                }
+            },
+            { "required", new JArray { "scene_name", "scene_id", "objects" } },
+        };
     }
 }

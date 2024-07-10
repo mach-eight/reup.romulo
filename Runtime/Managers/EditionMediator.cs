@@ -14,6 +14,8 @@ using ReupVirtualTwin.romuloEnvironment;
 using ReupVirtualTwin.dataSchemas;
 using Newtonsoft.Json.Linq;
 using System.Collections;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ReupVirtualTwin.managers
 {
@@ -82,6 +84,7 @@ namespace ReupVirtualTwin.managers
 
             incomingMessageValidator.RegisterMessage(WebMessageType.changeObjectsMaterial, RomuloExternalSchema.changeObjectMaterialPayloadSchema);
             incomingMessageValidator.RegisterMessage(WebMessageType.requestSceneState, RomuloExternalSchema.requestSceneStatePayloadSchema);
+            incomingMessageValidator.RegisterMessage(WebMessageType.requestSceneLoad, RomuloExternalSchema.requestLoadScenePayloadSchema);
         }
 
         public void Notify(ReupEvent eventName)
@@ -168,11 +171,12 @@ namespace ReupVirtualTwin.managers
             }
         }
 
-        public void ReceiveWebMessage(string serializedWebMessage)
+        public async Task ReceiveWebMessage(string serializedWebMessage)
         {
             JObject message = JObject.Parse(serializedWebMessage);
             if (!incomingMessageValidator.ValidateMessage(serializedWebMessage))
             {
+                Debug.Log("Invalid message received");
                 _webMessageSender.SendWebMessage(new WebMessage<string>
                 {
                     type = WebMessageType.error,
@@ -181,7 +185,7 @@ namespace ReupVirtualTwin.managers
                 return;
             }
             string type = message["type"].ToString();
-            object payload = message["payload"];
+            JToken payload = message["payload"];
             switch (type)
             {
                 case WebMessageType.setEditMode:
@@ -209,11 +213,70 @@ namespace ReupVirtualTwin.managers
                     SendModelInfoMessage();
                     break;
                 case WebMessageType.changeObjectsMaterial:
-                    _changeMaterialController.ChangeObjectMaterial((JObject)payload);
+                    await _changeMaterialController.ChangeObjectMaterial((JObject)payload);
                     break;
                 case WebMessageType.requestSceneState:
                     StartCoroutine(SendSceneStateMessage((JObject)payload));
                     break;
+                case WebMessageType.requestSceneLoad:
+                    await LoadObjectsState((JObject)payload);
+                    break;
+            }
+        }
+
+        private async Task LoadObjectsState(JObject requestPayload)
+        {
+            List<JObject> objectStates = requestPayload["objects"].ToObject<JArray>().Cast<JObject>().ToList();
+            var objectStatesByColor = objectStates
+                .Where(objectState => TypeHelpers.NotNull(objectState["color"]))
+                .GroupBy(objectState => objectState["color"].ToString());
+            PaintSceneObjects(objectStatesByColor);
+            var objectStatesByMaterial = objectStates
+                .Where(objectState => TypeHelpers.NotNull(objectState["material_id"]) && TypeHelpers.NotNull(objectState["material_url"]))
+                .GroupBy(objectState => objectState["material_id"].ToObject<int>());
+            await ApplyMaterialsToSceneObjects(objectStatesByMaterial);
+
+            WebMessage<JObject> successMessage = new()
+            {
+                type = WebMessageType.requestSceneLoadSuccess,
+                payload = new JObject(
+                    new JProperty("scene_name", requestPayload["scene_name"]),
+                    new JProperty("scene_id", requestPayload["scene_id"])
+                )
+            };
+            _webMessageSender.SendWebMessage(successMessage);
+        }
+
+        private void PaintSceneObjects(IEnumerable<IGrouping<string, JObject>> objectStatesByColor)
+        {
+            foreach(var objectsByColor in objectStatesByColor)
+            {
+                Color? color = Utils.ParseColor(objectsByColor.Key);
+                if (color == null)
+                {
+                    SendErrorMessage(InvalidColorErrorMessage(objectsByColor.Key));
+                    return;
+                }
+                string[] objectIds = objectsByColor.Select(objectState => objectState["object_id"].ToString()).ToArray();
+                List<GameObject> objectsToPaint = _registry.GetObjectsWithGuids(objectIds);
+                _changeColorManager.ChangeObjectsColor(objectsToPaint, (Color) color);
+            }
+        }
+
+        private async Task ApplyMaterialsToSceneObjects(IEnumerable<IGrouping<int, JObject>> objectStatesByMaterial)
+        {
+            foreach(var objectsByMaterial in objectStatesByMaterial)
+            {
+                int materialId = objectsByMaterial.Key;
+                string materilUrl = objectsByMaterial.First()["material_url"].ToString();
+                var objectIds = objectsByMaterial.Select(objectState => objectState["object_id"].ToString());
+                JObject materialChangeInfo = new()
+                {
+                    { "material_id", materialId },
+                    { "material_url", materilUrl },
+                    { "object_ids", new JArray(objectIds) },
+                };
+                await _changeMaterialController.ChangeObjectMaterial(materialChangeInfo, false);
             }
         }
 
@@ -286,6 +349,7 @@ namespace ReupVirtualTwin.managers
                 if (parsedColor != null)
                 {
                     _changeColorManager.ChangeObjectsColor(objectsToChangeColor, (Color)parsedColor);
+                    Notify(ReupEvent.objectColorChanged);
                 }
                 else
                 {

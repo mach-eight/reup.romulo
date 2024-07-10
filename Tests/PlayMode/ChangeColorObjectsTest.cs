@@ -6,8 +6,6 @@ using NUnit.Framework;
 
 using ReupVirtualTwin.models;
 using ReupVirtualTwin.managers;
-using ReupVirtualTwin.enums;
-using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.helpers;
 using Newtonsoft.Json.Linq;
@@ -16,7 +14,6 @@ public class ChangeColorObjectsTest : MonoBehaviour
 {
     ReupSceneInstantiator.SceneObjects sceneObjects;
     ChangeColorManager changeColorManager;
-    MockMediator mockMediator;
 
     GameObject meshedParent;
     GameObject unmeshedParent;
@@ -28,8 +25,6 @@ public class ChangeColorObjectsTest : MonoBehaviour
     {
         sceneObjects = ReupSceneInstantiator.InstantiateScene();
         changeColorManager = sceneObjects.changeColorManager;
-        mockMediator = new MockMediator();
-        changeColorManager.mediator = mockMediator;
         CreateObjects();
     }
     [TearDown]
@@ -70,24 +65,6 @@ public class ChangeColorObjectsTest : MonoBehaviour
         }
         return stringIDs;
     }
-    private class MockMediator : IMediator
-    {
-        public bool deleteModeActive = false;
-        public bool notified = false;
-
-        public void Notify(ReupEvent eventName)
-        {
-            if (eventName == ReupEvent.objectsDeleted)
-            {
-                notified = true;
-            }
-        }
-
-        public void Notify<T>(ReupEvent eventName, T payload)
-        {
-            throw new System.NotImplementedException();
-        }
-    }
 
     [UnityTest]
     public IEnumerator ShouldNotComplain_When_TryingToChangeColorOfUnmeshedObjects()
@@ -119,7 +96,7 @@ public class ChangeColorObjectsTest : MonoBehaviour
         changeColorManager.ChangeObjectsColor(gameObjects, Color.blue);
         yield return null;
 
-        string blueColorRGBA = ColorUtility.ToHtmlStringRGBA(Color.blue);
+        string blueColorRGBA = "#" + ColorUtility.ToHtmlStringRGBA(Color.blue);
         AssertUtils.AssertAllObjectsWithMeshRendererHaveMetaDataValue<string>(
             gameObjects,
             "appearance.color",
@@ -129,7 +106,7 @@ public class ChangeColorObjectsTest : MonoBehaviour
         changeColorManager.ChangeObjectsColor(gameObjects, Color.red);
         yield return null;
 
-        string redColorRGBA = ColorUtility.ToHtmlStringRGBA(Color.red);
+        string redColorRGBA = "#" + ColorUtility.ToHtmlStringRGBA(Color.red);
         AssertUtils.AssertAllObjectsWithMeshRendererHaveMetaDataValue<string>(
             gameObjects,
             "appearance.color",
@@ -161,7 +138,7 @@ public class ChangeColorObjectsTest : MonoBehaviour
         AssertUtils.AssertAllObjectsWithMeshRendererHaveMetaDataValue<string>(
             gameObjects,
             "appearance.color",
-            ColorUtility.ToHtmlStringRGBA(Color.blue));
+            "#" + ColorUtility.ToHtmlStringRGBA(Color.blue));
         yield return null;
     }
 

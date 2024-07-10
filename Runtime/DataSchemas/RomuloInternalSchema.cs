@@ -8,6 +8,7 @@ namespace ReupVirtualTwin.dataSchemas
         public static JObject materialChangeInfo { get; private set; }
         public static JObject sceneStateSchema { get; private set; }
         public static JObject sceneStateAppearanceSchema { get; private set; }
+        public static JObject objectSceneSchema { get; private set; }
 
         static RomuloInternalSchema()
         {
@@ -50,8 +51,19 @@ namespace ReupVirtualTwin.dataSchemas
                 { "required", new JArray { "id" } }
             };
 
+            objectSceneSchema = new()
+            {
+                { "type", DataValidator.objectType },
+                { "properties", new JObject
+                    {
+                        { "id", DataValidator.intSchema },
+                        { "object_id", DataValidator.stringSchema},
+                        { "base_scene", DataValidator.intSchema },
+                        { "material_id", DataValidator.MultiSchema(DataValidator.intSchema, DataValidator.nullSchema) },
+                        { "color", DataValidator.MultiSchema(DataValidator.stringSchema, DataValidator.nullSchema) },
+                    }
+                }
+            };
         }
-
-
     }
 }

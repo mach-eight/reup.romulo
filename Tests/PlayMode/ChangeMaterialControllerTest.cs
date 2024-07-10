@@ -60,7 +60,7 @@ namespace ReupVirtualTwinTests.controllers
 
         private class MediatorSpy : IMediator
         {
-            public JObject changeMaterialInfo;
+            public JObject changeMaterialInfo = null;
             public void Notify(ReupEvent eventName)
             {
                 throw new NotImplementedException();
@@ -142,6 +142,13 @@ namespace ReupVirtualTwinTests.controllers
             await controller.ChangeObjectMaterial(messagePayload);
             Assert.AreEqual(messagePayload["material_url"], mediatorSpy.changeMaterialInfo["material_url"]);
             Assert.AreEqual(messagePayload["object_ids"], mediatorSpy.changeMaterialInfo["object_ids"]);
+        }
+
+        [Test]
+        public async Task ShouldNotNotifyMediator_When_MaterialsChange()
+        {
+            await controller.ChangeObjectMaterial(messagePayload, false);
+            Assert.IsNull(mediatorSpy.changeMaterialInfo);
         }
 
         [Test]
