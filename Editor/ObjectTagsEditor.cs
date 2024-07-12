@@ -16,6 +16,8 @@ namespace ReupVirtualTwin.editor
 
         private SelectTagsSection selectTagsSection;
 
+        private string CurrentTagsLabel { get => objectTagsList.Count > 1 ? "Common Tags:" : "Current Tags:"; }
+
         private async void OnEnable()
         {
             objectTagsList = targets.Cast<ObjectTags>().ToList();
@@ -34,6 +36,10 @@ namespace ReupVirtualTwin.editor
             {
                 ShowWarning();
             }
+            if (GetDifferentTags().Count > 0)
+            {
+                ShowDifferentTags();
+            }
             ShowCurrentTags();
             EditorGUILayout.Space();
             selectTagsSection?.ShowTagsToAdd();
@@ -44,8 +50,12 @@ namespace ReupVirtualTwin.editor
         {
             objectTagsList.ForEach(objectTags =>
             {
-                objectTags.RemoveTag(deletedTag);
-                EditorUtility.SetDirty(objectTags);
+                bool isTagAlreadyPresent = objectTags.tags.Any(t => t.id == deletedTag.id);
+                if (isTagAlreadyPresent)
+                {
+                    objectTags.RemoveTag(deletedTag);
+                    EditorUtility.SetDirty(objectTags);
+                }
             });
         }
 
@@ -53,8 +63,8 @@ namespace ReupVirtualTwin.editor
         {
             objectTagsList.ForEach(objectTags =>
             {
-                bool isTagAlready = objectTags.tags.Any(t => t.id == addedTag.id);
-                if (!isTagAlready)
+                bool isTagAlreadyPresent = objectTags.tags.Any(t => t.id == addedTag.id);
+                if (!isTagAlreadyPresent)
                 {
                     objectTags.AddTag(addedTag);
                     EditorUtility.SetDirty(objectTags);
@@ -62,7 +72,7 @@ namespace ReupVirtualTwin.editor
             });
         }
 
-        private void OnTagReset(List<Tag> resetTags)
+        private void OnTagReset()
         {
             objectTagsList.ForEach(objectTags =>
             {
@@ -82,6 +92,18 @@ namespace ReupVirtualTwin.editor
             return objectTagsList[0].tags
                 .Where(t => commonTagNames.Contains(t.name))
                 .ToList();
+        }
+
+        private List<Tag> GetDifferentTags()
+        {
+            var commonTagNames = new HashSet<string>(GetCommonTags().Select(t => t.name));
+            var differentTags = objectTagsList
+                .SelectMany(objectTags => objectTags.tags)
+                .Where(t => !commonTagNames.Contains(t.name))
+                .Distinct()
+                .ToList();
+
+            return differentTags;
         }
 
         private bool AreAllTagsListsEqual()
@@ -108,7 +130,8 @@ namespace ReupVirtualTwin.editor
 
         private void ShowCurrentTags()
         {
-            EditorGUILayout.LabelField(ShowTextLabel());
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.LabelField(CurrentTagsLabel);
             List<Tag> tempTags = GetCommonTags();
             tempTags.ForEach(tag =>
             {
@@ -120,27 +143,42 @@ namespace ReupVirtualTwin.editor
                 }
                 EditorGUILayout.EndHorizontal();
             });
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.Space();
         }
 
-        private string ShowTextLabel()
+        private void ShowDifferentTags()
         {
-            if (objectTagsList.Count > 1) {
-                return "Common Tags:";
-            }
-            return "Current Tags:"; ;
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.LabelField("Tags that are not common to all selected objects:");
+            List<Tag> tempTags = GetDifferentTags();
+            tempTags.ForEach(tag =>
+            {
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField(tag.name);
+                if (GUILayout.Button("Remove"))
+                {
+                    OnTagDeletion(tag);
+                }
+                EditorGUILayout.EndHorizontal();
+            });
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.Space();
         }
 
         private void ShowWarning()
         {
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
             EditorGUILayout.HelpBox(
                 "The selected objects have different tags.\n " +
                 "If you want to create a new set of tags for the selected objects click the " +
                 "'Create New Set Of Tags' button", MessageType.Warning);
-            EditorGUILayout.Space();
             if (GUILayout.Button("Create New Set Of Tags"))
             {
                 selectTagsSection.RemoveAllTags();
             }
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.Space();
         }
 
 

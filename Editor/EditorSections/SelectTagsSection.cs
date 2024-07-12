@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using ReupVirtualTwin.helpers;
 using System;
+using PlasticPipe.PlasticProtocol.Messages;
 
 
 namespace ReupVirtualTwin.editor
@@ -17,7 +18,7 @@ namespace ReupVirtualTwin.editor
         public Action<List<Tag>> onTagsChange { set => _onTagsChange = value; }
         public Action<Tag> onTagDeletion { set => _onTagDeletion = value; }
         public Action<Tag> onTagAddition { set => _onTagAddition = value; }
-        public Action<List<Tag>> onTagReset { set => _onTagReset = value; }
+        public Action onTagReset { set => _onTagReset = value; }
 
 
         private ITagsApiManager tagsApiManager;
@@ -25,7 +26,7 @@ namespace ReupVirtualTwin.editor
         private Action<List<Tag>> _onTagsChange;
         private Action<Tag> _onTagDeletion;
         private Action<Tag> _onTagAddition;
-        private Action<List<Tag>> _onTagReset;
+        private Action _onTagReset;
 
         private Vector2 scrollPosition;
         private const int TAG_BUTTON_HEIGHT = 18;
@@ -80,7 +81,7 @@ namespace ReupVirtualTwin.editor
         public void RemoveAllTags()
         {
             selectedTags.Clear();
-            _onTagReset?.Invoke(selectedTags);
+            _onTagReset?.Invoke();
         }   
 
         private async void ShowRefetchTagsButton()
