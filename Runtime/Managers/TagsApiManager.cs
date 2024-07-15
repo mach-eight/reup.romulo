@@ -11,8 +11,6 @@ namespace ReupVirtualTwin.managers
     {
         public ITagsApiConsumer tagsApiConsumer { get => _tagsApiConsumer; set => _tagsApiConsumer = value; }
 
-        public string searchTagText { get => _searchText; set => _searchText = value; }
-
         [SerializeField]
         private bool waitingForTagsResponse = false;
         [SerializeField]

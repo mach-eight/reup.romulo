@@ -9,5 +9,7 @@ namespace ReupVirtualTwin.dataModels
         public string name;
         public string description;
         public int priority;
+
+        public string str { get => $"{this.id} {this.name}"; }
     }
 }

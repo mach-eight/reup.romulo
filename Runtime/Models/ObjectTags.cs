@@ -23,7 +23,7 @@ namespace ReupVirtualTwin.models
 
         public List<Tag> RemoveTag(Tag tag)
         {
-            tags.Remove(tag);
+            tags.RemoveAll(t => t.id == tag.id);
             return tags;
         }
 

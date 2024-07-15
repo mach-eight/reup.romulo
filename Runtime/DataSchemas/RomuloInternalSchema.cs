@@ -8,6 +8,7 @@ namespace ReupVirtualTwin.dataSchemas
         public static JObject materialChangeInfo { get; private set; }
         public static JObject sceneStateSchema { get; private set; }
         public static JObject sceneStateAppearanceSchema { get; private set; }
+        public static JObject objectSceneSchema { get; private set; }
 
         static RomuloInternalSchema()
         {
@@ -18,7 +19,7 @@ namespace ReupVirtualTwin.dataSchemas
                     {
                         { "material_id", DataValidator.intSchema },
                         { "material_url", DataValidator.stringSchema },
-                        { "object_ids",  DataValidator.CreateArraySchema(new JObject[] { DataValidator.stringSchema })},
+                        { "object_ids",  DataValidator.CreateArraySchema(DataValidator.stringSchema)},
                     }
                 },
                 { "required", new JArray { "material_url", "object_ids", "material_id" } }
@@ -43,16 +44,26 @@ namespace ReupVirtualTwin.dataSchemas
                     {
                         { "id", DataValidator.stringSchema },
                         { "appearance", sceneStateAppearanceSchema },
-                        { "children", DataValidator.CreateArraySchema(new JObject[]
-                            { DataValidator.CreateRefSchema("sceneStateSchema") })
+                        { "children", DataValidator.CreateArraySchema(DataValidator.CreateRefSchema("sceneStateSchema"))
                         },
                     }
                 },
                 { "required", new JArray { "id" } }
             };
 
+            objectSceneSchema = new()
+            {
+                { "type", DataValidator.objectType },
+                { "properties", new JObject
+                    {
+                        { "id", DataValidator.intSchema },
+                        { "object_id", DataValidator.stringSchema},
+                        { "base_scene", DataValidator.intSchema },
+                        { "material_id", DataValidator.MultiSchema(DataValidator.intSchema, DataValidator.nullSchema) },
+                        { "color", DataValidator.MultiSchema(DataValidator.stringSchema, DataValidator.nullSchema) },
+                    }
+                }
+            };
         }
-
-
     }
 }

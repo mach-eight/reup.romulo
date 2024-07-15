@@ -5,6 +5,6 @@ namespace ReupVirtualTwin.controllerInterfaces
 {
     public interface IChangeMaterialController
     {
-        public Task ChangeObjectMaterial(JObject message);
+        public Task ChangeObjectMaterial(JObject message, bool notify = true);
     }
 }

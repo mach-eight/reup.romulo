@@ -34,9 +34,9 @@ namespace ReupVirtualTwinTests.controllers
         public void FilterDisplayText_ShouldBeTagName()
         {
             TagFilter filter0 = new TagFilter(tag0);
-            Assert.AreEqual(filter0.displayText, tag0.name);
+            Assert.AreEqual(filter0.displayText, $"{tag0.id} {tag0.name}");
             TagFilter filter1 = new TagFilter(tag1);
-            Assert.AreEqual(filter1.displayText, tag1.name);
+            Assert.AreEqual(filter1.displayText, $"{tag1.id} {tag1.name}");
         }
         [Test]
         public void FilterTagShouldCallOnRemoveCallback()

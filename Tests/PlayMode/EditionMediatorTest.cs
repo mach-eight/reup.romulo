@@ -30,6 +30,7 @@ public class EditionMediatorTest : MonoBehaviour
     ChangeColorManagerSpy changeColorManagerSpy;
     ChangeMaterialControllerSpy changeMaterialControllerSpy;
     MockModelInfoManager mockModelInfoManager;
+    JObject requestSceneLoadMessage;
 
     [SetUp]
     public void SetUp()
@@ -56,25 +57,40 @@ public class EditionMediatorTest : MonoBehaviour
         editionMediator.changeMaterialController = changeMaterialControllerSpy;
         mockModelInfoManager = new MockModelInfoManager();
         editionMediator.modelInfoManager = mockModelInfoManager;
+        requestSceneLoadMessage = new JObject(
+            new JProperty("type", WebMessageType.requestSceneLoad),
+            new JProperty("payload", new JObject()
+            {
+                { "scene_name", "scene-name" },
+                { "scene_id", 12345 },
+                { "objects",  null },
+            })
+        );
     }
 
     private class ChangeColorManagerSpy : IChangeColorManager
     {
-        public List<GameObject> calledObjects;
-        public Color color;
+        public List<GameObject> lastCalledObjects;
+        public Color lastCalledColor;
+        public List<Color> calledColors = new List<Color>();
+        public List<List<GameObject>> calledObjects = new List<List<GameObject>>();
         public void ChangeObjectsColor(List<GameObject> objectsToDelete, Color color)
         {
-            calledObjects = objectsToDelete;
-            this.color = color;
+            lastCalledObjects = objectsToDelete;
+            lastCalledColor = color;
+            calledColors.Add(color);
+            calledObjects.Add(objectsToDelete);
         }
     }
 
     private class ChangeMaterialControllerSpy : IChangeMaterialController
     {
-        public JObject receivedMessagePayload;
-        public Task ChangeObjectMaterial(JObject message)
+        public JObject lastReceivedMessageRequest;
+        public List<JObject> receivedMessageRequests = new List<JObject>();
+        public Task ChangeObjectMaterial(JObject message, bool notify)
         {
-            receivedMessagePayload = message;
+            receivedMessageRequests.Add(message);
+            lastReceivedMessageRequest = message;
             return Task.CompletedTask;
         }
     }
@@ -315,6 +331,13 @@ public class EditionMediatorTest : MonoBehaviour
         }
     }
 
+    private void AssertExpectedData(object expected, object obtained)
+    {
+        var proccessedExpected = JToken.Parse(JsonConvert.SerializeObject(expected));
+        var proccessedObtained = JToken.Parse(JsonConvert.SerializeObject(obtained));
+        Assert.AreEqual(proccessedExpected, proccessedObtained);
+    }
+
     [UnityTest]
     public IEnumerator ShouldSendMessageInSetEditModeToTrue()
     {
@@ -546,8 +569,9 @@ public class EditionMediatorTest : MonoBehaviour
         string message = dummyJsonCreator.createWebMessage(WebMessageType.changeObjectColor, payload);
         editionMediator.ReceiveWebMessage(message);
         yield return null;
-        Assert.AreEqual(expectedColor, changeColorManagerSpy.color);
-        Assert.AreEqual(registrySpy.objects, changeColorManagerSpy.calledObjects);
+        Assert.AreEqual(registrySpy.lastRequestedObjectIds, payload.objectIds);
+        Assert.AreEqual(expectedColor, changeColorManagerSpy.lastCalledColor);
+        Assert.AreEqual(registrySpy.objects, changeColorManagerSpy.lastCalledObjects);
     }
 
     [UnityTest]
@@ -585,19 +609,9 @@ public class EditionMediatorTest : MonoBehaviour
         var serializedMessage = JsonConvert.SerializeObject(message);
         editionMediator.ReceiveWebMessage(serializedMessage);
         yield return null;
-        Assert.AreEqual(
-            ((Dictionary<string,object>)message["payload"])["material_url"],
-            changeMaterialControllerSpy.receivedMessagePayload["material_url"].ToString()
-        );
-        Assert.AreEqual(
-            ((string[])((Dictionary<string,object>)message["payload"])["object_ids"])[0],
-            changeMaterialControllerSpy.receivedMessagePayload["object_ids"][0].ToString()
-        );
-        Assert.AreEqual(
-            ((string[])((Dictionary<string,object>)message["payload"])["object_ids"])[1],
-            changeMaterialControllerSpy.receivedMessagePayload["object_ids"][1].ToString()
-        );
+        AssertExpectedData(message["payload"], changeMaterialControllerSpy.lastReceivedMessageRequest);
     }
+
 
     [UnityTest]
     public IEnumerator ShouldSendSuccessMessage_When_NotifiedOfMaterialChangeSuccess()
@@ -740,6 +754,224 @@ public class EditionMediatorTest : MonoBehaviour
         Assert.IsTrue(mockSelectedObjectsManager.selectionCleared);
         Assert.IsTrue(mockModelInfoManager.sceneStateRequested);
         yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldPaintObjects_when_Receive_loadSceneRequest_with_onlyOneColor()
+    {
+        string color = "#00FF00";
+        Color expectedColor = Color.green;
+        requestSceneLoadMessage["payload"]["objects"] = new JArray(
+            new JObject[]
+            {
+                new JObject()
+                {
+                    { "object_id", "object-id-1" },
+                    { "color", color },
+                },
+                new JObject()
+                {
+                    { "object_id", "object-id-2" },
+                },
+                new JObject()
+                {
+                    { "object_id", "object-id-3" },
+                    { "color", color },
+                },
+            }
+        );
+        string serializedMessage = JsonConvert.SerializeObject(requestSceneLoadMessage);
+        editionMediator.ReceiveWebMessage(serializedMessage);
+        yield return null;
+        Assert.AreEqual(new string[] { "object-id-1", "object-id-3" }, registrySpy.lastRequestedObjectIds);
+        Assert.AreEqual(expectedColor, changeColorManagerSpy.lastCalledColor);
+        Assert.AreEqual(registrySpy.objects, changeColorManagerSpy.lastCalledObjects);
+        Assert.AreEqual(1, mockWebMessageSender.sentMessages.Count);
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldPaintObjects_when_Receive_loadSceneRequest_with_severalColors()
+    {
+        string greenColor = "#00FF00";
+        Color expectedGreenColor = Color.green;
+        string redColor = "#FF0000";
+        Color expectedRedColor = Color.red;
+        requestSceneLoadMessage["payload"]["objects"] = new JArray(
+            new JObject[]
+            {
+                new JObject()
+                {
+                    { "object_id", "object-id-1" },
+                    { "color", greenColor },
+                },
+                new JObject()
+                {
+                    { "object_id", "object-id-2" },
+                    { "color", redColor },
+                },
+                new JObject()
+                {
+                    { "object_id", "object-id-3" },
+                    { "color", greenColor },
+                },
+            }
+        );
+        string serializedMessage = JsonConvert.SerializeObject(requestSceneLoadMessage);
+        editionMediator.ReceiveWebMessage(serializedMessage);
+        yield return null;
+        List<string[]> expectedObjectIdsGroups = new List<string[]>
+        {
+            new string[] { "object-id-1", "object-id-3" },
+            new string[] { "object-id-2" },
+        };
+        List<Color> expectedColors = new List<Color>
+        {
+            expectedGreenColor,
+            expectedRedColor,
+        };
+        Assert.AreEqual(expectedObjectIdsGroups, registrySpy.requestedObjectIds);
+        Assert.AreEqual(expectedColors, changeColorManagerSpy.calledColors);
+        Assert.AreEqual(1, mockWebMessageSender.sentMessages.Count);
+    }
+
+    [Test]
+    public async Task ShouldRequestChangeObjectsMaterial_when_Receive_loadSceneRequest_with_onlyOneMaterial()
+    {
+        requestSceneLoadMessage["payload"]["objects"] = new JArray(
+            new JObject[]
+            {
+                new JObject()
+                {
+                    { "object_id", "object-id-1" },
+                    { "material_id", 1 },
+                    { "material_url", "material-1-url" },
+                },
+                new JObject()
+                {
+                    { "object_id", "object-id-2" },
+                },
+                new JObject()
+                {
+                    { "object_id", "object-id-3" },
+                    { "material_id", 1 },
+                    { "material_url", "material-1-url" },
+                },
+            }
+        );
+        string serializedMessage = JsonConvert.SerializeObject(requestSceneLoadMessage);
+        await editionMediator.ReceiveWebMessage(serializedMessage);
+        JObject expectedMaterialChangeRequest = new JObject
+        {
+            { "material_id", 1 },
+            { "material_url", "material-1-url" },
+            { "object_ids", new JArray(new string[] { "object-id-1", "object-id-3" }) },
+        };
+        AssertExpectedData(expectedMaterialChangeRequest, changeMaterialControllerSpy.lastReceivedMessageRequest);
+        Assert.AreEqual(1, mockWebMessageSender.sentMessages.Count);
+    }
+
+    [Test]
+    public async Task ShouldRequestChangeObjectsMaterial_when_Receive_loadSceneRequest_with_severalMaterials()
+    {
+        requestSceneLoadMessage["payload"]["objects"] = new JArray(
+            new JObject[]
+            {
+                new JObject()
+                {
+                    { "object_id", "object-id-1" },
+                    { "material_id", 1 },
+                    { "material_url", "material-1-url" },
+                },
+                new JObject()
+                {
+                    { "object_id", "object-id-2" },
+                    { "material_id", 2 },
+                    { "material_url", "material-2-url" },
+                },
+                new JObject()
+                {
+                    { "object_id", "object-id-3" },
+                    { "material_id", 1 },
+                    { "material_url", "material-1-url" },
+                },
+            }
+        );
+        string serializedMessage = JsonConvert.SerializeObject(requestSceneLoadMessage);
+        await editionMediator.ReceiveWebMessage(serializedMessage);
+        JObject[] expectedMaterialChangeRequests = new JObject[]
+        {
+            new JObject
+            {
+                { "material_id", 1 },
+                { "material_url", "material-1-url" },
+                { "object_ids", new JArray(new string[] { "object-id-1", "object-id-3" }) },
+            },
+            new JObject
+            {
+                { "material_id", 2 },
+                { "material_url", "material-2-url" },
+                { "object_ids", new JArray(new string[] { "object-id-2" }) },
+            },
+        };
+        AssertExpectedData(expectedMaterialChangeRequests, changeMaterialControllerSpy.receivedMessageRequests);
+        Assert.AreEqual(1, mockWebMessageSender.sentMessages.Count);
+    }
+
+    [Test]
+    public async Task ShouldSendLoadSceneSuccessMessage_after_loadingSceneObjects()
+    {
+        requestSceneLoadMessage["payload"]["objects"] = new JArray(
+            new JObject[]
+            {
+                new JObject()
+                {
+                    { "object_id", "object-id-1" },
+                    { "color", "#FF0000" },
+                },
+                new JObject()
+                {
+                    { "object_id", "object-id-2" },
+                    { "material_id", 1 },
+                    { "material_url", "material-1-url" },
+                },
+            }
+        );
+        string serializedMessage = JsonConvert.SerializeObject(requestSceneLoadMessage);
+        await editionMediator.ReceiveWebMessage(serializedMessage);
+        WebMessage<JObject> sentMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[0];
+        Assert.AreEqual(1, mockWebMessageSender.sentMessages.Count);
+        Assert.AreEqual(WebMessageType.requestSceneLoadSuccess, sentMessage.type);
+        Assert.AreEqual("scene-name", sentMessage.payload["scene_name"].ToString());
+        Assert.AreEqual(12345, sentMessage.payload["scene_id"].ToObject<int>());
+    }
+
+    [Test]
+    public async Task ShouldNotPaintOrRequestMaterialChange_when_objectHaveColorAndMaterialIdSetToNull()
+    {
+        requestSceneLoadMessage["payload"]["objects"] = new JArray(
+            new JObject[]
+            {
+                new JObject()
+                {
+                    { "object_id", "object-id-1" },
+                    { "color", null },
+                    { "material_id", null },
+                    { "material_url", null },
+                },
+                new JObject()
+                {
+                    { "object_id", "object-id-2" },
+                    { "color", null },
+                    { "material_id", null },
+                    { "material_url", null },
+                },
+            }
+        );
+        string serializedMessage = JsonConvert.SerializeObject(requestSceneLoadMessage);
+        await editionMediator.ReceiveWebMessage(serializedMessage);
+        Assert.AreEqual(1, mockWebMessageSender.sentMessages.Count);
+        Assert.AreEqual(0, changeColorManagerSpy.calledColors.Count);
+        Assert.AreEqual(0, changeMaterialControllerSpy.receivedMessageRequests.Count);
     }
 
 }
