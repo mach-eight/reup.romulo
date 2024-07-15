@@ -9,6 +9,7 @@ namespace ReupVirtualTwin.enums
         public const string setEditModeSuccess = "[Edit Mode] Set Edit Mode Success";
 
         public const string setSelectedObjects = "[Selected Objects] Set Selected Objects Success v2";
+        public const string clearSelectedObjects = "[Selected Objects] Clear Selected Objects";
 
         public const string activatePositionTransform = "[Transform Objects] Activate Position Transform Mode";
         public const string activatePositionTransformSuccess = "[Transform Objects] Activate Position Transform Mode Success";
