@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 using System.Linq;
 using ReupVirtualTwin.helpers;
 using System;
-using PlasticPipe.PlasticProtocol.Messages;
-
 
 namespace ReupVirtualTwin.editor
 {

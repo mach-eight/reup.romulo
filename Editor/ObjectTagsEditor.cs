@@ -35,9 +35,6 @@ namespace ReupVirtualTwin.editor
             if (!AreAllTagsListsEqual())
             {
                 ShowWarning();
-            }
-            if (GetDifferentTags().Count > 0)
-            {
                 ShowDifferentTags();
             }
             ShowCurrentTags();
@@ -100,9 +97,9 @@ namespace ReupVirtualTwin.editor
             var differentTags = objectTagsList
                 .SelectMany(objectTags => objectTags.tags)
                 .Where(t => !commonTagNames.Contains(t.name))
-                .Distinct()
+                .GroupBy(t => t.name)
+                .Select(g => g.First())
                 .ToList();
-
             return differentTags;
         }
 
