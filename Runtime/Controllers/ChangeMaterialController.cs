@@ -26,17 +26,17 @@ namespace ReupVirtualTwin.controllers
             this.mediator = mediator;
         }
 
-        public async Task ChangeObjectMaterial(JObject message)
+        public async Task ChangeObjectMaterial(JObject materialChangeInfo, bool notify = true)
         {
             if (RomuloEnvironment.development)
             {
-                if (!DataValidator.ValidateObjectToSchema(message, RomuloInternalSchema.materialChangeInfo))
+                if (!DataValidator.ValidateObjectToSchema(materialChangeInfo, RomuloInternalSchema.materialChangeInfo))
                 {
                     return;
                 }
             }
-            string materialUrl = message["material_url"].ToString();
-            string[] objectIds = message["object_ids"].ToObject<string[]>();
+            string materialUrl = materialChangeInfo["material_url"].ToString();
+            string[] objectIds = materialChangeInfo["object_ids"].ToObject<string[]>();
             Texture2D texture = await textureDownloader.DownloadTextureFromUrl(materialUrl);
             if (!texture)
             {
@@ -51,10 +51,13 @@ namespace ReupVirtualTwin.controllers
                 if (objects[i].GetComponent<Renderer>() != null)
                 {
                     objects[i].GetComponent<Renderer>().material = newMaterial;
-                    ObjectMetaDataUtils.AssignMaterialIdMetaDataToObject(objects[i], message["material_id"].ToObject<int>());
+                    ObjectMetaDataUtils.AssignMaterialIdMetaDataToObject(objects[i], materialChangeInfo["material_id"].ToObject<int>());
                 }
             }
-            mediator.Notify(ReupEvent.objectMaterialChanged, message);
+            if (notify)
+            {
+                mediator.Notify(ReupEvent.objectMaterialChanged, materialChangeInfo);
+            }
         }
     }
 }
