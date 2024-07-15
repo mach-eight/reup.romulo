@@ -11,7 +11,6 @@ namespace ReupVirtualTwin.managerInterfaces
         public Task<List<Tag>> GetTags();
         public Task<List<Tag>> LoadMoreTags();
         public void CleanTags();
-        public string searchTagText { get; set; }
         public bool GetWaitingForTagResponse();
         public bool GetAreThereTagsToFetch();
     }
