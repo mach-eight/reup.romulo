@@ -17,6 +17,7 @@ namespace ReupVirtualTwin.editor
         private SelectTagsSection selectTagsSection;
 
         private string CurrentTagsLabel { get => objectTagsList.Count > 1 ? "Common Tags:" : "Current Tags:"; }
+        private bool areDifferentTags { get => GetDifferentTags().Count > 0 ? true : false; }
 
         private async void OnEnable()
         {
@@ -32,7 +33,7 @@ namespace ReupVirtualTwin.editor
         {
             serializedObject.Update();
             EditorGUILayout.PropertyField(serializedObject.FindProperty("m_Script"), true, new GUILayoutOption[0]);
-            if (!AreAllTagsListsEqual())
+            if (areDifferentTags)
             {
                 ShowWarning();
                 ShowDifferentTags();
@@ -80,49 +81,27 @@ namespace ReupVirtualTwin.editor
 
         private List<Tag> GetCommonTags()
         {
-            HashSet<string> commonTagNames = new HashSet<string>(objectTagsList[0].tags.Select(t => t.name));
+            HashSet<string> commonTagNames = new HashSet<string>(objectTagsList[0].tags.Select(t => t.id));
             for (int i = 1; i < objectTagsList.Count; i++)
             {
-                commonTagNames.IntersectWith(objectTagsList[i].tags.Select(t => t.name));
+                commonTagNames.IntersectWith(objectTagsList[i].tags.Select(t => t.id));
             }
 
             return objectTagsList[0].tags
-                .Where(t => commonTagNames.Contains(t.name))
+                .Where(t => commonTagNames.Contains(t.id))
                 .ToList();
         }
 
         private List<Tag> GetDifferentTags()
         {
-            var commonTagNames = new HashSet<string>(GetCommonTags().Select(t => t.name));
+            var commonTagNames = new HashSet<string>(GetCommonTags().Select(t => t.id));
             var differentTags = objectTagsList
                 .SelectMany(objectTags => objectTags.tags)
-                .Where(t => !commonTagNames.Contains(t.name))
-                .GroupBy(t => t.name)
-                .Select(g => g.First())
+                .Where(t => !commonTagNames.Contains(t.id))
+                .GroupBy(t => t.id)
+                .Select(t => t.First())
                 .ToList();
             return differentTags;
-        }
-
-        private bool AreAllTagsListsEqual()
-        {
-            List<Tag> firstObjectTags = objectTagsList[0].tags;
-            foreach (var objectTags in objectTagsList)
-            {
-                if (!AreTagsListsEqual(firstObjectTags, objectTags.tags))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        private bool AreTagsListsEqual(List<Tag> firstObjectTags, List<Tag> ObjectTags)
-        {
-            if (firstObjectTags.Count != ObjectTags.Count)
-            {
-                return false;
-            }
-            return firstObjectTags.All(t => ObjectTags.Any(t2 => t2.id == t.id));
         }
 
         private void ShowCurrentTags()
@@ -152,7 +131,7 @@ namespace ReupVirtualTwin.editor
             tempTags.ForEach(tag =>
             {
                 EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField(tag.name);
+                EditorGUILayout.LabelField(tag.str);
                 if (GUILayout.Button("Remove"))
                 {
                     OnTagDeletion(tag);
