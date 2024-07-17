@@ -834,6 +834,16 @@ public class EditionMediatorTest : MonoBehaviour
         Assert.AreEqual(1, mockWebMessageSender.sentMessages.Count);
     }
 
+    [UnityTest]
+    public IEnumerator ShouldClearSelectedObjects()
+    {
+        Assert.AreEqual(mockSelectedObjectsManager.selectionCleared, false);
+        string message = JObject.FromObject(new { type = WebMessageType.clearSelectedObjects }).ToString();
+        editionMediator.ReceiveWebMessage(message);
+        yield return null;
+        Assert.AreEqual(mockSelectedObjectsManager.selectionCleared, true);
+    }
+
     [Test]
     public async Task ShouldRequestChangeObjectsMaterial_when_Receive_loadSceneRequest_with_onlyOneMaterial()
     {

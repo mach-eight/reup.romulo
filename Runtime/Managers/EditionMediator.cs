@@ -75,6 +75,7 @@ namespace ReupVirtualTwin.managers
             incomingMessageValidator.RegisterMessage(WebMessageType.activateRotationTransform);
             incomingMessageValidator.RegisterMessage(WebMessageType.deactivateTransformMode);
             incomingMessageValidator.RegisterMessage(WebMessageType.requestModelInfo);
+            incomingMessageValidator.RegisterMessage(WebMessageType.clearSelectedObjects);
 
             incomingMessageValidator.RegisterMessage(WebMessageType.setEditMode, DataValidator.boolSchema);
 
@@ -220,6 +221,9 @@ namespace ReupVirtualTwin.managers
                     break;
                 case WebMessageType.requestSceneLoad:
                     await LoadObjectsState((JObject)payload);
+                    break;
+                case WebMessageType.clearSelectedObjects:
+                    _selectedObjectsManager.ClearSelection();
                     break;
             }
         }
