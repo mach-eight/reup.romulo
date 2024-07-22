@@ -6,7 +6,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ReupVirtualTwin.models
 {
-    public class RegisteredIdentifier : UniqueId, IObjectMetaDataGetterSetter
+    public class ObjectInfo : UniqueId, IObjectMetaDataGetterSetter
     {
         public JObject objectMetaData { get => _objectMetaData; set => _objectMetaData = value;}
         private JObject _objectMetaData;

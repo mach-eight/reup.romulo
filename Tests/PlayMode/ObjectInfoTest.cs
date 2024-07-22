@@ -8,7 +8,7 @@ using UnityEngine.TestTools;
 
 namespace ReupVirtualTwinTests.Registry
 {
-    public class RegisteredIdentifierTest : MonoBehaviour
+    public class ObjectInfoTest : MonoBehaviour
     {
         GameObject ObjectRegistryPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Assets/ScriptHolders/ObjectRegistry.prefab");
         GameObject objectRegistryGameObject;
@@ -22,7 +22,7 @@ namespace ReupVirtualTwinTests.Registry
             objectRegistryGameObject = (GameObject)PrefabUtility.InstantiatePrefab(ObjectRegistryPrefab);
             objectRegistry = objectRegistryGameObject.GetComponent<IObjectRegistry>();
             testObj = new GameObject("testObj");
-            testObj.AddComponent<RegisteredIdentifier>();
+            testObj.AddComponent<ObjectInfo>();
         }
 
         [UnityTearDown]
@@ -37,7 +37,7 @@ namespace ReupVirtualTwinTests.Registry
         [UnityTest]
         public IEnumerator TestObjHasAnId()
         {
-            var id = testObj.GetComponent<RegisteredIdentifier>().getId();
+            var id = testObj.GetComponent<ObjectInfo>().getId();
             Assert.IsNotNull(id);
             yield return null;
         }
@@ -45,7 +45,7 @@ namespace ReupVirtualTwinTests.Registry
         [UnityTest]
         public IEnumerator ObjectRegistryContainsTestObj()
         {
-            var id = testObj.GetComponent<RegisteredIdentifier>().getId();
+            var id = testObj.GetComponent<ObjectInfo>().getId();
             var obtainedObj = objectRegistry.GetObjectWithGuid(id);
             Assert.AreEqual(testObj, obtainedObj);
             yield return null;
@@ -61,11 +61,11 @@ namespace ReupVirtualTwinTests.Registry
         [UnityTest]
         public IEnumerator ObjectIsRegistryIsUpdatedIfNewIdIsAssigned()
         {
-            string currentId = testObj.GetComponent<RegisteredIdentifier>().getId();
+            string currentId = testObj.GetComponent<ObjectInfo>().getId();
             Assert.AreEqual(testObj, objectRegistry.GetObjectWithGuid(currentId));
             Assert.AreEqual(1, objectRegistry.GetObjectsCount());
             string newId = "new-id";
-            testObj.GetComponent<RegisteredIdentifier>().AssignId(newId);
+            testObj.GetComponent<ObjectInfo>().AssignId(newId);
             yield return null;
             Assert.IsNull(objectRegistry.GetObjectWithGuid(currentId));
             Assert.AreEqual(testObj, objectRegistry.GetObjectWithGuid(newId));
@@ -76,20 +76,20 @@ namespace ReupVirtualTwinTests.Registry
         public IEnumerator ShoulBeAbleToGenerateIdRightAfterCreatingTheUniqueIdComponent()
         {
             GameObject gameObject = new GameObject("new-game-obj");
-            RegisteredIdentifier registeredIdentifier = gameObject.AddComponent<RegisteredIdentifier>();
-            registeredIdentifier.GenerateId();
-            Assert.IsNotNull(registeredIdentifier.getId());
-            Assert.AreEqual(gameObject, objectRegistry.GetObjectWithGuid(registeredIdentifier.getId()));
+            ObjectInfo objectInfo = gameObject.AddComponent<ObjectInfo>();
+            objectInfo.GenerateId();
+            Assert.IsNotNull(objectInfo.getId());
+            Assert.AreEqual(gameObject, objectRegistry.GetObjectWithGuid(objectInfo.getId()));
             yield return null;
         }
         [UnityTest]
         public IEnumerator ShoulBeAbleToAssignIdRightAfterCreatingTheUniqueIdComponent()
         {
             GameObject gameObject = new GameObject("new-game-obj");
-            RegisteredIdentifier registeredIdentifier = gameObject.AddComponent<RegisteredIdentifier>();
+            ObjectInfo objectInfo = gameObject.AddComponent<ObjectInfo>();
             string assignedId = "assigned-id";
-            registeredIdentifier.AssignId(assignedId);
-            Assert.IsNotNull(registeredIdentifier.getId());
+            objectInfo.AssignId(assignedId);
+            Assert.IsNotNull(objectInfo.getId());
             Assert.AreEqual(gameObject, objectRegistry.GetObjectWithGuid(assignedId));
             yield return null;
         }

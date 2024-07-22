@@ -32,7 +32,7 @@ namespace ReupVirtualTwin.controllers
             IUniqueIdentifier uniqueId = obj.GetComponent<IUniqueIdentifier>();
             if (uniqueId == null)
             {
-                uniqueId = obj.AddComponent<RegisteredIdentifier>();
+                uniqueId = obj.AddComponent<ObjectInfo>();
                 CreateIdInUniqueIdComponent(uniqueId, objectId);
             }
             return uniqueId;

@@ -23,7 +23,7 @@ public static class ReupSceneInstantiator
         GameObject character = reupGameObject.transform.Find("Character").gameObject;
 
         GameObject building = new GameObject("building");
-        building.AddComponent<RegisteredIdentifier>().AssignId("building-id");
+        building.AddComponent<ObjectInfo>().AssignId("building-id");
         IBuildingGetterSetter setupBuilding = baseGlobalScriptGameObject.transform.Find("SetupBuilding").GetComponent<IBuildingGetterSetter>();
         setupBuilding.building = building;
 

@@ -1,13 +1,13 @@
 using UnityEditor;
 using ReupVirtualTwin.models;
 
-[CustomEditor(typeof(RegisteredIdentifier))]
-public class RegisteredIdentifierEditor : Editor
+[CustomEditor(typeof(ObjectInfo))]
+public class ObjectInfoEditor : Editor
 {
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
-        RegisteredIdentifier identifier = (RegisteredIdentifier)target;
+        ObjectInfo identifier = (ObjectInfo)target;
         if (string.IsNullOrEmpty(identifier.manualId))
         {
             identifier.manualId = identifier.uniqueId;

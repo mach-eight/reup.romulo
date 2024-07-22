@@ -50,16 +50,16 @@ namespace ReupVirtualTwinTests.Registry
         }
 
         [UnityTest]
-        public IEnumerator ShouldAssignARegisteredIdentifier()
+        public IEnumerator ShouldAssignObjectInfoToObjects()
         {
-            RegisteredIdentifier registeredIdentifier0 = parent.GetComponent<RegisteredIdentifier>();
-            Assert.IsNull(registeredIdentifier0);
+            ObjectInfo objectInfo0 = parent.GetComponent<ObjectInfo>();
+            Assert.IsNull(objectInfo0);
             yield return null;
             idController.AssignIdToObject(parent);
-            registeredIdentifier0 = parent.GetComponent<RegisteredIdentifier>();
+            objectInfo0 = parent.GetComponent<ObjectInfo>();
             yield return null;
-            Assert.IsNotNull(registeredIdentifier0);
-            string parentId = registeredIdentifier0.getId();
+            Assert.IsNotNull(objectInfo0);
+            string parentId = objectInfo0.getId();
             Assert.AreEqual(parent, objectRegistry.GetObjectWithGuid(parentId));
             yield return null;
         }
