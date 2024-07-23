@@ -31,6 +31,7 @@ public class EditionMediatorTest : MonoBehaviour
     ChangeMaterialControllerSpy changeMaterialControllerSpy;
     MockModelInfoManager mockModelInfoManager;
     JObject requestSceneLoadMessage;
+    OriginalSceneControllerSpy originalSceneControllerSpy;
 
     [SetUp]
     public void SetUp()
@@ -66,6 +67,17 @@ public class EditionMediatorTest : MonoBehaviour
                 { "objects",  null },
             })
         );
+        originalSceneControllerSpy = new OriginalSceneControllerSpy();
+        editionMediator.originalSceneController = originalSceneControllerSpy;
+    }
+
+    private class OriginalSceneControllerSpy : IOriginalSceneController
+    {
+        public int restoreOriginalSceneCallsCount = 0;
+        public void RestoreOriginalScene()
+        {
+            restoreOriginalSceneCallsCount++;
+        }
     }
 
     private class ChangeColorManagerSpy : IChangeColorManager
@@ -982,6 +994,16 @@ public class EditionMediatorTest : MonoBehaviour
         Assert.AreEqual(1, mockWebMessageSender.sentMessages.Count);
         Assert.AreEqual(0, changeColorManagerSpy.calledColors.Count);
         Assert.AreEqual(0, changeMaterialControllerSpy.receivedMessageRequests.Count);
+    }
+
+    [Test]
+    public async Task ShouldRequestOnceForOriginalSceneToBeRestored_when_Receive_loadSceneRequest()
+    {
+        requestSceneLoadMessage["payload"]["objects"] = new JArray();
+        string serializedMessage = JsonConvert.SerializeObject(requestSceneLoadMessage);
+        Assert.AreEqual(0, originalSceneControllerSpy.restoreOriginalSceneCallsCount);
+        await editionMediator.ReceiveWebMessage(serializedMessage);
+        Assert.AreEqual(1, originalSceneControllerSpy.restoreOriginalSceneCallsCount);
     }
 
 }
