@@ -67,6 +67,10 @@ namespace ReupVirtualTwin.managers
         private IModelInfoManager _modelInfoManager;
         public IModelInfoManager modelInfoManager { set => _modelInfoManager = value; }
 
+        private IOriginalSceneController _originalSceneController;
+        public IOriginalSceneController originalSceneController { get => _originalSceneController; set => _originalSceneController = value; }
+
+
         private void Awake()
         {
             incomingMessageValidator = new IncomingMessageValidator();

@@ -60,6 +60,7 @@ namespace ReupVirtualTwin.dependencyInjectors
                 registry,
                 editionMediator
             );
+            editionMediator.originalSceneController = new OriginalSceneController();
         }
     }
 }
