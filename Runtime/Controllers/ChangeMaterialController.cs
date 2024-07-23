@@ -51,6 +51,7 @@ namespace ReupVirtualTwin.controllers
                 if (objects[i].GetComponent<Renderer>() != null)
                 {
                     objects[i].GetComponent<Renderer>().material = newMaterial;
+                    objects[i].GetComponent<IObjectInfo>().materialWasChanged = true;
                     ObjectMetaDataUtils.AssignMaterialIdMetaDataToObject(objects[i], materialChangeInfo["material_id"].ToObject<int>());
                 }
             }

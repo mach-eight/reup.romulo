@@ -7,5 +7,7 @@ namespace ReupVirtualTwin.modelInterfaces
     public interface IObjectInfo
     {
         Material originalMaterial { get; }
+        bool materialWasRestored { get; set; }
+        bool materialWasChanged { get; set; }
     }
 }

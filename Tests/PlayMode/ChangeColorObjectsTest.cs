@@ -44,15 +44,19 @@ public class ChangeColorObjectsTest : MonoBehaviour
         meshedChild = new GameObject();
 
         meshedParent.AddComponent<RegisteredIdentifier>().GenerateId();
+        meshedParent.AddComponent<ObjectInfo>();
         meshedParent.AddComponent<MeshRenderer>();
 
         unmeshedParent.AddComponent<RegisteredIdentifier>().GenerateId();
+        unmeshedParent.AddComponent<ObjectInfo>();
 
         unmeshedChild.AddComponent<RegisteredIdentifier>().GenerateId();
         unmeshedChild.transform.parent = meshedParent.transform;
+        unmeshedChild.AddComponent<ObjectInfo>();
 
         meshedChild.AddComponent<RegisteredIdentifier>().GenerateId();
         meshedChild.AddComponent<MeshRenderer>();
+        meshedChild.AddComponent<ObjectInfo>();
         meshedChild.transform.parent = unmeshedParent.transform;
     }
 
