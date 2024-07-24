@@ -146,4 +146,22 @@ public class ChangeColorObjectsTest : MonoBehaviour
         yield return null;
     }
 
+    [UnityTest]
+    public IEnumerator ShouldSetChangedMaterialInObjectsInfo()
+    {
+        Assert.IsFalse(meshedParent.GetComponent<IObjectInfo>().materialWasChanged);
+        Assert.IsFalse(unmeshedParent.GetComponent<IObjectInfo>().materialWasChanged);
+        Assert.IsFalse(meshedChild.GetComponent<IObjectInfo>().materialWasChanged);
+        Assert.IsFalse(unmeshedChild.GetComponent<IObjectInfo>().materialWasChanged);
+        List<GameObject> gameObjects = new() { meshedParent, meshedChild, unmeshedParent, unmeshedChild};
+        changeColorManager.ChangeObjectsColor(gameObjects, Color.blue);
+        yield return null;
+
+        Assert.IsTrue(meshedParent.GetComponent<IObjectInfo>().materialWasChanged);
+        Assert.IsTrue(meshedChild.GetComponent<IObjectInfo>().materialWasChanged);
+
+        Assert.IsFalse(unmeshedParent.GetComponent<IObjectInfo>().materialWasChanged);
+        Assert.IsFalse(unmeshedChild.GetComponent<IObjectInfo>().materialWasChanged);
+    }
+
 }

@@ -2,6 +2,7 @@ using UnityEngine;
 using ReupVirtualTwin.managerInterfaces;
 using System.Collections.Generic;
 using ReupVirtualTwin.helpers;
+using ReupVirtualTwin.modelInterfaces;
 
 namespace ReupVirtualTwin.managers
 {
@@ -29,6 +30,7 @@ namespace ReupVirtualTwin.managers
                 Material material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
                 material.color = newColor;
                 renderer.material = material;
+                obj.GetComponent<IObjectInfo>().materialWasChanged = true;
                 return true;
             }
             return false;
