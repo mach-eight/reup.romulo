@@ -11,6 +11,7 @@ public class AutoBuildEditor : MonoBehaviour
 {
     private static IIdAssignerController idAssignerController = new IdController();
     private static IIdHasRepeatedController idHasRepeatedController = new IdController();
+    private static IObjectInfoController objectInfoController = new ObjectInfoController();
 
     [MenuItem("Reup Romulo/Build")]
     public static void Build()
@@ -101,6 +102,7 @@ public class AutoBuildEditor : MonoBehaviour
     {
         idAssignerController.RemoveIdsFromTree(building);
         idAssignerController.AssignIdsToTree(building);
+        objectInfoController.AssignObjectInfoToTree(building);
         UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(building.scene);
         UnityEditor.SceneManagement.EditorSceneManager.SaveScene(building.scene);
     }
