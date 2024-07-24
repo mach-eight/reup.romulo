@@ -13,6 +13,7 @@ namespace ReupVirtualTwin.dependencyInjectors
             SetupBuilding setUpBuilding = GetComponent<SetupBuilding>();
             setUpBuilding.colliderAdder = new ColliderAdder();
             setUpBuilding.idAssignerController = new IdController();
+            setUpBuilding.objectInfoController = new ObjectInfoController();
         }
     }
 }

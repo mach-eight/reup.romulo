@@ -17,6 +17,10 @@ namespace ReupVirtualTwin.behaviours
         private ITagSystemController _tagSystemController;
         public ITagSystemController tagSystemController { get => _tagSystemController; set => _tagSystemController = value; }
 
+        private IObjectInfoController _objectInfoController;
+        public IObjectInfoController objectInfoController { get => _objectInfoController; set => _objectInfoController = value; }
+
+
         event Action _onBuildingSetUp;
         public event Action onBuildingSetUp
         {
@@ -35,7 +39,6 @@ namespace ReupVirtualTwin.behaviours
         public IColliderAdder colliderAdder { set => _colliderAdder = value; }
         private IIdAssignerController _idAssignerController;
         public IIdAssignerController idAssignerController { get => _idAssignerController; set => _idAssignerController = value; }
-        //private 
 
         void Start()
         {
@@ -54,6 +57,7 @@ namespace ReupVirtualTwin.behaviours
         public void AssignIdsToBuilding()
         {
             _idAssignerController.AssignIdsToTree(building);
+            _objectInfoController.AssignObjectInfoToTree(building);
             Debug.Log("Ids added to tree");
         }
         public void RemoveIdsOfBuilding()
