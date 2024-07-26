@@ -9,11 +9,11 @@ namespace ReupVirtualTwin.dependencyInjectors
     {
         EditModeManager _editModeManager;
         [SerializeField]
-        GameObject editionMediator;
+        GameObject editMediator;
         private void Awake()
         {
             _editModeManager = GetComponent<EditModeManager>();
-            _editModeManager.mediator = editionMediator.GetComponent<IMediator>();
+            _editModeManager.mediator = editMediator.GetComponent<IMediator>();
         }
     }
 }
