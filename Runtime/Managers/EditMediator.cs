@@ -88,6 +88,7 @@ namespace ReupVirtualTwin.managers
             incomingMessageValidator.RegisterMessage(WebMessageType.requestSceneLoad, RomuloExternalSchema.requestLoadScenePayloadSchema);
         }
 
+
         public void Notify(ReupEvent eventName)
         {
             switch (eventName)
