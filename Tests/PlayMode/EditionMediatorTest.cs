@@ -393,7 +393,7 @@ public class EditMediatorTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldSendMessageInSetSubEditModeToTrue()
     {
-        editionMediator.Notify(ReupEvent.setSubEditMode, true);
+        editMediator.Notify(ReupEvent.setSubEditMode, true);
         WebMessage<bool> sentMessage = (WebMessage<bool>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.setSubEditModeSuccess, sentMessage.type);
         Assert.AreEqual(true, sentMessage.payload);
@@ -403,7 +403,7 @@ public class EditMediatorTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldSendMessageInSetSubEditModeToFalse()
     {
-        editionMediator.Notify(ReupEvent.setSubEditMode, false);
+        editMediator.Notify(ReupEvent.setSubEditMode, false);
         WebMessage<bool> sentMessage = (WebMessage<bool>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.setSubEditModeSuccess, sentMessage.type);
         Assert.AreEqual(false, sentMessage.payload);
@@ -414,11 +414,11 @@ public class EditMediatorTest : MonoBehaviour
     public IEnumerator ShouldSetSubEditModeWhenReceiveRequest()
     {
         string message = JObject.FromObject(new { type = WebMessageType.setSubEditMode, payload = true }).ToString();
-        editionMediator.ReceiveWebMessage(message);
+        editMediator.ReceiveWebMessage(message);
         Assert.AreEqual(mockEditModeManager.subEditMode, true);
         yield return null;
         message = JObject.FromObject(new { type = WebMessageType.setSubEditMode, payload = false }).ToString();
-        editionMediator.ReceiveWebMessage(message);
+        editMediator.ReceiveWebMessage(message);
         Assert.AreEqual(mockEditModeManager.subEditMode, false);
         yield return null;
     }
@@ -428,17 +428,17 @@ public class EditMediatorTest : MonoBehaviour
     {
         // edit mode = true and sub edit mode = false
         mockEditModeManager.editMode = true;
-        editionMediator.Notify(ReupEvent.setSubEditMode, false);
+        editMediator.Notify(ReupEvent.setSubEditMode, false);
         Assert.IsTrue(mockSelectedObjectsManager.allowSelection);
         yield return null;
         // edit mode = true and sub edit mode = true
         mockEditModeManager.editMode = true;
-        editionMediator.Notify(ReupEvent.setSubEditMode, true);
+        editMediator.Notify(ReupEvent.setSubEditMode, true);
         Assert.IsFalse(mockSelectedObjectsManager.allowSelection);
         yield return null;
         // edit mode = false and sub edit mode = false
         mockEditModeManager.editMode = false;
-        editionMediator.Notify(ReupEvent.setSubEditMode, false);
+        editMediator.Notify(ReupEvent.setSubEditMode, false);
         Assert.IsFalse(mockSelectedObjectsManager.allowSelection);
         yield return null;
     }
@@ -447,7 +447,7 @@ public class EditMediatorTest : MonoBehaviour
     public IEnumerator ShouldSetSubEditModeToFalseWhenEditModeIsSetToFalse()
     {
         mockEditModeManager.subEditMode = true;
-        editionMediator.Notify(ReupEvent.setEditMode, false);
+        editMediator.Notify(ReupEvent.setEditMode, false);
         yield return null;
         Assert.AreEqual(mockEditModeManager.subEditMode, false);
         yield return null;
