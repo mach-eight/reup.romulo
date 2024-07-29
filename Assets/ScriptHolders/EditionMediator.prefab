@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8950963653470224177}
   - component: {fileID: 6976859030307673124}
   m_Layer: 0
-  m_Name: EditionMediator
+  m_Name: EditMediator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -187,7 +187,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8706749933657137664, guid: 1dd9c57964793b04ca2ff63667e92df7, type: 3}
-      propertyPath: editionMediator
+      propertyPath: editMediator
       value: 
       objectReference: {fileID: 3831656627378006908}
     m_RemovedComponents: []
