@@ -175,5 +175,18 @@ namespace ReupVirtualTwinTests.controllers
             Assert.IsTrue(filteredObjects.Contains(building.transform.GetChild(0).GetChild(1).gameObject));
         }
 
+        [Test]
+        public void ShouldReturnObjects_WithTagZ_And_WithoutNotPresentTag()
+        {
+            building = StubObjectTreeWithTagAtDifferentLevelsCreator.CreateMockObjectWithArbitraryTagAtSecondAndThirdLevel();
+            ITagFilter filterZ = new TagFilter(StubObjectTreeWithTagAtDifferentLevelsCreator.tagZ);
+            ITagFilter filterNotPresentTag = new TagFilter(StubObjectTreeWithTagAtDifferentLevelsCreator.notPesentTag);
+            filterNotPresentTag.invertFilter = true;
+            List<ITagFilter> filterList = new List<ITagFilter>() {filterZ, filterNotPresentTag};
+            List<GameObject> filteredObjects = TagFiltersApplier.ApplyFiltersToTree(building, filterList);
+            Assert.AreEqual(1, filteredObjects.Count);
+            Assert.IsTrue(filteredObjects.Contains(building.transform.GetChild(0).gameObject));
+        }
+
     }
 }
