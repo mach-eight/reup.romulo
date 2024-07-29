@@ -15,7 +15,7 @@ public class ReupPrefabTest : MonoBehaviour
 
     IObjectRegistry objectRegistry;
 
-    EditionMediator editionMediator;
+    EditMediator editMediator;
     SensedObjectHighlighter selectableObjectHighlighter;
     EditModeManager editModeManager;
 
@@ -33,9 +33,9 @@ public class ReupPrefabTest : MonoBehaviour
         GameObject baseGlobalScriptGameObject = sceneObjects.baseGlobalScriptGameObject;
         objectRegistry = baseGlobalScriptGameObject.transform.Find("ObjectRegistry").GetComponent<IObjectRegistry>();
 
-        GameObject editionMediatorGameObject = baseGlobalScriptGameObject.transform.Find("EditionMediator").gameObject;
-        editionMediator = editionMediatorGameObject.GetComponent<EditionMediator>();
-        editModeManager = editionMediatorGameObject.transform.Find("EditModeManager").GetComponent<EditModeManager>();
+        GameObject editMediatorGameObject = baseGlobalScriptGameObject.transform.Find("EditMediator").gameObject;
+        editMediator = editMediatorGameObject.GetComponent<EditMediator>();
+        editModeManager = editMediatorGameObject.transform.Find("EditModeManager").GetComponent<EditModeManager>();
 
         character = sceneObjects.character;
         selectableObjectHighlighter = character.transform
@@ -52,16 +52,16 @@ public class ReupPrefabTest : MonoBehaviour
     }
 
     [UnityTest]
-    public IEnumerator EditionMediatorShouldFindTheRegistry()
+    public IEnumerator EditMediatorShouldFindTheRegistry()
     {
-        Assert.AreEqual(objectRegistry, editionMediator.registry);
+        Assert.AreEqual(objectRegistry, editMediator.registry);
         yield return null;
     }
 
     [UnityTest]
-    public IEnumerator EditionMediatorShouldHaveAChangeMaterialController()
+    public IEnumerator EditMediatorShouldHaveAChangeMaterialController()
     {
-        Assert.IsNotNull(editionMediator.changeMaterialController);
+        Assert.IsNotNull(editMediator.changeMaterialController);
         yield return null;
     }
 

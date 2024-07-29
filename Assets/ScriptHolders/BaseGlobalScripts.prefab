@@ -504,10 +504,10 @@ PrefabInstance:
       objectReference: {fileID: 5810216909219089537}
     - target: {fileID: 3831656627378006908, guid: 0cda47605a736cf4195ac4447f195623, type: 3}
       propertyPath: m_Name
-      value: EditionMediator
+      value: EditMediator
       objectReference: {fileID: 0}
     - target: {fileID: 7510122304204504903, guid: 0cda47605a736cf4195ac4447f195623, type: 3}
-      propertyPath: editionMediator
+      propertyPath: editMediator
       value: 
       objectReference: {fileID: 5810216909219089537}
     - target: {fileID: 8950963653470224177, guid: 0cda47605a736cf4195ac4447f195623, type: 3}

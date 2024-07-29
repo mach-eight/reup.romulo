@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 
 namespace ReupVirtualTwin.managers
 {
-    public class EditionMediator : MonoBehaviour, IMediator, IWebMessageReceiver
+    public class EditMediator : MonoBehaviour, IMediator, IWebMessageReceiver
     {
         private ICharacterRotationManager _characterRotationManager;
         public ICharacterRotationManager characterRotationManager
@@ -88,6 +88,7 @@ namespace ReupVirtualTwin.managers
             incomingMessageValidator.RegisterMessage(WebMessageType.requestSceneState, RomuloExternalSchema.requestSceneStatePayloadSchema);
             incomingMessageValidator.RegisterMessage(WebMessageType.requestSceneLoad, RomuloExternalSchema.requestLoadScenePayloadSchema);
         }
+
 
         public void Notify(ReupEvent eventName)
         {

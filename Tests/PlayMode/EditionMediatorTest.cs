@@ -16,10 +16,10 @@ using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwin.controllerInterfaces;
 using Newtonsoft.Json.Linq;
 
-public class EditionMediatorTest : MonoBehaviour
+public class EditMediatorTest : MonoBehaviour
 {
     GameObject containerGameObject;
-    EditionMediator editionMediator;
+    EditMediator editMediator;
     MockEditModeManager mockEditModeManager;
     MockSelectedObjectsManager mockSelectedObjectsManager;
     MockWebMessageSender mockWebMessageSender;
@@ -36,27 +36,27 @@ public class EditionMediatorTest : MonoBehaviour
     public void SetUp()
     {
         containerGameObject = new GameObject();
-        editionMediator = containerGameObject.AddComponent<EditionMediator>();
+        editMediator = containerGameObject.AddComponent<EditMediator>();
         mockEditModeManager = new MockEditModeManager();
         mockSelectedObjectsManager = new MockSelectedObjectsManager();
-        editionMediator.editModeManager = mockEditModeManager;
-        editionMediator.selectedObjectsManager = mockSelectedObjectsManager;
+        editMediator.editModeManager = mockEditModeManager;
+        editMediator.selectedObjectsManager = mockSelectedObjectsManager;
         mockWebMessageSender = new MockWebMessageSender();
-        editionMediator.webMessageSender = mockWebMessageSender;
+        editMediator.webMessageSender = mockWebMessageSender;
         mockTransformObjectsManager = new MockTransformObjectsManager();
-        editionMediator.transformObjectsManager = mockTransformObjectsManager;
-        mockInsertObjectsManager = new MockInsertObjectsManager(editionMediator);
-        editionMediator.insertObjectsController = mockInsertObjectsManager;
+        editMediator.transformObjectsManager = mockTransformObjectsManager;
+        mockInsertObjectsManager = new MockInsertObjectsManager(editMediator);
+        editMediator.insertObjectsController = mockInsertObjectsManager;
         mockObjectMapper = new MockObjectMapper();
-        editionMediator.objectMapper = mockObjectMapper;
+        editMediator.objectMapper = mockObjectMapper;
         registrySpy = new ObjectRegistrySpy();
-        editionMediator.registry = registrySpy;
+        editMediator.registry = registrySpy;
         changeColorManagerSpy = new ChangeColorManagerSpy();
-        editionMediator.changeColorManager = changeColorManagerSpy;
+        editMediator.changeColorManager = changeColorManagerSpy;
         changeMaterialControllerSpy = new ChangeMaterialControllerSpy();
-        editionMediator.changeMaterialController = changeMaterialControllerSpy;
+        editMediator.changeMaterialController = changeMaterialControllerSpy;
         mockModelInfoManager = new MockModelInfoManager();
-        editionMediator.modelInfoManager = mockModelInfoManager;
+        editMediator.modelInfoManager = mockModelInfoManager;
         requestSceneLoadMessage = new JObject(
             new JProperty("type", WebMessageType.requestSceneLoad),
             new JProperty("payload", new JObject()
@@ -235,12 +235,12 @@ public class EditionMediatorTest : MonoBehaviour
         public bool calledToInsertObject = false;
         public string objectLoadString = null;
         public string requestedObjectId;
-        private IMediator editionMediator;
+        private IMediator editMediator;
         public MockInsertObjectsManager(IMediator mediator)
         {
             calledToInsertObject = false;
             objectLoadString = null;
-            editionMediator = mediator;
+            editMediator = mediator;
         }
 
         public void InsertObject(InsertObjectMessagePayload insertObjectMessagePayload)
@@ -253,7 +253,7 @@ public class EditionMediatorTest : MonoBehaviour
                 loadedObject = injectedObject,
                 selectObjectAfterInsertion = insertObjectMessagePayload.selectObjectAfterInsertion,
             };
-            editionMediator.Notify(ReupEvent.insertedObjectLoaded, insertedObjectPayload);
+            editMediator.Notify(ReupEvent.insertedObjectLoaded, insertedObjectPayload);
             requestedObjectId = insertObjectMessagePayload.objectId;
         }
     }
@@ -343,7 +343,7 @@ public class EditionMediatorTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldSendMessageInSetEditModeToTrue()
     {
-        editionMediator.Notify(ReupEvent.setEditMode, true);
+        editMediator.Notify(ReupEvent.setEditMode, true);
         WebMessage<bool> sentMessage = (WebMessage<bool>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.setEditModeSuccess, sentMessage.type);
         Assert.AreEqual(true, sentMessage.payload);
@@ -352,7 +352,7 @@ public class EditionMediatorTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldSendMessageInSetEditModeToFalse()
     {
-        editionMediator.Notify(ReupEvent.setEditMode, false);
+        editMediator.Notify(ReupEvent.setEditMode, false);
         WebMessage<bool> sentMessage = (WebMessage<bool>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.setEditModeSuccess, sentMessage.type);
         Assert.AreEqual(false, sentMessage.payload);
@@ -363,21 +363,21 @@ public class EditionMediatorTest : MonoBehaviour
     public IEnumerator ShouldSetEditModeWhenReceiveRequest()
     {
         string message = JObject.FromObject(new { type = WebMessageType.setEditMode, payload = true }).ToString();
-        editionMediator.ReceiveWebMessage(message);
+        editMediator.ReceiveWebMessage(message);
         Assert.AreEqual(mockEditModeManager.editMode, true);
         yield return null;
         message = JObject.FromObject(new { type = WebMessageType.setEditMode, payload = false }).ToString();
-        editionMediator.ReceiveWebMessage(message);
+        editMediator.ReceiveWebMessage(message);
         Assert.AreEqual(mockEditModeManager.editMode, false);
         yield return null;
     }
     [UnityTest]
     public IEnumerator ShouldAllowAndDisallowObjectSelection()
     {
-        editionMediator.Notify(ReupEvent.setEditMode, true);
+        editMediator.Notify(ReupEvent.setEditMode, true);
         Assert.AreEqual(mockSelectedObjectsManager.allowSelection, true);
         yield return null;
-        editionMediator.Notify(ReupEvent.setEditMode, false);
+        editMediator.Notify(ReupEvent.setEditMode, false);
         Assert.AreEqual(mockSelectedObjectsManager.allowSelection, false);
         yield return null;
     }
@@ -385,7 +385,7 @@ public class EditionMediatorTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldClearSelectionWhenEditModeIsSetToFalse()
     {
-        editionMediator.Notify(ReupEvent.setEditMode, false);
+        editMediator.Notify(ReupEvent.setEditMode, false);
         Assert.AreEqual(mockSelectedObjectsManager.selectionCleared, true);
         yield return null;
     }
@@ -457,7 +457,7 @@ public class EditionMediatorTest : MonoBehaviour
     public IEnumerator ShouldSendErrorMessageIfReceibeMessageToActivatePositionTransformModeWithNoSelectedObject()
     {
         string message = dummyJsonCreator.createWebMessage(WebMessageType.activatePositionTransform);
-        editionMediator.ReceiveWebMessage(message);
+        editMediator.ReceiveWebMessage(message);
         yield return null;
         WebMessage<string> sentMessage = (WebMessage<string>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.error, sentMessage.type);
@@ -468,7 +468,7 @@ public class EditionMediatorTest : MonoBehaviour
     public IEnumerator ShouldSendErrorMessageIfReceibeMessageToActivateRotationTransformModeWithNoSelectedObject()
     {
         string message = dummyJsonCreator.createWebMessage(WebMessageType.activateRotationTransform);
-        editionMediator.ReceiveWebMessage(message);
+        editMediator.ReceiveWebMessage(message);
         yield return null;
         WebMessage<string> sentMessage = (WebMessage<string>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.error, sentMessage.type);
@@ -479,7 +479,7 @@ public class EditionMediatorTest : MonoBehaviour
     public IEnumerator ShouldSendErrorMessageIfReceibeMessageToDeactivateTransformModeButNoTransforModeIsActive()
     {
         string message = dummyJsonCreator.createWebMessage(WebMessageType.deactivateTransformMode);
-        editionMediator.ReceiveWebMessage(message);
+        editMediator.ReceiveWebMessage(message);
         yield return null;
         WebMessage<string> sentMessage = (WebMessage<string>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.error, sentMessage.type);
@@ -498,7 +498,7 @@ public class EditionMediatorTest : MonoBehaviour
             deselectPreviousSelection = true,
         };
         string message = dummyJsonCreator.createWebMessage(WebMessageType.loadObject, payload);
-        editionMediator.ReceiveWebMessage(message);
+        editMediator.ReceiveWebMessage(message);
         yield return null;
         Assert.IsTrue(mockInsertObjectsManager.calledToInsertObject);
         Assert.AreEqual(payload.objectUrl, mockInsertObjectsManager.objectLoadString);
@@ -509,13 +509,13 @@ public class EditionMediatorTest : MonoBehaviour
     public IEnumerator ShouldSendMessageOfLoadObjectUpdatedProcess()
     {
         float processStatus = 0.25f;
-        editionMediator.Notify(ReupEvent.insertedObjectStatusUpdate, processStatus);
+        editMediator.Notify(ReupEvent.insertedObjectStatusUpdate, processStatus);
         WebMessage<float> sentMessage = (WebMessage<float>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.loadObjectProcessUpdate, sentMessage.type);
         Assert.AreEqual(processStatus, sentMessage.payload);
         yield return null;
         processStatus = 0.6f;
-        editionMediator.Notify(ReupEvent.insertedObjectStatusUpdate, processStatus);
+        editMediator.Notify(ReupEvent.insertedObjectStatusUpdate, processStatus);
         sentMessage = (WebMessage<float>)mockWebMessageSender.sentMessages[1];
         Assert.AreEqual(WebMessageType.loadObjectProcessUpdate, sentMessage.type);
         Assert.AreEqual(processStatus, sentMessage.payload);
@@ -529,7 +529,7 @@ public class EditionMediatorTest : MonoBehaviour
         {
             loadedObject = new GameObject("insertedObject"),
         };
-        editionMediator.Notify(ReupEvent.insertedObjectLoaded, insertedObjectPayload);
+        editMediator.Notify(ReupEvent.insertedObjectLoaded, insertedObjectPayload);
         yield return null;
         WebMessage<ObjectDTO> sentMessage = (WebMessage<ObjectDTO>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.loadObjectSuccess, sentMessage.type);
@@ -548,7 +548,7 @@ public class EditionMediatorTest : MonoBehaviour
             objectId = "test-3d-model-url",
         };
         string message = dummyJsonCreator.createWebMessage(WebMessageType.loadObject, payload);
-        editionMediator.ReceiveWebMessage(message);
+        editMediator.ReceiveWebMessage(message);
         yield return null;
         Assert.IsNull(mockSelectedObjectsManager.wrapperDTO.wrappedObjects);
         Assert.IsNull(mockSelectedObjectsManager.wrapperDTO.wrappedObjects);
@@ -563,11 +563,11 @@ public class EditionMediatorTest : MonoBehaviour
             objectId = "test-3d-model-url",
         };
         string message = dummyJsonCreator.createWebMessage(WebMessageType.loadObject, payload);
-        editionMediator.ReceiveWebMessage(message);
+        editMediator.ReceiveWebMessage(message);
         yield return null;
         WebMessage<string> sentMessage = (WebMessage<string>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.error, sentMessage.type);
-        Assert.AreEqual(editionMediator.noInsertObjectUrlErrorMessage, sentMessage.payload);
+        Assert.AreEqual(editMediator.noInsertObjectUrlErrorMessage, sentMessage.payload);
         yield return null;
     }
 
@@ -579,11 +579,11 @@ public class EditionMediatorTest : MonoBehaviour
             objectUrl = "test-3d-model-url",
         };
         string message = dummyJsonCreator.createWebMessage(WebMessageType.loadObject, payload);
-        editionMediator.ReceiveWebMessage(message);
+        editMediator.ReceiveWebMessage(message);
         yield return null;
         WebMessage<string> sentMessage = (WebMessage<string>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.error, sentMessage.type);
-        Assert.AreEqual(editionMediator.noInsertObjectIdErrorMessage, sentMessage.payload);
+        Assert.AreEqual(editMediator.noInsertObjectIdErrorMessage, sentMessage.payload);
         yield return null;
     }
 
@@ -598,7 +598,7 @@ public class EditionMediatorTest : MonoBehaviour
             deselectPreviousSelection = true,
         };
         string message = dummyJsonCreator.createWebMessage(WebMessageType.loadObject, payload);
-        editionMediator.ReceiveWebMessage(message);
+        editMediator.ReceiveWebMessage(message);
         yield return null;
         Assert.IsTrue(mockSelectedObjectsManager.wrapperDTO.wrappedObjects.Contains(mockInsertObjectsManager.injectedObject));
         Assert.AreEqual(1, mockSelectedObjectsManager.wrapperDTO.wrappedObjects.Count);
@@ -616,7 +616,7 @@ public class EditionMediatorTest : MonoBehaviour
             deselectPreviousSelection = true,
         };
         string message = dummyJsonCreator.createWebMessage(WebMessageType.loadObject, payload);
-        editionMediator.ReceiveWebMessage(message);
+        editMediator.ReceiveWebMessage(message);
         yield return null;
         Assert.AreEqual(payload.objectId, mockInsertObjectsManager.requestedObjectId);
     }
@@ -632,7 +632,7 @@ public class EditionMediatorTest : MonoBehaviour
             objectIds = new string[] {"id-0", "id-1"},
         };
         string message = dummyJsonCreator.createWebMessage(WebMessageType.changeObjectColor, payload);
-        editionMediator.ReceiveWebMessage(message);
+        editMediator.ReceiveWebMessage(message);
         yield return null;
         Assert.AreEqual(registrySpy.lastRequestedObjectIds, payload.objectIds);
         Assert.AreEqual(expectedColor, changeColorManagerSpy.lastCalledColor);
@@ -649,11 +649,11 @@ public class EditionMediatorTest : MonoBehaviour
             objectIds = new string[] {"id-0", "id-1"},
         };
         string message = dummyJsonCreator.createWebMessage(WebMessageType.changeObjectColor, payload);
-        editionMediator.ReceiveWebMessage(message);
+        editMediator.ReceiveWebMessage(message);
         yield return null;
         WebMessage<string> sentMessage = (WebMessage<string>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.error, sentMessage.type);
-        Assert.AreEqual(editionMediator.InvalidColorErrorMessage(color), sentMessage.payload);
+        Assert.AreEqual(editMediator.InvalidColorErrorMessage(color), sentMessage.payload);
     }
 
     [UnityTest]
@@ -672,7 +672,7 @@ public class EditionMediatorTest : MonoBehaviour
             }
         };
         var serializedMessage = JsonConvert.SerializeObject(message);
-        editionMediator.ReceiveWebMessage(serializedMessage);
+        editMediator.ReceiveWebMessage(serializedMessage);
         yield return null;
         AssertExpectedData(message["payload"], changeMaterialControllerSpy.lastReceivedMessageRequest);
     }
@@ -686,7 +686,7 @@ public class EditionMediatorTest : MonoBehaviour
             new JProperty("material_url", "material-url"),
             new JProperty("object_ids", new JArray(new string[] { "id-0", "id-1" }))
         );
-        editionMediator.Notify(ReupEvent.objectMaterialChanged, materialChangeInfo);
+        editMediator.Notify(ReupEvent.objectMaterialChanged, materialChangeInfo);
         WebMessage<JObject> sentMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.changeObjectsMaterialSuccess, sentMessage.type);
         Assert.AreEqual(materialChangeInfo["material_url"], sentMessage.payload["material_url"]);
@@ -704,7 +704,7 @@ public class EditionMediatorTest : MonoBehaviour
                 new JProperty("misspelled_object_ids", new JArray(new string[] { "id-0", "id-1" }))
             ))
         );
-        editionMediator.ReceiveWebMessage(message.ToString());
+        editMediator.ReceiveWebMessage(message.ToString());
         yield return null;
         WebMessage<string> sentMessage = (WebMessage<string>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.error, sentMessage.type);
@@ -718,7 +718,7 @@ public class EditionMediatorTest : MonoBehaviour
         {
             { "type", "invalid-type" }
         };
-        editionMediator.ReceiveWebMessage(message.ToString());
+        editMediator.ReceiveWebMessage(message.ToString());
         yield return null;
         WebMessage<string> sentMessage = (WebMessage<string>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.error, sentMessage.type);
@@ -728,7 +728,7 @@ public class EditionMediatorTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldSendDeleteObjectSuccessAndUpdateBuildingMessage()
     {
-        editionMediator.Notify(ReupEvent.objectsDeleted);
+        editMediator.Notify(ReupEvent.objectsDeleted);
         WebMessage<string> deletedSuccessMessage = (WebMessage<string>)mockWebMessageSender.sentMessages[0];
         yield return null;
         Assert.AreEqual(WebMessageType.deleteObjectsSuccess, deletedSuccessMessage.type);
@@ -746,7 +746,7 @@ public class EditionMediatorTest : MonoBehaviour
             payload = new Dictionary<string, object>()
         };
         var serializedMessage = JsonConvert.SerializeObject(sceneStateRequestMessage);
-        editionMediator.ReceiveWebMessage(serializedMessage);
+        editMediator.ReceiveWebMessage(serializedMessage);
         yield return null;
         WebMessage<string> sentMessage = (WebMessage<string>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.error, sentMessage.type);
@@ -765,7 +765,7 @@ public class EditionMediatorTest : MonoBehaviour
                 {"scene_name", sceneName }
             }
         };
-        editionMediator.ReceiveWebMessage(JsonConvert.SerializeObject(sceneStateRequestMessage));
+        editMediator.ReceiveWebMessage(JsonConvert.SerializeObject(sceneStateRequestMessage));
         yield return null;
 
         WebMessage<JObject> sentMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[0];
@@ -789,7 +789,7 @@ public class EditionMediatorTest : MonoBehaviour
             }
         };
         var serializedMessage = JsonConvert.SerializeObject(messageWithNoMaterialId);
-        editionMediator.ReceiveWebMessage(serializedMessage);
+        editMediator.ReceiveWebMessage(serializedMessage);
         yield return null;
         WebMessage<string> sentMessage = (WebMessage<string>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.error, sentMessage.type);
@@ -812,7 +812,7 @@ public class EditionMediatorTest : MonoBehaviour
         Assert.IsFalse(mockModelInfoManager.sceneStateRequested);
 
         string serializedMessage = JsonConvert.SerializeObject(sceneStateRequestMessage);
-        editionMediator.ReceiveWebMessage(serializedMessage);
+        editMediator.ReceiveWebMessage(serializedMessage);
         Assert.IsTrue(mockSelectedObjectsManager.selectionCleared);
         Assert.IsFalse(mockModelInfoManager.sceneStateRequested);
         yield return null;
@@ -846,7 +846,7 @@ public class EditionMediatorTest : MonoBehaviour
             }
         );
         string serializedMessage = JsonConvert.SerializeObject(requestSceneLoadMessage);
-        editionMediator.ReceiveWebMessage(serializedMessage);
+        editMediator.ReceiveWebMessage(serializedMessage);
         yield return null;
         Assert.AreEqual(new string[] { "object-id-1", "object-id-3" }, registrySpy.lastRequestedObjectIds);
         Assert.AreEqual(expectedColor, changeColorManagerSpy.lastCalledColor);
@@ -882,7 +882,7 @@ public class EditionMediatorTest : MonoBehaviour
             }
         );
         string serializedMessage = JsonConvert.SerializeObject(requestSceneLoadMessage);
-        editionMediator.ReceiveWebMessage(serializedMessage);
+        editMediator.ReceiveWebMessage(serializedMessage);
         yield return null;
         List<string[]> expectedObjectIdsGroups = new List<string[]>
         {
@@ -904,7 +904,7 @@ public class EditionMediatorTest : MonoBehaviour
     {
         Assert.AreEqual(mockSelectedObjectsManager.selectionCleared, false);
         string message = JObject.FromObject(new { type = WebMessageType.clearSelectedObjects }).ToString();
-        editionMediator.ReceiveWebMessage(message);
+        editMediator.ReceiveWebMessage(message);
         yield return null;
         Assert.AreEqual(mockSelectedObjectsManager.selectionCleared, true);
     }
@@ -934,7 +934,7 @@ public class EditionMediatorTest : MonoBehaviour
             }
         );
         string serializedMessage = JsonConvert.SerializeObject(requestSceneLoadMessage);
-        await editionMediator.ReceiveWebMessage(serializedMessage);
+        await editMediator.ReceiveWebMessage(serializedMessage);
         JObject expectedMaterialChangeRequest = new JObject
         {
             { "material_id", 1 },
@@ -972,7 +972,7 @@ public class EditionMediatorTest : MonoBehaviour
             }
         );
         string serializedMessage = JsonConvert.SerializeObject(requestSceneLoadMessage);
-        await editionMediator.ReceiveWebMessage(serializedMessage);
+        await editMediator.ReceiveWebMessage(serializedMessage);
         JObject[] expectedMaterialChangeRequests = new JObject[]
         {
             new JObject
@@ -1012,7 +1012,7 @@ public class EditionMediatorTest : MonoBehaviour
             }
         );
         string serializedMessage = JsonConvert.SerializeObject(requestSceneLoadMessage);
-        await editionMediator.ReceiveWebMessage(serializedMessage);
+        await editMediator.ReceiveWebMessage(serializedMessage);
         WebMessage<JObject> sentMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(1, mockWebMessageSender.sentMessages.Count);
         Assert.AreEqual(WebMessageType.requestSceneLoadSuccess, sentMessage.type);
@@ -1043,7 +1043,7 @@ public class EditionMediatorTest : MonoBehaviour
             }
         );
         string serializedMessage = JsonConvert.SerializeObject(requestSceneLoadMessage);
-        await editionMediator.ReceiveWebMessage(serializedMessage);
+        await editMediator.ReceiveWebMessage(serializedMessage);
         Assert.AreEqual(1, mockWebMessageSender.sentMessages.Count);
         Assert.AreEqual(0, changeColorManagerSpy.calledColors.Count);
         Assert.AreEqual(0, changeMaterialControllerSpy.receivedMessageRequests.Count);
