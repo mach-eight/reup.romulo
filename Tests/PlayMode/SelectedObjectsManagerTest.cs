@@ -80,16 +80,29 @@ public class SelectedObjectsManagerTest : MonoBehaviour
     }
 
     [UnityTest]
-    public IEnumerator ShouldClearAllSelectedObjectsWhenAllowSelectionIsUnset()
+    public IEnumerator ShouldNotDeselectAnyObjectIfAllowSelectionNotSet()
     {
-
         selectedObjectsManager.allowSelection = true;
         selectedObjectsManager.AddObjectToSelection(testGameObject0);
         selectedObjectsManager.AddObjectToSelection(testGameObject1);
         Assert.AreEqual(new List<GameObject>() { testGameObject0, testGameObject1}, mockMediator.selectedObjects);
         yield return null;
         selectedObjectsManager.allowSelection = false;
-        Assert.AreEqual(new List<GameObject>() {}, mockMediator.selectedObjects);
+        selectedObjectsManager.RemoveObjectFromSelection(testGameObject0);
+        selectedObjectsManager.RemoveObjectFromSelection(testGameObject1);
+        Assert.AreEqual(new List<GameObject>() { testGameObject0, testGameObject1 }, mockMediator.selectedObjects);
+        yield return null;
+    }
+    [UnityTest]
+    public IEnumerator ShouldDeselectObjectIfAllowSelectionSet()
+    {
+        selectedObjectsManager.allowSelection = true;
+        selectedObjectsManager.AddObjectToSelection(testGameObject0);
+        selectedObjectsManager.AddObjectToSelection(testGameObject1);
+        Assert.AreEqual(new List<GameObject>() { testGameObject0, testGameObject1 }, mockMediator.selectedObjects);
+        yield return null;
+        selectedObjectsManager.RemoveObjectFromSelection(testGameObject0);
+        Assert.AreEqual(new List<GameObject>() { testGameObject1 }, mockMediator.selectedObjects);
         yield return null;
     }
     [UnityTest]

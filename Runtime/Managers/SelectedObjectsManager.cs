@@ -5,7 +5,6 @@ using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwin.enums;
 using ReupVirtualTwin.dataModels;
-using NUnit.Framework;
 using System.Collections.Generic;
 
 namespace ReupVirtualTwin.managers
@@ -52,10 +51,6 @@ namespace ReupVirtualTwin.managers
         public bool allowSelection { get => _allowSelection; set
             {
                 _allowSelection = value;
-                if (!_allowSelection)
-                {
-                    ClearSelection();
-                }
             }
         }
 
@@ -81,6 +76,7 @@ namespace ReupVirtualTwin.managers
 
         public GameObject RemoveObjectFromSelection(GameObject selectedObject)
         {
+            if (!_allowSelection) return null;
             wrapperObject = _objectWrapper.UnwrapObject(selectedObject);
             _highlighter.UnhighlightObject(selectedObject);
             return _wrapperObject;

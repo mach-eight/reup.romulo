@@ -10,21 +10,21 @@ namespace ReupVirtualTwin.behaviours
     {
         [HideInInspector]
         public SensedObjectHighlighter selectableObjectHighlighter;
-        public IOnEditModeChanged editModeManager;
+        public IOnSelectableObjectsHighlightChange editModeManager;
 
         private void Start()
         {
-            editModeManager.EditModeChanged += OnEditModeChange;
+            editModeManager.SelectableObjectsHighlightChanged += OnSelectableObjectsHighlightChange;
         }
 
         private void OnDestroy()
         {
-            editModeManager.EditModeChanged -= OnEditModeChange;
+            editModeManager.SelectableObjectsHighlightChanged -= OnSelectableObjectsHighlightChange;
         }
 
-        private void OnEditModeChange(bool editMode)
+        private void OnSelectableObjectsHighlightChange(bool ShouldShowSelectableObjectsChanged)
         {
-            selectableObjectHighlighter.enableHighlighting = editMode;
+            selectableObjectHighlighter.enableHighlighting = ShouldShowSelectableObjectsChanged;
         }
     }
 }

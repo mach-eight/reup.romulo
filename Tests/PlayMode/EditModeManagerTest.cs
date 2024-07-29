@@ -32,9 +32,21 @@ public class EditModeManagerTest : MonoBehaviour
         yield return null;
     }
 
+    [UnityTest]
+    public IEnumerator EditModeManagerShouldNotifyMediatorWhenSettingSubEditMode()
+    {
+        editModeManager.subEditMode = true;
+        Assert.AreEqual(true, mockMediator.subEditMode);
+        yield return null;
+        editModeManager.subEditMode = false;
+        Assert.AreEqual(false, mockMediator.subEditMode);
+        yield return null;
+    }
+
     private class MockMediator : IMediator
     {
         public bool editMode;
+        public bool subEditMode;
         public void Notify(ReupEvent eventName)
         {
             throw new System.NotImplementedException();
@@ -45,6 +57,11 @@ public class EditModeManagerTest : MonoBehaviour
             if (eventName == ReupEvent.setEditMode)
             {
                 editMode = (bool)(object)payload;
+            }
+
+            if (eventName == ReupEvent.setSubEditMode)
+            {
+                subEditMode = (bool)(object)payload;
             }
         }
     }

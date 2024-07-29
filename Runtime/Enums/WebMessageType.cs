@@ -8,6 +8,9 @@ namespace ReupVirtualTwin.enums
         public const string setEditMode = "[Edit Mode] Set Edit Mode";
         public const string setEditModeSuccess = "[Edit Mode] Set Edit Mode Success";
 
+        public const string setSubEditMode = "[SubEdit Mode] Set SubEdit Mode";
+        public const string setSubEditModeSuccess = "[SubEdit Mode] Set SubEdit Mode Success";
+
         public const string setSelectedObjects = "[Selected Objects] Set Selected Objects Success v2";
         public const string clearSelectedObjects = "[Selected Objects] Clear Selected Objects";
 
