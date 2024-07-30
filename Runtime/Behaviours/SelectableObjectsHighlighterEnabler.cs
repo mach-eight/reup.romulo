@@ -22,9 +22,9 @@ namespace ReupVirtualTwin.behaviours
             SelectedObjectsManager.AllowSelectionChanged -= OnSelectionModeChanged;
         }
 
-        private void OnSelectionModeChanged(bool allowSelectionMode)
+        private void OnSelectionModeChanged(bool allowSelection)
         {
-            selectableObjectHighlighter.enableHighlighting = allowSelectionMode;
+            selectableObjectHighlighter.enableHighlighting = allowSelection;
         }
     }
 }
