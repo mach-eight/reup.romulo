@@ -6,11 +6,13 @@ using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwin.enums;
 using ReupVirtualTwin.dataModels;
 using System.Collections.Generic;
+using System;
 
 namespace ReupVirtualTwin.managers
 {
-    public class SelectedObjectsManager : MonoBehaviour, ISelectedObjectsManager, IIsObjectPartOfSelection
+    public class SelectedObjectsManager : MonoBehaviour, ISelectedObjectsManager, IIsObjectPartOfSelection, IOnAllowSelectionChange
     {
+        public event Action<bool> AllowSelectionChanged;
         private IObjectWrapper _objectWrapper;
         public IObjectWrapper objectWrapper { set =>  _objectWrapper = value; }
         private IObjectHighlighter _highlighter;
@@ -51,9 +53,9 @@ namespace ReupVirtualTwin.managers
         public bool allowSelection { get => _allowSelection; set
             {
                 _allowSelection = value;
+                AllowSelectionChanged?.Invoke(_allowSelection);
             }
         }
-
 
         public GameObject AddObjectToSelection(GameObject selectedObject)
         {

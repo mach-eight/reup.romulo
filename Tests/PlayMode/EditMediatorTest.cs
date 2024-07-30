@@ -98,9 +98,7 @@ public class EditMediatorTest : MonoBehaviour
     private class MockEditModeManager : IEditModeManager
     {
         private bool _editMode;
-        private bool _subEditMode;
         public bool editMode { get => _editMode; set => _editMode = value; }
-        public bool subEditMode { get => _subEditMode; set => _subEditMode = value; }
     }
     private class MockSelectedObjectsManager : ISelectedObjectsManager
     {
@@ -383,73 +381,28 @@ public class EditMediatorTest : MonoBehaviour
     }
 
     [UnityTest]
+    public IEnumerator ShouldAllowSelection()
+    {
+        string message = JObject.FromObject(new { type = WebMessageType.allowSelection }).ToString();
+        editMediator.ReceiveWebMessage(message);
+        Assert.AreEqual(mockSelectedObjectsManager.allowSelection, true);
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldDisableSelection()
+    {
+        string message = JObject.FromObject(new { type = WebMessageType.disableSelection }).ToString();
+        editMediator.ReceiveWebMessage(message);
+        Assert.AreEqual(mockSelectedObjectsManager.allowSelection, false);
+        yield return null;
+    }
+
+    [UnityTest]
     public IEnumerator ShouldClearSelectionWhenEditModeIsSetToFalse()
     {
         editMediator.Notify(ReupEvent.setEditMode, false);
         Assert.AreEqual(mockSelectedObjectsManager.selectionCleared, true);
-        yield return null;
-    }
-
-    [UnityTest]
-    public IEnumerator ShouldSendMessageInSetSubEditModeToTrue()
-    {
-        editMediator.Notify(ReupEvent.setSubEditMode, true);
-        WebMessage<bool> sentMessage = (WebMessage<bool>)mockWebMessageSender.sentMessages[0];
-        Assert.AreEqual(WebMessageType.setSubEditModeSuccess, sentMessage.type);
-        Assert.AreEqual(true, sentMessage.payload);
-        yield return null;
-    }
-
-    [UnityTest]
-    public IEnumerator ShouldSendMessageInSetSubEditModeToFalse()
-    {
-        editMediator.Notify(ReupEvent.setSubEditMode, false);
-        WebMessage<bool> sentMessage = (WebMessage<bool>)mockWebMessageSender.sentMessages[0];
-        Assert.AreEqual(WebMessageType.setSubEditModeSuccess, sentMessage.type);
-        Assert.AreEqual(false, sentMessage.payload);
-        yield return null;
-    }
-
-    [UnityTest]
-    public IEnumerator ShouldSetSubEditModeWhenReceiveRequest()
-    {
-        string message = JObject.FromObject(new { type = WebMessageType.setSubEditMode, payload = true }).ToString();
-        editMediator.ReceiveWebMessage(message);
-        Assert.AreEqual(mockEditModeManager.subEditMode, true);
-        yield return null;
-        message = JObject.FromObject(new { type = WebMessageType.setSubEditMode, payload = false }).ToString();
-        editMediator.ReceiveWebMessage(message);
-        Assert.AreEqual(mockEditModeManager.subEditMode, false);
-        yield return null;
-    }
-
-    [UnityTest]
-    public IEnumerator ShouldAllowAndDisallowObjectSelectionAccordingToSubEditMode()
-    {
-        // edit mode = true and sub edit mode = false
-        mockEditModeManager.editMode = true;
-        editMediator.Notify(ReupEvent.setSubEditMode, false);
-        Assert.IsTrue(mockSelectedObjectsManager.allowSelection);
-        yield return null;
-        // edit mode = true and sub edit mode = true
-        mockEditModeManager.editMode = true;
-        editMediator.Notify(ReupEvent.setSubEditMode, true);
-        Assert.IsFalse(mockSelectedObjectsManager.allowSelection);
-        yield return null;
-        // edit mode = false and sub edit mode = false
-        mockEditModeManager.editMode = false;
-        editMediator.Notify(ReupEvent.setSubEditMode, false);
-        Assert.IsFalse(mockSelectedObjectsManager.allowSelection);
-        yield return null;
-    }
-
-    [UnityTest]
-    public IEnumerator ShouldSetSubEditModeToFalseWhenEditModeIsSetToFalse()
-    {
-        mockEditModeManager.subEditMode = true;
-        editMediator.Notify(ReupEvent.setEditMode, false);
-        yield return null;
-        Assert.AreEqual(mockEditModeManager.subEditMode, false);
         yield return null;
     }
 

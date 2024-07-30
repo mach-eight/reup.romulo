@@ -76,9 +76,10 @@ namespace ReupVirtualTwin.managers
             incomingMessageValidator.RegisterMessage(WebMessageType.deactivateTransformMode);
             incomingMessageValidator.RegisterMessage(WebMessageType.requestModelInfo);
             incomingMessageValidator.RegisterMessage(WebMessageType.clearSelectedObjects);
+            incomingMessageValidator.RegisterMessage(WebMessageType.allowSelection);
+            incomingMessageValidator.RegisterMessage(WebMessageType.disableSelection);
 
             incomingMessageValidator.RegisterMessage(WebMessageType.setEditMode, DataValidator.boolSchema);
-            incomingMessageValidator.RegisterMessage(WebMessageType.setSubEditMode, DataValidator.boolSchema);
 
             incomingMessageValidator.RegisterMessage(WebMessageType.deleteObjects, DataValidator.stringSchema);
             incomingMessageValidator.RegisterMessage(WebMessageType.loadObject, DataValidator.stringSchema);
@@ -130,13 +131,6 @@ namespace ReupVirtualTwin.managers
                         throw new ArgumentException($"Payload must be a boolean for {eventName} events", nameof(payload));
                     }
                     ProccessEditMode((bool)(object)payload);
-                    break;
-                case ReupEvent.setSubEditMode:
-                    if (!(payload is bool))
-                    {
-                        throw new ArgumentException($"Payload must be a boolean for {eventName} events", nameof(payload));
-                    }
-                    ProcessSubEditMode((bool)(object)payload);
                     break;
                 case ReupEvent.setSelectedObjects:
                     if (!(payload is ObjectWrapperDTO))
@@ -201,9 +195,6 @@ namespace ReupVirtualTwin.managers
                 case WebMessageType.setEditMode:
                     _editModeManager.editMode = ((JValue)payload).Value<bool>();
                     break;
-                case WebMessageType.setSubEditMode:
-                    _editModeManager.subEditMode = ((JValue)payload).Value<bool>();
-                    break;
                 case WebMessageType.activatePositionTransform:
                     ActivateTransformMode(TransformMode.PositionMode);
                     break;
@@ -236,6 +227,12 @@ namespace ReupVirtualTwin.managers
                     break;
                 case WebMessageType.clearSelectedObjects:
                     _selectedObjectsManager.ClearSelection();
+                    break;
+                case WebMessageType.allowSelection:
+                    _selectedObjectsManager.allowSelection = true;
+                    break;
+                case WebMessageType.disableSelection:
+                    _selectedObjectsManager.allowSelection = false;
                     break;
             }
         }
@@ -384,8 +381,6 @@ namespace ReupVirtualTwin.managers
             if (editMode == false)
             {
                 _selectedObjectsManager.ClearSelection();
-                if(_editModeManager.subEditMode)
-                    _editModeManager.subEditMode = false;
                 if (_transformObjectsManager.active)
                     _transformObjectsManager.DeactivateTransformMode();
             }
@@ -395,21 +390,6 @@ namespace ReupVirtualTwin.managers
                 payload = editMode,
             };
             _webMessageSender.SendWebMessage(message);
-        }
-
-        private void ProcessSubEditMode(bool subEditMode)
-        {
-            if (_editModeManager.editMode)
-            {
-                _selectedObjectsManager.allowSelection = !subEditMode;
-            }
-            WebMessage<bool> message = new WebMessage<bool>
-            {
-                type = WebMessageType.setSubEditModeSuccess,
-                payload = subEditMode,
-            };
-            _webMessageSender.SendWebMessage(message);
-
         }
 
         private void ProcessNewWrapper(ObjectWrapperDTO wrappedObject)
