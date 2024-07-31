@@ -19,7 +19,7 @@ namespace ReupVirtualTwin.behaviours
         {
             if(_selectedObjectsManager.wrapperDTO.wrappedObjects.Contains(obj))
             {
-                _selectedObjectsManager.RemoveObjectFromSelection(obj);
+                _selectedObjectsManager.RemoveObjectFromSelectionIfEditSelectionAllowed(obj);
                 return;
             }
             _selectedObjectsManager.AddObjectToSelection(obj);

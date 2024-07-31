@@ -229,10 +229,10 @@ namespace ReupVirtualTwin.managers
                     _selectedObjectsManager.ClearSelection();
                     break;
                 case WebMessageType.allowSelection:
-                    _selectedObjectsManager.allowSelection = true;
+                    _selectedObjectsManager.allowEditSelection = true;
                     break;
                 case WebMessageType.disableSelection:
-                    _selectedObjectsManager.allowSelection = false;
+                    _selectedObjectsManager.allowEditSelection = false;
                     break;
             }
         }
@@ -377,7 +377,7 @@ namespace ReupVirtualTwin.managers
 
         private void ProccessEditMode(bool editMode)
         {
-            _selectedObjectsManager.allowSelection = editMode;
+            _selectedObjectsManager.allowEditSelection = editMode;
             if (editMode == false)
             {
                 _selectedObjectsManager.ClearSelection();

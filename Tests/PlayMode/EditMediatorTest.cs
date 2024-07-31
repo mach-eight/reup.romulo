@@ -110,8 +110,8 @@ public class EditMediatorTest : MonoBehaviour
                 wrappedObjects = null,
             };
         }
-        private bool _allowSelection = false;
-        public bool allowSelection { get => _allowSelection; set => _allowSelection = value; }
+        private bool _allowEditSelection = false;
+        public bool allowEditSelection { get => _allowEditSelection; set => _allowEditSelection = value; }
 
 
         public bool selectionCleared = false;
@@ -138,6 +138,11 @@ public class EditMediatorTest : MonoBehaviour
         }
 
         public GameObject RemoveObjectFromSelection(GameObject selectedObject)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public GameObject RemoveObjectFromSelectionIfEditSelectionAllowed(GameObject selectedObject)
         {
             throw new System.NotImplementedException();
         }
@@ -373,10 +378,10 @@ public class EditMediatorTest : MonoBehaviour
     public IEnumerator ShouldAllowAndDisallowObjectSelection()
     {
         editMediator.Notify(ReupEvent.setEditMode, true);
-        Assert.AreEqual(mockSelectedObjectsManager.allowSelection, true);
+        Assert.AreEqual(mockSelectedObjectsManager.allowEditSelection, true);
         yield return null;
         editMediator.Notify(ReupEvent.setEditMode, false);
-        Assert.AreEqual(mockSelectedObjectsManager.allowSelection, false);
+        Assert.AreEqual(mockSelectedObjectsManager.allowEditSelection, false);
         yield return null;
     }
 
@@ -385,7 +390,7 @@ public class EditMediatorTest : MonoBehaviour
     {
         string message = JObject.FromObject(new { type = WebMessageType.allowSelection }).ToString();
         editMediator.ReceiveWebMessage(message);
-        Assert.AreEqual(mockSelectedObjectsManager.allowSelection, true);
+        Assert.AreEqual(mockSelectedObjectsManager.allowEditSelection, true);
         yield return null;
     }
 
@@ -394,7 +399,7 @@ public class EditMediatorTest : MonoBehaviour
     {
         string message = JObject.FromObject(new { type = WebMessageType.disableSelection }).ToString();
         editMediator.ReceiveWebMessage(message);
-        Assert.AreEqual(mockSelectedObjectsManager.allowSelection, false);
+        Assert.AreEqual(mockSelectedObjectsManager.allowEditSelection, false);
         yield return null;
     }
 

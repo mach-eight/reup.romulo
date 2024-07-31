@@ -49,17 +49,17 @@ namespace ReupVirtualTwin.managers
             }
         }
 
-        private bool _allowSelection = false;
-        public bool allowSelection { get => _allowSelection; set
+        private bool _allowEditSelection = false;
+        public bool allowEditSelection { get => _allowEditSelection; set
             {
-                _allowSelection = value;
-                AllowSelectionChanged?.Invoke(_allowSelection);
+                _allowEditSelection = value;
+                AllowSelectionChanged?.Invoke(_allowEditSelection);
             }
         }
 
         public GameObject AddObjectToSelection(GameObject selectedObject)
         {
-            if (!_allowSelection) return null;
+            if (!_allowEditSelection) return null;
             wrapperObject = _objectWrapper.WrapObject(selectedObject);
             return _wrapperObject;
         }
@@ -76,9 +76,14 @@ namespace ReupVirtualTwin.managers
             }
         }
 
+        public GameObject RemoveObjectFromSelectionIfEditSelectionAllowed(GameObject selectedObject)
+        {
+            if (!_allowEditSelection) return null;
+            return RemoveObjectFromSelection(selectedObject);
+        }
+
         public GameObject RemoveObjectFromSelection(GameObject selectedObject)
         {
-            if (!_allowSelection) return null;
             wrapperObject = _objectWrapper.UnwrapObject(selectedObject);
             _highlighter.UnhighlightObject(selectedObject);
             return _wrapperObject;
