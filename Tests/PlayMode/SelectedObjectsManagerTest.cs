@@ -88,8 +88,8 @@ public class SelectedObjectsManagerTest : MonoBehaviour
         Assert.AreEqual(new List<GameObject>() { testGameObject0, testGameObject1 }, mockMediator.selectedObjects);
         yield return null;
         selectedObjectsManager.allowEditSelection = false;
-        selectedObjectsManager.RemoveObjectFromSelectionIfEditSelectionAllowed(testGameObject0);
-        selectedObjectsManager.RemoveObjectFromSelectionIfEditSelectionAllowed(testGameObject1);
+        selectedObjectsManager.RemoveObjectFromSelection(testGameObject0);
+        selectedObjectsManager.RemoveObjectFromSelection(testGameObject1);
         Assert.AreEqual(new List<GameObject>() { testGameObject0, testGameObject1 }, mockMediator.selectedObjects);
         yield return null;
     }
@@ -101,7 +101,7 @@ public class SelectedObjectsManagerTest : MonoBehaviour
         selectedObjectsManager.AddObjectToSelection(testGameObject1);
         Assert.AreEqual(new List<GameObject>() { testGameObject0, testGameObject1 }, mockMediator.selectedObjects);
         yield return null;
-        selectedObjectsManager.RemoveObjectFromSelectionIfEditSelectionAllowed(testGameObject0);
+        selectedObjectsManager.RemoveObjectFromSelection(testGameObject0);
         Assert.AreEqual(new List<GameObject>() { testGameObject1 }, mockMediator.selectedObjects);
         yield return null;
     }
@@ -114,11 +114,11 @@ public class SelectedObjectsManagerTest : MonoBehaviour
         Assert.AreEqual(new List<GameObject>() { testGameObject0, testGameObject1 }, mockMediator.selectedObjects);
         yield return null;
         selectedObjectsManager.allowEditSelection = false;
-        selectedObjectsManager.RemoveObjectFromSelection(testGameObject0);
+        selectedObjectsManager.ForceRemoveObjectFromSelection(testGameObject0);
         Assert.AreEqual(new List<GameObject>() { testGameObject1 }, mockMediator.selectedObjects);
         yield return null;
         selectedObjectsManager.allowEditSelection = true;
-        selectedObjectsManager.RemoveObjectFromSelection(testGameObject1);
+        selectedObjectsManager.ForceRemoveObjectFromSelection(testGameObject1);
         Assert.AreEqual(new List<GameObject>() {}, mockMediator.selectedObjects);
         yield return null;
     }

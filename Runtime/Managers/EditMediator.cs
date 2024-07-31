@@ -341,7 +341,7 @@ namespace ReupVirtualTwin.managers
             {
                 foreach( GameObject obj in objectsToDelete)
                 {
-                    _selectedObjectsManager.RemoveObjectFromSelection(obj);
+                    _selectedObjectsManager.ForceRemoveObjectFromSelection(obj);
                 }
                 _deleteObjectsManager.DeleteObjects(objectsToDelete);
             }

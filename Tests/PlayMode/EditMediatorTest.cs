@@ -142,7 +142,7 @@ public class EditMediatorTest : MonoBehaviour
             throw new System.NotImplementedException();
         }
 
-        public GameObject RemoveObjectFromSelectionIfEditSelectionAllowed(GameObject selectedObject)
+        public GameObject ForceRemoveObjectFromSelection(GameObject selectedObject)
         {
             throw new System.NotImplementedException();
         }

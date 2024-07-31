@@ -76,13 +76,13 @@ namespace ReupVirtualTwin.managers
             }
         }
 
-        public GameObject RemoveObjectFromSelectionIfEditSelectionAllowed(GameObject selectedObject)
+        public GameObject RemoveObjectFromSelection(GameObject selectedObject)
         {
             if (!_allowEditSelection) return null;
-            return RemoveObjectFromSelection(selectedObject);
+            return ForceRemoveObjectFromSelection(selectedObject);
         }
 
-        public GameObject RemoveObjectFromSelection(GameObject selectedObject)
+        public GameObject ForceRemoveObjectFromSelection(GameObject selectedObject)
         {
             wrapperObject = _objectWrapper.UnwrapObject(selectedObject);
             _highlighter.UnhighlightObject(selectedObject);
