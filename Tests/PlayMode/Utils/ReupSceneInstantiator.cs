@@ -27,7 +27,7 @@ public static class ReupSceneInstantiator
         setupBuilding.building = building;
 
         ChangeColorManager changeColorManager = baseGlobalScriptGameObject.transform
-            .Find("EditionMediator")
+            .Find("EditMediator")
             .Find("ChangeColorManager")
             .GetComponent<ChangeColorManager>();
 

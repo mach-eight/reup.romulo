@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 
 namespace ReupVirtualTwin.managers
 {
-    public class EditionMediator : MonoBehaviour, IMediator, IWebMessageReceiver
+    public class EditMediator : MonoBehaviour, IMediator, IWebMessageReceiver
     {
         private ICharacterRotationManager _characterRotationManager;
         public ICharacterRotationManager characterRotationManager
@@ -80,6 +80,8 @@ namespace ReupVirtualTwin.managers
             incomingMessageValidator.RegisterMessage(WebMessageType.deactivateTransformMode);
             incomingMessageValidator.RegisterMessage(WebMessageType.requestModelInfo);
             incomingMessageValidator.RegisterMessage(WebMessageType.clearSelectedObjects);
+            incomingMessageValidator.RegisterMessage(WebMessageType.allowSelection);
+            incomingMessageValidator.RegisterMessage(WebMessageType.disableSelection);
 
             incomingMessageValidator.RegisterMessage(WebMessageType.setEditMode, DataValidator.boolSchema);
 
@@ -91,6 +93,7 @@ namespace ReupVirtualTwin.managers
             incomingMessageValidator.RegisterMessage(WebMessageType.requestSceneState, RomuloExternalSchema.requestSceneStatePayloadSchema);
             incomingMessageValidator.RegisterMessage(WebMessageType.requestSceneLoad, RomuloExternalSchema.requestLoadScenePayloadSchema);
         }
+
 
         public void Notify(ReupEvent eventName)
         {
@@ -229,6 +232,12 @@ namespace ReupVirtualTwin.managers
                 case WebMessageType.clearSelectedObjects:
                     _selectedObjectsManager.ClearSelection();
                     break;
+                case WebMessageType.allowSelection:
+                    _selectedObjectsManager.allowEditSelection = true;
+                    break;
+                case WebMessageType.disableSelection:
+                    _selectedObjectsManager.allowEditSelection = false;
+                    break;
             }
         }
 
@@ -340,7 +349,7 @@ namespace ReupVirtualTwin.managers
             {
                 foreach( GameObject obj in objectsToDelete)
                 {
-                    _selectedObjectsManager.RemoveObjectFromSelection(obj);
+                    _selectedObjectsManager.ForceRemoveObjectFromSelection(obj);
                 }
                 _deleteObjectsManager.DeleteObjects(objectsToDelete);
             }
@@ -376,7 +385,7 @@ namespace ReupVirtualTwin.managers
 
         private void ProccessEditMode(bool editMode)
         {
-            _selectedObjectsManager.allowSelection = editMode;
+            _selectedObjectsManager.allowEditSelection = editMode;
             if (editMode == false)
             {
                 _selectedObjectsManager.ClearSelection();

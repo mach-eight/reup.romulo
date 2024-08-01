@@ -5,13 +5,14 @@ using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwin.enums;
 using ReupVirtualTwin.dataModels;
-using NUnit.Framework;
 using System.Collections.Generic;
+using System;
 
 namespace ReupVirtualTwin.managers
 {
-    public class SelectedObjectsManager : MonoBehaviour, ISelectedObjectsManager, IIsObjectPartOfSelection
+    public class SelectedObjectsManager : MonoBehaviour, ISelectedObjectsManager, IIsObjectPartOfSelection, IOnAllowSelectionChange
     {
+        public event Action<bool> AllowSelectionChanged;
         private IObjectWrapper _objectWrapper;
         public IObjectWrapper objectWrapper { set =>  _objectWrapper = value; }
         private IObjectHighlighter _highlighter;
@@ -48,21 +49,17 @@ namespace ReupVirtualTwin.managers
             }
         }
 
-        private bool _allowSelection = false;
-        public bool allowSelection { get => _allowSelection; set
+        private bool _allowEditSelection = false;
+        public bool allowEditSelection { get => _allowEditSelection; set
             {
-                _allowSelection = value;
-                if (!_allowSelection)
-                {
-                    ClearSelection();
-                }
+                _allowEditSelection = value;
+                AllowSelectionChanged?.Invoke(_allowEditSelection);
             }
         }
 
-
         public GameObject AddObjectToSelection(GameObject selectedObject)
         {
-            if (!_allowSelection) return null;
+            if (!_allowEditSelection) return null;
             wrapperObject = _objectWrapper.WrapObject(selectedObject);
             return _wrapperObject;
         }
@@ -80,6 +77,12 @@ namespace ReupVirtualTwin.managers
         }
 
         public GameObject RemoveObjectFromSelection(GameObject selectedObject)
+        {
+            if (!_allowEditSelection) return null;
+            return ForceRemoveObjectFromSelection(selectedObject);
+        }
+
+        public GameObject ForceRemoveObjectFromSelection(GameObject selectedObject)
         {
             wrapperObject = _objectWrapper.UnwrapObject(selectedObject);
             _highlighter.UnhighlightObject(selectedObject);

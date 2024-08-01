@@ -25,8 +25,8 @@ namespace ReupVirtualTwin.dependencyInjectors
             selectableObjectHighlighter.objectHighlighter = new Outliner(RomuloEnvironment.orangeHighlightColor, 5.0f);
 
             SelectableObjectsHighlighterEnabler selectableObjectHighlighterEnabler = GetComponent<SelectableObjectsHighlighterEnabler>();
-            selectableObjectHighlighterEnabler.editModeManager = editModeManager;
             selectableObjectHighlighterEnabler.selectableObjectHighlighter = selectableObjectHighlighter;
+            selectableObjectHighlighterEnabler.SelectedObjectsManager = selectedObjectsManager;
             selectableObjectHighlighter.selectedObjectsManager = selectedObjectsManager;
         }
     }
