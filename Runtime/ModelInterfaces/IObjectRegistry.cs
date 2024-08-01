@@ -10,6 +10,7 @@ namespace ReupVirtualTwin.modelInterfaces
         public GameObject GetObjectWithGuid(string guid);
         public List<GameObject> GetObjectsWithGuids(string[] guids);
         public int GetObjectsCount();
+        public List<GameObject> GetObjects();
         public void ClearRegistry();
     }
 }

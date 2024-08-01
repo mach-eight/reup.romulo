@@ -152,6 +152,11 @@ public class DeleteObjectsManagerTest : MonoBehaviour
         {
             throw new NotImplementedException();
         }
+
+        public List<GameObject> GetObjects()
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }

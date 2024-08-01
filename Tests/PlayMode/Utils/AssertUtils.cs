@@ -1,6 +1,7 @@
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using ReupVirtualTwin.helpers;
+using ReupVirtualTwin.modelInterfaces;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -29,6 +30,17 @@ public static class AssertUtils
         for (int i = 0; i < list.Count; i++)
         {
             Assert.IsNull(list[i]);
+        }
+    }
+
+    public static void AssertAllObjectsWithMeshRendererHaveSetChangedMaterial(List<GameObject> objects)
+    {
+        for (int i = 0; i < objects.Count; i++)
+        {
+            if (objects[i].GetComponent<MeshRenderer>() != null)
+            {
+                Assert.IsTrue(objects[i].GetComponent<IObjectInfo>().materialWasChanged);
+            }
         }
     }
 

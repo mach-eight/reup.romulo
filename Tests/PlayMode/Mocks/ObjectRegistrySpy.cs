@@ -30,6 +30,11 @@ namespace Tests.PlayMode.Mocks
             throw new System.NotImplementedException();
         }
 
+        public List<GameObject> GetObjects()
+        {
+            throw new System.NotImplementedException();
+        }
+
         public int GetObjectsCount()
         {
             throw new System.NotImplementedException();

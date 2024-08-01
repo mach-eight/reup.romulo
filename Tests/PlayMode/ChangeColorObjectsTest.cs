@@ -44,15 +44,19 @@ public class ChangeColorObjectsTest : MonoBehaviour
         meshedChild = new GameObject();
 
         meshedParent.AddComponent<RegisteredIdentifier>().GenerateId();
+        meshedParent.AddComponent<ObjectInfo>();
         meshedParent.AddComponent<MeshRenderer>();
 
         unmeshedParent.AddComponent<RegisteredIdentifier>().GenerateId();
+        unmeshedParent.AddComponent<ObjectInfo>();
 
         unmeshedChild.AddComponent<RegisteredIdentifier>().GenerateId();
         unmeshedChild.transform.parent = meshedParent.transform;
+        unmeshedChild.AddComponent<ObjectInfo>();
 
         meshedChild.AddComponent<RegisteredIdentifier>().GenerateId();
         meshedChild.AddComponent<MeshRenderer>();
+        meshedChild.AddComponent<ObjectInfo>();
         meshedChild.transform.parent = unmeshedParent.transform;
     }
 
@@ -140,6 +144,24 @@ public class ChangeColorObjectsTest : MonoBehaviour
             "appearance.color",
             "#" + ColorUtility.ToHtmlStringRGBA(Color.blue));
         yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldSetChangedMaterialInObjectsInfo()
+    {
+        Assert.IsFalse(meshedParent.GetComponent<IObjectInfo>().materialWasChanged);
+        Assert.IsFalse(unmeshedParent.GetComponent<IObjectInfo>().materialWasChanged);
+        Assert.IsFalse(meshedChild.GetComponent<IObjectInfo>().materialWasChanged);
+        Assert.IsFalse(unmeshedChild.GetComponent<IObjectInfo>().materialWasChanged);
+        List<GameObject> gameObjects = new() { meshedParent, meshedChild, unmeshedParent, unmeshedChild};
+        changeColorManager.ChangeObjectsColor(gameObjects, Color.blue);
+        yield return null;
+
+        Assert.IsTrue(meshedParent.GetComponent<IObjectInfo>().materialWasChanged);
+        Assert.IsTrue(meshedChild.GetComponent<IObjectInfo>().materialWasChanged);
+
+        Assert.IsFalse(unmeshedParent.GetComponent<IObjectInfo>().materialWasChanged);
+        Assert.IsFalse(unmeshedChild.GetComponent<IObjectInfo>().materialWasChanged);
     }
 
 }
