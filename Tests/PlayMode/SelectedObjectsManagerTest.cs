@@ -43,25 +43,25 @@ public class SelectedObjectsManagerTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldNotifyMediatorOfSelectObjects()
     {
-        selectedObjectsManager.allowSelection = true;
+        selectedObjectsManager.allowEditSelection = true;
         selectedObjectsManager.AddObjectToSelection(testGameObject0);
-        Assert.AreEqual(new List<GameObject>() { testGameObject0}, mockMediator.selectedObjects);
+        Assert.AreEqual(new List<GameObject>() { testGameObject0 }, mockMediator.selectedObjects);
         selectedObjectsManager.AddObjectToSelection(testGameObject1);
-        Assert.AreEqual(new List<GameObject>() { testGameObject0, testGameObject1}, mockMediator.selectedObjects);
+        Assert.AreEqual(new List<GameObject>() { testGameObject0, testGameObject1 }, mockMediator.selectedObjects);
         yield return null;
     }
     [UnityTest]
     public IEnumerator ShouldNotSelectAnyObjectIfAllowSelectionNotSet()
     {
-        selectedObjectsManager.allowSelection = false;
+        selectedObjectsManager.allowEditSelection = false;
         selectedObjectsManager.AddObjectToSelection(testGameObject0);
         selectedObjectsManager.AddObjectToSelection(testGameObject1);
-        Assert.AreEqual(new List<GameObject>() {}, mockMediator.selectedObjects);
+        Assert.AreEqual(new List<GameObject>() { }, mockMediator.selectedObjects);
         yield return null;
-        selectedObjectsManager.allowSelection = true;
+        selectedObjectsManager.allowEditSelection = true;
         selectedObjectsManager.AddObjectToSelection(testGameObject0);
         selectedObjectsManager.AddObjectToSelection(testGameObject1);
-        Assert.AreEqual(new List<GameObject>() { testGameObject0, testGameObject1}, mockMediator.selectedObjects);
+        Assert.AreEqual(new List<GameObject>() { testGameObject0, testGameObject1 }, mockMediator.selectedObjects);
         yield return null;
     }
 
@@ -69,26 +69,56 @@ public class SelectedObjectsManagerTest : MonoBehaviour
     public IEnumerator ShouldClearAllSelectedObjects()
     {
 
-        selectedObjectsManager.allowSelection = true;
+        selectedObjectsManager.allowEditSelection = true;
         selectedObjectsManager.AddObjectToSelection(testGameObject0);
         selectedObjectsManager.AddObjectToSelection(testGameObject1);
-        Assert.AreEqual(new List<GameObject>() { testGameObject0, testGameObject1}, mockMediator.selectedObjects);
+        Assert.AreEqual(new List<GameObject>() { testGameObject0, testGameObject1 }, mockMediator.selectedObjects);
         yield return null;
         selectedObjectsManager.ClearSelection();
-        Assert.AreEqual(new List<GameObject>() {}, mockMediator.selectedObjects);
+        Assert.AreEqual(new List<GameObject>() { }, mockMediator.selectedObjects);
         yield return null;
     }
 
     [UnityTest]
-    public IEnumerator ShouldClearAllSelectedObjectsWhenAllowSelectionIsUnset()
+    public IEnumerator ShouldNotDeselectAnyObjectIfAllowEditSelectionNotSet()
     {
-
-        selectedObjectsManager.allowSelection = true;
+        selectedObjectsManager.allowEditSelection = true;
         selectedObjectsManager.AddObjectToSelection(testGameObject0);
         selectedObjectsManager.AddObjectToSelection(testGameObject1);
-        Assert.AreEqual(new List<GameObject>() { testGameObject0, testGameObject1}, mockMediator.selectedObjects);
+        Assert.AreEqual(new List<GameObject>() { testGameObject0, testGameObject1 }, mockMediator.selectedObjects);
         yield return null;
-        selectedObjectsManager.allowSelection = false;
+        selectedObjectsManager.allowEditSelection = false;
+        selectedObjectsManager.RemoveObjectFromSelection(testGameObject0);
+        selectedObjectsManager.RemoveObjectFromSelection(testGameObject1);
+        Assert.AreEqual(new List<GameObject>() { testGameObject0, testGameObject1 }, mockMediator.selectedObjects);
+        yield return null;
+    }
+    [UnityTest]
+    public IEnumerator ShouldDeselectObjectIfAllowEditSelectionSet()
+    {
+        selectedObjectsManager.allowEditSelection = true;
+        selectedObjectsManager.AddObjectToSelection(testGameObject0);
+        selectedObjectsManager.AddObjectToSelection(testGameObject1);
+        Assert.AreEqual(new List<GameObject>() { testGameObject0, testGameObject1 }, mockMediator.selectedObjects);
+        yield return null;
+        selectedObjectsManager.RemoveObjectFromSelection(testGameObject0);
+        Assert.AreEqual(new List<GameObject>() { testGameObject1 }, mockMediator.selectedObjects);
+        yield return null;
+    }
+    [UnityTest]
+    public IEnumerator ShouldDeselectObjectRegardlessOfAllowEditSelectionStatus()
+    {
+        selectedObjectsManager.allowEditSelection = true;
+        selectedObjectsManager.AddObjectToSelection(testGameObject0);
+        selectedObjectsManager.AddObjectToSelection(testGameObject1);
+        Assert.AreEqual(new List<GameObject>() { testGameObject0, testGameObject1 }, mockMediator.selectedObjects);
+        yield return null;
+        selectedObjectsManager.allowEditSelection = false;
+        selectedObjectsManager.ForceRemoveObjectFromSelection(testGameObject0);
+        Assert.AreEqual(new List<GameObject>() { testGameObject1 }, mockMediator.selectedObjects);
+        yield return null;
+        selectedObjectsManager.allowEditSelection = true;
+        selectedObjectsManager.ForceRemoveObjectFromSelection(testGameObject1);
         Assert.AreEqual(new List<GameObject>() {}, mockMediator.selectedObjects);
         yield return null;
     }
@@ -104,7 +134,7 @@ public class SelectedObjectsManagerTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldDestroyWrapperObjectAfterClearingSelection()
     {
-        selectedObjectsManager.allowSelection = true;
+        selectedObjectsManager.allowEditSelection = true;
         selectedObjectsManager.AddObjectToSelection(testGameObject0);
         Assert.NotNull(selectedObjectsManager.wrapperDTO);
         yield return null;
