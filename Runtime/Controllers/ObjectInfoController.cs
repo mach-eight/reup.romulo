@@ -26,5 +26,23 @@ namespace ReupVirtualTwin.controllers
             }
             return objectInfo;
         }
+
+        public void RemoveObjectInfoFromTree(GameObject tree)
+        {
+            RemoveObjectInfoFromObject(tree);
+            foreach (Transform child in tree.transform)
+            {
+                RemoveObjectInfoFromTree(child.gameObject);
+            }
+        }
+
+        public void RemoveObjectInfoFromObject(GameObject obj)
+        {
+            IObjectInfo objectInfo = obj.GetComponent<IObjectInfo>();
+            if (objectInfo != null)
+            {
+                Object.DestroyImmediate((Object)objectInfo);
+            }
+        }
     }
 }

@@ -63,6 +63,7 @@ namespace ReupVirtualTwin.behaviours
         public void RemoveIdsOfBuilding()
         {
             _idAssignerController.RemoveIdsFromTree(building);
+            _objectInfoController.RemoveObjectInfoFromTree(building);
             Debug.Log("Ids removed from tree");
         }
         public void ResetIdsOfBuilding()
