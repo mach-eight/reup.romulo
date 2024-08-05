@@ -7,6 +7,7 @@ using ReupVirtualTwin.managers;
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.behaviours;
 using ReupVirtualTwin.helpers;
+using ReupVirtualTwin.managerInterfaces;
 
 public class ReupPrefabTest : MonoBehaviour
 {
@@ -105,6 +106,14 @@ public class ReupPrefabTest : MonoBehaviour
         editModeManager.editMode = false;
         yield return null;
         Assert.IsFalse(selectableObjectHighlighter.enableHighlighting);
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator SelectSElectableObject_ShouldHaveA_ISelectableObjectsHighlighter()
+    {
+        ISelectableObjectsHighlighter selectableObjectsHighlighter = sceneObjects.selectSelectableObject.selectableObjectsHighlighter;
+        Assert.IsNotNull(selectableObjectsHighlighter);
         yield return null;
     }
 

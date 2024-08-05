@@ -3,7 +3,6 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-using ReupVirtualTwin.managers;
 using ReupVirtualTwin.behaviours;
 using ReupVirtualTwin.managerInterfaces;
 

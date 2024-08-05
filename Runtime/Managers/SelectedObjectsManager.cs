@@ -11,6 +11,7 @@ using System;
 namespace ReupVirtualTwin.managers
 {
     public class SelectedObjectsManager : MonoBehaviour, ISelectedObjectsManager, IIsObjectPartOfSelection, IOnAllowSelectionChange
+        ,ISelectableObjectsHighlighter
     {
         public event Action<bool> AllowSelectionChanged;
         private IObjectWrapper _objectWrapper;
@@ -93,6 +94,11 @@ namespace ReupVirtualTwin.managers
         {
             List<GameObject> selectedObjects = _objectWrapper.wrappedObjects;
             return GameObjectUtils.IsPartOf(selectedObjects, obj);
+        }
+
+        public void HighlightSelectableObjects()
+        {
+            throw new NotImplementedException();
         }
     }
 }

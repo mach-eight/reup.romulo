@@ -11,13 +11,16 @@ namespace ReupVirtualTwin.behaviours
     {
         ISelectedObjectsManager _selectedObjectsManager;
         ISelectableObjectsHighlighter _selectableObjectsHighlighter;
-        public ISelectableObjectsHighlighter selectableObjectsHighlighter { set { _selectableObjectsHighlighter = value; } }
+        public ISelectableObjectsHighlighter selectableObjectsHighlighter
+        {
+            get { return  _selectableObjectsHighlighter; }
+            set { _selectableObjectsHighlighter = value; }
+        }
         override protected void Start()
         {
-            Debug.Log("in start");
             base.Start();
             _selectedObjectsManager = GetComponent<ISelectedObjectsManager>();
-            Debug.Log("end of start");
+            _selectableObjectsHighlighter = GetComponent<ISelectableObjectsHighlighter>();
         }
         public override void HandleObject(GameObject obj)
         {
