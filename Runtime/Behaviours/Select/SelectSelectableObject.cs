@@ -10,10 +10,14 @@ namespace ReupVirtualTwin.behaviours
     public class SelectSelectableObject : SelectObject
     {
         ISelectedObjectsManager _selectedObjectsManager;
+        ISelectableObjectsHighlighter _selectableObjectsHighlighter;
+        public ISelectableObjectsHighlighter selectableObjectsHighlighter { set { _selectableObjectsHighlighter = value; } }
         override protected void Start()
         {
+            Debug.Log("in start");
             base.Start();
             _selectedObjectsManager = GetComponent<ISelectedObjectsManager>();
+            Debug.Log("end of start");
         }
         public override void HandleObject(GameObject obj)
         {
@@ -23,6 +27,13 @@ namespace ReupVirtualTwin.behaviours
                 return;
             }
             _selectedObjectsManager.AddObjectToSelection(obj);
+        }
+        public override void MissObject()
+        {
+            if (_selectedObjectsManager.allowEditSelection)
+            {
+                _selectableObjectsHighlighter.HighlightSelectableObjects();
+            }
         }
     }
 }

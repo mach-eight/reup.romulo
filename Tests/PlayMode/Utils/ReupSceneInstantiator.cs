@@ -1,6 +1,7 @@
 using ReupVirtualTwin.behaviourInterfaces;
 using ReupVirtualTwin.managers;
 using ReupVirtualTwin.models;
+using ReupVirtualTwin.behaviours;
 using UnityEditor;
 using UnityEngine;
 
@@ -14,6 +15,7 @@ public static class ReupSceneInstantiator
         public GameObject baseGlobalScriptGameObject;
         public GameObject building;
         public ChangeColorManager changeColorManager;
+        public SelectSelectableObject selectSelectableObject;
     }
 
     public static SceneObjects InstantiateScene()
@@ -32,6 +34,11 @@ public static class ReupSceneInstantiator
             .Find("ChangeColorManager")
             .GetComponent<ChangeColorManager>();
 
+         SelectSelectableObject selectSelectableObject = baseGlobalScriptGameObject.transform
+            .Find("EditMediator")
+            .Find("SelectedObjectsManager")
+            .GetComponent<SelectSelectableObject>();
+
         return new SceneObjects
         {
             reupObject = reupGameObject,
@@ -39,6 +46,7 @@ public static class ReupSceneInstantiator
             baseGlobalScriptGameObject = baseGlobalScriptGameObject,
             building = building,
             changeColorManager = changeColorManager,
+            selectSelectableObject = selectSelectableObject,
         };
     }
 
@@ -46,5 +54,14 @@ public static class ReupSceneInstantiator
     {
         Object.Destroy(sceneObjects.reupObject);
         Object.Destroy(sceneObjects.building);
+    }
+
+    public static void SetEditMode(SceneObjects sceneObjects, bool editMode)
+    {
+        EditModeManager editModeManager = sceneObjects.baseGlobalScriptGameObject.transform
+            .Find("EditMediator")
+            .Find("EditModeManager")
+            .GetComponent<EditModeManager>();
+        editModeManager.editMode = editMode;
     }
 }
