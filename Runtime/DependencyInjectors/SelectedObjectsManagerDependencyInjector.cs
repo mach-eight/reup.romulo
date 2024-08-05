@@ -5,6 +5,7 @@ using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.managers;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.romuloEnvironment;
+using ReupVirtualTwin.modelInterfaces;
 
 namespace ReupVirtualTwin.dependencyInjectors
 {
@@ -22,6 +23,11 @@ namespace ReupVirtualTwin.dependencyInjectors
 
             SelectableObjectSelector selector = GetComponent<SelectableObjectSelector>();
             selector.tagsController = new TagsController();
+
+            selectedObjectsManager.highlightAnimator = new HighlightAnimator();
+            IObjectRegistry registry = ObjectFinder.FindObjectRegistry().GetComponent<IObjectRegistry>();
+            selectedObjectsManager.objectRegistry = registry;
+            selectedObjectsManager.tagsController = new TagsController();
         }
     }
 }

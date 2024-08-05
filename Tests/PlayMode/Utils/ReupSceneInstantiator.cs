@@ -16,6 +16,7 @@ public static class ReupSceneInstantiator
         public GameObject building;
         public ChangeColorManager changeColorManager;
         public SelectSelectableObject selectSelectableObject;
+        public SelectedObjectsManager selectedObjectsManager;
     }
 
     public static SceneObjects InstantiateScene()
@@ -39,6 +40,11 @@ public static class ReupSceneInstantiator
             .Find("SelectedObjectsManager")
             .GetComponent<SelectSelectableObject>();
 
+         SelectedObjectsManager selectedObjectsManager = baseGlobalScriptGameObject.transform
+            .Find("EditMediator")
+            .Find("SelectedObjectsManager")
+            .GetComponent<SelectedObjectsManager>();
+
         return new SceneObjects
         {
             reupObject = reupGameObject,
@@ -47,6 +53,7 @@ public static class ReupSceneInstantiator
             building = building,
             changeColorManager = changeColorManager,
             selectSelectableObject = selectSelectableObject,
+            selectedObjectsManager = selectedObjectsManager,
         };
     }
 

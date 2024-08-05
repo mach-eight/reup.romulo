@@ -8,6 +8,7 @@ using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.behaviours;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.managerInterfaces;
+using ReupVirtualTwin.helperInterfaces;
 
 public class ReupPrefabTest : MonoBehaviour
 {
@@ -110,10 +111,26 @@ public class ReupPrefabTest : MonoBehaviour
     }
 
     [UnityTest]
-    public IEnumerator SelectSElectableObject_ShouldHaveA_ISelectableObjectsHighlighter()
+    public IEnumerator SelectSelectableObject_ShouldHaveA_ISelectableObjectsHighlighter()
     {
         ISelectableObjectsHighlighter selectableObjectsHighlighter = sceneObjects.selectSelectableObject.selectableObjectsHighlighter;
         Assert.IsNotNull(selectableObjectsHighlighter);
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator SelectObjectManager_ShouldHaveA_IHighlightAnimator()
+    {
+        IHighlightAnimator highlightAnimator = sceneObjects.selectedObjectsManager.highlightAnimator;
+        Assert.IsNotNull(highlightAnimator);
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator SelectObjectManager_ShouldHaveA_IObjectRegistry()
+    {
+        IObjectRegistry objectRegistry = sceneObjects.selectedObjectsManager.objectRegistry;
+        Assert.IsNotNull(objectRegistry);
         yield return null;
     }
 

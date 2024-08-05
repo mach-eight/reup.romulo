@@ -1,12 +1,15 @@
 using UnityEngine;
+using System.Collections.Generic;
+using System;
+using System.Linq;
 
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwin.enums;
 using ReupVirtualTwin.dataModels;
-using System.Collections.Generic;
-using System;
+using ReupVirtualTwin.modelInterfaces;
+using ReupVirtualTwin.controllerInterfaces;
 
 namespace ReupVirtualTwin.managers
 {
@@ -20,6 +23,11 @@ namespace ReupVirtualTwin.managers
         public IObjectHighlighter highlighter { set => _highlighter = value; }
         private IMediator _mediator;
         public IMediator mediator { set { _mediator = value; } }
+        public IHighlightAnimator highlightAnimator { get; set; }
+        public IObjectRegistry objectRegistry { get; set; }
+
+        public ITagsController tagsController { get; set; }
+
         private GameObject _wrapperObject;
         private GameObject wrapperObject
         {
@@ -98,7 +106,10 @@ namespace ReupVirtualTwin.managers
 
         public void HighlightSelectableObjects()
         {
-            throw new NotImplementedException();
+            List<GameObject> selectableObjects = objectRegistry.GetObjects()
+                .Where(obj => tagsController.DoesObjectHaveTag(obj, EditionTagsCreator.CreateSelectableTag().id))
+                .ToList();
+            highlightAnimator.HighlighObjectsEaseInEaseOut(selectableObjects);
         }
     }
 }
