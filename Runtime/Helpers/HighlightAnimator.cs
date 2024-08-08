@@ -20,6 +20,7 @@ namespace ReupVirtualTwin.helpers
 
         public void HighlighObjectsEaseInEaseOut(List<GameObject> objs)
         {
+            StopAllCoroutines();
             StartCoroutine("DoAnimation", objs);
         }
 
