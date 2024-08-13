@@ -22,7 +22,7 @@ namespace ReupVirtualTwin.dependencyInjectors
 
             SensedObjectHighlighter selectableObjectHighlighter = GetComponent<SensedObjectHighlighter>();
             selectableObjectHighlighter.objectSensor = objectSensor;
-            selectableObjectHighlighter.objectHighlighter = new Outliner(RomuloEnvironment.orangeHighlightColor, 5.0f);
+            selectableObjectHighlighter.objectHighlighter = new HaloApplier();
 
             SelectableObjectsHighlighterEnabler selectableObjectHighlighterEnabler = GetComponent<SelectableObjectsHighlighterEnabler>();
             selectableObjectHighlighterEnabler.selectableObjectHighlighter = selectableObjectHighlighter;

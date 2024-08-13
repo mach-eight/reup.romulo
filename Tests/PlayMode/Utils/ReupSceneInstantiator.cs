@@ -1,5 +1,7 @@
 using ReupVirtualTwin.behaviours;
 using ReupVirtualTwin.managers;
+using ReupVirtualTwin.models;
+using ReupVirtualTwin.behaviours;
 using UnityEditor;
 using UnityEngine;
 
@@ -14,6 +16,8 @@ public static class ReupSceneInstantiator
         public GameObject building;
         public ChangeColorManager changeColorManager;
         public SetupBuilding setupbuilding;
+        public SelectSelectableObject selectSelectableObject;
+        public SelectedObjectsManager selectedObjectsManager;
     }
 
     public static SceneObjects InstantiateScene()
@@ -31,6 +35,16 @@ public static class ReupSceneInstantiator
             .Find("ChangeColorManager")
             .GetComponent<ChangeColorManager>();
 
+         SelectSelectableObject selectSelectableObject = baseGlobalScriptGameObject.transform
+            .Find("EditMediator")
+            .Find("SelectedObjectsManager")
+            .GetComponent<SelectSelectableObject>();
+
+         SelectedObjectsManager selectedObjectsManager = baseGlobalScriptGameObject.transform
+            .Find("EditMediator")
+            .Find("SelectedObjectsManager")
+            .GetComponent<SelectedObjectsManager>();
+
         return new SceneObjects
         {
             reupObject = reupGameObject,
@@ -39,6 +53,8 @@ public static class ReupSceneInstantiator
             building = building,
             changeColorManager = changeColorManager,
             setupbuilding = setupBuilding,
+            selectSelectableObject = selectSelectableObject,
+            selectedObjectsManager = selectedObjectsManager,
         };
     }
 
@@ -56,5 +72,13 @@ public static class ReupSceneInstantiator
         GameObject grandhChild0 = new GameObject("grandChild0");
         grandhChild0.transform.parent = child0.transform;
         return building;
+    }
+    public static void SetEditMode(SceneObjects sceneObjects, bool editMode)
+    {
+        EditModeManager editModeManager = sceneObjects.baseGlobalScriptGameObject.transform
+            .Find("EditMediator")
+            .Find("EditModeManager")
+            .GetComponent<EditModeManager>();
+        editModeManager.editMode = editMode;
     }
 }

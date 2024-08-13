@@ -1,7 +1,9 @@
-using ReupVirtualTwin.modelInterfaces;
-using ReupVirtualTwin.models;
 using System.Collections.Generic;
 using UnityEngine;
+
+using ReupVirtualTwin.modelInterfaces;
+using ReupVirtualTwin.models;
+using ReupVirtualTwin.controllers;
 
 namespace Tests.PlayMode.Mocks
 {
@@ -10,6 +12,7 @@ namespace Tests.PlayMode.Mocks
         public List<GameObject> objects = new List<GameObject>();
         public string[] lastRequestedObjectIds;
         public List<string[]> requestedObjectIds;
+        private TagSystemController tagSystemController = new TagSystemController();
         public ObjectRegistrySpy()
         {
             for (int i = 0; i < 10; i++)
@@ -17,6 +20,7 @@ namespace Tests.PlayMode.Mocks
                 GameObject obj = new();
                 obj.AddComponent<UniqueId>().GenerateId();
                 objects.Add(obj);
+                tagSystemController.AssignTagSystemToObject(obj);
             }
             requestedObjectIds = new List<string[]>();
         }
@@ -32,7 +36,7 @@ namespace Tests.PlayMode.Mocks
 
         public List<GameObject> GetObjects()
         {
-            throw new System.NotImplementedException();
+            return objects;
         }
 
         public int GetObjectsCount()
