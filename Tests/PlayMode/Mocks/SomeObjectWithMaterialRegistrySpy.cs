@@ -60,5 +60,10 @@ namespace Tests.PlayMode.Mocks
                 Object.Destroy(objects[i]);
             }
         }
+
+        public List<GameObject> GetObjects()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
