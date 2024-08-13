@@ -17,6 +17,10 @@ namespace ReupVirtualTwin.behaviours
         private ITagSystemController _tagSystemController;
         public ITagSystemController tagSystemController { get => _tagSystemController; set => _tagSystemController = value; }
 
+        private IObjectInfoController _objectInfoController;
+        public IObjectInfoController objectInfoController { get => _objectInfoController; set => _objectInfoController = value; }
+
+
         event Action _onBuildingSetUp;
         public event Action onBuildingSetUp
         {
@@ -35,7 +39,6 @@ namespace ReupVirtualTwin.behaviours
         public IColliderAdder colliderAdder { set => _colliderAdder = value; }
         private IIdAssignerController _idAssignerController;
         public IIdAssignerController idAssignerController { get => _idAssignerController; set => _idAssignerController = value; }
-        //private 
 
         void Start()
         {
@@ -51,21 +54,23 @@ namespace ReupVirtualTwin.behaviours
             buildingSetup = true;
         }
 
-        public void AssignIdsToBuilding()
+        public void AssignIdsAndObjectInfoToBuilding()
         {
             _idAssignerController.AssignIdsToTree(building);
-            Debug.Log("Ids added to tree");
+            _objectInfoController.AssignObjectInfoToTree(building);
+            Debug.Log("Ids and object info added to tree");
         }
-        public void RemoveIdsOfBuilding()
+        public void RemoveIdsAndObjectInfoFromBuilding()
         {
             _idAssignerController.RemoveIdsFromTree(building);
-            Debug.Log("Ids removed from tree");
+            _objectInfoController.RemoveObjectInfoFromTree(building);
+            Debug.Log("Ids and object info removed from tree");
         }
         public void ResetIdsOfBuilding()
         {
-            RemoveIdsOfBuilding();
-            AssignIdsToBuilding();
-            Debug.Log("Ids reseted from tree");
+            RemoveIdsAndObjectInfoFromBuilding();
+            AssignIdsAndObjectInfoToBuilding();
+            Debug.Log("Ids and object info reseted from tree");
         }
 
         public void AddTagSystemToBuildingObjects()

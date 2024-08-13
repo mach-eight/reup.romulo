@@ -67,6 +67,10 @@ namespace ReupVirtualTwin.managers
         private IModelInfoManager _modelInfoManager;
         public IModelInfoManager modelInfoManager { set => _modelInfoManager = value; }
 
+        private IOriginalSceneController _originalSceneController;
+        public IOriginalSceneController originalSceneController { get => _originalSceneController; set => _originalSceneController = value; }
+
+
         private void Awake()
         {
             incomingMessageValidator = new IncomingMessageValidator();
@@ -239,11 +243,15 @@ namespace ReupVirtualTwin.managers
 
         private async Task LoadObjectsState(JObject requestPayload)
         {
+            originalSceneController.RestoreOriginalScene();
+
             List<JObject> objectStates = requestPayload["objects"].ToObject<JArray>().Cast<JObject>().ToList();
+
             var objectStatesByColor = objectStates
                 .Where(objectState => TypeHelpers.NotNull(objectState["color"]))
                 .GroupBy(objectState => objectState["color"].ToString());
             PaintSceneObjects(objectStatesByColor);
+
             var objectStatesByMaterial = objectStates
                 .Where(objectState => TypeHelpers.NotNull(objectState["material_id"]) && TypeHelpers.NotNull(objectState["material_url"]))
                 .GroupBy(objectState => objectState["material_id"].ToObject<int>());

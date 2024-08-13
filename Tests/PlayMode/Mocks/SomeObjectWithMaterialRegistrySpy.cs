@@ -15,7 +15,7 @@ namespace Tests.PlayMode.Mocks
             {
                 GameObject obj = new();
                 obj.AddComponent<UniqueId>().GenerateId();
-                obj.AddComponent<MetaDataComponentMock>();
+                obj.AddComponent<ObjectInfo>();
                 if (i % 2 == 0)
                 {
                     obj.AddComponent<MeshRenderer>();

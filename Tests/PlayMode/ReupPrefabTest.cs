@@ -111,6 +111,11 @@ public class ReupPrefabTest : MonoBehaviour
     }
 
     [UnityTest]
+    public IEnumerator EditionMediatorShouldHaveAOriginalSceneController()
+    {
+        Assert.IsNotNull(editMediator.originalSceneController);
+        yield return null;
+    }
     public IEnumerator SelectSelectableObject_ShouldHaveA_ISelectableObjectsHighlighter()
     {
         ISelectableObjectsHighlighter selectableObjectsHighlighter = sceneObjects.selectSelectableObject.selectableObjectsHighlighter;

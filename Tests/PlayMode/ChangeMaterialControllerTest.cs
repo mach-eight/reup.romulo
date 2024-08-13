@@ -183,5 +183,12 @@ namespace ReupVirtualTwinTests.controllers
                 messagePayload["material_id"].ToObject<int>());
         }
 
+        [Test]
+        public async Task ShouldSetChangedMaterialInObjectInfo()
+        {
+            await controller.ChangeObjectMaterial(messagePayload);
+            AssertUtils.AssertAllObjectsWithMeshRendererHaveSetChangedMaterial(objectRegistry.objects);
+        }
+
     }
 }

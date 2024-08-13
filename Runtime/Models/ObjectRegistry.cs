@@ -54,7 +54,7 @@ namespace ReupVirtualTwin.models
         {
             objects.Clear();
         }
-        
+
         public List<GameObject> GetObjects()
         {
             return objects;

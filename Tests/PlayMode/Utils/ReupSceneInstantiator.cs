@@ -1,4 +1,4 @@
-using ReupVirtualTwin.behaviourInterfaces;
+using ReupVirtualTwin.behaviours;
 using ReupVirtualTwin.managers;
 using ReupVirtualTwin.models;
 using ReupVirtualTwin.behaviours;
@@ -15,6 +15,7 @@ public static class ReupSceneInstantiator
         public GameObject baseGlobalScriptGameObject;
         public GameObject building;
         public ChangeColorManager changeColorManager;
+        public SetupBuilding setupbuilding;
         public SelectSelectableObject selectSelectableObject;
         public SelectedObjectsManager selectedObjectsManager;
     }
@@ -25,9 +26,8 @@ public static class ReupSceneInstantiator
         GameObject baseGlobalScriptGameObject = reupGameObject.transform.Find("BaseGlobalScripts").gameObject;
         GameObject character = reupGameObject.transform.Find("Character").gameObject;
 
-        GameObject building = new GameObject("building");
-        building.AddComponent<RegisteredIdentifier>().AssignId("building-id");
-        IBuildingGetterSetter setupBuilding = baseGlobalScriptGameObject.transform.Find("SetupBuilding").GetComponent<IBuildingGetterSetter>();
+        GameObject building = CreateBuilding();
+        SetupBuilding setupBuilding = baseGlobalScriptGameObject.transform.Find("SetupBuilding").GetComponent<SetupBuilding>();
         setupBuilding.building = building;
 
         ChangeColorManager changeColorManager = baseGlobalScriptGameObject.transform
@@ -52,6 +52,7 @@ public static class ReupSceneInstantiator
             baseGlobalScriptGameObject = baseGlobalScriptGameObject,
             building = building,
             changeColorManager = changeColorManager,
+            setupbuilding = setupBuilding,
             selectSelectableObject = selectSelectableObject,
             selectedObjectsManager = selectedObjectsManager,
         };
@@ -63,6 +64,15 @@ public static class ReupSceneInstantiator
         Object.Destroy(sceneObjects.building);
     }
 
+    private static GameObject CreateBuilding()
+    {
+        GameObject building = new GameObject("building");
+        GameObject child0 = new GameObject("child0");
+        child0.transform.parent = building.transform;
+        GameObject grandhChild0 = new GameObject("grandChild0");
+        grandhChild0.transform.parent = child0.transform;
+        return building;
+    }
     public static void SetEditMode(SceneObjects sceneObjects, bool editMode)
     {
         EditModeManager editModeManager = sceneObjects.baseGlobalScriptGameObject.transform
