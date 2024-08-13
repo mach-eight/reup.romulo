@@ -30,11 +30,11 @@ namespace ReupVirtualTwin.editor
                 }
                 if (GUILayout.Button("Add Ids to objects"))
                 {
-                    setUpBuilding.AssignIdsToBuilding();
+                    setUpBuilding.AssignIdsAndObjectInfoToBuilding();
                 }
                 if (GUILayout.Button("Remove Ids from objects"))
                 {
-                    setUpBuilding.RemoveIdsOfBuilding();
+                    setUpBuilding.RemoveIdsAndObjectInfoFromBuilding();
                 }
                 if (GUILayout.Button("Reset Ids from objects"))
                 {

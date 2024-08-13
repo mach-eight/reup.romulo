@@ -68,7 +68,7 @@ public class AutoBuildEditor : MonoBehaviour
             return false;
         }
 
-        RecreateIds(building);
+        ResetIdsAndAddObjectInfo(building);
 
         bool hasRepeatedIds = idHasRepeatedController.HasRepeatedIds(building);
         if (hasRepeatedIds)
@@ -98,7 +98,7 @@ public class AutoBuildEditor : MonoBehaviour
         return building;
     }
 
-    private static void RecreateIds(GameObject building)
+    private static void ResetIdsAndAddObjectInfo(GameObject building)
     {
         idAssignerController.RemoveIdsFromTree(building);
         idAssignerController.AssignIdsToTree(building);

@@ -54,23 +54,23 @@ namespace ReupVirtualTwin.behaviours
             buildingSetup = true;
         }
 
-        public void AssignIdsToBuilding()
+        public void AssignIdsAndObjectInfoToBuilding()
         {
             _idAssignerController.AssignIdsToTree(building);
             _objectInfoController.AssignObjectInfoToTree(building);
-            Debug.Log("Ids added to tree");
+            Debug.Log("Ids and object info added to tree");
         }
-        public void RemoveIdsOfBuilding()
+        public void RemoveIdsAndObjectInfoFromBuilding()
         {
             _idAssignerController.RemoveIdsFromTree(building);
             _objectInfoController.RemoveObjectInfoFromTree(building);
-            Debug.Log("Ids removed from tree");
+            Debug.Log("Ids and object info removed from tree");
         }
         public void ResetIdsOfBuilding()
         {
-            RemoveIdsOfBuilding();
-            AssignIdsToBuilding();
-            Debug.Log("Ids reseted from tree");
+            RemoveIdsAndObjectInfoFromBuilding();
+            AssignIdsAndObjectInfoToBuilding();
+            Debug.Log("Ids and object info reseted from tree");
         }
 
         public void AddTagSystemToBuildingObjects()

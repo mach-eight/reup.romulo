@@ -36,7 +36,7 @@ namespace ReupVirtualTwin.behaviours
             Assert.IsNull(building.GetComponent<RegisteredIdentifier>());
             Assert.IsNull(child0.GetComponent<RegisteredIdentifier>());
             Assert.IsNull(grandChild0.GetComponent<RegisteredIdentifier>());
-            setupbuilding.AssignIdsToBuilding();
+            setupbuilding.AssignIdsAndObjectInfoToBuilding();
             Assert.IsNotNull(building.GetComponent<RegisteredIdentifier>());
             Assert.IsNotNull(child0.GetComponent<RegisteredIdentifier>());
             Assert.IsNotNull(grandChild0.GetComponent<RegisteredIdentifier>());
@@ -48,7 +48,7 @@ namespace ReupVirtualTwin.behaviours
             Assert.IsNull(building.GetComponent<ObjectInfo>());
             Assert.IsNull(child0.GetComponent<ObjectInfo>());
             Assert.IsNull(grandChild0.GetComponent<ObjectInfo>());
-            setupbuilding.AssignIdsToBuilding();
+            setupbuilding.AssignIdsAndObjectInfoToBuilding();
             Assert.IsNotNull(building.GetComponent<ObjectInfo>());
             Assert.IsNotNull(child0.GetComponent<ObjectInfo>());
             Assert.IsNotNull(grandChild0.GetComponent<ObjectInfo>());
