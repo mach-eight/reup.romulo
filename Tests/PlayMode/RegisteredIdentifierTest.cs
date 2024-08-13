@@ -25,6 +25,13 @@ namespace ReupVirtualTwinTests.Registry
             testObj.AddComponent<RegisteredIdentifier>();
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            Destroy(testObj);
+            Destroy(objectRegistryGameObject);
+        }
+
         [UnityTearDown]
         public IEnumerator TearDownCoroutine()
         {
@@ -93,5 +100,6 @@ namespace ReupVirtualTwinTests.Registry
             Assert.AreEqual(gameObject, objectRegistry.GetObjectWithGuid(assignedId));
             yield return null;
         }
+
     }
 }

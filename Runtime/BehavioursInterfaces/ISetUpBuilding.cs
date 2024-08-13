@@ -4,8 +4,8 @@ namespace ReupVirtualTwin.behaviourInterfaces
 {
     public interface ISetUpBuilding
     {
-        public void AssignIdsToBuilding();
-        public void RemoveIdsOfBuilding();
+        public void AssignIdsAndObjectInfoToBuilding();
+        public void RemoveIdsAndObjectInfoFromBuilding();
         public void ResetIdsOfBuilding();
         public void AddTagSystemToBuildingObjects();
     }

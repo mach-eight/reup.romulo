@@ -24,13 +24,17 @@ namespace ReupVirtualTwin.editor
                 {
                     setUpBuilding.idAssignerController = new IdController();
                 }
+                if (setUpBuilding.objectInfoController == null)
+                {
+                    setUpBuilding.objectInfoController = new ObjectInfoController();
+                }
                 if (GUILayout.Button("Add Ids to objects"))
                 {
-                    setUpBuilding.AssignIdsToBuilding();
+                    setUpBuilding.AssignIdsAndObjectInfoToBuilding();
                 }
                 if (GUILayout.Button("Remove Ids from objects"))
                 {
-                    setUpBuilding.RemoveIdsOfBuilding();
+                    setUpBuilding.RemoveIdsAndObjectInfoFromBuilding();
                 }
                 if (GUILayout.Button("Reset Ids from objects"))
                 {

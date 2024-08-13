@@ -8,10 +8,12 @@ using ReupVirtualTwin.managers;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.enums;
 using ReupVirtualTwin.models;
-using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.dataModels;
 using Tests.PlayMode.Mocks;
+using ReupVirtualTwin.controllerInterfaces;
+using ReupVirtualTwin.controllers;
+using ReupVirtualTwin.helperInterfaces;
 
 public class SelectedObjectsManagerTest : MonoBehaviour
 {
@@ -22,6 +24,8 @@ public class SelectedObjectsManagerTest : MonoBehaviour
     MockMediator mockMediator;
     ObjectHighlighterSpy mockHighlighter;
     MockObjectWrapper mockObjectWrapper;
+    ITagsController tagsController;
+    HighlightAnimatorMock highlighAnimatorMock;
 
     [SetUp]
     public void SetUp()
@@ -38,7 +42,20 @@ public class SelectedObjectsManagerTest : MonoBehaviour
         selectedObjectsManager.mediator = mockMediator;
         selectedObjectsManager.highlighter = mockHighlighter;
         selectedObjectsManager.objectWrapper = mockObjectWrapper;
+        tagsController = new TagsController();
+        highlighAnimatorMock = new HighlightAnimatorMock();
+        selectedObjectsManager.highlightAnimator = highlighAnimatorMock;
+        selectedObjectsManager.tagsController = tagsController;
     }
+
+    [TearDown]
+    public void TearDown()
+    {
+        Destroy(containerGameObject);
+        Destroy(testGameObject0);
+        Destroy(testGameObject1);
+    }
+
 
     [UnityTest]
     public IEnumerator ShouldNotifyMediatorOfSelectObjects()
@@ -144,7 +161,22 @@ public class SelectedObjectsManagerTest : MonoBehaviour
         Assert.IsTrue(selection == null);
         yield return null;
     }
-
+    [UnityTest]
+    public IEnumerator ShouldPassSelectableObjectsToHighlightAnimator()
+    {
+        ObjectRegistrySpy objectRegistry = new ObjectRegistrySpy();
+        selectedObjectsManager.objectRegistry = objectRegistry;
+        tagsController.AddTagToObject(objectRegistry.objects[0], EditionTagsCreator.CreateSelectableTag());
+        tagsController.AddTagToObject(objectRegistry.objects[1], EditionTagsCreator.CreateSelectableTag());
+        tagsController.AddTagToObject(objectRegistry.objects[3], EditionTagsCreator.CreateSelectableTag());
+        yield return null;
+        selectedObjectsManager.HighlightSelectableObjects();
+        Assert.AreEqual(highlighAnimatorMock.requestedGameObjectsList.Count, 1);
+        Assert.AreEqual(
+            highlighAnimatorMock.requestedGameObjectsList[0],
+            new List<GameObject> { objectRegistry.objects[0], objectRegistry.objects[1], objectRegistry.objects[3] }
+        );
+    }
     private class MockMediator : IMediator
     {
         public List<GameObject> selectedObjects = new List<GameObject>() { };
@@ -163,7 +195,6 @@ public class SelectedObjectsManagerTest : MonoBehaviour
             }
         }
     }
-
 
     private class MockObjectWrapper : IObjectWrapper
     {
@@ -198,6 +229,15 @@ public class SelectedObjectsManagerTest : MonoBehaviour
                 selectedObjects.Add(obj);
             }
             return _wrapper;
+        }
+    }
+
+    class HighlightAnimatorMock : IHighlightAnimator
+    {
+        public List<List<GameObject>> requestedGameObjectsList = new List<List<GameObject>>();
+        public void HighlighObjectsEaseInEaseOut(List<GameObject> objs)
+        {
+            requestedGameObjectsList.Add(objs);
         }
     }
 

@@ -29,6 +29,7 @@ public class SphereMaterialContainerHandlerTest
         extensionSceneTriggers = new GameObject();
         extensionSceneTriggers.tag = TagsEnum.extensionsTriggers;
 
+        extensionSceneTriggers.AddComponent<MaterialChanger>();
         spheresMaterialContainerHandler = extensionSceneTriggers.AddComponent<SpheresMaterialContainerHandler>();
         spheresMaterialContainerHandler.materialsContainerPrefab = materialContainerPrefab;
         spheresMaterialContainerHandler.materialsSpherePrefab = materialSpherePrefab;

@@ -31,7 +31,6 @@ namespace ReupVirtualTwin.helpers
                 bool allChildrenPassed = children.All(child => filteredObjects.Contains(child)); 
                 if (allChildrenPassed)
                 {
-                    filteredObjects.Clear();
                     filteredObjects.Add(treeHead);
                 }
             }
