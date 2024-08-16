@@ -181,6 +181,19 @@ namespace ReupVirtualTwin.managers
 
         public async Task ReceiveWebMessage(string serializedWebMessage)
         {
+            try
+            {
+                await ExcecuteWebMessage(serializedWebMessage);
+            }
+            catch (Exception e)
+            {
+                Debug.Log("An error ocurred why executing the WebMessage");
+                Debug.LogError(e.Message);
+                Debug.LogError(e);
+            }
+        }
+        public async Task ExcecuteWebMessage(string serializedWebMessage)
+        {
             JObject message = JObject.Parse(serializedWebMessage);
             if (!incomingMessageValidator.ValidateMessage(serializedWebMessage))
             {
