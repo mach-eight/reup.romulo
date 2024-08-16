@@ -181,25 +181,11 @@ namespace ReupVirtualTwin.managers
 
         public async Task ReceiveWebMessage(string serializedWebMessage)
         {
-            try
-            {
-                await ExcecuteWebMessage(serializedWebMessage);
-            }
-            catch (Exception e)
-            {
-                Debug.Log("An error ocurred why executing the WebMessage");
-                Debug.LogError(e.Message);
-                Debug.LogError(e);
-            }
-        }
-        public async Task ExcecuteWebMessage(string serializedWebMessage)
-        {
             JObject message = JObject.Parse(serializedWebMessage);
             if (!incomingMessageValidator.ValidateMessage(serializedWebMessage))
             {
-                Debug.Log("Invalid message received");
-                _webMessageSender.SendWebMessage(new WebMessage<string>
-                {
+                Debug.LogWarning("Invalid message received");
+                _webMessageSender.SendWebMessage(new WebMessage<string>{
                     type = WebMessageType.error,
                     payload = $"Invalid message received at {this.GetType()}"
                 });
@@ -207,6 +193,19 @@ namespace ReupVirtualTwin.managers
             }
             string type = message["type"].ToString();
             JToken payload = message["payload"];
+            try
+            {
+                await ExcecuteWebMessage(type, payload);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("An error ocurred why executing the WebMessage");
+                Debug.LogError(e.Message);
+                Debug.LogError(e);
+            }
+        }
+        public async Task ExcecuteWebMessage(string type, JToken payload)
+        {
             switch (type)
             {
                 case WebMessageType.setEditMode:
