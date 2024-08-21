@@ -62,8 +62,7 @@ public class EditMediatorTest : MonoBehaviour
             new JProperty("type", WebMessageType.requestSceneLoad),
             new JProperty("payload", new JObject()
             {
-                { "scene_name", "scene-name" },
-                { "scene_id", 12345 },
+                { "request_timestamp", 1723834815802 },
                 { "objects",  null },
             })
         );
@@ -726,7 +725,7 @@ public class EditMediatorTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldSendSceneStateMessage_when_requested()
     {
-        int request_timestamp = 1111111;
+        long request_timestamp = 1723834815802;
         WebMessage<Dictionary<string, object>> sceneStateRequestMessage = new WebMessage<Dictionary<string, object>>()
         {
             type = WebMessageType.requestSceneState,
@@ -741,7 +740,7 @@ public class EditMediatorTest : MonoBehaviour
         WebMessage<JObject> sentMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.requestSceneStateSuccess, sentMessage.type);
         Assert.IsTrue(JToken.DeepEquals(mockModelInfoManager.GetSceneState(), sentMessage.payload["scene_state"]));
-        Assert.AreEqual(request_timestamp, sentMessage.payload["request_timestamp"].ToObject<int>());
+        Assert.AreEqual(request_timestamp, sentMessage.payload["request_timestamp"].ToObject<long>());
         yield return null;
     }
 
@@ -774,7 +773,7 @@ public class EditMediatorTest : MonoBehaviour
             type = WebMessageType.requestSceneState,
             payload = new Dictionary<string, object>()
             {
-                {"request_timestamp", 11111111 }
+                {"request_timestamp", 1723834815802 }
             }
         };
 
@@ -986,8 +985,7 @@ public class EditMediatorTest : MonoBehaviour
         WebMessage<JObject> sentMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(1, mockWebMessageSender.sentMessages.Count);
         Assert.AreEqual(WebMessageType.requestSceneLoadSuccess, sentMessage.type);
-        Assert.AreEqual("scene-name", sentMessage.payload["scene_name"].ToString());
-        Assert.AreEqual(12345, sentMessage.payload["scene_id"].ToObject<int>());
+        Assert.AreEqual(sentMessage.payload["request_timestamp"].ToObject<long>(), 1723834815802);
     }
 
     [Test]
