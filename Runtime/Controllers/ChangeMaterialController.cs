@@ -37,6 +37,9 @@ namespace ReupVirtualTwin.controllers
             }
             string materialUrl = materialChangeInfo["material_url"].ToString();
             string[] objectIds = materialChangeInfo["object_ids"].ToObject<string[]>();
+            float width_cm = materialChangeInfo["width_mm"].ToObject<long>() / 10;
+            float height_cm = materialChangeInfo["height_mm"].ToObject<long>() / 10;
+            Vector2 materialDimensionsInCm = new Vector2(width_cm, height_cm);
             Texture2D texture = await textureDownloader.DownloadTextureFromUrl(materialUrl);
             if (!texture)
             {
@@ -46,6 +49,7 @@ namespace ReupVirtualTwin.controllers
             List<GameObject> objects = objectRegistry.GetObjectsWithGuids(objectIds);
             Material newMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));
             newMaterial.SetTexture("_BaseMap", texture);
+            newMaterial.mainTextureScale = new Vector2(0.01f, 0.01f);
             for (int i = 0; i < objects.Count; i++)
             {
                 if (objects[i].GetComponent<Renderer>() != null)
@@ -53,6 +57,7 @@ namespace ReupVirtualTwin.controllers
                     objects[i].GetComponent<Renderer>().material = newMaterial;
                     objects[i].GetComponent<IObjectInfo>().materialWasChanged = true;
                     ObjectMetaDataUtils.AssignMaterialIdMetaDataToObject(objects[i], materialChangeInfo["material_id"].ToObject<int>());
+                    UvUtils.AdjustUVScaleToDimensions(objects[i], materialDimensionsInCm);
                 }
             }
             if (notify)
