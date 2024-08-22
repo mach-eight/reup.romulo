@@ -34,12 +34,11 @@ namespace ReupVirtualTwin.dataSchemas
             {"type", DataValidator.objectType },
             {"properties", new JObject
                 {
-                    { "scene_name", DataValidator.stringSchema },
-                    { "scene_id", DataValidator.intSchema },
-                { "objects", DataValidator.CreateArraySchema(RomuloInternalSchema.objectSceneSchema) },
+                    { "request_timestamp", DataValidator.intSchema },
+                    { "objects", DataValidator.CreateArraySchema(RomuloInternalSchema.objectSceneSchema) },
                 }
             },
-            { "required", new JArray { "scene_name", "scene_id", "objects" } },
+            { "required", new JArray { "request_timestamp", "objects" } },
         };
     }
 }
