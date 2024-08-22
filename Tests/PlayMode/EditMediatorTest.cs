@@ -726,13 +726,13 @@ public class EditMediatorTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldSendSceneStateMessage_when_requested()
     {
-        string sceneName = "the-scene-name";
+        int request_timestamp = 1111111;
         WebMessage<Dictionary<string, object>> sceneStateRequestMessage = new WebMessage<Dictionary<string, object>>()
         {
             type = WebMessageType.requestSceneState,
             payload = new Dictionary<string, object>()
             {
-                {"scene_name", sceneName }
+                {"request_timestamp", request_timestamp }
             }
         };
         editMediator.ReceiveWebMessage(JsonConvert.SerializeObject(sceneStateRequestMessage));
@@ -741,7 +741,7 @@ public class EditMediatorTest : MonoBehaviour
         WebMessage<JObject> sentMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.requestSceneStateSuccess, sentMessage.type);
         Assert.IsTrue(JToken.DeepEquals(mockModelInfoManager.GetSceneState(), sentMessage.payload["scene_state"]));
-        Assert.AreEqual(sceneName, sentMessage.payload["scene_name"].ToString());
+        Assert.AreEqual(request_timestamp, sentMessage.payload["request_timestamp"].ToObject<int>());
         yield return null;
     }
 
@@ -774,7 +774,7 @@ public class EditMediatorTest : MonoBehaviour
             type = WebMessageType.requestSceneState,
             payload = new Dictionary<string, object>()
             {
-                {"scene_name", "test-scene-name" }
+                {"request_timestamp", 11111111 }
             }
         };
 

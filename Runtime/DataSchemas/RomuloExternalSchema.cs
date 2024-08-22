@@ -23,10 +23,10 @@ namespace ReupVirtualTwin.dataSchemas
             { "type", DataValidator.objectType },
             { "properties", new JObject
                 {
-                    { "scene_name", DataValidator.stringSchema },
+                    { "request_timestamp", DataValidator.intSchema },
                 }
             },
-            { "required", new JArray { "scene_name" } },
+            { "required", new JArray { "request_timestamp" } },
         };
 
         public static readonly JObject requestLoadScenePayloadSchema = new JObject()
