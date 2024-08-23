@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class ObjectUtils
 {
-    public static List<GameObject> GetObjectsWithMeshRenderer(List<GameObject> objects)
+    public static List<GameObject> FilterForObjectsWithMeshRenderer(List<GameObject> objects)
     {
         List<GameObject> filteredObjects = new List<GameObject>();
         for (int i = 0; i < objects.Count; i++)

@@ -213,7 +213,7 @@ namespace ReupVirtualTwinTests.controllers
         [Test]
         public async Task ShouldRequestMaterialScalerToScaleMaterialOfObjects()
         {
-            List<GameObject> objectsWithMeshRenderer = ObjectUtils.GetObjectsWithMeshRenderer(objectRegistry.objects);
+            List<GameObject> objectsWithMeshRenderer = ObjectUtils.FilterForObjectsWithMeshRenderer(objectRegistry.objects);
             int numberOfObjectsWithMesh = objectsWithMeshRenderer.Count;
             List<Vector2> expectedDimensionCalls = Enumerable.Repeat<Vector2>(new Vector2(2, 1.5f), numberOfObjectsWithMesh).ToList();
             await controller.ChangeObjectMaterial(messagePayload);
