@@ -49,7 +49,6 @@ namespace ReupVirtualTwin.controllers
             List<GameObject> objects = objectRegistry.GetObjectsWithGuids(objectIds);
             Material newMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));
             newMaterial.SetTexture("_BaseMap", texture);
-            newMaterial.mainTextureScale = new Vector2(0.01f, 0.01f);
             for (int i = 0; i < objects.Count; i++)
             {
                 if (objects[i].GetComponent<Renderer>() != null)

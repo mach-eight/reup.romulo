@@ -6,26 +6,18 @@ namespace ReupVirtualTwin.helpers
     public static class UvUtils
     {
 
-        public static void AdjustUVScaleToDimensions(GameObject obj, Vector2 dimensionsInCM)
+        public static void AdjustUVScaleToDimensions(GameObject obj, Vector2 dimensionsInCm)
         {
-            Vector2 currentTextureDimensions = GetTextureDimensions(obj);
-            Debug.Log("currentTextureDimensions");
-            Debug.Log(currentTextureDimensions.x);
-            Debug.Log(currentTextureDimensions.y);
+            Vector2 currentTextureDimensionsInCm = GetTextureDimensions(obj);
             Vector2 scaleFactor = new Vector2(
-                currentTextureDimensions.x / dimensionsInCM.x,
-                currentTextureDimensions.y / dimensionsInCM.y
-                );
-            Debug.Log("scaleFactor.x");
-            Debug.Log(scaleFactor.x);
-            Debug.Log("scaleFactor.y");
-            Debug.Log(scaleFactor.y);
+                currentTextureDimensionsInCm.x / dimensionsInCm.x,
+                currentTextureDimensionsInCm.y / dimensionsInCm.y
+            );
             Renderer renderer = obj.GetComponent<Renderer>();
             if (renderer != null)
             {
                 Material mat = renderer.material;
                 mat.mainTextureScale = new Vector2(scaleFactor.x, scaleFactor.y);
-                //mat.mainTextureScale = new Vector2(2, 2);
             }
         }
 
@@ -33,7 +25,6 @@ namespace ReupVirtualTwin.helpers
         {
             Mesh mesh = obj.GetComponent<MeshFilter>().sharedMesh;
             UV3DPairPoints[] references = Get3TransormationReferences(mesh);
-            //UV3DPairPoints[] references = Get3TransormationReferencesdummy();
             Func<Vector2, Vector3> uvToSpaceTransformator = CreateUvToSpaceTransformator(references);
             Vector3 uv00ToSpace = uvToSpaceTransformator(new Vector2(0, 0));
             Vector3 uv10ToSpace = uvToSpaceTransformator(new Vector2(1, 0));
@@ -66,17 +57,13 @@ namespace ReupVirtualTwin.helpers
                 {0, 0, uv2.x, uv2.y, 0, 0, 0, 1, 0, point2.y},
                 {0, 0, 0, 0, uv2.x, uv2.y, 0, 0, 1, point2.z},
             };
-            //PrintMatrix(matrix);
 
             float[,] reducedMatrix = LinearAlgebraUtils.RREF(matrix);
-
-            //PrintMatrix(reducedMatrix);
 
             // supposing that the transformation we want to return is of the type:
             // ( a b )   ( u )   ( x0 )     ( x )
             // ( c d ) * ( v ) + ( y0 )  =  ( y ) 
             // ( e f )           ( z0 )     ( z )
-
             float a = reducedMatrix[0, 9];
             float b = reducedMatrix[1, 9];
             float c = reducedMatrix[2, 9];
@@ -129,9 +116,6 @@ namespace ReupVirtualTwin.helpers
 
             for (int i = 0; i < 3; i++)
             {
-                Debug.Log($"poitn {i}");
-                Debug.Log(vertices[i]);
-                Debug.Log(uvs[i]);
                 uv3dPairPoints[i] = new UV3DPairPoints
                 {
                     point = vertices[i],
@@ -146,34 +130,6 @@ namespace ReupVirtualTwin.helpers
             public Vector2 uv;
             public Vector3 point;
         }
-
-
-
-        //public static void AdjustUVScaleToDimensions(GameObject obj, Vector2 referenceUVBounds)
-        //{
-        //    Debug.Log("referenceUVBounds");
-        //    Debug.Log(referenceUVBounds.x);
-        //    Debug.Log(referenceUVBounds.y);
-
-        //    Vector2 objUVBounds = GetUVBounds(obj);
-        //    Debug.Log("objUVBounds");
-        //    Debug.Log(objUVBounds.x);
-        //    Debug.Log(objUVBounds.y);
-
-        //    // Calculate the scale factor based on UV bounds
-        //    Vector2 scaleFactor = new Vector2(referenceUVBounds.x / objUVBounds.x, referenceUVBounds.y / objUVBounds.y);
-        //    Debug.Log("scaleFactor");
-        //    Debug.Log(scaleFactor.x);
-        //    Debug.Log(scaleFactor.y);
-
-        //    // Apply the inverse of the scale factor to the object's texture tiling
-        //    Renderer renderer = obj.GetComponent<Renderer>();
-        //    if (renderer != null)
-        //    {
-        //        Material mat = renderer.material;
-        //        mat.mainTextureScale = new Vector2(scaleFactor.x, scaleFactor.y);
-        //    }
-        //}
 
         public static Vector2 GetUVBounds(GameObject obj)
         {
@@ -196,7 +152,6 @@ namespace ReupVirtualTwin.helpers
 
             return uvMax - uvMin; // Returns the UV bounds (width and height)
         }
-
 
     }
 }

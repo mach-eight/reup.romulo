@@ -73,7 +73,6 @@ namespace ReupVirtualTwin.helpers
             {
                 for (int j = 0; j < matrix.GetLength(1); j++)
                 {
-                    //Debug.Log(rrefMatrix[i, j] + " ");
                     result = result + matrix[i, j] + " ";
                 }
                 result = result + "\n";
