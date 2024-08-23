@@ -6,9 +6,8 @@ using UnityEngine;
 
 namespace ReupVirtualTwinTests.helpers
 {
-    public class LinearAlgebraUtilsTest : MonoBehaviour
+    public class LinearAlgebraUtilsTest
     {
-
         [Test]
         public void ReducedRowEchelonForm_success()
         {

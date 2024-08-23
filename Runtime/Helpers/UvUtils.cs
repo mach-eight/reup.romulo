@@ -6,12 +6,12 @@ namespace ReupVirtualTwin.helpers
     public static class UvUtils
     {
 
-        public static void AdjustUVScaleToDimensions(GameObject obj, Vector2 dimensionsInCm)
+        public static void AdjustUVScaleToDimensions(GameObject obj, Vector2 dimensionsInM)
         {
-            Vector2 currentTextureDimensionsInCm = GetTextureDimensions(obj);
+            Vector2 currentTextureDimensionsInM = GetTextureDimensions(obj);
             Vector2 scaleFactor = new Vector2(
-                currentTextureDimensionsInCm.x / dimensionsInCm.x,
-                currentTextureDimensionsInCm.y / dimensionsInCm.y
+                currentTextureDimensionsInM.x / dimensionsInM.x,
+                currentTextureDimensionsInM.y / dimensionsInM.y
             );
             Renderer renderer = obj.GetComponent<Renderer>();
             if (renderer != null)
@@ -21,10 +21,10 @@ namespace ReupVirtualTwin.helpers
             }
         }
 
-        static Vector2 GetTextureDimensions(GameObject obj)
+        public static Vector2 GetTextureDimensions(GameObject obj)
         {
             Mesh mesh = obj.GetComponent<MeshFilter>().sharedMesh;
-            UV3DPairPoints[] references = Get3TransormationReferences(mesh);
+            UvPointPair[] references = Get3TransormationReferences(mesh);
             Func<Vector2, Vector3> uvToSpaceTransformator = CreateUvToSpaceTransformator(references);
             Vector3 uv00ToSpace = uvToSpaceTransformator(new Vector2(0, 0));
             Vector3 uv10ToSpace = uvToSpaceTransformator(new Vector2(1, 0));
@@ -35,7 +35,7 @@ namespace ReupVirtualTwin.helpers
         }
 
 
-        static Func<Vector2, Vector3> CreateUvToSpaceTransformator(UV3DPairPoints[] references)
+        static Func<Vector2, Vector3> CreateUvToSpaceTransformator(UvPointPair[] references)
         {
             Vector2 uv0 = references[0].uv;
             Vector2 uv1 = references[1].uv;
@@ -85,47 +85,22 @@ namespace ReupVirtualTwin.helpers
                 return new Vector3(x,y,z);
             };
         }
-        static UV3DPairPoints[] Get3TransormationReferencesdummy()
+        static UvPointPair[] Get3TransormationReferences(Mesh mesh)
         {
-            return new UV3DPairPoints[]
-            {
-                new UV3DPairPoints
-                {
-                    uv = new Vector2(10f, 13.0718954248366f),
-                    point = new Vector3(0,0,-141.42135623731f),
-                },
-                new UV3DPairPoints
-                {
-                    uv = new Vector2(0, 13.0718954248366f),
-                    point = new Vector3(-70.7106781186548f, 0, -70.7106781186547f),
-                },
-                new UV3DPairPoints
-                {
-                    uv = new Vector2(0,0),
-                    point = new Vector3(0,0,0),
-                },
-            };
-        }
-        static UV3DPairPoints[] Get3TransormationReferences(Mesh mesh)
-        {
-
             Vector3[] vertices = mesh.vertices;
             Vector2[] uvs = mesh.uv;
-
-            UV3DPairPoints[] uv3dPairPoints = new UV3DPairPoints[3];
-
+            UvPointPair[] uv3dPairPoints = new UvPointPair[3];
             for (int i = 0; i < 3; i++)
             {
-                uv3dPairPoints[i] = new UV3DPairPoints
+                uv3dPairPoints[i] = new UvPointPair
                 {
                     point = vertices[i],
                     uv = uvs[i]
                 };
             }
             return uv3dPairPoints;
-
         }
-        private class UV3DPairPoints
+        public class UvPointPair
         {
             public Vector2 uv;
             public Vector3 point;
