@@ -29,17 +29,11 @@ namespace ReupVirtualTwinTests.helpers
             GameObject.Destroy(wallInstanceInM);
         }
 
-        void AssertVector2sAreEqual(Vector2 expected, Vector2 real)
-        {
-            float distance = Vector2.Distance(expected, real);
-            Assert.IsTrue(distance < 1e-6);
-        }
-
         [Test]
         public void GetTextureDimensions_success_for_fbx_imported_in_cm()
         {
             Vector2 textureDimensions = UvUtils.GetTextureDimensions(wallInstanceInCm);
-            AssertVector2sAreEqual(originalTextureDimensions, textureDimensions);
+            AssertUtils.AssertVector2sAreEqual(originalTextureDimensions, textureDimensions);
         }
 
         [Test]
@@ -53,14 +47,14 @@ namespace ReupVirtualTwinTests.helpers
             Vector2 expectedMaterialScale = new Vector2(1/xScale, 1/yScale);
             UvUtils.AdjustUVScaleToDimensions(wallInstanceInCm, desiredTextureDimensionsInM);
             Material material = wallInstanceInCm.GetComponent<Renderer>().material;
-            AssertVector2sAreEqual(expectedMaterialScale, material.mainTextureScale);
+            AssertUtils.AssertVector2sAreEqual(expectedMaterialScale, material.mainTextureScale);
         }
 
         [Test]
         public void GetTextureDimensions_success_for_fbx_imported_in_m()
         {
             Vector2 textureDimensions = UvUtils.GetTextureDimensions(wallInstanceInM);
-            AssertVector2sAreEqual(originalTextureDimensions, textureDimensions);
+            AssertUtils.AssertVector2sAreEqual(originalTextureDimensions, textureDimensions);
         }
 
         [Test]
@@ -74,7 +68,7 @@ namespace ReupVirtualTwinTests.helpers
             Vector2 expectedMaterialScale = new Vector2(1/xScale, 1/yScale);
             UvUtils.AdjustUVScaleToDimensions(wallInstanceInM, desiredTextureDimensionsInM);
             Material material = wallInstanceInM.GetComponent<Renderer>().material;
-            AssertVector2sAreEqual(expectedMaterialScale, material.mainTextureScale);
+            AssertUtils.AssertVector2sAreEqual(expectedMaterialScale, material.mainTextureScale);
         }
     }
 }

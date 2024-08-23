@@ -44,7 +44,7 @@ namespace ReupVirtualTwin.helpers
             Vector3 point1 = references[1].point;
             Vector3 point2 = references[2].point;
 
-            float[,] matrix = {
+            float[,] augmentedMatrix = {
                 {uv0.x, uv0.y, 0, 0, 0, 0, 1, 0, 0, point0.x},
                 {0, 0, uv0.x, uv0.y, 0, 0, 0, 1, 0, point0.y},
                 {0, 0, 0, 0, uv0.x, uv0.y, 0, 0, 1, point0.z},
@@ -58,7 +58,7 @@ namespace ReupVirtualTwin.helpers
                 {0, 0, 0, 0, uv2.x, uv2.y, 0, 0, 1, point2.z},
             };
 
-            float[,] reducedMatrix = LinearAlgebraUtils.RREF(matrix);
+            float[,] reducedMatrix = LinearAlgebraUtils.RREF(augmentedMatrix);
 
             // supposing that the transformation we want to return is of the type:
             // ( a b )   ( u )   ( x0 )     ( x )

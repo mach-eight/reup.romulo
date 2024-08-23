@@ -11,11 +11,13 @@ using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.romuloEnvironment;
 using ReupVirtualTwin.dataSchemas;
 using Newtonsoft.Json.Linq;
+using ReupVirtualTwin.helperInterfaces;
 
 namespace ReupVirtualTwin.controllers
 {
     public class ChangeMaterialController : IChangeMaterialController
     {
+        public IMaterialScaler materialScaler = new MaterialScaler();
         readonly ITextureDownloader textureDownloader;
         readonly IObjectRegistry objectRegistry;
         readonly IMediator mediator;
@@ -37,9 +39,9 @@ namespace ReupVirtualTwin.controllers
             }
             string materialUrl = materialChangeInfo["material_url"].ToString();
             string[] objectIds = materialChangeInfo["object_ids"].ToObject<string[]>();
-            float width_cm = materialChangeInfo["width_mm"].ToObject<long>() / 10;
-            float height_cm = materialChangeInfo["height_mm"].ToObject<long>() / 10;
-            Vector2 materialDimensionsInCm = new Vector2(width_cm, height_cm);
+            float widthInM = materialChangeInfo["width_mm"].ToObject<float>() / 1000;
+            float heightInM = materialChangeInfo["height_mm"].ToObject<float>() / 1000;
+            Vector2 materialDimensionsInM = new Vector2(widthInM, heightInM);
             Texture2D texture = await textureDownloader.DownloadTextureFromUrl(materialUrl);
             if (!texture)
             {
@@ -56,7 +58,7 @@ namespace ReupVirtualTwin.controllers
                     objects[i].GetComponent<Renderer>().material = newMaterial;
                     objects[i].GetComponent<IObjectInfo>().materialWasChanged = true;
                     ObjectMetaDataUtils.AssignMaterialIdMetaDataToObject(objects[i], materialChangeInfo["material_id"].ToObject<int>());
-                    UvUtils.AdjustUVScaleToDimensions(objects[i], materialDimensionsInCm);
+                    materialScaler.AdjustUVScaleToDimensions(objects[i], materialDimensionsInM);
                 }
             }
             if (notify)

@@ -12,6 +12,8 @@ using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.enums;
 using Newtonsoft.Json.Linq;
 using ReupVirtualTwin.helpers;
+using ReupVirtualTwin.helperInterfaces;
+using System.Linq;
 
 namespace ReupVirtualTwinTests.controllers
 {
@@ -22,6 +24,7 @@ namespace ReupVirtualTwinTests.controllers
         JObject messagePayload;
         SomeObjectWithMaterialRegistrySpy objectRegistry;
         MediatorSpy mediatorSpy;
+        MaterialScalerSpy materialScalerSpy;
 
         [UnitySetUp]
         public IEnumerator SetUp()
@@ -30,11 +33,15 @@ namespace ReupVirtualTwinTests.controllers
             textureDownloaderSpy = new TextureDownloaderSpy();
             objectRegistry = new SomeObjectWithMaterialRegistrySpy();
             controller = new ChangeMaterialController(textureDownloaderSpy, objectRegistry, mediatorSpy);
+            materialScalerSpy = new MaterialScalerSpy();
+            controller.materialScaler = materialScalerSpy;
             messagePayload = new JObject()
             {
                 { "material_id", 1234567890 },
                 { "material_url", "material-url.com" },
-                { "object_ids", new JArray(new string[] { "id-0", "id-1" }) }
+                { "object_ids", new JArray(new string[] { "id-0", "id-1" }) },
+                { "width_mm", 2000 },
+                { "height_mm", 1500 },
             };
             yield return null;
         }
@@ -44,6 +51,19 @@ namespace ReupVirtualTwinTests.controllers
         {
             objectRegistry.DestroyAllObjects();
             yield return null;
+        }
+
+        private class MaterialScalerSpy : IMaterialScaler
+        {
+            public int callCount = 0;
+            public List<GameObject> calledObjects = new List<GameObject>();
+            public List<Vector2> calledDimensions = new List<Vector2>();
+            public void AdjustUVScaleToDimensions(GameObject obj, Vector2 dimensionsInM)
+            {
+                callCount++;
+                calledObjects.Add(obj);
+                calledDimensions.Add(dimensionsInM);
+            }
         }
 
         private class TextureDownloaderSpy : ITextureDownloader
@@ -190,5 +210,19 @@ namespace ReupVirtualTwinTests.controllers
             AssertUtils.AssertAllObjectsWithMeshRendererHaveSetChangedMaterial(objectRegistry.objects);
         }
 
+        [Test]
+        public async Task ShouldRequestMaterialScalerToScaleMaterialOfObjects()
+        {
+            List<GameObject> objectsWithMeshRenderer = ObjectUtils.GetObjectsWithMeshRenderer(objectRegistry.objects);
+            int numberOfObjectsWithMesh = objectsWithMeshRenderer.Count;
+            List<Vector2> expectedDimensionCalls = Enumerable.Repeat<Vector2>(new Vector2(2, 1.5f), numberOfObjectsWithMesh).ToList();
+            await controller.ChangeObjectMaterial(messagePayload);
+            Assert.AreEqual(numberOfObjectsWithMesh, materialScalerSpy.callCount);
+            Assert.AreEqual(objectsWithMeshRenderer, materialScalerSpy.calledObjects);
+            Assert.AreEqual(expectedDimensionCalls, materialScalerSpy.calledDimensions);
+
+        }
+
     }
 }
+
