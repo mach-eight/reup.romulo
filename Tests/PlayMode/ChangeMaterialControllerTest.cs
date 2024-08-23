@@ -211,7 +211,7 @@ namespace ReupVirtualTwinTests.controllers
         }
 
         [Test]
-        public async Task ShouldRequestMaterialScalerToScaleMaterialOfObjects()
+        public async Task ShouldRequestMaterialScalerToScaleObjectsMaterial()
         {
             List<GameObject> objectsWithMeshRenderer = ObjectUtils.FilterForObjectsWithMeshRenderer(objectRegistry.objects);
             int numberOfObjectsWithMesh = objectsWithMeshRenderer.Count;
