@@ -24,8 +24,8 @@ namespace ReupVirtualTwin.helpers
         public static Vector2 GetTextureDimensions(GameObject obj)
         {
             Mesh mesh = obj.GetComponent<MeshFilter>().sharedMesh;
-            UvPointPair[] references = Get3TransormationReferences(mesh);
-            Func<Vector2, Vector3> uvToSpaceTransformator = CreateUvToSpaceTransformator(references);
+            UvPointPair[] uvPointPairs = GetSomeUvPointPairs(mesh, 3);
+            Func<Vector2, Vector3> uvToSpaceTransformator = CreateUvToSpaceTransformator(uvPointPairs);
             Vector3 uv00ToSpace = uvToSpaceTransformator(new Vector2(0, 0));
             Vector3 uv10ToSpace = uvToSpaceTransformator(new Vector2(1, 0));
             Vector3 uv01ToSpace = uvToSpaceTransformator(new Vector2(0, 1));
@@ -35,14 +35,14 @@ namespace ReupVirtualTwin.helpers
         }
 
 
-        static Func<Vector2, Vector3> CreateUvToSpaceTransformator(UvPointPair[] references)
+        static Func<Vector2, Vector3> CreateUvToSpaceTransformator(UvPointPair[] uvPointPairs)
         {
-            Vector2 uv0 = references[0].uv;
-            Vector2 uv1 = references[1].uv;
-            Vector2 uv2 = references[2].uv;
-            Vector3 point0 = references[0].point;
-            Vector3 point1 = references[1].point;
-            Vector3 point2 = references[2].point;
+            Vector2 uv0 = uvPointPairs[0].uv;
+            Vector2 uv1 = uvPointPairs[1].uv;
+            Vector2 uv2 = uvPointPairs[2].uv;
+            Vector3 point0 = uvPointPairs[0].point;
+            Vector3 point1 = uvPointPairs[1].point;
+            Vector3 point2 = uvPointPairs[2].point;
 
             float[,] augmentedMatrix = {
                 {uv0.x, uv0.y, 0, 0, 0, 0, 1, 0, 0, point0.x},
@@ -60,7 +60,7 @@ namespace ReupVirtualTwin.helpers
 
             float[,] reducedMatrix = LinearAlgebraUtils.RREF(augmentedMatrix);
 
-            // supposing that the transformation we want to return is of the type:
+            // supposing the transformation we want to return is of the type:
             // ( a b )   ( u )   ( x0 )     ( x )
             // ( c d ) * ( v ) + ( y0 )  =  ( y ) 
             // ( e f )           ( z0 )     ( z )
@@ -85,12 +85,12 @@ namespace ReupVirtualTwin.helpers
                 return new Vector3(x,y,z);
             };
         }
-        static UvPointPair[] Get3TransormationReferences(Mesh mesh)
+        static UvPointPair[] GetSomeUvPointPairs(Mesh mesh, int ammount)
         {
             Vector3[] vertices = mesh.vertices;
             Vector2[] uvs = mesh.uv;
             UvPointPair[] uv3dPairPoints = new UvPointPair[3];
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < ammount; i++)
             {
                 uv3dPairPoints[i] = new UvPointPair
                 {
@@ -104,28 +104,6 @@ namespace ReupVirtualTwin.helpers
         {
             public Vector2 uv;
             public Vector3 point;
-        }
-
-        public static Vector2 GetUVBounds(GameObject obj)
-        {
-            Mesh mesh = obj.GetComponent<MeshFilter>().sharedMesh;
-
-            if (mesh == null)
-            {
-                Debug.LogError("Object does not have a MeshFilter with a mesh.");
-                return Vector2.one;
-            }
-
-            Vector2 uvMin = new Vector2(float.MaxValue, float.MaxValue);
-            Vector2 uvMax = new Vector2(float.MinValue, float.MinValue);
-
-            foreach (Vector2 uv in mesh.uv)
-            {
-                uvMin = Vector2.Min(uvMin, uv);
-                uvMax = Vector2.Max(uvMax, uv);
-            }
-
-            return uvMax - uvMin; // Returns the UV bounds (width and height)
         }
 
     }
