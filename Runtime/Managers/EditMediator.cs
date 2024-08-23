@@ -273,8 +273,7 @@ namespace ReupVirtualTwin.managers
             {
                 type = WebMessageType.requestSceneLoadSuccess,
                 payload = new JObject(
-                    new JProperty("scene_name", requestPayload["scene_name"]),
-                    new JProperty("scene_id", requestPayload["scene_id"])
+                    new JProperty("request_timestamp", requestPayload["request_timestamp"])
                 )
             };
             _webMessageSender.SendWebMessage(successMessage);
@@ -323,7 +322,7 @@ namespace ReupVirtualTwin.managers
                 type = WebMessageType.requestSceneStateSuccess,
                 payload = new JObject(
                     new JProperty("scene_state", sceneState),
-                    new JProperty("scene_name", sceneStateRequestPayload["scene_name"])),
+                    new JProperty("request_timestamp", sceneStateRequestPayload["request_timestamp"])),
             };
             _webMessageSender.SendWebMessage(sceneStateMessage);
         }
