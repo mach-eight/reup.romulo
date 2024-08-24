@@ -8,17 +8,18 @@ namespace ReupVirtualTwin.helpers
 
         public static void AdjustUVScaleToDimensions(GameObject obj, Vector2 dimensionsInM)
         {
+            Renderer renderer = obj.GetComponent<Renderer>();
+            if (renderer == null)
+            {
+                return;
+            }
             Vector2 currentTextureDimensionsInM = GetTextureDimensions(obj);
             Vector2 scaleFactor = new Vector2(
                 currentTextureDimensionsInM.x / dimensionsInM.x,
                 currentTextureDimensionsInM.y / dimensionsInM.y
             );
-            Renderer renderer = obj.GetComponent<Renderer>();
-            if (renderer != null)
-            {
-                Material mat = renderer.material;
-                mat.mainTextureScale = new Vector2(scaleFactor.x, scaleFactor.y);
-            }
+            Material mat = renderer.material;
+            mat.mainTextureScale = new Vector2(scaleFactor.x, scaleFactor.y);
         }
 
         public static Vector2 GetTextureDimensions(GameObject obj)
