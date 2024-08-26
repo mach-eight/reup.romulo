@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using AM = Accord.Math;
 
 namespace ReupVirtualTwin.helpers
 {
@@ -46,7 +47,7 @@ namespace ReupVirtualTwin.helpers
             Vector3 point1 = uvPointPairs[1].point;
             Vector3 point2 = uvPointPairs[2].point;
 
-            float[,] augmentedMatrix = {
+            double[,] augmentedMatrix = {
                 {uv0.x, uv0.y, 0, 0, 0, 0, 1, 0, 0, point0.x},
                 {0, 0, uv0.x, uv0.y, 0, 0, 0, 1, 0, point0.y},
                 {0, 0, 0, 0, uv0.x, uv0.y, 0, 0, 1, point0.z},
@@ -60,31 +61,31 @@ namespace ReupVirtualTwin.helpers
                 {0, 0, 0, 0, uv2.x, uv2.y, 0, 0, 1, point2.z},
             };
 
-            float[,] reducedMatrix = LinearAlgebraUtils.RREF(augmentedMatrix);
+            double[,] reducedMatrix = new AM.ReducedRowEchelonForm(augmentedMatrix).Result;
 
             // supposing the transformation we want to return is of the type:
             // ( a b )   ( u )   ( x0 )     ( x )
             // ( c d ) * ( v ) + ( y0 )  =  ( y ) 
             // ( e f )           ( z0 )     ( z )
-            float a = reducedMatrix[0, 9];
-            float b = reducedMatrix[1, 9];
-            float c = reducedMatrix[2, 9];
-            float d = reducedMatrix[3, 9];
-            float e = reducedMatrix[4, 9];
-            float f = reducedMatrix[5, 9];
-            float x0 = reducedMatrix[6, 9];
-            float y0 = reducedMatrix[7, 9];
-            float z0 = reducedMatrix[8, 9];
+            double a = reducedMatrix[0, 9];
+            double b = reducedMatrix[1, 9];
+            double c = reducedMatrix[2, 9];
+            double d = reducedMatrix[3, 9];
+            double e = reducedMatrix[4, 9];
+            double f = reducedMatrix[5, 9];
+            double x0 = reducedMatrix[6, 9];
+            double y0 = reducedMatrix[7, 9];
+            double z0 = reducedMatrix[8, 9];
 
 
             return (Vector2 uv) =>
             {
-                float u = uv.x;
-                float v = uv.y;
-                float x = a * u + b * v + x0;
-                float y = c * u + d * v + y0;
-                float z = e * u + f * v + z0;
-                return new Vector3(x,y,z);
+                double u = uv.x;
+                double v = uv.y;
+                double x = a * u + b * v + x0;
+                double y = c * u + d * v + y0;
+                double z = e * u + f * v + z0;
+                return new Vector3((float)x ,(float)y, (float)z);
             };
         }
         static UvPointPair[] GetSomeUvPointPairs(Mesh mesh, int ammount)
