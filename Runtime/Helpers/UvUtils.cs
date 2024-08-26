@@ -6,17 +6,18 @@ namespace ReupVirtualTwin.helpers
     public static class UvUtils
     {
 
-        public static void AdjustUVScaleToDimensions(GameObject obj, Vector2 dimensionsInM)
+        public static void AdjustUVScaleToDimensions(GameObject obj, Vector2 dimensionsInMilimeters)
         {
             Renderer renderer = obj.GetComponent<Renderer>();
             if (renderer == null)
             {
                 return;
             }
-            Vector2 currentTextureDimensionsInM = GetTextureDimensions(obj);
+            Vector2 dimensionsInMeters = dimensionsInMilimeters / 1000;
+            Vector2 currentTextureDimensionsInMeters = GetTextureDimensions(obj);
             Vector2 scaleFactor = new Vector2(
-                currentTextureDimensionsInM.x / dimensionsInM.x,
-                currentTextureDimensionsInM.y / dimensionsInM.y
+                currentTextureDimensionsInMeters.x / dimensionsInMeters.x,
+                currentTextureDimensionsInMeters.y / dimensionsInMeters.y
             );
             Material mat = renderer.material;
             mat.mainTextureScale = new Vector2(scaleFactor.x, scaleFactor.y);
