@@ -215,7 +215,7 @@ namespace ReupVirtualTwinTests.controllers
         {
             List<GameObject> objectsWithMeshRenderer = ObjectUtils.FilterForObjectsWithMeshRenderer(objectRegistry.objects);
             int numberOfObjectsWithMesh = objectsWithMeshRenderer.Count;
-            List<Vector2> expectedDimensionCalls = Enumerable.Repeat<Vector2>(new Vector2(2, 1.5f), numberOfObjectsWithMesh).ToList();
+            List<Vector2> expectedDimensionCalls = Enumerable.Repeat<Vector2>(new Vector2(2000, 1500), numberOfObjectsWithMesh).ToList();
             await controller.ChangeObjectMaterial(messagePayload);
             Assert.AreEqual(numberOfObjectsWithMesh, materialScalerSpy.callCount);
             Assert.AreEqual(objectsWithMeshRenderer, materialScalerSpy.calledObjects);

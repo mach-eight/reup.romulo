@@ -11,7 +11,7 @@ namespace ReupVirtualTwinTests.helpers
         GameObject wallPrefabInCm = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Tests/TestAssets/150cmx150cm_inclined_texture_10cmx14cm.prefab");
         GameObject wallInstanceInM;
         GameObject wallInstanceInCm;
-        Vector2 originalTextureDimensions;
+        Vector2 originalTextureDimensionsInMilimeters;
         MaterialScaler materialScaler;
         Vector2 desiredTextureDimensionsInM;
         Vector2 expectedMaterialScale;
@@ -21,10 +21,10 @@ namespace ReupVirtualTwinTests.helpers
         {
             wallInstanceInCm = (GameObject)PrefabUtility.InstantiatePrefab(wallPrefabInCm);
             wallInstanceInM = (GameObject)PrefabUtility.InstantiatePrefab(wallPrefabInM);
-            originalTextureDimensions = new Vector2(0.1f, 0.14f);
+            originalTextureDimensionsInMilimeters = new Vector2(100, 140);
             float xScale = 5;
             float yScale = 10;
-            desiredTextureDimensionsInM = new Vector2(originalTextureDimensions.x * xScale, originalTextureDimensions.y * yScale);
+            desiredTextureDimensionsInM = new Vector2(originalTextureDimensionsInMilimeters.x * xScale, originalTextureDimensionsInMilimeters.y * yScale);
             expectedMaterialScale = new Vector2(1/xScale, 1/yScale);
             materialScaler = new MaterialScaler();
         }
