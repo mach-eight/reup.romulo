@@ -222,6 +222,7 @@ namespace ReupVirtualTwin.managers
                     break;
                 case WebMessageType.changeObjectsMaterial:
                     await _changeMaterialController.ChangeObjectMaterial((JObject)payload);
+                    Notify(ReupEvent.objectMaterialChanged, (JObject)payload);
                     break;
                 case WebMessageType.requestSceneState:
                     StartCoroutine(SendSceneStateMessage((JObject)payload));
@@ -243,61 +244,103 @@ namespace ReupVirtualTwin.managers
 
         private async Task LoadObjectsState(JObject requestPayload)
         {
-            originalSceneController.RestoreOriginalScene();
+            originalSceneController?.RestoreOriginalScene();
+     
+            if (!requestPayload.ContainsKey("objects") || !requestPayload["objects"].Any(obj => HasRequiredKeys(obj)))
+            {
+                SendErrorMessage("the request payload is missing the required key 'objects' or 'objects' does not contain required 'color' or 'material_id' keys");
+                return;
+            }
 
-            List<JObject> objectStates = requestPayload["objects"].ToObject<JArray>().Cast<JObject>().ToList();
+            List<JObject> objectStates = requestPayload["objects"]?.ToObject<JArray>()?.Cast<JObject>().ToList() ?? new List<JObject>(); 
 
             var objectStatesByColor = objectStates
                 .Where(objectState => TypeHelpers.NotNull(objectState["color"]))
                 .GroupBy(objectState => objectState["color"].ToString());
-            PaintSceneObjects(objectStatesByColor);
+            Result colorWasChanged = PaintSceneObjects(objectStatesByColor);
 
             var objectStatesByMaterial = objectStates
                 .Where(objectState => TypeHelpers.NotNull(objectState["material_id"]) && TypeHelpers.NotNull(objectState["material_url"]))
                 .GroupBy(objectState => objectState["material_id"].ToObject<int>());
-            await ApplyMaterialsToSceneObjects(objectStatesByMaterial);
+            Result materialWasChanged = await ApplyMaterialsToSceneObjects(objectStatesByMaterial);
 
-            WebMessage<JObject> successMessage = new()
+            if (!colorWasChanged.IsSuccess || !materialWasChanged.IsSuccess)
+            {
+                SendErrorMessage(colorWasChanged.Error ?? materialWasChanged.Error);
+                return;
+            }
+
+            SendSuccessLoadMessage(requestPayload["request_timestamp"]);
+        }
+
+        private void SendSuccessLoadMessage(JToken requestTimestamp)
+        {
+            var successMessage = new WebMessage<JObject>
             {
                 type = WebMessageType.requestSceneLoadSuccess,
-                payload = new JObject(
-                    new JProperty("request_timestamp", requestPayload["request_timestamp"])
-                )
+                payload = new JObject(new JProperty("request_timestamp", requestTimestamp))
             };
+
             _webMessageSender.SendWebMessage(successMessage);
         }
 
-        private void PaintSceneObjects(IEnumerable<IGrouping<string, JObject>> objectStatesByColor)
+        private bool HasRequiredKeys(JToken obj)
+        {
+            bool hasColor = TypeHelpers.NotNull(obj["color"]);
+            bool hasMaterialId = TypeHelpers.NotNull(obj["material_id"]);
+            bool hasMaterialUrl = TypeHelpers.NotNull(obj["material_url"]);
+
+            bool hasMaterialPair = !hasMaterialId || (hasMaterialId && hasMaterialUrl);
+
+            return hasColor || (hasMaterialId && hasMaterialPair);
+        }
+
+        private Result PaintSceneObjects(IEnumerable<IGrouping<string, JObject>> objectStatesByColor)
         {
             foreach(var objectsByColor in objectStatesByColor)
             {
+                int count = 0; 
                 Color? color = Utils.ParseColor(objectsByColor.Key);
                 if (color == null)
                 {
-                    SendErrorMessage(InvalidColorErrorMessage(objectsByColor.Key));
-                    return;
+                    return Result.Failure(InvalidColorErrorMessage(objectsByColor.Key));
                 }
                 string[] objectIds = objectsByColor.Select(objectState => objectState["object_id"].ToString()).ToArray();
                 List<GameObject> objectsToPaint = _registry.GetObjectsWithGuids(objectIds);
+                if (objectsToPaint[count] == null)
+                {
+                    return Result.Failure("No objects found matching the given ID");
+                }
+                count++;
+                Debug.Log("objectsToPaint");
+                Debug.Log(objectsToPaint[0]);
                 _changeColorManager.ChangeObjectsColor(objectsToPaint, (Color) color);
             }
+            return Result.Success();
         }
 
-        private async Task ApplyMaterialsToSceneObjects(IEnumerable<IGrouping<int, JObject>> objectStatesByMaterial)
+        private async Task<Result> ApplyMaterialsToSceneObjects(IEnumerable<IGrouping<int, JObject>> objectStatesByMaterial)
         {
             foreach(var objectsByMaterial in objectStatesByMaterial)
             {
                 int materialId = objectsByMaterial.Key;
-                string materilUrl = objectsByMaterial.First()["material_url"].ToString();
+                string materialUrl = objectsByMaterial.First()["material_url"].ToString();
                 var objectIds = objectsByMaterial.Select(objectState => objectState["object_id"].ToString());
+                Result isSuccess;
+                
                 JObject materialChangeInfo = new()
                 {
                     { "material_id", materialId },
-                    { "material_url", materilUrl },
+                    { "material_url", materialUrl },
                     { "object_ids", new JArray(objectIds) },
                 };
-                await _changeMaterialController.ChangeObjectMaterial(materialChangeInfo, false);
+                isSuccess = await _changeMaterialController.ChangeObjectMaterial(materialChangeInfo);
+                if (!isSuccess.IsSuccess)
+                {
+                    return isSuccess;
+                }
             }
+            return Result.Success();
         }
 
         private IEnumerator SendSceneStateMessage(JObject sceneStateRequestPayload)

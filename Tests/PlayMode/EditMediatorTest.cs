@@ -54,7 +54,7 @@ public class EditMediatorTest : MonoBehaviour
         editMediator.registry = registrySpy;
         changeColorManagerSpy = new ChangeColorManagerSpy();
         editMediator.changeColorManager = changeColorManagerSpy;
-        changeMaterialControllerSpy = new ChangeMaterialControllerSpy();
+        //changeMaterialControllerSpy = new ChangeMaterialControllerSpy();
         editMediator.changeMaterialController = changeMaterialControllerSpy;
         mockModelInfoManager = new MockModelInfoManager();
         editMediator.modelInfoManager = mockModelInfoManager;
@@ -98,11 +98,17 @@ public class EditMediatorTest : MonoBehaviour
     {
         public JObject lastReceivedMessageRequest;
         public List<JObject> receivedMessageRequests = new List<JObject>();
-        public Task ChangeObjectMaterial(JObject message, bool notify)
+        private Result _resultToReturn;
+
+        public ChangeMaterialControllerSpy(Result resultToReturn)
+        {
+            _resultToReturn = resultToReturn;
+        }
+        public Task<Result> ChangeObjectMaterial(JObject message)
         {
             receivedMessageRequests.Add(message);
             lastReceivedMessageRequest = message;
-            return Task.CompletedTask;
+            return Task.FromResult(_resultToReturn);
         }
     }
 

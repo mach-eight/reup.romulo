@@ -6,7 +6,7 @@ using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.webRequestersInterfaces;
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.managerInterfaces;
-using ReupVirtualTwin.enums;
+using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.romuloEnvironment;
 using ReupVirtualTwin.dataSchemas;
@@ -18,21 +18,19 @@ namespace ReupVirtualTwin.controllers
     {
         readonly ITextureDownloader textureDownloader;
         readonly IObjectRegistry objectRegistry;
-        readonly IMediator mediator;
         public ChangeMaterialController(ITextureDownloader textureDownloader, IObjectRegistry objectRegistry, IMediator mediator)
         {
             this.textureDownloader = textureDownloader;
             this.objectRegistry = objectRegistry;
-            this.mediator = mediator;
         }
 
-        public async Task ChangeObjectMaterial(JObject materialChangeInfo, bool notify = true)
+        public async Task<Result> ChangeObjectMaterial(JObject materialChangeInfo)
         {
             if (RomuloEnvironment.development)
             {
                 if (!DataValidator.ValidateObjectToSchema(materialChangeInfo, RomuloInternalSchema.materialChangeInfo))
                 {
-                    return;
+                    return Result.Failure("Error, the provided material change information does not conform to the expected schema");
                 }
             }
             string materialUrl = materialChangeInfo["material_url"].ToString();
@@ -40,12 +38,16 @@ namespace ReupVirtualTwin.controllers
             Texture2D texture = await textureDownloader.DownloadTextureFromUrl(materialUrl);
             if (!texture)
             {
-                mediator.Notify(ReupEvent.error, $"Error downloading image from {materialUrl}");
-                return;
+                return Result.Failure($"Error downloading image from {materialUrl}");
             }
             List<GameObject> objects = objectRegistry.GetObjectsWithGuids(objectIds);
+            if (objects.Count == 0)
+            {
+                return Result.Failure("No objects found matching the given ID");
+            }
             Material newMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));
             newMaterial.SetTexture("_BaseMap", texture);
+
             for (int i = 0; i < objects.Count; i++)
             {
                 if (objects[i].GetComponent<Renderer>() != null)
@@ -55,10 +57,7 @@ namespace ReupVirtualTwin.controllers
                     ObjectMetaDataUtils.AssignMaterialIdMetaDataToObject(objects[i], materialChangeInfo["material_id"].ToObject<int>());
                 }
             }
-            if (notify)
-            {
-                mediator.Notify(ReupEvent.objectMaterialChanged, materialChangeInfo);
-            }
+            return Result.Success();
         }
     }
 }

@@ -147,7 +147,7 @@ namespace ReupVirtualTwinTests.controllers
         [Test]
         public async Task ShouldNotNotifyMediator_When_MaterialsChange()
         {
-            await controller.ChangeObjectMaterial(messagePayload, false);
+            await controller.ChangeObjectMaterial(messagePayload);
             Assert.IsNull(mediatorSpy.changeMaterialInfo);
         }
 

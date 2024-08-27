@@ -1,10 +1,12 @@
 using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
+using ReupVirtualTwin.dataModels;
 
 namespace ReupVirtualTwin.controllerInterfaces
 {
     public interface IChangeMaterialController
     {
-        public Task ChangeObjectMaterial(JObject message, bool notify = true);
+        public Task<Result> ChangeObjectMaterial(JObject message);
     }
+
 }

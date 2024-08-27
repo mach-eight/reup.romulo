@@ -60,6 +60,7 @@ namespace ReupVirtualTwin.dataSchemas
                         { "object_id", DataValidator.stringSchema},
                         { "base_scene", DataValidator.intSchema },
                         { "material_id", DataValidator.MultiSchema(DataValidator.intSchema, DataValidator.nullSchema) },
+                        { "material_url", DataValidator.stringSchema},
                         { "color", DataValidator.MultiSchema(DataValidator.stringSchema, DataValidator.nullSchema) },
                     }
                 }
