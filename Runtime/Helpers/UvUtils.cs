@@ -131,20 +131,5 @@ namespace ReupVirtualTwin.helpers
             return false;
         }
 
-        public static void PrintMatrix(double[,] matrix)
-        {
-            string result = "";
-
-            for (int i = 0; i < matrix.GetLength(0); i++)
-            {
-                for (int j = 0; j < matrix.GetLength(1); j++)
-                {
-                    result = result + matrix[i, j] + " ";
-                }
-                result = result + "\n";
-            }
-            Debug.Log(result);
-        }
-
     }
 }
