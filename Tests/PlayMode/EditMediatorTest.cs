@@ -643,6 +643,8 @@ public class EditMediatorTest : MonoBehaviour
                     {"material_id", 1234},
                     {"material_url", "material-url"},
                     {"object_ids", new string[] { "id-0", "id-1" } },
+                    { "width_mm", 2000 },
+                    { "height_mm", 1500 },
                 }
             }
         };
