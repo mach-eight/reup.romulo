@@ -804,15 +804,19 @@ public class EditMediatorTest : MonoBehaviour
                 {
                     { "object_id", "object-id-1" },
                     { "color", color },
+                    { "material", null }
                 },
                 new JObject()
                 {
                     { "object_id", "object-id-2" },
+                    { "color", color },
+                    { "material", null }
                 },
                 new JObject()
                 {
                     { "object_id", "object-id-3" },
                     { "color", color },
+                    { "material", null }
                 },
             }
         );
