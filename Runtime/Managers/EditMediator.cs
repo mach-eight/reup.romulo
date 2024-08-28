@@ -266,14 +266,26 @@ namespace ReupVirtualTwin.managers
 
             if (!colorWasChanged.IsSuccess || !materialWasChanged.IsSuccess)
             {
-                SendErrorMessage(colorWasChanged.Error ?? materialWasChanged.Error);
+                SendFailureLoadSceneMessage(requestPayload["request_timestamp"]);
                 return;
             }
 
-            SendSuccessLoadMessage(requestPayload["request_timestamp"]);
+            SendSuccessLoadSceneMessage(requestPayload["request_timestamp"]);
         }
 
-        private void SendSuccessLoadMessage(JToken requestTimestamp)
+
+        private void SendSuccessLoadSceneMessage(JToken requestTimestamp)
+        {
+            var successMessage = new WebMessage<JObject>
+            {
+                type = WebMessageType.requestSceneLoadSuccess,
+                payload = new JObject(new JProperty("request_timestamp", requestTimestamp))
+            };
+
+            _webMessageSender.SendWebMessage(successMessage);
+        }
+
+        private void SendFailureLoadSceneMessage(JToken requestTimestamp)
         {
             var successMessage = new WebMessage<JObject>
             {

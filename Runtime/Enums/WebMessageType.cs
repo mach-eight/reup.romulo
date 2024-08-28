@@ -44,6 +44,7 @@ namespace ReupVirtualTwin.enums
         public const string requestSceneStateSuccess = "[Load Save Scene] Get Scene State Success";
         public const string requestSceneLoad = "[Load Save Scene] Load Scene";
         public const string requestSceneLoadSuccess = "[Load Save Scene] Load Scene Success";
+        public const string requestSceneLoadFailure = "[Load Save Scene] Load Scene Failure";
 
     }
 }
