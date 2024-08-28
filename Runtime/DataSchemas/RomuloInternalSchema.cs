@@ -54,6 +54,20 @@ namespace ReupVirtualTwin.dataSchemas
                 { "required", new JArray { "id" } }
             };
 
+            materialSchema = new()
+            {
+                { "type", DataValidator.objectType },
+                { "properties", new JObject
+                    {
+                        { "id", DataValidator.intSchema },
+                        { "texture", DataValidator.stringSchema },
+                        { "width_mm", DataValidator.intSchema },
+                        { "height_mm", DataValidator.intSchema },
+                    }
+                },
+                { "required", new JArray { "id", "texture", "width_mm", "height_mm" } }
+            };
+
             objectWithChangedMaterialSceneSchema = new()
             {
                 { "type", DataValidator.objectType },
@@ -93,19 +107,6 @@ namespace ReupVirtualTwin.dataSchemas
                 { "required", new JArray { "object_id", "material", "color" } }
             };
 
-            materialSchema = new()
-            {
-                { "type", DataValidator.objectType },
-                { "properties", new JObject
-                    {
-                        { "id", DataValidator.intSchema },
-                        { "texture", DataValidator.stringSchema },
-                        { "width_mm", DataValidator.intSchema },
-                        { "height_mm", DataValidator.intSchema },
-                    }
-                },
-                { "required", new JArray { "id", "texture", "width_mm", "height_mm" } }
-            };
         }
     }
 }

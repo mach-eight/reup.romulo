@@ -265,7 +265,11 @@ namespace ReupVirtualTwin.managers
             PaintSceneObjects(objectStatesByColor);
 
             var objectStatesByMaterial = objectStates
-                .Where(objectState => TypeHelpers.NotNull(objectState["material"]["id"]) && TypeHelpers.NotNull(objectState["material"]["url"]))
+                .Where(objectState => {
+                    return TypeHelpers.NotNull(objectState["material"]) &&
+                        TypeHelpers.NotNull(objectState["material"]["id"]) &&
+                        TypeHelpers.NotNull(objectState["material"]["texture"]);
+                })
                 .GroupBy(objectState => objectState["material"]["id"].ToObject<int>());
             await ApplyMaterialsToSceneObjects(objectStatesByMaterial);
 

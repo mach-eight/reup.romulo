@@ -809,7 +809,7 @@ public class EditMediatorTest : MonoBehaviour
                 new JObject()
                 {
                     { "object_id", "object-id-2" },
-                    { "color", color },
+                    { "color", null },
                     { "material", null }
                 },
                 new JObject()
