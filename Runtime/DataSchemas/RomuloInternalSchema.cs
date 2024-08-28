@@ -8,8 +8,8 @@ namespace ReupVirtualTwin.dataSchemas
         public static JObject materialChangeInfo { get; private set; }
         public static JObject sceneStateSchema { get; private set; }
         public static JObject sceneStateAppearanceSchema { get; private set; }
-        public static JObject objectWithChagedMaterialSceneSchema { get; private set; }
-        public static JObject objectWithChagedColorSceneSchema { get; private set; }
+        public static JObject objectWithChangedMaterialSceneSchema { get; private set; }
+        public static JObject objectWithChangedColorSceneSchema { get; private set; }
         public static JObject objectWithNoChangesSceneSchema { get; private set; }
         public static JObject materialSchema { get; private set; }
 
@@ -54,7 +54,7 @@ namespace ReupVirtualTwin.dataSchemas
                 { "required", new JArray { "id" } }
             };
 
-            objectWithChagedMaterialSceneSchema = new()
+            objectWithChangedMaterialSceneSchema = new()
             {
                 { "type", DataValidator.objectType },
                 { "properties", new JObject
@@ -67,7 +67,7 @@ namespace ReupVirtualTwin.dataSchemas
                 { "required", new JArray { "object_id", "material", "color" } }
             };
 
-            objectWithChagedColorSceneSchema = new()
+            objectWithChangedColorSceneSchema = new()
             {
                 { "type", DataValidator.objectType },
                 { "properties", new JObject
@@ -87,7 +87,7 @@ namespace ReupVirtualTwin.dataSchemas
                     {
                         { "object_id", DataValidator.stringSchema},
                         { "material", DataValidator.nullSchema },
-                        { "color", DataValidator.stringSchema },
+                        { "color", DataValidator.nullSchema },
                     }
                 },
                 { "required", new JArray { "object_id", "material", "color" } }

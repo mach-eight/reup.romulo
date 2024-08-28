@@ -40,8 +40,8 @@ namespace ReupVirtualTwin.dataSchemas
                     { "objects", DataValidator.CreateArraySchema
                         (
                             RomuloInternalSchema.objectWithNoChangesSceneSchema,
-                            RomuloInternalSchema.objectWithChagedColorSceneSchema,
-                            RomuloInternalSchema.objectWithChagedMaterialSceneSchema
+                            RomuloInternalSchema.objectWithChangedColorSceneSchema,
+                            RomuloInternalSchema.objectWithChangedMaterialSceneSchema
                         )
                     },
                 }
