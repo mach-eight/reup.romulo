@@ -175,12 +175,12 @@ namespace ReupVirtualTwinTests.controllers
         public async Task ShouldSaveMaterialId_In_ObjectsMetaData()
         {
             List<JToken> objectsMaterialId = ObjectMetaDataUtils.GetMetaDataValuesFromObjects(
-                objectRegistry.objects, "appearance.material_id");
+                objectRegistry.objects, "appearance.materialId");
             AssertUtils.AssertAllAreNull(objectsMaterialId);
             await controller.ChangeObjectMaterial(messagePayload);
             AssertUtils.AssertAllObjectsWithMeshRendererHaveMetaDataValue<int>(
                 objectRegistry.objects,
-                "appearance.material_id",
+                "appearance.materialId",
                 messagePayload["materialId"].ToObject<int>());
         }
 
@@ -199,7 +199,7 @@ namespace ReupVirtualTwinTests.controllers
             AssertUtils.AssertAllAreNull(objectsColorCode);
             AssertUtils.AssertAllObjectsWithMeshRendererHaveMetaDataValue<int>(
                 objectRegistry.objects,
-                "appearance.material_id",
+                "appearance.materialId",
                 messagePayload["materialId"].ToObject<int>());
         }
 
