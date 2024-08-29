@@ -843,16 +843,19 @@ public class EditMediatorTest : MonoBehaviour
                 {
                     { "object_id", "object-id-1" },
                     { "color", greenColor },
+                    { "material", null }
                 },
                 new JObject()
                 {
                     { "object_id", "object-id-2" },
                     { "color", redColor },
+                    { "material", null }
                 },
                 new JObject()
                 {
                     { "object_id", "object-id-3" },
                     { "color", greenColor },
+                    { "material", null }
                 },
             }
         );
@@ -893,18 +896,36 @@ public class EditMediatorTest : MonoBehaviour
                 new JObject()
                 {
                     { "object_id", "object-id-1" },
-                    { "material_id", 1 },
-                    { "material_url", "material-1-url" },
+                    { "color", null },
+                    { "material",
+                        new JObject()
+                        {
+                            { "id", 1 },
+                            { "texture", "material-1-url" },
+                            { "width_mm", 2000 },
+                            { "height_mm", 1500}
+                        }
+                    }
                 },
                 new JObject()
                 {
                     { "object_id", "object-id-2" },
+                    { "color", null },
+                    { "material", null }
                 },
                 new JObject()
                 {
                     { "object_id", "object-id-3" },
-                    { "material_id", 1 },
-                    { "material_url", "material-1-url" },
+                    { "color", null },
+                    { "material",
+                        new JObject()
+                        {
+                            { "id", 1 },
+                            { "texture", "material-1-url" },
+                            { "width_mm", 2000 },
+                            { "height_mm", 1500}
+                        }
+                    }
                 },
             }
         );
@@ -929,20 +950,44 @@ public class EditMediatorTest : MonoBehaviour
                 new JObject()
                 {
                     { "object_id", "object-id-1" },
-                    { "material_id", 1 },
-                    { "material_url", "material-1-url" },
+                    { "color", null },
+                    { "material",
+                        new JObject()
+                        {
+                            { "id", 1 },
+                            { "texture", "material-1-url" },
+                            { "width_mm", 2000 },
+                            { "height_mm", 1500}
+                        }
+                    }
                 },
                 new JObject()
                 {
                     { "object_id", "object-id-2" },
-                    { "material_id", 2 },
-                    { "material_url", "material-2-url" },
+                    { "color", null },
+                    { "material",
+                        new JObject()
+                        {
+                            { "id", 2 },
+                            { "texture", "material-2-url" },
+                            { "width_mm", 2000 },
+                            { "height_mm", 1500}
+                        }
+                    }
                 },
                 new JObject()
                 {
                     { "object_id", "object-id-3" },
-                    { "material_id", 1 },
-                    { "material_url", "material-1-url" },
+                    { "color", null },
+                    { "material",
+                        new JObject()
+                        {
+                            { "id", 1 },
+                            { "texture", "material-1-url" },
+                            { "width_mm", 2000 },
+                            { "height_mm", 1500}
+                        }
+                    }
                 },
             }
         );
@@ -977,12 +1022,21 @@ public class EditMediatorTest : MonoBehaviour
                 {
                     { "object_id", "object-id-1" },
                     { "color", "#FF0000" },
+                    { "material", null }
                 },
                 new JObject()
                 {
                     { "object_id", "object-id-2" },
-                    { "material_id", 1 },
-                    { "material_url", "material-1-url" },
+                    { "color", null },
+                    { "material",
+                        new JObject()
+                        {
+                            { "id", 1 },
+                            { "texture", "material-1-url" },
+                            { "width_mm", 2000 },
+                            { "height_mm", 1500}
+                        }
+                    }
                 },
             }
         );

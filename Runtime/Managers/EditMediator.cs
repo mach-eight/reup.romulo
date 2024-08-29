@@ -304,7 +304,7 @@ namespace ReupVirtualTwin.managers
             foreach(var objectsByMaterial in objectStatesByMaterial)
             {
                 int materialId = objectsByMaterial.Key;
-                string materilUrl = objectsByMaterial.First()["material"]["url"].ToString();
+                string materilUrl = objectsByMaterial.First()["material"]["texture"].ToString();
                 var objectIds = objectsByMaterial.Select(objectState => objectState["object_id"].ToString());
                 JObject materialChangeInfo = new()
                 {
