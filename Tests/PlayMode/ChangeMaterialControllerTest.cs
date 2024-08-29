@@ -37,11 +37,15 @@ namespace ReupVirtualTwinTests.controllers
             controller.materialScaler = materialScalerSpy;
             messagePayload = new JObject()
             {
-                { "materialId", 1234567890 },
-                { "materialUrl", "material-url.com" },
                 { "objectIds", new JArray(new string[] { "id-0", "id-1" }) },
-                { "widthMilimeters", 2000 },
-                { "heightMilimeters", 1500 },
+                { "material", new JObject()
+                    {
+                        { "id", 1234567890 },
+                        { "texture", "material-url.com" },
+                        { "widthMilimeters", 2000 },
+                        { "heightMilimeters", 1500 },
+                    }
+                }
             };
             yield return null;
         }
@@ -129,7 +133,7 @@ namespace ReupVirtualTwinTests.controllers
         public async Task ShouldRequestDownloadMaterialTexture()
         {
             await controller.ChangeObjectMaterial(messagePayload);
-            Assert.AreEqual(messagePayload["materialUrl"].ToString(), textureDownloaderSpy.url);
+            Assert.AreEqual(messagePayload["material"]["texture"].ToString(), textureDownloaderSpy.url);
         }
 
         [Test]
@@ -181,7 +185,7 @@ namespace ReupVirtualTwinTests.controllers
             AssertUtils.AssertAllObjectsWithMeshRendererHaveMetaDataValue<int>(
                 objectRegistry.objects,
                 "appearance.materialId",
-                messagePayload["materialId"].ToObject<int>());
+                messagePayload["material"]["id"].ToObject<int>());
         }
 
         [Test]
@@ -200,7 +204,7 @@ namespace ReupVirtualTwinTests.controllers
             AssertUtils.AssertAllObjectsWithMeshRendererHaveMetaDataValue<int>(
                 objectRegistry.objects,
                 "appearance.materialId",
-                messagePayload["materialId"].ToObject<int>());
+                messagePayload["material"]["id"].ToObject<int>());
         }
 
         [Test]
