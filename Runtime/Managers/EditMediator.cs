@@ -184,9 +184,8 @@ namespace ReupVirtualTwin.managers
             JObject message = JObject.Parse(serializedWebMessage);
             if (!incomingMessageValidator.ValidateMessage(serializedWebMessage))
             {
-                Debug.Log("Invalid message received");
-                _webMessageSender.SendWebMessage(new WebMessage<string>
-                {
+                Debug.LogWarning("Invalid message received");
+                _webMessageSender.SendWebMessage(new WebMessage<string>{
                     type = WebMessageType.error,
                     payload = $"Invalid message received at {this.GetType()}"
                 });
@@ -194,6 +193,19 @@ namespace ReupVirtualTwin.managers
             }
             string type = message["type"].ToString();
             JToken payload = message["payload"];
+            try
+            {
+                await ExcecuteWebMessage(type, payload);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("An error ocurred why executing the WebMessage");
+                Debug.LogError(e.Message);
+                Debug.LogError(e);
+            }
+        }
+        public async Task ExcecuteWebMessage(string type, JToken payload)
+        {
             switch (type)
             {
                 case WebMessageType.setEditMode:
@@ -253,16 +265,19 @@ namespace ReupVirtualTwin.managers
             PaintSceneObjects(objectStatesByColor);
 
             var objectStatesByMaterial = objectStates
-                .Where(objectState => TypeHelpers.NotNull(objectState["material_id"]) && TypeHelpers.NotNull(objectState["material_url"]))
-                .GroupBy(objectState => objectState["material_id"].ToObject<int>());
+                .Where(objectState => {
+                    return TypeHelpers.NotNull(objectState["material"]) &&
+                        TypeHelpers.NotNull(objectState["material"]["id"]) &&
+                        TypeHelpers.NotNull(objectState["material"]["texture"]);
+                })
+                .GroupBy(objectState => objectState["material"]["id"].ToObject<int>());
             await ApplyMaterialsToSceneObjects(objectStatesByMaterial);
 
             WebMessage<JObject> successMessage = new()
             {
                 type = WebMessageType.requestSceneLoadSuccess,
                 payload = new JObject(
-                    new JProperty("scene_name", requestPayload["scene_name"]),
-                    new JProperty("scene_id", requestPayload["scene_id"])
+                    new JProperty("requestTimestamp", requestPayload["requestTimestamp"])
                 )
             };
             _webMessageSender.SendWebMessage(successMessage);
@@ -278,7 +293,7 @@ namespace ReupVirtualTwin.managers
                     SendErrorMessage(InvalidColorErrorMessage(objectsByColor.Key));
                     return;
                 }
-                string[] objectIds = objectsByColor.Select(objectState => objectState["object_id"].ToString()).ToArray();
+                string[] objectIds = objectsByColor.Select(objectState => objectState["objectId"].ToString()).ToArray();
                 List<GameObject> objectsToPaint = _registry.GetObjectsWithGuids(objectIds);
                 _changeColorManager.ChangeObjectsColor(objectsToPaint, (Color) color);
             }
@@ -288,14 +303,11 @@ namespace ReupVirtualTwin.managers
         {
             foreach(var objectsByMaterial in objectStatesByMaterial)
             {
-                int materialId = objectsByMaterial.Key;
-                string materilUrl = objectsByMaterial.First()["material_url"].ToString();
-                var objectIds = objectsByMaterial.Select(objectState => objectState["object_id"].ToString());
+                var objectIds = objectsByMaterial.Select(objectState => objectState["objectId"].ToString());
                 JObject materialChangeInfo = new()
                 {
-                    { "material_id", materialId },
-                    { "material_url", materilUrl },
-                    { "object_ids", new JArray(objectIds) },
+                    { "material", objectsByMaterial.First()["material"] },
+                    { "objectIds", new JArray(objectIds) },
                 };
                 await _changeMaterialController.ChangeObjectMaterial(materialChangeInfo, false);
             }
@@ -310,8 +322,8 @@ namespace ReupVirtualTwin.managers
             {
                 type = WebMessageType.requestSceneStateSuccess,
                 payload = new JObject(
-                    new JProperty("scene_state", sceneState),
-                    new JProperty("scene_name", sceneStateRequestPayload["scene_name"])),
+                    new JProperty("sceneState", sceneState),
+                    new JProperty("requestTimestamp", sceneStateRequestPayload["requestTimestamp"])),
             };
             _webMessageSender.SendWebMessage(sceneStateMessage);
         }

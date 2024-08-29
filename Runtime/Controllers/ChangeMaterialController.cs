@@ -11,11 +11,13 @@ using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.romuloEnvironment;
 using ReupVirtualTwin.dataSchemas;
 using Newtonsoft.Json.Linq;
+using ReupVirtualTwin.helperInterfaces;
 
 namespace ReupVirtualTwin.controllers
 {
     public class ChangeMaterialController : IChangeMaterialController
     {
+        public IMaterialScaler materialScaler = new MaterialScaler();
         readonly ITextureDownloader textureDownloader;
         readonly IObjectRegistry objectRegistry;
         readonly IMediator mediator;
@@ -35,8 +37,11 @@ namespace ReupVirtualTwin.controllers
                     return;
                 }
             }
-            string materialUrl = materialChangeInfo["material_url"].ToString();
-            string[] objectIds = materialChangeInfo["object_ids"].ToObject<string[]>();
+            string materialUrl = materialChangeInfo["material"]["texture"].ToString();
+            string[] objectIds = materialChangeInfo["objectIds"].ToObject<string[]>();
+            float width = materialChangeInfo["material"]["widthMilimeters"].ToObject<float>();
+            float height = materialChangeInfo["material"]["heightMilimeters"].ToObject<float>();
+            Vector2 materialDimensionsInMilimeters = new Vector2(width, height);
             Texture2D texture = await textureDownloader.DownloadTextureFromUrl(materialUrl);
             if (!texture)
             {
@@ -52,7 +57,8 @@ namespace ReupVirtualTwin.controllers
                 {
                     objects[i].GetComponent<Renderer>().material = newMaterial;
                     objects[i].GetComponent<IObjectInfo>().materialWasChanged = true;
-                    ObjectMetaDataUtils.AssignMaterialIdMetaDataToObject(objects[i], materialChangeInfo["material_id"].ToObject<int>());
+                    ObjectMetaDataUtils.AssignMaterialIdMetaDataToObject(objects[i], materialChangeInfo["material"]["id"].ToObject<int>());
+                    materialScaler.AdjustUVScaleToDimensions(objects[i], materialDimensionsInMilimeters);
                 }
             }
             if (notify)

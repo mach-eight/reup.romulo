@@ -44,4 +44,11 @@ public static class AssertUtils
         }
     }
 
+    public static void AssertVector2sAreEqual(Vector2 expected, Vector2 real)
+    {
+        float distance = Vector2.Distance(expected, real);
+        Assert.IsTrue(distance < 1e-6);
+    }
+
+
 }

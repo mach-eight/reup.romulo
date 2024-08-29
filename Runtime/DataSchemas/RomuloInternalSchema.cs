@@ -8,21 +8,38 @@ namespace ReupVirtualTwin.dataSchemas
         public static JObject materialChangeInfo { get; private set; }
         public static JObject sceneStateSchema { get; private set; }
         public static JObject sceneStateAppearanceSchema { get; private set; }
-        public static JObject objectSceneSchema { get; private set; }
+        public static JObject objectWithChangedMaterialSceneSchema { get; private set; }
+        public static JObject objectWithChangedColorSceneSchema { get; private set; }
+        public static JObject objectWithNoChangesSceneSchema { get; private set; }
+        public static JObject materialSchema { get; private set; }
 
         static RomuloInternalSchema()
         {
+
+            materialSchema = new()
+            {
+                { "type", DataValidator.objectType },
+                { "properties", new JObject
+                    {
+                        { "id", DataValidator.intSchema },
+                        { "texture", DataValidator.stringSchema },
+                        { "widthMilimeters", DataValidator.intSchema },
+                        { "heightMilimeters", DataValidator.intSchema },
+                    }
+                },
+                { "required", new JArray { "id", "texture", "widthMilimeters", "heightMilimeters" } }
+            };
+
             materialChangeInfo = new()
             {
                 { "type", DataValidator.objectType },
                 { "properties", new JObject
                     {
-                        { "material_id", DataValidator.intSchema },
-                        { "material_url", DataValidator.stringSchema },
-                        { "object_ids",  DataValidator.CreateArraySchema(DataValidator.stringSchema)},
+                        { "material", materialSchema },
+                        { "objectIds",  DataValidator.CreateArraySchema(DataValidator.stringSchema)},
                     }
                 },
-                { "required", new JArray { "material_url", "object_ids", "material_id" } }
+                { "required", new JArray { "objectIds", "material" } }
             };
 
             sceneStateAppearanceSchema = new()
@@ -31,7 +48,7 @@ namespace ReupVirtualTwin.dataSchemas
                 { "properties", new JObject
                     {
                         { "color", DataValidator.stringSchema },
-                        { "material_id", DataValidator.stringSchema}
+                        { "materialId", DataValidator.stringSchema}
                     }
                 }
             };
@@ -51,19 +68,45 @@ namespace ReupVirtualTwin.dataSchemas
                 { "required", new JArray { "id" } }
             };
 
-            objectSceneSchema = new()
+            objectWithChangedMaterialSceneSchema = new()
             {
                 { "type", DataValidator.objectType },
                 { "properties", new JObject
                     {
-                        { "id", DataValidator.intSchema },
-                        { "object_id", DataValidator.stringSchema},
-                        { "base_scene", DataValidator.intSchema },
-                        { "material_id", DataValidator.MultiSchema(DataValidator.intSchema, DataValidator.nullSchema) },
-                        { "color", DataValidator.MultiSchema(DataValidator.stringSchema, DataValidator.nullSchema) },
+                        { "objectId", DataValidator.stringSchema},
+                        { "material", materialSchema },
+                        { "color", DataValidator.nullSchema },
                     }
-                }
+                },
+                { "required", new JArray { "objectId", "material", "color" } }
             };
+
+            objectWithChangedColorSceneSchema = new()
+            {
+                { "type", DataValidator.objectType },
+                { "properties", new JObject
+                    {
+                        { "objectId", DataValidator.stringSchema},
+                        { "material", DataValidator.nullSchema },
+                        { "color", DataValidator.stringSchema },
+                    }
+                },
+                { "required", new JArray { "objectId", "material", "color" } }
+            };
+
+            objectWithNoChangesSceneSchema = new()
+            {
+                { "type", DataValidator.objectType },
+                { "properties", new JObject
+                    {
+                        { "objectId", DataValidator.stringSchema},
+                        { "material", DataValidator.nullSchema },
+                        { "color", DataValidator.nullSchema },
+                    }
+                },
+                { "required", new JArray { "objectId", "material", "color" } }
+            };
+
         }
     }
 }

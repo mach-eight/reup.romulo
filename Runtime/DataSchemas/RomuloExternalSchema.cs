@@ -5,28 +5,17 @@ namespace ReupVirtualTwin.dataSchemas
 {
     public class RomuloExternalSchema
     {
-        public static readonly JObject changeObjectMaterialPayloadSchema = new JObject
-        {
-            { "type", DataValidator.objectType },
-            { "properties", new JObject
-                {
-                    { "material_id", DataValidator.intSchema },
-                    { "material_url", DataValidator.stringSchema },
-                    { "object_ids", DataValidator.CreateArraySchema(DataValidator.stringSchema) },
-                }
-            },
-            { "required", new JArray { "material_url", "object_ids", "material_id" } },
-        };
+        public static readonly JObject changeObjectMaterialPayloadSchema = RomuloInternalSchema.materialChangeInfo;
 
         public static readonly JObject requestSceneStatePayloadSchema = new JObject
         {
             { "type", DataValidator.objectType },
             { "properties", new JObject
                 {
-                    { "scene_name", DataValidator.stringSchema },
+                    { "requestTimestamp", DataValidator.intSchema },
                 }
             },
-            { "required", new JArray { "scene_name" } },
+            { "required", new JArray { "requestTimestamp" } },
         };
 
         public static readonly JObject requestLoadScenePayloadSchema = new JObject()
@@ -34,12 +23,17 @@ namespace ReupVirtualTwin.dataSchemas
             {"type", DataValidator.objectType },
             {"properties", new JObject
                 {
-                    { "scene_name", DataValidator.stringSchema },
-                    { "scene_id", DataValidator.intSchema },
-                { "objects", DataValidator.CreateArraySchema(RomuloInternalSchema.objectSceneSchema) },
+                    { "requestTimestamp", DataValidator.intSchema },
+                    { "objects", DataValidator.CreateArraySchema
+                        (
+                            RomuloInternalSchema.objectWithNoChangesSceneSchema,
+                            RomuloInternalSchema.objectWithChangedColorSceneSchema,
+                            RomuloInternalSchema.objectWithChangedMaterialSceneSchema
+                        )
+                    },
                 }
             },
-            { "required", new JArray { "scene_name", "scene_id", "objects" } },
+            { "required", new JArray { "requestTimestamp", "objects" } },
         };
     }
 }
