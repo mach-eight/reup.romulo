@@ -53,7 +53,7 @@ namespace ReupVirtualTwin.editor
             EditorGUILayout.Space();
             int scrollHeight = MAX_BUTTONS_IN_SCROLL_VIEW * (TAG_BUTTON_HEIGHT + UNITY_BUTTON_MARGIN);
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, GUILayout.Height(scrollHeight));
-            IEnumerable<Tag> filteredTags = FilterTagsByNameAndIfNotPresent();
+            IEnumerable<Tag> filteredTags = FilterUnselectedTagsByNameAndId();
             foreach (Tag tag in filteredTags)
             {
                 if (GUILayout.Button(tag.str, GUILayout.Height(TAG_BUTTON_HEIGHT)))
@@ -114,9 +114,12 @@ namespace ReupVirtualTwin.editor
             return false;
         }
 
-        private IEnumerable<Tag> FilterTagsByNameAndIfNotPresent()
+        private IEnumerable<Tag> FilterUnselectedTagsByNameAndId()
         {
-            return allTags.Where(tag => !IsTagAlreadyPresent(tag) && TagContainsText(tag.name, searchTagText));
+            return allTags.Where(tag =>
+                !IsTagAlreadyPresent(tag) &&
+                (TagContainsText(tag.name, searchTagText) || TagHasSameId(tag.id, searchTagText))
+            );
         }
 
         private async Task GetTags()
@@ -131,6 +134,11 @@ namespace ReupVirtualTwin.editor
         private bool TagContainsText(string tagName, string text)
         {
             return tagName.ToLower().Contains(text.ToLower());
+        }
+
+        private bool TagHasSameId(string tagId, string text)
+        {
+            return tagId == text;
         }
 
         private bool IsTagAlreadyPresent(Tag tag)
