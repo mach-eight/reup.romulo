@@ -28,5 +28,25 @@ namespace ReupVirtualTwin.helpers
             return mergedStates;
         }
 
+        public static void ApplyVisibilityState(GameObject obj, Dictionary<string, bool> visibilityStates, IIdGetterController idGetter)
+        {
+            string objId = idGetter.GetIdFromObject(obj);
+            bool objectVisibility = visibilityStates.GetValueOrDefault(objId);
+            ApplyVisibilityToObject(obj, objectVisibility);
+            foreach (Transform child in obj.transform)
+            {
+                ApplyVisibilityState(child.gameObject, visibilityStates, idGetter);
+            }
+        }
+
+        private static void ApplyVisibilityToObject(GameObject obj, bool visibility)
+        {
+            if (visibility)
+            {
+                visibilityManager.Show(obj, false);
+                return;
+            }
+            visibilityManager.Hide(obj, false);
+        }
     }
 }

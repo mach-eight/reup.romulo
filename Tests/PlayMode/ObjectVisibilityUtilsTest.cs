@@ -29,18 +29,16 @@ namespace ReupVirtualTwinTests.helpers
             GameObject.Destroy(building);
         }
 
-        [Test]
-        public void ShouldReturnObjectsVisibilityState_with_all_objects_visible()
+        public void AssertAllObjectsVisible(GameObject parent)
         {
-            Dictionary<string, bool> objectStates = ObjectVisibilityUtils.GetVisibilityStateOfAllObjects(building, idController);
-            foreach(var kvp in objectStates)
+            Dictionary<string, bool> visibilityStates = ObjectVisibilityUtils.GetVisibilityStateOfAllObjects(parent, idController);
+            foreach(var kvp in visibilityStates)
             {
                 Assert.IsTrue(kvp.Value);
             }
         }
 
-        [Test]
-        public void ShouldReturnObjectsVisibilityState_with_some_objects_visible()
+        public List<string> MakeInvisibleSomeObjects()
         {
             List<GameObject> someInvisibleObjects = new List<GameObject>()
             {
@@ -53,8 +51,12 @@ namespace ReupVirtualTwinTests.helpers
             {
                 visibilityManager.Hide(obj, false);
             }
-            Dictionary<string, bool> objectStates = ObjectVisibilityUtils.GetVisibilityStateOfAllObjects(building, idController);
-            foreach(var kvp in objectStates)
+            return invisibleItemsIds;
+        }
+
+        private static void AssertVisibilityStates(List<string> invisibleItemsIds, Dictionary<string, bool> visibilityStates)
+        {
+            foreach (var kvp in visibilityStates)
             {
                 if (invisibleItemsIds.IndexOf(kvp.Key) >= 0)
                 {
@@ -63,6 +65,32 @@ namespace ReupVirtualTwinTests.helpers
                 }
                 Assert.IsTrue(kvp.Value);
             }
+        }
+
+        [Test]
+        public void ShouldReturnObjectsVisibilityState_with_all_objects_visible()
+        {
+            AssertAllObjectsVisible(building);
+        }
+
+        [Test]
+        public void ShouldReturnObjectsVisibilityState_with_some_objects_visible()
+        {
+            List<string> invisibleItemsIds = MakeInvisibleSomeObjects();
+            Dictionary<string, bool> visibilityStates = ObjectVisibilityUtils.GetVisibilityStateOfAllObjects(building, idController);
+            AssertVisibilityStates(invisibleItemsIds, visibilityStates);
+        }
+
+        [Test]
+        public void ShouldApplyVisibility()
+        {
+            List<string> invisibleItemsIds = MakeInvisibleSomeObjects();
+            Dictionary<string, bool> visibilityStatesBefore = ObjectVisibilityUtils.GetVisibilityStateOfAllObjects(building, idController);
+            visibilityManager.Show(building, true);
+            AssertAllObjectsVisible(building);
+            ObjectVisibilityUtils.ApplyVisibilityState(building, visibilityStatesBefore, idController);
+            Dictionary<string, bool> visibilityStatesAfter = ObjectVisibilityUtils.GetVisibilityStateOfAllObjects(building, idController);
+            Assert.AreEqual(visibilityStatesBefore, visibilityStatesAfter);
         }
     }
 }
