@@ -37,7 +37,13 @@ namespace ReupVirtualTwin.dataSchemas
             {"properties", new JObject
                 {
                     { "request_timestamp", DataValidator.intSchema },
-                    { "objects", DataValidator.CreateArraySchema(RomuloInternalSchema.objectSceneSchema) },
+                    { "objects", DataValidator.CreateArraySchema
+                        (
+                            RomuloInternalSchema.objectWithNoChangesSceneSchema,
+                            RomuloInternalSchema.objectWithChangedColorSceneSchema,
+                            RomuloInternalSchema.objectWithChangedMaterialSceneSchema
+                        )
+                    },
                 }
             },
             { "required", new JArray { "request_timestamp", "objects" } },

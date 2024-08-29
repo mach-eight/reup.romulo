@@ -265,8 +265,12 @@ namespace ReupVirtualTwin.managers
             PaintSceneObjects(objectStatesByColor);
 
             var objectStatesByMaterial = objectStates
-                .Where(objectState => TypeHelpers.NotNull(objectState["material_id"]) && TypeHelpers.NotNull(objectState["material_url"]))
-                .GroupBy(objectState => objectState["material_id"].ToObject<int>());
+                .Where(objectState => {
+                    return TypeHelpers.NotNull(objectState["material"]) &&
+                        TypeHelpers.NotNull(objectState["material"]["id"]) &&
+                        TypeHelpers.NotNull(objectState["material"]["texture"]);
+                })
+                .GroupBy(objectState => objectState["material"]["id"].ToObject<int>());
             await ApplyMaterialsToSceneObjects(objectStatesByMaterial);
 
             WebMessage<JObject> successMessage = new()
@@ -300,7 +304,7 @@ namespace ReupVirtualTwin.managers
             foreach(var objectsByMaterial in objectStatesByMaterial)
             {
                 int materialId = objectsByMaterial.Key;
-                string materilUrl = objectsByMaterial.First()["material_url"].ToString();
+                string materilUrl = objectsByMaterial.First()["material"]["texture"].ToString();
                 var objectIds = objectsByMaterial.Select(objectState => objectState["object_id"].ToString());
                 JObject materialChangeInfo = new()
                 {
