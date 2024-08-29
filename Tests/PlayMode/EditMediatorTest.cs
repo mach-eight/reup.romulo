@@ -563,6 +563,45 @@ public class EditMediatorTest : MonoBehaviour
     }
 
     [UnityTest]
+    public IEnumerator ShouldSendErrorMessageIfObjectsKeyColorOrMaterialIsMissing()
+    {
+        JObject payload = new JObject
+        {
+            ["objects"] = new JArray(new JObject
+            {
+                ["object_id"] = "id-0"
+            })
+        };
+
+        editMediator.ReceiveWebMessage(payload.ToString());
+
+        yield return null;
+
+        WebMessage<string> sentMessage = (WebMessage<string>)mockWebMessageSender.sentMessages[0];
+        Assert.AreEqual(WebMessageType.error, sentMessage.type);
+        Assert.AreEqual("the request payload 'objects' does not contain required 'color' or 'material_id'/'material_url' keys", sentMessage.payload);
+    }
+
+    //[UnityTest]
+    //public IEnumerator ShouldSendErrorMessageIfObjectsDoNotContainRequiredKeys()
+    //{
+    //    JObject payload = new JObject
+    //    {
+    //        ["objects"] = new JArray(new JObject
+    //        {
+    //            ["invalid_key"] = "some_value" // No tiene "color", "material_id" ni "material_url"
+    //        })
+    //    };
+    //    editMediator.ReceiveWebMessage(payload.ToString());
+
+    //    yield return null;
+
+    //    WebMessage<string> sentMessage = (WebMessage<string>)mockWebMessageSender.sentMessages[0];
+    //    Assert.AreEqual(WebMessageType.error, sentMessage.type);
+    //    Assert.AreEqual("the request payload is missing the required key 'objects' or 'objects' does not contain required 'color' or 'material_id' keys", sentMessage.payload);
+    //}
+
+    [UnityTest]
     public IEnumerator ShouldSelectJustInsertedObject()
     {
         InsertObjectMessagePayload payload = new InsertObjectMessagePayload

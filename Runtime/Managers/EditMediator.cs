@@ -323,7 +323,6 @@ namespace ReupVirtualTwin.managers
         {
             foreach(var objectsByColor in objectStatesByColor)
             {
-                int count = 0; 
                 Color? color = Utils.ParseColor(objectsByColor.Key);
                 if (color == null)
                 {
@@ -331,13 +330,6 @@ namespace ReupVirtualTwin.managers
                 }
                 string[] objectIds = objectsByColor.Select(objectState => objectState["object_id"].ToString()).ToArray();
                 List<GameObject> objectsToPaint = _registry.GetObjectsWithGuids(objectIds);
-                if (objectsToPaint[count] == null)
-                {
-                    return Result.Failure("No objects found matching the given ID");
-                }
-                count++;
-                Debug.Log("objectsToPaint");
-                Debug.Log(objectsToPaint[0]);
                 _changeColorManager.ChangeObjectsColor(objectsToPaint, (Color) color);
             }
             return Result.Success();
