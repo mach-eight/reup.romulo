@@ -303,13 +303,10 @@ namespace ReupVirtualTwin.managers
         {
             foreach(var objectsByMaterial in objectStatesByMaterial)
             {
-                int materialId = objectsByMaterial.Key;
-                string materilUrl = objectsByMaterial.First()["material"]["texture"].ToString();
                 var objectIds = objectsByMaterial.Select(objectState => objectState["objectId"].ToString());
                 JObject materialChangeInfo = new()
                 {
-                    { "materialId", materialId },
-                    { "materialUrl", materilUrl },
+                    { "material", objectsByMaterial.First()["material"] },
                     { "objectIds", new JArray(objectIds) },
                 };
                 await _changeMaterialController.ChangeObjectMaterial(materialChangeInfo, false);

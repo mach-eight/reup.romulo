@@ -5,20 +5,7 @@ namespace ReupVirtualTwin.dataSchemas
 {
     public class RomuloExternalSchema
     {
-        public static readonly JObject changeObjectMaterialPayloadSchema = new JObject
-        {
-            { "type", DataValidator.objectType },
-            { "properties", new JObject
-                {
-                    { "materialId", DataValidator.intSchema },
-                    { "materialUrl", DataValidator.stringSchema },
-                    { "widthMilimeters", DataValidator.intSchema },
-                    { "heightMilimeters", DataValidator.intSchema },
-                    { "objectIds", DataValidator.CreateArraySchema(DataValidator.stringSchema) },
-                }
-            },
-            { "required", new JArray { "materialUrl", "objectIds", "materialId", "widthMilimeters", "heightMilimeters" } },
-        };
+        public static readonly JObject changeObjectMaterialPayloadSchema = RomuloInternalSchema.materialChangeInfo;
 
         public static readonly JObject requestSceneStatePayloadSchema = new JObject
         {

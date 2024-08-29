@@ -15,17 +15,31 @@ namespace ReupVirtualTwin.dataSchemas
 
         static RomuloInternalSchema()
         {
+
+            materialSchema = new()
+            {
+                { "type", DataValidator.objectType },
+                { "properties", new JObject
+                    {
+                        { "id", DataValidator.intSchema },
+                        { "texture", DataValidator.stringSchema },
+                        { "widthMilimeters", DataValidator.intSchema },
+                        { "heightMilimeters", DataValidator.intSchema },
+                    }
+                },
+                { "required", new JArray { "id", "texture", "widthMilimeters", "heightMilimeters" } }
+            };
+
             materialChangeInfo = new()
             {
                 { "type", DataValidator.objectType },
                 { "properties", new JObject
                     {
-                        { "materialId", DataValidator.intSchema },
-                        { "materialUrl", DataValidator.stringSchema },
+                        { "material", materialSchema },
                         { "objectIds",  DataValidator.CreateArraySchema(DataValidator.stringSchema)},
                     }
                 },
-                { "required", new JArray { "materialUrl", "objectIds", "materialId" } }
+                { "required", new JArray { "objectIds", "material" } }
             };
 
             sceneStateAppearanceSchema = new()
@@ -52,20 +66,6 @@ namespace ReupVirtualTwin.dataSchemas
                     }
                 },
                 { "required", new JArray { "id" } }
-            };
-
-            materialSchema = new()
-            {
-                { "type", DataValidator.objectType },
-                { "properties", new JObject
-                    {
-                        { "id", DataValidator.intSchema },
-                        { "texture", DataValidator.stringSchema },
-                        { "widthMilimeters", DataValidator.intSchema },
-                        { "heightMilimeters", DataValidator.intSchema },
-                    }
-                },
-                { "required", new JArray { "id", "texture", "widthMilimeters", "heightMilimeters" } }
             };
 
             objectWithChangedMaterialSceneSchema = new()
