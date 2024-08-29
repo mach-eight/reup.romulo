@@ -82,11 +82,6 @@ namespace ReupVirtualTwin.editor
             EditorGUILayout.EndHorizontal();
         }
 
-        private void SaveCurrentObjectsVisibility()
-        {
-
-        }
-
         private void ApplyFilters(GameObject building)
         {
             List<ITagFilter> filters = substringTagFilters.Concat(tagFilters).ToList();
