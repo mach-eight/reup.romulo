@@ -20,12 +20,12 @@ namespace ReupVirtualTwin.dataSchemas
                 { "type", DataValidator.objectType },
                 { "properties", new JObject
                     {
-                        { "material_id", DataValidator.intSchema },
-                        { "material_url", DataValidator.stringSchema },
-                        { "object_ids",  DataValidator.CreateArraySchema(DataValidator.stringSchema)},
+                        { "materialId", DataValidator.intSchema },
+                        { "materialUrl", DataValidator.stringSchema },
+                        { "objectIds",  DataValidator.CreateArraySchema(DataValidator.stringSchema)},
                     }
                 },
-                { "required", new JArray { "material_url", "object_ids", "material_id" } }
+                { "required", new JArray { "materialUrl", "objectIds", "materialId" } }
             };
 
             sceneStateAppearanceSchema = new()
@@ -34,7 +34,7 @@ namespace ReupVirtualTwin.dataSchemas
                 { "properties", new JObject
                     {
                         { "color", DataValidator.stringSchema },
-                        { "material_id", DataValidator.stringSchema}
+                        { "materialId", DataValidator.stringSchema}
                     }
                 }
             };
@@ -61,11 +61,11 @@ namespace ReupVirtualTwin.dataSchemas
                     {
                         { "id", DataValidator.intSchema },
                         { "texture", DataValidator.stringSchema },
-                        { "width_mm", DataValidator.intSchema },
-                        { "height_mm", DataValidator.intSchema },
+                        { "widthMilimeters", DataValidator.intSchema },
+                        { "heightMilimeters", DataValidator.intSchema },
                     }
                 },
-                { "required", new JArray { "id", "texture", "width_mm", "height_mm" } }
+                { "required", new JArray { "id", "texture", "widthMilimeters", "heightMilimeters" } }
             };
 
             objectWithChangedMaterialSceneSchema = new()
@@ -73,12 +73,12 @@ namespace ReupVirtualTwin.dataSchemas
                 { "type", DataValidator.objectType },
                 { "properties", new JObject
                     {
-                        { "object_id", DataValidator.stringSchema},
+                        { "objectId", DataValidator.stringSchema},
                         { "material", materialSchema },
                         { "color", DataValidator.nullSchema },
                     }
                 },
-                { "required", new JArray { "object_id", "material", "color" } }
+                { "required", new JArray { "objectId", "material", "color" } }
             };
 
             objectWithChangedColorSceneSchema = new()
@@ -86,12 +86,12 @@ namespace ReupVirtualTwin.dataSchemas
                 { "type", DataValidator.objectType },
                 { "properties", new JObject
                     {
-                        { "object_id", DataValidator.stringSchema},
+                        { "objectId", DataValidator.stringSchema},
                         { "material", DataValidator.nullSchema },
                         { "color", DataValidator.stringSchema },
                     }
                 },
-                { "required", new JArray { "object_id", "material", "color" } }
+                { "required", new JArray { "objectId", "material", "color" } }
             };
 
             objectWithNoChangesSceneSchema = new()
@@ -99,12 +99,12 @@ namespace ReupVirtualTwin.dataSchemas
                 { "type", DataValidator.objectType },
                 { "properties", new JObject
                     {
-                        { "object_id", DataValidator.stringSchema},
+                        { "objectId", DataValidator.stringSchema},
                         { "material", DataValidator.nullSchema },
                         { "color", DataValidator.nullSchema },
                     }
                 },
-                { "required", new JArray { "object_id", "material", "color" } }
+                { "required", new JArray { "objectId", "material", "color" } }
             };
 
         }

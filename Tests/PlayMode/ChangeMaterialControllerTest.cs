@@ -37,11 +37,11 @@ namespace ReupVirtualTwinTests.controllers
             controller.materialScaler = materialScalerSpy;
             messagePayload = new JObject()
             {
-                { "material_id", 1234567890 },
-                { "material_url", "material-url.com" },
-                { "object_ids", new JArray(new string[] { "id-0", "id-1" }) },
-                { "width_mm", 2000 },
-                { "height_mm", 1500 },
+                { "materialId", 1234567890 },
+                { "materialUrl", "material-url.com" },
+                { "objectIds", new JArray(new string[] { "id-0", "id-1" }) },
+                { "widthMilimeters", 2000 },
+                { "heightMilimeters", 1500 },
             };
             yield return null;
         }
@@ -129,7 +129,7 @@ namespace ReupVirtualTwinTests.controllers
         public async Task ShouldRequestDownloadMaterialTexture()
         {
             await controller.ChangeObjectMaterial(messagePayload);
-            Assert.AreEqual(messagePayload["material_url"].ToString(), textureDownloaderSpy.url);
+            Assert.AreEqual(messagePayload["materialUrl"].ToString(), textureDownloaderSpy.url);
         }
 
         [Test]
@@ -160,8 +160,8 @@ namespace ReupVirtualTwinTests.controllers
         public async Task ShouldNotifyMediator_When_MaterialsChange()
         {
             await controller.ChangeObjectMaterial(messagePayload);
-            Assert.AreEqual(messagePayload["material_url"], mediatorSpy.changeMaterialInfo["material_url"]);
-            Assert.AreEqual(messagePayload["object_ids"], mediatorSpy.changeMaterialInfo["object_ids"]);
+            Assert.AreEqual(messagePayload["materialUrl"], mediatorSpy.changeMaterialInfo["materialUrl"]);
+            Assert.AreEqual(messagePayload["objectIds"], mediatorSpy.changeMaterialInfo["objectIds"]);
         }
 
         [Test]
@@ -181,7 +181,7 @@ namespace ReupVirtualTwinTests.controllers
             AssertUtils.AssertAllObjectsWithMeshRendererHaveMetaDataValue<int>(
                 objectRegistry.objects,
                 "appearance.material_id",
-                messagePayload["material_id"].ToObject<int>());
+                messagePayload["materialId"].ToObject<int>());
         }
 
         [Test]
@@ -200,7 +200,7 @@ namespace ReupVirtualTwinTests.controllers
             AssertUtils.AssertAllObjectsWithMeshRendererHaveMetaDataValue<int>(
                 objectRegistry.objects,
                 "appearance.material_id",
-                messagePayload["material_id"].ToObject<int>());
+                messagePayload["materialId"].ToObject<int>());
         }
 
         [Test]

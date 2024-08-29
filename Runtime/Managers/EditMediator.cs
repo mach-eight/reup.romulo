@@ -277,7 +277,7 @@ namespace ReupVirtualTwin.managers
             {
                 type = WebMessageType.requestSceneLoadSuccess,
                 payload = new JObject(
-                    new JProperty("request_timestamp", requestPayload["request_timestamp"])
+                    new JProperty("requestTimestamp", requestPayload["requestTimestamp"])
                 )
             };
             _webMessageSender.SendWebMessage(successMessage);
@@ -293,7 +293,7 @@ namespace ReupVirtualTwin.managers
                     SendErrorMessage(InvalidColorErrorMessage(objectsByColor.Key));
                     return;
                 }
-                string[] objectIds = objectsByColor.Select(objectState => objectState["object_id"].ToString()).ToArray();
+                string[] objectIds = objectsByColor.Select(objectState => objectState["objectId"].ToString()).ToArray();
                 List<GameObject> objectsToPaint = _registry.GetObjectsWithGuids(objectIds);
                 _changeColorManager.ChangeObjectsColor(objectsToPaint, (Color) color);
             }
@@ -305,12 +305,12 @@ namespace ReupVirtualTwin.managers
             {
                 int materialId = objectsByMaterial.Key;
                 string materilUrl = objectsByMaterial.First()["material"]["texture"].ToString();
-                var objectIds = objectsByMaterial.Select(objectState => objectState["object_id"].ToString());
+                var objectIds = objectsByMaterial.Select(objectState => objectState["objectId"].ToString());
                 JObject materialChangeInfo = new()
                 {
-                    { "material_id", materialId },
-                    { "material_url", materilUrl },
-                    { "object_ids", new JArray(objectIds) },
+                    { "materialId", materialId },
+                    { "materialUrl", materilUrl },
+                    { "objectIds", new JArray(objectIds) },
                 };
                 await _changeMaterialController.ChangeObjectMaterial(materialChangeInfo, false);
             }
@@ -325,8 +325,8 @@ namespace ReupVirtualTwin.managers
             {
                 type = WebMessageType.requestSceneStateSuccess,
                 payload = new JObject(
-                    new JProperty("scene_state", sceneState),
-                    new JProperty("request_timestamp", sceneStateRequestPayload["request_timestamp"])),
+                    new JProperty("sceneState", sceneState),
+                    new JProperty("requestTimestamp", sceneStateRequestPayload["requestTimestamp"])),
             };
             _webMessageSender.SendWebMessage(sceneStateMessage);
         }

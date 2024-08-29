@@ -10,14 +10,14 @@ namespace ReupVirtualTwin.dataSchemas
             { "type", DataValidator.objectType },
             { "properties", new JObject
                 {
-                    { "material_id", DataValidator.intSchema },
-                    { "material_url", DataValidator.stringSchema },
-                    { "width_mm", DataValidator.intSchema },
-                    { "height_mm", DataValidator.intSchema },
-                    { "object_ids", DataValidator.CreateArraySchema(DataValidator.stringSchema) },
+                    { "materialId", DataValidator.intSchema },
+                    { "materialUrl", DataValidator.stringSchema },
+                    { "widthMilimeters", DataValidator.intSchema },
+                    { "heightMilimeters", DataValidator.intSchema },
+                    { "objectIds", DataValidator.CreateArraySchema(DataValidator.stringSchema) },
                 }
             },
-            { "required", new JArray { "material_url", "object_ids", "material_id", "width_mm", "height_mm" } },
+            { "required", new JArray { "materialUrl", "objectIds", "materialId", "widthMilimeters", "heightMilimeters" } },
         };
 
         public static readonly JObject requestSceneStatePayloadSchema = new JObject
@@ -25,10 +25,10 @@ namespace ReupVirtualTwin.dataSchemas
             { "type", DataValidator.objectType },
             { "properties", new JObject
                 {
-                    { "request_timestamp", DataValidator.intSchema },
+                    { "requestTimestamp", DataValidator.intSchema },
                 }
             },
-            { "required", new JArray { "request_timestamp" } },
+            { "required", new JArray { "requestTimestamp" } },
         };
 
         public static readonly JObject requestLoadScenePayloadSchema = new JObject()
@@ -36,7 +36,7 @@ namespace ReupVirtualTwin.dataSchemas
             {"type", DataValidator.objectType },
             {"properties", new JObject
                 {
-                    { "request_timestamp", DataValidator.intSchema },
+                    { "requestTimestamp", DataValidator.intSchema },
                     { "objects", DataValidator.CreateArraySchema
                         (
                             RomuloInternalSchema.objectWithNoChangesSceneSchema,
@@ -46,7 +46,7 @@ namespace ReupVirtualTwin.dataSchemas
                     },
                 }
             },
-            { "required", new JArray { "request_timestamp", "objects" } },
+            { "required", new JArray { "requestTimestamp", "objects" } },
         };
     }
 }
