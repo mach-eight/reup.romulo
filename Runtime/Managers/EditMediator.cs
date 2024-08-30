@@ -258,7 +258,7 @@ namespace ReupVirtualTwin.managers
         {
             originalSceneController?.RestoreOriginalScene();
 
-            List<JObject> objectStates = requestPayload["objects"]?.ToObject<JArray>()?.Cast<JObject>().ToList() ?? new List<JObject>(); 
+            List<JObject> objectStates = requestPayload["objects"].ToObject<JArray>().Cast<JObject>().ToList();
 
             var objectStatesByColor = objectStates
                 .Where(objectState => TypeHelpers.NotNull(objectState["color"]))
@@ -274,36 +274,51 @@ namespace ReupVirtualTwin.managers
                 .GroupBy(objectState => objectState["material"]["id"].ToObject<int>());
             Result materialWasChanged = await ApplyMaterialsToSceneObjects(objectStatesByMaterial);
 
-            if (!colorWasChanged.IsSuccess || !materialWasChanged.IsSuccess)
+            Result finalResult = CombineResults(colorWasChanged, materialWasChanged);
+            if (!finalResult.IsSuccess)
             {
                 originalSceneController?.RestoreOriginalScene();
-                SendFailureLoadSceneMessage(requestPayload["request_timestamp"]);
+                SendFailureLoadSceneMessage(requestPayload["request_timestamp"], finalResult.Error);
                 return;
             }
 
             SendSuccessLoadSceneMessage(requestPayload["request_timestamp"]);
         }
 
+        private Result CombineResults(params Result[] results)
+        {
+            foreach (var result in results)
+            {
+                if (!result.IsSuccess)
+                {
+                    return Result.Failure(result.Error);
+                }
+            }
+            return Result.Success();
+        }
+
         private void SendSuccessLoadSceneMessage(JToken requestPayload)
         {
-            var successMessage = new WebMessage<JObject>
+            WebMessage<JObject> successMessage = new()
             {
                 type = WebMessageType.requestSceneLoadSuccess,
                 payload = new JObject(
-                    new JProperty("requestTimestamp", requestPayload["requestTimestamp"])
-                )
+                   new JProperty("requestTimestamp", requestPayload["requestTimestamp"])
+               )
             };
-
             _webMessageSender.SendWebMessage(successMessage);
         }
 
-        private void SendFailureLoadSceneMessage(JToken requestTimestamp)
+        private void SendFailureLoadSceneMessage(JToken requestTimestamp, string errorMessage)
         {
-            //modificar
-            var failureMessage = new WebMessage<JObject>
+          
+             WebMessage<JObject> failureMessage = new()
             {
                 type = WebMessageType.requestSceneLoadFailure,
-                payload = new JObject(new JProperty("request_timestamp", requestTimestamp))
+                payload = new JObject(
+                    new JProperty("requestTimestamp", requestTimestamp),
+                    new JProperty("errorMessage", errorMessage)
+                )
             };
 
             _webMessageSender.SendWebMessage(failureMessage);
