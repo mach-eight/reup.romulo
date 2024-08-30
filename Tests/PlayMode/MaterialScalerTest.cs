@@ -11,8 +11,8 @@ namespace ReupVirtualTwinTests.helpers
         GameObject wallPrefabInCm = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Tests/TestAssets/150cmx150cm_inclined_texture_10cmx14cm.prefab");
         GameObject wallInstanceInM;
         GameObject wallInstanceInCm;
-        Vector2 originalTextureDimensionsInMilimeters;
         MaterialScaler materialScaler;
+        Vector2 originalTextureDimensionsInMilimeters;
         Vector2 desiredTextureDimensionsInM;
         Vector2 expectedMaterialScale;
 
@@ -49,6 +49,31 @@ namespace ReupVirtualTwinTests.helpers
             materialScaler.AdjustUVScaleToDimensions(wallInstanceInM, desiredTextureDimensionsInM);
             Material material = wallInstanceInM.GetComponent<Renderer>().material;
             AssertUtils.AssertVector2sAreEqual(expectedMaterialScale, material.mainTextureScale);
+        }
+
+        [Test]
+        public void ShouldAdjustUVScaleToDimensions_while_avoiding_collinearpoints()
+        {
+            GameObject wall = new GameObject();
+            MeshRenderer meshRenderer = wall.AddComponent<MeshRenderer>();
+            meshRenderer.sharedMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));;
+            MeshFilter meshFilter = wall.AddComponent<MeshFilter>();
+            Mesh mesh = new Mesh();
+            mesh.vertices = new Vector3[] {
+                new Vector3(0,0,0), new Vector3(0,0.1f,0), new Vector3(0,0.2f,0), new Vector3(0,0.5f,0), new Vector3(0,1,0), // points in the same line
+                new Vector3(0,1,1),
+                new Vector3(0,0,1),
+            };
+            mesh.uv = new Vector2[] {
+                new Vector2(0,0), new Vector2(0.1f,0), new Vector2(0.2f,0), new Vector2(0.5f,0), new Vector2(1,0), // points in the same line uvs
+
+                new Vector2(1,1),
+                new Vector2(0,1),
+            };
+            meshFilter.sharedMesh = mesh;
+            materialScaler.AdjustUVScaleToDimensions(wall, new Vector2(2000, 2000));
+            Material material = wall.GetComponent<Renderer>().material;
+            AssertUtils.AssertVector2sAreEqual(new Vector2(0.5f, 0.5f), material.mainTextureScale);
         }
     }
 }

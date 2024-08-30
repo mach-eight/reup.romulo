@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using NUnit.Framework;
 using UnityEngine;
@@ -5,6 +6,7 @@ using UnityEngine.TestTools;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 using Tests.PlayMode.Mocks;
 using ReupVirtualTwin.managers;
@@ -14,7 +16,8 @@ using ReupVirtualTwin.behaviourInterfaces;
 using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwin.controllerInterfaces;
-using Newtonsoft.Json.Linq;
+using ReupVirtualTwin.helpers;
+using ReupVirtualTwin.dataSchemas;
 
 public class EditMediatorTest : MonoBehaviour
 {
@@ -54,7 +57,7 @@ public class EditMediatorTest : MonoBehaviour
         editMediator.registry = registrySpy;
         changeColorManagerSpy = new ChangeColorManagerSpy();
         editMediator.changeColorManager = changeColorManagerSpy;
-        //changeMaterialControllerSpy = new ChangeMaterialControllerSpy();
+        changeMaterialControllerSpy = new ChangeMaterialControllerSpy();
         editMediator.changeMaterialController = changeMaterialControllerSpy;
         mockModelInfoManager = new MockModelInfoManager();
         editMediator.modelInfoManager = mockModelInfoManager;
@@ -62,7 +65,7 @@ public class EditMediatorTest : MonoBehaviour
             new JProperty("type", WebMessageType.requestSceneLoad),
             new JProperty("payload", new JObject()
             {
-                { "request_timestamp", 1723834815802 },
+                { "requestTimestamp", 1723834815802 },
                 { "objects",  null },
             })
         );
@@ -98,17 +101,22 @@ public class EditMediatorTest : MonoBehaviour
     {
         public JObject lastReceivedMessageRequest;
         public List<JObject> receivedMessageRequests = new List<JObject>();
-        private Result _resultToReturn;
+        public bool throwError = false;        
+        public Task<Result> ChangeObjectMaterial(JObject materialChangeInfo)
+        {
+            if (throwError) {
+                Result.Failure("ERROR, Fail to change materials"); 
+            }
+            if (!DataValidator.ValidateObjectToSchema(materialChangeInfo, RomuloInternalSchema.materialChangeInfo))
+            {
+                Debug.Log("entro "); 
+                throw new Exception("Invalid material change info object");
+            }
+            Debug.Log("no entro  ");
+            receivedMessageRequests.Add(materialChangeInfo);
+            lastReceivedMessageRequest = materialChangeInfo;
 
-        public ChangeMaterialControllerSpy(Result resultToReturn)
-        {
-            _resultToReturn = resultToReturn;
-        }
-        public Task<Result> ChangeObjectMaterial(JObject message)
-        {
-            receivedMessageRequests.Add(message);
-            lastReceivedMessageRequest = message;
-            return Task.FromResult(_resultToReturn);
+            return Task.FromResult(Result.Success());
         }
     }
 
@@ -673,17 +681,20 @@ public class EditMediatorTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldRequestChangeMaterialOfObjects_When_ReceivesChangeMaterialRequest()
     {
-
+        JObject material = new JObject()
+        {
+            { "id", 1 },
+            { "texture", "material-1-url" },
+            { "widthMilimeters", 2000 },
+            { "heightMilimeters", 1500}
+        };
         Dictionary<string, object> message = new Dictionary<string, object>
         {
             { "type", WebMessageType.changeObjectsMaterial },
             { "payload", new Dictionary<string, object>
                 {
-                    {"material_id", 1234},
-                    {"material_url", "material-url"},
-                    {"object_ids", new string[] { "id-0", "id-1" } },
-                    { "width_mm", 2000 },
-                    { "height_mm", 1500 },
+                    {"objectIds", new string[] { "id-0", "id-1" } },
+                    { "material", material },
                 }
             }
         };
@@ -697,16 +708,20 @@ public class EditMediatorTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldSendSuccessMessage_When_NotifiedOfMaterialChangeSuccess()
     {
+        JObject material = new JObject()
+        {
+            { "id", 1 },
+            { "texture", "material-1-url" },
+            { "widthMilimeters", 2000 },
+            { "heightMilimeters", 1500}
+        };
         JObject materialChangeInfo = new JObject(
-            new JProperty("material_id", 1234),
-            new JProperty("material_url", "material-url"),
-            new JProperty("object_ids", new JArray(new string[] { "id-0", "id-1" }))
+            new JProperty("material", material),
+            new JProperty("objectIds", new JArray(new string[] { "id-0", "id-1" }))
         );
         editMediator.Notify(ReupEvent.objectMaterialChanged, materialChangeInfo);
         WebMessage<JObject> sentMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.changeObjectsMaterialSuccess, sentMessage.type);
-        Assert.AreEqual(materialChangeInfo["material_url"], sentMessage.payload["material_url"]);
-        Assert.AreEqual(materialChangeInfo["object_ids"], sentMessage.payload["object_ids"]);
         yield return null;
     }
 
@@ -772,13 +787,13 @@ public class EditMediatorTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldSendSceneStateMessage_when_requested()
     {
-        long request_timestamp = 1723834815802;
+        long requestTimestamp = 1723834815802;
         WebMessage<Dictionary<string, object>> sceneStateRequestMessage = new WebMessage<Dictionary<string, object>>()
         {
             type = WebMessageType.requestSceneState,
             payload = new Dictionary<string, object>()
             {
-                {"request_timestamp", request_timestamp }
+                {"requestTimestamp", requestTimestamp }
             }
         };
         editMediator.ReceiveWebMessage(JsonConvert.SerializeObject(sceneStateRequestMessage));
@@ -786,8 +801,8 @@ public class EditMediatorTest : MonoBehaviour
 
         WebMessage<JObject> sentMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.requestSceneStateSuccess, sentMessage.type);
-        Assert.IsTrue(JToken.DeepEquals(mockModelInfoManager.GetSceneState(), sentMessage.payload["scene_state"]));
-        Assert.AreEqual(request_timestamp, sentMessage.payload["request_timestamp"].ToObject<long>());
+        Assert.IsTrue(JToken.DeepEquals(mockModelInfoManager.GetSceneState(), sentMessage.payload["sceneState"]));
+        Assert.AreEqual(requestTimestamp, sentMessage.payload["requestTimestamp"].ToObject<long>());
         yield return null;
     }
 
@@ -820,7 +835,7 @@ public class EditMediatorTest : MonoBehaviour
             type = WebMessageType.requestSceneState,
             payload = new Dictionary<string, object>()
             {
-                {"request_timestamp", 1723834815802 }
+                {"requestTimestamp", 1723834815802 }
             }
         };
 
@@ -847,17 +862,21 @@ public class EditMediatorTest : MonoBehaviour
             {
                 new JObject()
                 {
-                    { "object_id", "object-id-1" },
+                    { "objectId", "object-id-1" },
                     { "color", color },
+                    { "material", null }
                 },
                 new JObject()
                 {
-                    { "object_id", "object-id-2" },
+                    { "objectId", "object-id-2" },
+                    { "color", null },
+                    { "material", null }
                 },
                 new JObject()
                 {
-                    { "object_id", "object-id-3" },
+                    { "objectId", "object-id-3" },
                     { "color", color },
+                    { "material", null }
                 },
             }
         );
@@ -882,18 +901,21 @@ public class EditMediatorTest : MonoBehaviour
             {
                 new JObject()
                 {
-                    { "object_id", "object-id-1" },
+                    { "objectId", "object-id-1" },
                     { "color", greenColor },
+                    { "material", null }
                 },
                 new JObject()
                 {
-                    { "object_id", "object-id-2" },
+                    { "objectId", "object-id-2" },
                     { "color", redColor },
+                    { "material", null }
                 },
                 new JObject()
                 {
-                    { "object_id", "object-id-3" },
+                    { "objectId", "object-id-3" },
                     { "color", greenColor },
+                    { "material", null }
                 },
             }
         );
@@ -928,24 +950,33 @@ public class EditMediatorTest : MonoBehaviour
     [Test]
     public async Task ShouldRequestChangeObjectsMaterial_when_Receive_loadSceneRequest_with_onlyOneMaterial()
     {
+        JObject material = new JObject()
+        {
+            { "id", 1 },
+            { "texture", "material-1-url" },
+            { "widthMilimeters", 2000 },
+            { "heightMilimeters", 1500}
+        };
         requestSceneLoadMessage["payload"]["objects"] = new JArray(
             new JObject[]
             {
                 new JObject()
                 {
-                    { "object_id", "object-id-1" },
-                    { "material_id", 1 },
-                    { "material_url", "material-1-url" },
+                    { "objectId", "object-id-1" },
+                    { "color", null },
+                    { "material", material }
                 },
                 new JObject()
                 {
-                    { "object_id", "object-id-2" },
+                    { "objectId", "object-id-2" },
+                    { "color", null },
+                    { "material", null }
                 },
                 new JObject()
                 {
-                    { "object_id", "object-id-3" },
-                    { "material_id", 1 },
-                    { "material_url", "material-1-url" },
+                    { "objectId", "object-id-3" },
+                    { "color", null },
+                    { "material", material }
                 },
             }
         );
@@ -953,10 +984,13 @@ public class EditMediatorTest : MonoBehaviour
         await editMediator.ReceiveWebMessage(serializedMessage);
         JObject expectedMaterialChangeRequest = new JObject
         {
-            { "material_id", 1 },
-            { "material_url", "material-1-url" },
-            { "object_ids", new JArray(new string[] { "object-id-1", "object-id-3" }) },
+            { "material", material },
+            { "objectIds", new JArray(new string[] { "object-id-1", "object-id-3" }) },
         };
+        Debug.Log("expectedMaterialChangeRequest");
+        Debug.Log(expectedMaterialChangeRequest);
+        Debug.Log("changeMaterialControllerSpy.lastReceivedMessageRequest");
+        Debug.Log(changeMaterialControllerSpy.lastReceivedMessageRequest);
         AssertExpectedData(expectedMaterialChangeRequest, changeMaterialControllerSpy.lastReceivedMessageRequest);
         Assert.AreEqual(1, mockWebMessageSender.sentMessages.Count);
     }
@@ -964,43 +998,56 @@ public class EditMediatorTest : MonoBehaviour
     [Test]
     public async Task ShouldRequestChangeObjectsMaterial_when_Receive_loadSceneRequest_with_severalMaterials()
     {
+        JObject material1 = new JObject()
+        {
+            { "id", 1 },
+            { "texture", "material-1-url" },
+            { "widthMilimeters", 2000 },
+            { "heightMilimeters", 1500}
+        };
+        JObject material2 = new JObject()
+        {
+            { "id", 2 },
+            { "texture", "material-2-url" },
+            { "widthMilimeters", 20000 },
+            { "heightMilimeters", 15000 }
+        };
         requestSceneLoadMessage["payload"]["objects"] = new JArray(
             new JObject[]
             {
                 new JObject()
                 {
-                    { "object_id", "object-id-1" },
-                    { "material_id", 1 },
-                    { "material_url", "material-1-url" },
+                    { "objectId", "object-id-1" },
+                    { "color", null },
+                    { "material", material1 }
                 },
                 new JObject()
                 {
-                    { "object_id", "object-id-2" },
-                    { "material_id", 2 },
-                    { "material_url", "material-2-url" },
+                    { "objectId", "object-id-2" },
+                    { "color", null },
+                    { "material", material2 }
                 },
                 new JObject()
                 {
-                    { "object_id", "object-id-3" },
-                    { "material_id", 1 },
-                    { "material_url", "material-1-url" },
+                    { "objectId", "object-id-3" },
+                    { "color", null },
+                    { "material", material1 }
                 },
             }
         );
         string serializedMessage = JsonConvert.SerializeObject(requestSceneLoadMessage);
         await editMediator.ReceiveWebMessage(serializedMessage);
+
         JObject[] expectedMaterialChangeRequests = new JObject[]
         {
             new JObject
             {
-                { "material_id", 1 },
-                { "material_url", "material-1-url" },
+                { "material", material1 },
                 { "object_ids", new JArray(new string[] { "object-id-1", "object-id-3" }) },
             },
             new JObject
             {
-                { "material_id", 2 },
-                { "material_url", "material-2-url" },
+                { "material", material2 },
                 { "object_ids", new JArray(new string[] { "object-id-2" }) },
             },
         };
@@ -1016,14 +1063,23 @@ public class EditMediatorTest : MonoBehaviour
             {
                 new JObject()
                 {
-                    { "object_id", "object-id-1" },
+                    { "objectId", "object-id-1" },
                     { "color", "#FF0000" },
+                    { "material", null }
                 },
                 new JObject()
                 {
-                    { "object_id", "object-id-2" },
-                    { "material_id", 1 },
-                    { "material_url", "material-1-url" },
+                    { "objectId", "object-id-2" },
+                    { "color", null },
+                    { "material",
+                        new JObject()
+                        {
+                            { "id", 1 },
+                            { "texture", "material-1-url" },
+                            { "widthMilimeters", 2000 },
+                            { "heightMilimeters", 1500}
+                        }
+                    }
                 },
             }
         );
@@ -1032,7 +1088,7 @@ public class EditMediatorTest : MonoBehaviour
         WebMessage<JObject> sentMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(1, mockWebMessageSender.sentMessages.Count);
         Assert.AreEqual(WebMessageType.requestSceneLoadSuccess, sentMessage.type);
-        Assert.AreEqual(sentMessage.payload["request_timestamp"].ToObject<long>(), 1723834815802);
+        Assert.AreEqual(sentMessage.payload["requestTimestamp"].ToObject<long>(), 1723834815802);
     }
 
     [Test]
@@ -1043,17 +1099,15 @@ public class EditMediatorTest : MonoBehaviour
             {
                 new JObject()
                 {
-                    { "object_id", "object-id-1" },
+                    { "objectId", "object-id-1" },
                     { "color", null },
-                    { "material_id", null },
-                    { "material_url", null },
+                    { "material", null }
                 },
                 new JObject()
                 {
-                    { "object_id", "object-id-2" },
+                    { "objectId", "object-id-2" },
                     { "color", null },
-                    { "material_id", null },
-                    { "material_url", null },
+                    { "material", null },
                 },
             }
         );

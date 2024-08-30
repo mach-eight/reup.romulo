@@ -257,12 +257,6 @@ namespace ReupVirtualTwin.managers
         private async Task LoadObjectsState(JObject requestPayload)
         {
             originalSceneController?.RestoreOriginalScene();
-     
-            if (!requestPayload.ContainsKey("objects") || !requestPayload["objects"].Any(obj => HasRequiredKeys(obj)))
-            {
-                SendErrorMessage("the request payload is missing the required key 'objects' or 'objects' does not contain required 'color' or 'material_id' keys");
-                return;
-            }
 
             List<JObject> objectStates = requestPayload["objects"]?.ToObject<JArray>()?.Cast<JObject>().ToList() ?? new List<JObject>(); 
 
@@ -272,12 +266,17 @@ namespace ReupVirtualTwin.managers
             Result colorWasChanged = PaintSceneObjects(objectStatesByColor);
 
             var objectStatesByMaterial = objectStates
-                .Where(objectState => TypeHelpers.NotNull(objectState["material_id"]) && TypeHelpers.NotNull(objectState["material_url"]))
-                .GroupBy(objectState => objectState["material_id"].ToObject<int>());
+                .Where(objectState => {
+                    return TypeHelpers.NotNull(objectState["material"]) &&
+                        TypeHelpers.NotNull(objectState["material"]["id"]) &&
+                        TypeHelpers.NotNull(objectState["material"]["texture"]);
+                })
+                .GroupBy(objectState => objectState["material"]["id"].ToObject<int>());
             Result materialWasChanged = await ApplyMaterialsToSceneObjects(objectStatesByMaterial);
 
             if (!colorWasChanged.IsSuccess || !materialWasChanged.IsSuccess)
             {
+                originalSceneController?.RestoreOriginalScene();
                 SendFailureLoadSceneMessage(requestPayload["request_timestamp"]);
                 return;
             }
@@ -285,13 +284,14 @@ namespace ReupVirtualTwin.managers
             SendSuccessLoadSceneMessage(requestPayload["request_timestamp"]);
         }
 
-
-        private void SendSuccessLoadSceneMessage(JToken requestTimestamp)
+        private void SendSuccessLoadSceneMessage(JToken requestPayload)
         {
             var successMessage = new WebMessage<JObject>
             {
                 type = WebMessageType.requestSceneLoadSuccess,
-                payload = new JObject(new JProperty("request_timestamp", requestTimestamp))
+                payload = new JObject(
+                    new JProperty("requestTimestamp", requestPayload["requestTimestamp"])
+                )
             };
 
             _webMessageSender.SendWebMessage(successMessage);
@@ -299,25 +299,16 @@ namespace ReupVirtualTwin.managers
 
         private void SendFailureLoadSceneMessage(JToken requestTimestamp)
         {
-            var successMessage = new WebMessage<JObject>
+            //modificar
+            var failureMessage = new WebMessage<JObject>
             {
-                type = WebMessageType.requestSceneLoadSuccess,
+                type = WebMessageType.requestSceneLoadFailure,
                 payload = new JObject(new JProperty("request_timestamp", requestTimestamp))
             };
 
-            _webMessageSender.SendWebMessage(successMessage);
+            _webMessageSender.SendWebMessage(failureMessage);
         }
 
-        private bool HasRequiredKeys(JToken obj)
-        {
-            bool hasColor = TypeHelpers.NotNull(obj["color"]);
-            bool hasMaterialId = TypeHelpers.NotNull(obj["material_id"]);
-            bool hasMaterialUrl = TypeHelpers.NotNull(obj["material_url"]);
-
-            bool hasMaterialPair = !hasMaterialId || (hasMaterialId && hasMaterialUrl);
-
-            return hasColor || (hasMaterialId && hasMaterialPair);
-        }
 
         private Result PaintSceneObjects(IEnumerable<IGrouping<string, JObject>> objectStatesByColor)
         {
@@ -328,7 +319,7 @@ namespace ReupVirtualTwin.managers
                 {
                     return Result.Failure(InvalidColorErrorMessage(objectsByColor.Key));
                 }
-                string[] objectIds = objectsByColor.Select(objectState => objectState["object_id"].ToString()).ToArray();
+                string[] objectIds = objectsByColor.Select(objectState => objectState["objectId"].ToString()).ToArray();
                 List<GameObject> objectsToPaint = _registry.GetObjectsWithGuids(objectIds);
                 _changeColorManager.ChangeObjectsColor(objectsToPaint, (Color) color);
             }
@@ -337,20 +328,16 @@ namespace ReupVirtualTwin.managers
 
         private async Task<Result> ApplyMaterialsToSceneObjects(IEnumerable<IGrouping<int, JObject>> objectStatesByMaterial)
         {
+
             foreach(var objectsByMaterial in objectStatesByMaterial)
             {
-                int materialId = objectsByMaterial.Key;
-                string materialUrl = objectsByMaterial.First()["material_url"].ToString();
-                var objectIds = objectsByMaterial.Select(objectState => objectState["object_id"].ToString());
-                Result isSuccess;
-                
+                var objectIds = objectsByMaterial.Select(objectState => objectState["objectId"].ToString());
                 JObject materialChangeInfo = new()
                 {
-                    { "material_id", materialId },
-                    { "material_url", materialUrl },
-                    { "object_ids", new JArray(objectIds) },
+                    { "material", objectsByMaterial.First()["material"] },
+                    { "objectIds", new JArray(objectIds) },
                 };
-                isSuccess = await _changeMaterialController.ChangeObjectMaterial(materialChangeInfo);
+                Result isSuccess = await _changeMaterialController.ChangeObjectMaterial(materialChangeInfo);
                 if (!isSuccess.IsSuccess)
                 {
                     return isSuccess;
@@ -368,8 +355,8 @@ namespace ReupVirtualTwin.managers
             {
                 type = WebMessageType.requestSceneStateSuccess,
                 payload = new JObject(
-                    new JProperty("scene_state", sceneState),
-                    new JProperty("request_timestamp", sceneStateRequestPayload["request_timestamp"])),
+                    new JProperty("sceneState", sceneState),
+                    new JProperty("requestTimestamp", sceneStateRequestPayload["requestTimestamp"])),
             };
             _webMessageSender.SendWebMessage(sceneStateMessage);
         }

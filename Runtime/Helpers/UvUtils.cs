@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using AM = Accord.Math;
+using System.Collections.Generic;
 
 namespace ReupVirtualTwin.helpers
 {
@@ -77,7 +78,6 @@ namespace ReupVirtualTwin.helpers
             double y0 = reducedMatrix[7, 9];
             double z0 = reducedMatrix[8, 9];
 
-
             return (Vector2 uv) =>
             {
                 double u = uv.x;
@@ -92,21 +92,43 @@ namespace ReupVirtualTwin.helpers
         {
             Vector3[] vertices = mesh.vertices;
             Vector2[] uvs = mesh.uv;
-            UvPointPair[] uv3dPairPoints = new UvPointPair[3];
-            for (int i = 0; i < ammount; i++)
+            List<Vector3> checkedVertices = new List<Vector3>();
+            List<UvPointPair> uv3dPairPoints = new List<UvPointPair>();
+            int i = 0;
+            while (checkedVertices.Count < ammount)
             {
-                uv3dPairPoints[i] = new UvPointPair
+                if (!IsNewPointCollinear(checkedVertices, vertices[i]))
                 {
-                    point = vertices[i],
-                    uv = uvs[i]
-                };
+                    uv3dPairPoints.Add(new UvPointPair {
+                        point = vertices[i],
+                        uv = uvs[i]
+                    });
+                    checkedVertices.Add(vertices[i]);
+                }
+                i++;
             }
-            return uv3dPairPoints;
+            return uv3dPairPoints.ToArray();
         }
         public class UvPointPair
         {
             public Vector2 uv;
             public Vector3 point;
+        }
+
+        private static bool IsNewPointCollinear(List<Vector3> points, Vector3 newPoint)
+        {
+            if (points.Count <= 1)
+            {
+                return false;
+            }
+            Vector3 line = points[0] - points[1];
+            Vector3 newPointVector = points[0] - newPoint;
+            Vector3 crossProduct = Vector3.Cross(line, newPointVector);
+            if (crossProduct.magnitude < Mathf.Epsilon)
+            {
+                return true;
+            }
+            return false;
         }
 
     }

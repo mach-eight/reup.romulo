@@ -133,11 +133,11 @@ public class ChangeColorObjectsTest : MonoBehaviour
         List<GameObject> gameObjects = new() { meshedParent, meshedChild, unmeshedParent, unmeshedChild};
         int fakeMaterialId = 746;
         AssignFakeMaterialIdMetaDataToObjects(gameObjects, fakeMaterialId);
-        AssertUtils.AssertAllObjectsWithMeshRendererHaveMetaDataValue<int>(gameObjects, "appearance.material_id", fakeMaterialId);
+        AssertUtils.AssertAllObjectsWithMeshRendererHaveMetaDataValue<int>(gameObjects, "appearance.materialId", fakeMaterialId);
         changeColorManager.ChangeObjectsColor(gameObjects, Color.blue);
         yield return null;
         List<JToken> objectsMaterialId = ObjectMetaDataUtils.GetMetaDataValuesFromObjects(
-            gameObjects, "appearance.material_id");
+            gameObjects, "appearance.materialId");
         AssertUtils.AssertAllAreNull(objectsMaterialId);
         AssertUtils.AssertAllObjectsWithMeshRendererHaveMetaDataValue<string>(
             gameObjects,

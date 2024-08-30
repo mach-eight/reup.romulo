@@ -9,7 +9,7 @@ namespace ReupVirtualTwin.helpers
 {
     public static class ObjectMetaDataUtils
     {
-        static readonly string materialIdPath = "appearance.material_id";
+        static readonly string materialIdPath = "appearance.materialId";
         static readonly string colorPath = "appearance.color";
         public static JObject GetMetaData(GameObject gameObject)
         {
