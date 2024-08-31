@@ -116,8 +116,11 @@ namespace ReupVirtualTwin.helpers
             int triangleIndex = 0;
             while (triangleIndex < triangles.Length)
             {
-                if (!ArePointsCollinear(vertices[triangleIndex], vertices[triangleIndex+1], vertices[triangleIndex+2]))
-                {
+                if (!ArePointsCollinear(
+                    vertices[triangles[triangleIndex]],
+                    vertices[triangles[triangleIndex] + 1],
+                    vertices[triangles[triangleIndex] + 2]
+                )){
                     return triangles.AsSpan(triangleIndex, 3).ToArray();
                 }
                 triangleIndex = triangleIndex + 3;
