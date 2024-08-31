@@ -52,7 +52,7 @@ namespace ReupVirtualTwinTests.helpers
         }
 
         [Test]
-        public void ShouldAdjustUVScaleToDimensions_while_avoiding_collinearpoints()
+        public void ShouldAdjustUVScaleToDimensions_while_selecting_non_collinear_triangle()
         {
             GameObject wall = new GameObject();
             MeshRenderer meshRenderer = wall.AddComponent<MeshRenderer>();
@@ -60,15 +60,18 @@ namespace ReupVirtualTwinTests.helpers
             MeshFilter meshFilter = wall.AddComponent<MeshFilter>();
             Mesh mesh = new Mesh();
             mesh.vertices = new Vector3[] {
-                new Vector3(0,0,0), new Vector3(0,0.1f,0), new Vector3(0,0.2f,0), new Vector3(0,0.5f,0), new Vector3(0,1,0), // points in the same line
+                new Vector3(0,0,0), new Vector3(0,0.5f,0), new Vector3(0,1,0), // 3 points in the same line (same 3 points of first triangle)
                 new Vector3(0,1,1),
                 new Vector3(0,0,1),
             };
             mesh.uv = new Vector2[] {
-                new Vector2(0,0), new Vector2(0.1f,0), new Vector2(0.2f,0), new Vector2(0.5f,0), new Vector2(1,0), // points in the same line uvs
-
+                new Vector2(0,0), new Vector2(0.5f,0), new Vector2(1,0), // 3 points in the same line uvs
                 new Vector2(1,1),
                 new Vector2(0,1),
+            };
+            mesh.triangles = new int[] {
+                0, 1, 2,
+                2, 3, 4,
             };
             meshFilter.sharedMesh = mesh;
             materialScaler.AdjustUVScaleToDimensions(wall, new Vector2(2000, 2000));

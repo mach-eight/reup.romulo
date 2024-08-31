@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using AM = Accord.Math;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ReupVirtualTwin.helpers
 {
@@ -28,7 +29,7 @@ namespace ReupVirtualTwin.helpers
         public static Vector2 GetTextureDimensions(GameObject obj)
         {
             Mesh mesh = obj.GetComponent<MeshFilter>().sharedMesh;
-            UvPointPair[] uvPointPairs = GetSomeUvPointPairs(mesh, 3);
+            UvPointPair[] uvPointPairs = getTriangleWithRespectiveUvs(mesh);
             Func<Vector2, Vector3> uvToSpaceTransformator = CreateUvToSpaceTransformator(uvPointPairs);
             Vector3 uv00ToSpace = uvToSpaceTransformator(new Vector2(0, 0));
             Vector3 uv10ToSpace = uvToSpaceTransformator(new Vector2(1, 0));
@@ -88,26 +89,17 @@ namespace ReupVirtualTwin.helpers
                 return new Vector3((float)x ,(float)y, (float)z);
             };
         }
-        static UvPointPair[] GetSomeUvPointPairs(Mesh mesh, int ammount)
+        static UvPointPair[] getTriangleWithRespectiveUvs(Mesh mesh)
         {
+            int[] triangles = mesh.triangles;
             Vector3[] vertices = mesh.vertices;
             Vector2[] uvs = mesh.uv;
-            List<Vector3> checkedVertices = new List<Vector3>();
-            List<UvPointPair> uv3dPairPoints = new List<UvPointPair>();
-            int i = 0;
-            while (checkedVertices.Count < ammount)
+            int[] choosenTriangle = FirstNonColinearTriangle(triangles, vertices);
+            return choosenTriangle.Select(triangle => new UvPointPair
             {
-                if (!IsNewPointCollinear(checkedVertices, vertices[i]))
-                {
-                    uv3dPairPoints.Add(new UvPointPair {
-                        point = vertices[i],
-                        uv = uvs[i]
-                    });
-                    checkedVertices.Add(vertices[i]);
-                }
-                i++;
-            }
-            return uv3dPairPoints.ToArray();
+                uv = uvs[triangle],
+                point = vertices[triangle],
+            }).ToArray();
         }
         public class UvPointPair
         {
@@ -115,21 +107,33 @@ namespace ReupVirtualTwin.helpers
             public Vector3 point;
         }
 
-        private static bool IsNewPointCollinear(List<Vector3> points, Vector3 newPoint)
+        private static int[] FirstNonColinearTriangle(int[] triangles, Vector3[] vertices)
         {
-            if (points.Count <= 1)
+            int triangleIndex = 0;
+            while (triangleIndex < triangles.Length)
             {
-                return false;
+                if (!ArePointsCollinear(
+                    vertices[triangles[triangleIndex]],
+                    vertices[triangles[triangleIndex] + 1],
+                    vertices[triangles[triangleIndex] + 2]
+                )){
+                    return triangles.AsSpan(triangleIndex, 3).ToArray();
+                }
+                triangleIndex = triangleIndex + 3;
             }
-            Vector3 line = points[0] - points[1];
-            Vector3 newPointVector = points[0] - newPoint;
-            Vector3 crossProduct = Vector3.Cross(line, newPointVector);
+            throw new Exception("no triangle is non collinear");
+        }
+
+        private static bool ArePointsCollinear(Vector3 a, Vector3 b, Vector3 c)
+        {
+            Vector3 line0 = a - b;
+            Vector3 line1 = a - c;
+            Vector3 crossProduct = Vector3.Cross(line0, line1);
             if (crossProduct.magnitude < Mathf.Epsilon)
             {
                 return true;
             }
             return false;
         }
-
     }
 }
