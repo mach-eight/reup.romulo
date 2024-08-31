@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using AM = Accord.Math;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ReupVirtualTwin.helpers
 {
@@ -94,16 +95,11 @@ namespace ReupVirtualTwin.helpers
             Vector3[] vertices = mesh.vertices;
             Vector2[] uvs = mesh.uv;
             int[] choosenTriangle = FirstNonColinearTriangle(triangles, vertices);
-            UvPointPair[] uv3dPairPoints = new UvPointPair[3];
-            for(int i = 0; i < 3; i++)
+            return choosenTriangle.Select(triangle => new UvPointPair
             {
-                uv3dPairPoints[i] = new UvPointPair()
-                {
-                    uv = uvs[choosenTriangle[i]],
-                    point = vertices[choosenTriangle[i]],
-                };
-            }
-            return uv3dPairPoints;
+                uv = uvs[triangle],
+                point = vertices[triangle],
+            }).ToArray();
         }
         public class UvPointPair
         {
