@@ -75,7 +75,7 @@ namespace ReupVirtualTwin.editor
                     objectsVisibilityStates.Add(ObjectVisibilityUtils.GetVisibilityStateOfAllObjects(building, new IdController()));
                     ApplyFilters(building);
                 }
-                if (GUILayout.Button("Undo filters") && objectsVisibilityStates.Count > 0)
+                if (GUILayout.Button("Restore last objects visibility") && objectsVisibilityStates.Count > 0)
                 {
                     UndoLastFilters(building);
                 }
