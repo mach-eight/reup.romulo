@@ -1,111 +1,104 @@
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
 using ReupVirtualTwin.helpers;
+using System;
 
 namespace ReupVirtualTwin.dataSchemas
 {
     public static class RomuloInternalSchema
     {
-        public static JObject materialChangeInfo { get; private set; }
-        public static JObject sceneStateSchema { get; private set; }
-        public static JObject sceneStateAppearanceSchema { get; private set; }
-        public static JObject objectWithChangedMaterialSceneSchema { get; private set; }
-        public static JObject objectWithChangedColorSceneSchema { get; private set; }
-        public static JObject objectWithNoChangesSceneSchema { get; private set; }
-        public static JObject materialSchema { get; private set; }
+        public static JSchema boolSchema { get; private set; }
+        public static JSchema intSchema { get; private set; }
+        public static JSchema stringSchema { get; private set; }
+        public static JSchema nullSchema { get; private set; }
+        public static JSchema materialChangeInfoSchema { get; private set; }
+        public static JSchema sceneStateSchema { get; private set; }
+        public static JSchema sceneStateAppearanceSchema { get; private set; }
+        public static JSchema objectWithChangedMaterialSceneSchema { get; private set; }
+        public static JSchema objectWithChangedColorSceneSchema { get; private set; }
+        public static JSchema objectWithNoChangesSceneSchema { get; private set; }
+        public static JSchema materialSchema { get; private set; }
 
         static RomuloInternalSchema()
         {
+            stringSchema = JSchema.Parse(@"{ ""type"": ""string"" }");
 
-            materialSchema = new()
-            {
-                { "type", DataValidator.objectType },
-                { "properties", new JObject
-                    {
-                        { "id", DataValidator.intSchema },
-                        { "texture", DataValidator.stringSchema },
-                        { "widthMilimeters", DataValidator.intSchema },
-                        { "heightMilimeters", DataValidator.intSchema },
-                    }
+            intSchema = JSchema.Parse(@"{ ""type"": ""integer"" }");
+
+            boolSchema = JSchema.Parse(@"{ ""type"": ""boolean"" }");
+
+            nullSchema = JSchema.Parse(@"{ ""type"": ""null"" }");
+
+            materialSchema = JSchema.Parse(@"{
+                ""type"": ""object"",
+                ""properties"": {
+                    ""id"": { ""type"": ""string"" },
+                    ""texture"": { ""type"": ""string"" },
+                    ""widthMilimeters"": { ""type"": ""integer"" },
+                    ""heightMilimeters"": { ""type"": ""integer"" }
                 },
-                { "required", new JArray { "id", "texture", "widthMilimeters", "heightMilimeters" } }
-            };
+                ""required"": [""id"", ""texture"", ""widthMilimeters"", ""heightMilimeters""]
+            }");
 
-            materialChangeInfo = new()
-            {
-                { "type", DataValidator.objectType },
-                { "properties", new JObject
-                    {
-                        { "material", materialSchema },
-                        { "objectIds",  DataValidator.CreateArraySchema(DataValidator.stringSchema)},
-                    }
+            materialChangeInfoSchema = JSchema.Parse(@"{
+                ""type"": ""object"",
+                ""properties"": {
+                    ""material"": " + materialSchema.ToString() + @",
+                    ""objectIds"": { ""type"": ""array"", ""items"": { ""type"": ""string"" } }
                 },
-                { "required", new JArray { "objectIds", "material" } }
-            };
+                ""required"": [""objectIds"", ""material""]
+            }");
 
-            sceneStateAppearanceSchema = new()
-            {
-                { "type", DataValidator.objectType },
-                { "properties", new JObject
-                    {
-                        { "color", DataValidator.stringSchema },
-                        { "materialId", DataValidator.stringSchema}
-                    }
+            sceneStateAppearanceSchema = JSchema.Parse(@"{
+                ""type"": ""object"",
+                ""properties"": {
+                    ""color"": { ""type"": ""string"" },
+                    ""materialId"": { ""type"": ""string"" }
                 }
-            };
+            }");
 
-            sceneStateSchema = new()
-            {
-                { "type", DataValidator.objectType },
-                { "name", "sceneStateSchema" },
-                { "properties", new JObject
-                    {
-                        { "id", DataValidator.stringSchema },
-                        { "appearance", sceneStateAppearanceSchema },
-                        { "children", DataValidator.CreateArraySchema(DataValidator.CreateRefSchema("sceneStateSchema"))
-                        },
+            sceneStateSchema = JSchema.Parse(@"{
+                ""type"": ""object"",
+                ""properties"": {
+                    ""id"": { ""type"": ""string"" },
+                    ""appearance"": " + sceneStateAppearanceSchema.ToString() + @",
+                    ""children"": {
+                        ""type"": ""array"",
+                        ""items"": { ""$ref"": ""#"" }
                     }
                 },
-                { "required", new JArray { "id" } }
-            };
+                ""required"": [""id""]
+            }");
 
-            objectWithChangedMaterialSceneSchema = new()
-            {
-                { "type", DataValidator.objectType },
-                { "properties", new JObject
-                    {
-                        { "objectId", DataValidator.stringSchema},
-                        { "material", materialSchema },
-                        { "color", DataValidator.nullSchema },
-                    }
+            objectWithChangedMaterialSceneSchema = JSchema.Parse(@"{
+                ""type"": ""object"",
+                ""properties"": {
+                    ""objectId"": { ""type"": ""string"" },
+                    ""material"": " + materialSchema.ToString() + @",
+                    ""color"": { ""type"": ""null"" }
                 },
-                { "required", new JArray { "objectId", "material", "color" } }
-            };
+                ""required"": [""objectId"", ""material"", ""color""]
+            }");
 
-            objectWithChangedColorSceneSchema = new()
-            {
-                { "type", DataValidator.objectType },
-                { "properties", new JObject
-                    {
-                        { "objectId", DataValidator.stringSchema},
-                        { "material", DataValidator.nullSchema },
-                        { "color", DataValidator.stringSchema },
-                    }
+            objectWithChangedColorSceneSchema = JSchema.Parse(@"{
+                ""type"": ""object"",
+                ""properties"": {
+                    ""objectId"": { ""type"": ""string"" },
+                    ""material"": { ""type"": ""null"" },
+                    ""color"": { ""type"": ""string"" }
                 },
-                { "required", new JArray { "objectId", "material", "color" } }
-            };
+                ""required"": [""objectId"", ""material"", ""color""]
+            }");
 
-            objectWithNoChangesSceneSchema = new()
-            {
-                { "type", DataValidator.objectType },
-                { "properties", new JObject
-                    {
-                        { "objectId", DataValidator.stringSchema},
-                        { "material", DataValidator.nullSchema },
-                        { "color", DataValidator.nullSchema },
-                    }
+            objectWithNoChangesSceneSchema = JSchema.Parse(@"{
+                ""type"": ""object"",
+                ""properties"": {
+                    ""objectId"": { ""type"": ""string"" },
+                    ""material"": { ""type"": ""null"" },
+                    ""color"": { ""type"": ""null"" }
                 },
-                { "required", new JArray { "objectId", "material", "color" } }
-            };
+                ""required"": [""objectId"", ""material"", ""color""]
+            }");
 
         }
     }

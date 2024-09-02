@@ -40,7 +40,7 @@ namespace ReupVirtualTwinTests.controllers
                 { "objectIds", new JArray(new string[] { "id-0", "id-1" }) },
                 { "material", new JObject()
                     {
-                        { "id", 1234567890 },
+                        { "id", "1234567890" },
                         { "texture", "material-url.com" },
                         { "widthMilimeters", 2000 },
                         { "heightMilimeters", 1500 },

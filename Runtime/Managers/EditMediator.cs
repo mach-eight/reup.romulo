@@ -16,6 +16,7 @@ using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Schema;
 
 namespace ReupVirtualTwin.managers
 {
@@ -55,8 +56,6 @@ namespace ReupVirtualTwin.managers
             get => _changeMaterialController; set => _changeMaterialController = value;
         }
 
-        private IncomingMessageValidator incomingMessageValidator;
-
         [HideInInspector]
         public string noInsertObjectIdErrorMessage = "No object id provided for insertion";
         [HideInInspector]
@@ -69,31 +68,6 @@ namespace ReupVirtualTwin.managers
 
         private IOriginalSceneController _originalSceneController;
         public IOriginalSceneController originalSceneController { get => _originalSceneController; set => _originalSceneController = value; }
-
-
-        private void Awake()
-        {
-            incomingMessageValidator = new IncomingMessageValidator();
-
-            incomingMessageValidator.RegisterMessage(WebMessageType.activatePositionTransform);
-            incomingMessageValidator.RegisterMessage(WebMessageType.activateRotationTransform);
-            incomingMessageValidator.RegisterMessage(WebMessageType.deactivateTransformMode);
-            incomingMessageValidator.RegisterMessage(WebMessageType.requestModelInfo);
-            incomingMessageValidator.RegisterMessage(WebMessageType.clearSelectedObjects);
-            incomingMessageValidator.RegisterMessage(WebMessageType.allowSelection);
-            incomingMessageValidator.RegisterMessage(WebMessageType.disableSelection);
-
-            incomingMessageValidator.RegisterMessage(WebMessageType.setEditMode, DataValidator.boolSchema);
-
-            incomingMessageValidator.RegisterMessage(WebMessageType.deleteObjects, DataValidator.stringSchema);
-            incomingMessageValidator.RegisterMessage(WebMessageType.loadObject, DataValidator.stringSchema);
-            incomingMessageValidator.RegisterMessage(WebMessageType.changeObjectColor, DataValidator.stringSchema);
-
-            incomingMessageValidator.RegisterMessage(WebMessageType.changeObjectsMaterial, RomuloExternalSchema.changeObjectMaterialPayloadSchema);
-            incomingMessageValidator.RegisterMessage(WebMessageType.requestSceneState, RomuloExternalSchema.requestSceneStatePayloadSchema);
-            incomingMessageValidator.RegisterMessage(WebMessageType.requestSceneLoad, RomuloExternalSchema.requestLoadScenePayloadSchema);
-        }
-
 
         public void Notify(ReupEvent eventName)
         {
@@ -160,7 +134,7 @@ namespace ReupVirtualTwin.managers
                 case ReupEvent.objectMaterialChanged:
                     if (RomuloEnvironment.development)
                     {
-                        if (!DataValidator.ValidateObjectToSchema(payload, RomuloInternalSchema.materialChangeInfo))
+                        if (!((JObject)(object)payload).IsValid(RomuloExternalSchema.changeObjectMaterialPayloadSchema))
                         {
                             return;
                         }
@@ -182,13 +156,16 @@ namespace ReupVirtualTwin.managers
         public async Task ReceiveWebMessage(string serializedWebMessage)
         {
             JObject message = JObject.Parse(serializedWebMessage);
-            if (!incomingMessageValidator.ValidateMessage(serializedWebMessage))
+            IList<string> validationErrors;
+            bool isMessageValid = message.IsValid(RomuloExternalSchema.incomingMessageSchema, out validationErrors);
+            if (!isMessageValid)
             {
+                foreach (string validationError in validationErrors)
+                {
+                    Debug.Log(validationError);
+                }
                 Debug.LogWarning("Invalid message received");
-                _webMessageSender.SendWebMessage(new WebMessage<string>{
-                    type = WebMessageType.error,
-                    payload = $"Invalid message received at {this.GetType()}"
-                });
+                SendErrorMessage($"Invalid message received at {this.GetType()}");
                 return;
             }
             string type = message["type"].ToString();
@@ -249,6 +226,9 @@ namespace ReupVirtualTwin.managers
                     break;
                 case WebMessageType.disableSelection:
                     _selectedObjectsManager.allowEditSelection = false;
+                    break;
+                default:
+                    SendErrorMessage($"Invalid message type {type}");
                     break;
             }
         }
