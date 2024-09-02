@@ -256,8 +256,7 @@ namespace ReupVirtualTwin.managers
 
         private async Task LoadObjectsState(JObject requestPayload)
         {
-            originalSceneController?.RestoreOriginalScene();
-
+            originalSceneController?.RestoreOriginalScene();         
             List<JObject> objectStates = requestPayload["objects"].ToObject<JArray>().Cast<JObject>().ToList();
 
             var objectStatesByColor = objectStates
@@ -278,11 +277,11 @@ namespace ReupVirtualTwin.managers
             if (!finalResult.IsSuccess)
             {
                 originalSceneController?.RestoreOriginalScene();
-                SendFailureLoadSceneMessage(requestPayload["request_timestamp"], finalResult.Error);
+                SendFailureLoadSceneMessage(requestPayload["requestTimestamp"], finalResult.Error);
                 return;
             }
 
-            SendSuccessLoadSceneMessage(requestPayload["request_timestamp"]);
+            SendSuccessLoadSceneMessage(requestPayload["requestTimestamp"]);
         }
 
         private Result CombineResults(params Result[] results)
@@ -303,7 +302,7 @@ namespace ReupVirtualTwin.managers
             {
                 type = WebMessageType.requestSceneLoadSuccess,
                 payload = new JObject(
-                   new JProperty("requestTimestamp", requestPayload["requestTimestamp"])
+                   new JProperty("requestTimestamp", requestPayload)
                )
             };
             _webMessageSender.SendWebMessage(successMessage);

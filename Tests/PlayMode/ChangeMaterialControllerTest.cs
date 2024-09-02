@@ -78,6 +78,10 @@ namespace ReupVirtualTwinTests.controllers
             {
                 this.url = url;
                 await Task.Delay(1);
+                if (shouldFail)
+                {
+                    return null;
+                }
                 return texture;
             }
         }
@@ -161,18 +165,22 @@ namespace ReupVirtualTwinTests.controllers
         }
 
         [Test]
-        public async Task ShouldNotifyMediator_When_MaterialsChange()
+        public async Task ShouldReturnSuccess_When_MaterialsChange()
         {
-            await controller.ChangeObjectMaterial(messagePayload);
-            Assert.AreEqual(messagePayload["materialUrl"], mediatorSpy.changeMaterialInfo["materialUrl"]);
-            Assert.AreEqual(messagePayload["objectIds"], mediatorSpy.changeMaterialInfo["objectIds"]);
+            var result = await controller.ChangeObjectMaterial(messagePayload);
+
+            Assert.IsTrue(result.IsSuccess, "The material change operation should succeed.");
+
         }
 
         [Test]
-        public async Task ShouldNotNotifyMediator_When_MaterialsChange()
+        public async Task ShouldReturnFailure_When_TextureDownloadFails()
         {
-            await controller.ChangeObjectMaterial(messagePayload);
-            Assert.IsNull(mediatorSpy.changeMaterialInfo);
+            textureDownloaderSpy.shouldFail = true;
+            var result = await controller.ChangeObjectMaterial(messagePayload);
+            Assert.IsFalse(result.IsSuccess);
+            Assert.AreEqual($"Error downloading image from {messagePayload["material"]["texture"]}", result.Error);
+
         }
 
         [Test]

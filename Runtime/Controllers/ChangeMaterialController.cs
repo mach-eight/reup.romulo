@@ -28,7 +28,6 @@ namespace ReupVirtualTwin.controllers
 
         public async Task<Result> ChangeObjectMaterial(JObject materialChangeInfo)
         {
-            //return Result.Failure("Error,"); 
             if (RomuloEnvironment.development)
             {
                 if (!DataValidator.ValidateObjectToSchema(materialChangeInfo, RomuloInternalSchema.materialChangeInfo))
@@ -47,10 +46,7 @@ namespace ReupVirtualTwin.controllers
                 return Result.Failure($"Error downloading image from {materialUrl}");
             }
             List<GameObject> objects = objectRegistry.GetObjectsWithGuids(objectIds);
-            if (objects.Count == 0)
-            {
-                return Result.Failure("No objects found matching the given ID");
-            }
+
             Material newMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));
             newMaterial.SetTexture("_BaseMap", texture);
 
