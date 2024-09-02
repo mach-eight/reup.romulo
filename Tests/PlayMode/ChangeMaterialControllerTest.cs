@@ -73,6 +73,7 @@ namespace ReupVirtualTwinTests.controllers
         private class TextureDownloaderSpy : ITextureDownloader
         {
             public string url;
+            public bool shouldFail= false;
             public Texture2D texture = new Texture2D(1,1);
             public async Task<Texture2D> DownloadTextureFromUrl(string url)
             {
