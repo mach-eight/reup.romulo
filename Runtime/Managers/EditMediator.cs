@@ -56,6 +56,8 @@ namespace ReupVirtualTwin.managers
             get => _changeMaterialController; set => _changeMaterialController = value;
         }
 
+        private IncomingMessageValidator incomingMessageValidator = new IncomingMessageValidator();
+
         [HideInInspector]
         public string noInsertObjectIdErrorMessage = "No object id provided for insertion";
         [HideInInspector]
@@ -136,6 +138,7 @@ namespace ReupVirtualTwin.managers
                     {
                         if (!((JObject)(object)payload).IsValid(RomuloExternalSchema.changeObjectMaterialPayloadSchema))
                         {
+                            Debug.LogWarning("Invalid payload for objectMaterialChanged event");
                             return;
                         }
                     }
@@ -156,16 +159,14 @@ namespace ReupVirtualTwin.managers
         public async Task ReceiveWebMessage(string serializedWebMessage)
         {
             JObject message = JObject.Parse(serializedWebMessage);
-            IList<string> validationErrors;
-            bool isMessageValid = message.IsValid(RomuloExternalSchema.incomingMessageSchema, out validationErrors);
-            if (!isMessageValid)
+            IList<string> errorMessages;
+            if (!incomingMessageValidator.ValidateMessage(message, out errorMessages))
             {
-                foreach (string validationError in validationErrors)
+                foreach (string error in errorMessages)
                 {
-                    Debug.Log(validationError);
+                    Debug.LogWarning(error);
                 }
-                Debug.LogWarning("Invalid message received");
-                SendErrorMessage($"Invalid message received at {this.GetType()}");
+                SendErrorMessage(string.Join("", errorMessages));
                 return;
             }
             string type = message["type"].ToString();
@@ -226,9 +227,6 @@ namespace ReupVirtualTwin.managers
                     break;
                 case WebMessageType.disableSelection:
                     _selectedObjectsManager.allowEditSelection = false;
-                    break;
-                default:
-                    SendErrorMessage($"Invalid message type {type}");
                     break;
             }
         }

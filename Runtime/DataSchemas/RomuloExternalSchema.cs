@@ -1,6 +1,4 @@
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
-using ReupVirtualTwin.helpers;
 
 namespace ReupVirtualTwin.dataSchemas
 {
@@ -16,7 +14,7 @@ namespace ReupVirtualTwin.dataSchemas
             ""required"": [""requestTimestamp""]
         }");
 
-        public static readonly JSchema RequestLoadScenePayloadSchema = JSchema.Parse(@"{
+        public static readonly JSchema requestLoadScenePayloadSchema = JSchema.Parse(@"{
             ""type"": ""object"",
             ""properties"": {
                 ""requestTimestamp"": { ""type"": ""integer"" },
@@ -32,23 +30,6 @@ namespace ReupVirtualTwin.dataSchemas
                 }
             },
             ""required"": [""requestTimestamp"", ""objects""]
-        }");
-
-        public static readonly JSchema incomingMessageSchema = JSchema.Parse(@"{
-            ""type"": ""object"",
-            ""properties"": {
-                ""type"": { ""type"": ""string"" },
-                ""payload"": {
-                    ""anyOf"": [
-                        " + changeObjectMaterialPayloadSchema.ToString() + @",
-                        " + requestSceneStatePayloadSchema.ToString() + @",
-                        " + RequestLoadScenePayloadSchema.ToString() + @",
-                        " + RomuloInternalSchema.boolSchema.ToString() + @",
-                        " + RomuloInternalSchema.stringSchema.ToString() + @"
-                    ]
-                }
-            },
-            ""required"": [""type""]
         }");
     }
 }

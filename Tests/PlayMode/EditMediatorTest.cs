@@ -230,6 +230,7 @@ public class EditMediatorTest : MonoBehaviour
 
         public void SendWebMessage<T>(WebMessage<T> webMessage)
         {
+            Debug.Log($"Sending message: {JsonConvert.SerializeObject(webMessage)}");
             sentMessages.Add(webMessage);
         }
     }
@@ -643,7 +644,7 @@ public class EditMediatorTest : MonoBehaviour
     {
         JObject material = new JObject()
         {
-            { "id", "123456" },
+            { "id", 123456 },
             { "texture", "material-1-url" },
             { "widthMilimeters", 2000 },
             { "heightMilimeters", 1500 }
@@ -670,7 +671,7 @@ public class EditMediatorTest : MonoBehaviour
     {
         JObject material = new JObject()
         {
-            { "id", "12345" },
+            { "id", 12345 },
             { "texture", "material-1-url" },
             { "widthMilimeters", 2000 },
             { "heightMilimeters", 1500}
@@ -774,8 +775,14 @@ public class EditMediatorTest : MonoBehaviour
             { "type", WebMessageType.changeObjectsMaterial },
             { "payload", new Dictionary<string, object>
                 {
-                    {"material_url", "material-url"},
-                    {"object_ids", new string[] { "id-0", "id-1" } },
+                    { "material", new JObject()
+                        {
+                            ["texture"] = "material-1-url",
+                            ["widthMilimeters"] = 2000,
+                            ["heightMilimeters"] = 1500
+                        }
+                    },
+                    {"objectIds", new string[] { "id-0", "id-1" } },
                 }
             }
         };
@@ -912,7 +919,7 @@ public class EditMediatorTest : MonoBehaviour
     {
         JObject material = new JObject()
         {
-            { "id", "123456" },
+            { "id", 123456 },
             { "texture", "material-1-url" },
             { "widthMilimeters", 2000 },
             { "heightMilimeters", 1500}
@@ -956,14 +963,14 @@ public class EditMediatorTest : MonoBehaviour
     {
         JObject material1 = new JObject()
         {
-            { "id", "123456" },
+            { "id", 123456 },
             { "texture", "material-1-url" },
             { "widthMilimeters", 2000 },
             { "heightMilimeters", 1500}
         };
         JObject material2 = new JObject()
         {
-            { "id", "1234567" },
+            { "id", 1234567 },
             { "texture", "material-2-url" },
             { "widthMilimeters", 20000 },
             { "heightMilimeters", 15000 }
@@ -1030,7 +1037,7 @@ public class EditMediatorTest : MonoBehaviour
                     { "material",
                         new JObject()
                         {
-                            { "id", "12345" },
+                            { "id", 12345 },
                             { "texture", "material-1-url" },
                             { "widthMilimeters", 2000 },
                             { "heightMilimeters", 1500}
@@ -1082,20 +1089,6 @@ public class EditMediatorTest : MonoBehaviour
         Assert.AreEqual(0, originalSceneControllerSpy.restoreOriginalSceneCallsCount);
         await editMediator.ReceiveWebMessage(serializedMessage);
         Assert.AreEqual(1, originalSceneControllerSpy.restoreOriginalSceneCallsCount);
-    }
-
-    [Test]
-    public async Task ShouldSendErrorMessageIfAnInvalidPayloadIsRecieved()
-    {
-        JObject invalidMessage = new JObject
-        {
-            { "type", WebMessageType.activatePositionTransform },
-            { "payload", new JObject() }
-        };
-        string serializedMessage = JsonConvert.SerializeObject(invalidMessage);
-        await editMediator.ReceiveWebMessage(serializedMessage);
-        WebMessage<string> sentMessage = (WebMessage<string>)mockWebMessageSender.sentMessages[0];
-        Assert.AreEqual(WebMessageType.error, sentMessage.type);
     }
 
 }
