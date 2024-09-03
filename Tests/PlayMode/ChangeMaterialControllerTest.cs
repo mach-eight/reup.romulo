@@ -23,16 +23,14 @@ namespace ReupVirtualTwinTests.controllers
         ChangeMaterialController controller;
         JObject messagePayload;
         SomeObjectWithMaterialRegistrySpy objectRegistry;
-        MediatorSpy mediatorSpy;
         MaterialScalerSpy materialScalerSpy;
 
         [UnitySetUp]
         public IEnumerator SetUp()
         {
-            mediatorSpy = new MediatorSpy();
             textureDownloaderSpy = new TextureDownloaderSpy();
             objectRegistry = new SomeObjectWithMaterialRegistrySpy();
-            controller = new ChangeMaterialController(textureDownloaderSpy, objectRegistry, mediatorSpy);
+            controller = new ChangeMaterialController(textureDownloaderSpy, objectRegistry);
             materialScalerSpy = new MaterialScalerSpy();
             controller.materialScaler = materialScalerSpy;
             messagePayload = new JObject()
@@ -84,23 +82,6 @@ namespace ReupVirtualTwinTests.controllers
                     return null;
                 }
                 return texture;
-            }
-        }
-
-        private class MediatorSpy : IMediator
-        {
-            public JObject changeMaterialInfo = null;
-            public void Notify(ReupEvent eventName)
-            {
-                throw new NotImplementedException();
-            }
-
-            public void Notify<T>(ReupEvent eventName, T payload)
-            {
-                if (eventName == ReupEvent.objectMaterialChanged)
-                {
-                    changeMaterialInfo = payload as JObject;
-                }
             }
         }
 

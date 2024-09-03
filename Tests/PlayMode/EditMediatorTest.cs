@@ -102,10 +102,11 @@ public class EditMediatorTest : MonoBehaviour
         public JObject lastReceivedMessageRequest;
         public List<JObject> receivedMessageRequests = new List<JObject>();
         public bool throwError = false;        
-        public Task<Result> ChangeObjectMaterial(JObject materialChangeInfo)
+        public Task<TaskResult> ChangeObjectMaterial(JObject materialChangeInfo)
         {
+            Debug.Log("entra");
             if (throwError) {
-                return Task.FromResult(Result.Failure("ERROR, Fail to change materials")); 
+                return Task.FromResult(TaskResult.Failure("ERROR, Fail to change materials")); 
             }
             if (!DataValidator.ValidateObjectToSchema(materialChangeInfo, RomuloInternalSchema.materialChangeInfo))
             {
@@ -114,7 +115,7 @@ public class EditMediatorTest : MonoBehaviour
             receivedMessageRequests.Add(materialChangeInfo);
             lastReceivedMessageRequest = materialChangeInfo;
 
-            return Task.FromResult(Result.Success());
+            return Task.FromResult(TaskResult.Success());
         }
     }
 
@@ -569,7 +570,7 @@ public class EditMediatorTest : MonoBehaviour
     }
 
     [Test]
-    public async Task ShouldSendSuccessMessage_When_LoadSceneIsSuccess()
+    public async Task ShouldSendSuccessMessage_When_LoadSceneIsSuccessful()
     {
         string color = "#00FF00";
         requestSceneLoadMessage["payload"]["objects"] = new JArray(
@@ -599,7 +600,7 @@ public class EditMediatorTest : MonoBehaviour
     }
 
     [Test]
-    public async Task ShouldSendFailureMessage_When_LoasSceneFails()
+    public async Task ShouldSendFailureMessage_When_LoadSceneFails()
     {
         JObject material = new JObject()
         {
@@ -751,6 +752,35 @@ public class EditMediatorTest : MonoBehaviour
         WebMessage<JObject> sentMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.changeObjectsMaterialSuccess, sentMessage.type);
         yield return null;
+    }
+
+    [Test]
+    public async Task ShouldSendFailureMessage_When_NotifiedOfMaterialCannotChange()
+    {
+        JObject material = new JObject()
+        {
+            { "id", 1 },
+            { "texture", "material-1-url" },
+            { "widthMilimeters", 2000 },
+            { "heightMilimeters", 1500}
+        };
+
+        JObject requesMessage = new JObject(
+           new JProperty("type", WebMessageType.changeObjectsMaterial),
+           new JProperty("payload", new JObject()
+           {
+               new JProperty("material", material),
+               new JProperty("objectIds", new JArray(new string[] { "id-0", "id-1" }))
+           })
+       );
+
+        changeMaterialControllerSpy.throwError = true;
+        string serializedMessage = JsonConvert.SerializeObject(requesMessage);
+        await editMediator.ReceiveWebMessage(serializedMessage);
+
+        WebMessage<string> sentMessage = (WebMessage<string>)mockWebMessageSender.sentMessages[0];
+        Debug.Log(sentMessage);
+        Assert.AreEqual(WebMessageType.error, sentMessage.type);
     }
 
     [UnityTest]

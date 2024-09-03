@@ -57,10 +57,8 @@ namespace ReupVirtualTwin.dependencyInjectors
             );
             editMediator.changeMaterialController = new ChangeMaterialController(
                 new TextureDownloader(),
-                registry,
-                editMediator
+                registry
             );
-            editMediator.originalSceneController = new OriginalSceneController(registry);
         }
     }
 }

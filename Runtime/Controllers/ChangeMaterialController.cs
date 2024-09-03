@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.webRequestersInterfaces;
 using ReupVirtualTwin.modelInterfaces;
-using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.romuloEnvironment;
@@ -20,19 +19,19 @@ namespace ReupVirtualTwin.controllers
         public IMaterialScaler materialScaler = new MaterialScaler();
         readonly ITextureDownloader textureDownloader;
         readonly IObjectRegistry objectRegistry;
-        public ChangeMaterialController(ITextureDownloader textureDownloader, IObjectRegistry objectRegistry, IMediator mediator)
+        public ChangeMaterialController(ITextureDownloader textureDownloader, IObjectRegistry objectRegistry)
         {
             this.textureDownloader = textureDownloader;
             this.objectRegistry = objectRegistry;
         }
 
-        public async Task<Result> ChangeObjectMaterial(JObject materialChangeInfo)
+        public async Task<TaskResult> ChangeObjectMaterial(JObject materialChangeInfo)
         {
             if (RomuloEnvironment.development)
             {
                 if (!DataValidator.ValidateObjectToSchema(materialChangeInfo, RomuloInternalSchema.materialChangeInfo))
                 {
-                    return Result.Failure("Error, the provided material change information does not conform to the expected schema");
+                    return TaskResult.Failure("Error, the provided material change information does not conform to the expected schema");
                 }
             }
             string materialUrl = materialChangeInfo["material"]["texture"].ToString();
@@ -43,7 +42,7 @@ namespace ReupVirtualTwin.controllers
             Texture2D texture = await textureDownloader.DownloadTextureFromUrl(materialUrl);
             if (!texture)
             {
-                return Result.Failure($"Error downloading image from {materialUrl}");
+                return TaskResult.Failure($"Error downloading image from {materialUrl}");
             }
             List<GameObject> objects = objectRegistry.GetObjectsWithGuids(objectIds);
 
@@ -60,7 +59,7 @@ namespace ReupVirtualTwin.controllers
                     materialScaler.AdjustUVScaleToDimensions(objects[i], materialDimensionsInMilimeters);
                 }
             }
-            return Result.Success();
+            return TaskResult.Success();
         }
     }
 }
