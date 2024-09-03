@@ -108,7 +108,7 @@ public class EditMediatorTest : MonoBehaviour
             if (!isValid)
             {
                foreach (string errorMessage in errorMessages)
-                {
+               {
                    Debug.LogError(errorMessage);
                }
                throw new Exception("Invalid material change info object");
