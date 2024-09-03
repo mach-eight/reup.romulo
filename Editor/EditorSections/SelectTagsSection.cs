@@ -116,7 +116,7 @@ namespace ReupVirtualTwin.editor
 
         private IEnumerable<Tag> FilterUnselectedTagsByNameAndId()
         {
-            return allTags.Where(tag => !IsTagAlreadyPresent(tag) && TagContainsText($"{tag.id} {tag.name}", searchTagText));
+            return allTags.Where(tag => !IsTagAlreadyPresent(tag) && StringsUtils.TextContainsSubtext($"{tag.id} {tag.name}", searchTagText));
         }
 
         private async Task GetTags()
@@ -127,10 +127,6 @@ namespace ReupVirtualTwin.editor
         private async Task GetMoreTags()
         {
             allTags = EditionTagsCreator.ApplyEditionTags(await tagsApiManager.LoadMoreTags());
-        }
-        private bool TagContainsText(string tagIdAndName, string text)
-        {
-            return tagIdAndName.ToLower().Contains(text.ToLower());
         }
 
         private bool IsTagAlreadyPresent(Tag tag)
