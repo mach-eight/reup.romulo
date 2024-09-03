@@ -111,7 +111,7 @@ public class ReupPrefabTest : MonoBehaviour
     }
 
     [UnityTest]
-    public IEnumerator EditionMediatorShouldHaveAOriginalSceneController()
+    public IEnumerator EditMediatorShouldHaveAOriginalSceneController()
     {
         Assert.IsNotNull(editMediator.originalSceneController);
         yield return null;

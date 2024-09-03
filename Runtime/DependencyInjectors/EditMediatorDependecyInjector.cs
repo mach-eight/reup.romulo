@@ -59,6 +59,7 @@ namespace ReupVirtualTwin.dependencyInjectors
                 new TextureDownloader(),
                 registry
             );
+            editMediator.originalSceneController = new OriginalSceneController(registry);
         }
     }
 }
