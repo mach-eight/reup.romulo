@@ -234,8 +234,7 @@ namespace ReupVirtualTwin.managers
                     break;
                 case WebMessageType.changeObjectsMaterial:
                     TaskResult result = await _changeMaterialController.ChangeObjectMaterial((JObject)payload);
-                    Debug.Log(result.IsSuccess);
-                    if (!result.IsSuccess) 
+                    if (!result.isSuccess) 
                     {
                         SendErrorMessage("Cannot change the material");
                     }
@@ -261,7 +260,7 @@ namespace ReupVirtualTwin.managers
 
         private async Task LoadObjectsState(JObject requestPayload)
         {
-            originalSceneController?.RestoreOriginalScene();         
+            originalSceneController.RestoreOriginalScene();         
             List<JObject> objectStates = requestPayload["objects"].ToObject<JArray>().Cast<JObject>().ToList();
 
             var objectStatesByColor = objectStates
@@ -279,36 +278,36 @@ namespace ReupVirtualTwin.managers
             TaskResult materialWasChanged = await ApplyMaterialsToSceneObjects(objectStatesByMaterial);
 
             TaskResult finalResult = TaskResult.CombineResults(materialWasChanged, colorWasChanged);
-            if (!finalResult.IsSuccess)
+            if (!finalResult.isSuccess)
             {
                 originalSceneController?.RestoreOriginalScene();
-                SendFailureLoadSceneMessage(requestPayload["requestTimestamp"], finalResult.Error);
+                SendFailureLoadSceneMessage(requestPayload, finalResult.error);
                 return;
             }
 
-            SendSuccessLoadSceneMessage(requestPayload["requestTimestamp"]);
+            SendSuccessLoadSceneMessage(requestPayload);
         }
 
-        private void SendSuccessLoadSceneMessage(JToken requestPayload)
+        private void SendSuccessLoadSceneMessage(JObject requestPayload)
         {
             WebMessage<JObject> successMessage = new()
             {
                 type = WebMessageType.requestSceneLoadSuccess,
                 payload = new JObject(
-                    new JProperty("requestTimestamp", requestPayload)
+                    new JProperty("requestTimestamp", requestPayload["requestTimestamp"])
                 )
             };
             _webMessageSender.SendWebMessage(successMessage);
         }
 
-        private void SendFailureLoadSceneMessage(JToken requestTimestamp, string errorMessage)
+        private void SendFailureLoadSceneMessage(JObject requestPayload, string errorMessage)
         {
           
              WebMessage<JObject> failureMessage = new()
             {
                 type = WebMessageType.requestSceneLoadFailure,
                 payload = new JObject(
-                    new JProperty("requestTimestamp", requestTimestamp),
+                    new JProperty("requestTimestamp", requestPayload["requestTimestamp"]),
                     new JProperty("errorMessage", errorMessage)
                 )
             };
@@ -345,7 +344,7 @@ namespace ReupVirtualTwin.managers
                     { "objectIds", new JArray(objectIds) },
                 };
                 TaskResult isSuccess = await _changeMaterialController.ChangeObjectMaterial(materialChangeInfo);
-                if (!isSuccess.IsSuccess)
+                if (!isSuccess.isSuccess)
                 {
                     return isSuccess;
                 }
@@ -593,7 +592,6 @@ namespace ReupVirtualTwin.managers
 
         private void SendErrorMessage(string message)
         {
-            Debug.Log(message);
             _webMessageSender.SendWebMessage(new WebMessage<string>
             {
                 type = WebMessageType.error,

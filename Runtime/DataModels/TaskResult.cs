@@ -4,13 +4,13 @@ namespace ReupVirtualTwin.dataModels
 {
     public class TaskResult
     {
-        public bool IsSuccess { get; }
-        public string Error { get; }
+        public bool isSuccess { get; }
+        public string error { get; }
 
         protected TaskResult(bool isSuccess, string error)
         {
-            IsSuccess = isSuccess;
-            Error = error;
+            this.isSuccess = isSuccess;
+            this.error = error;
         }
 
         public static TaskResult Success() => new TaskResult(true, null);
@@ -21,9 +21,9 @@ namespace ReupVirtualTwin.dataModels
         {
             foreach (var result in results)
             {
-                if (!result.IsSuccess)
+                if (!result.isSuccess)
                 {
-                    return TaskResult.Failure(result.Error);
+                    return TaskResult.Failure(result.error);
                 }
             }
             return TaskResult.Success();

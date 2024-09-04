@@ -151,7 +151,7 @@ namespace ReupVirtualTwinTests.controllers
         {
             var result = await controller.ChangeObjectMaterial(messagePayload);
 
-            Assert.IsTrue(result.IsSuccess, "The material change operation should succeed.");
+            Assert.IsTrue(result.isSuccess, "The material change operation should succeed.");
 
         }
 
@@ -160,8 +160,8 @@ namespace ReupVirtualTwinTests.controllers
         {
             textureDownloaderSpy.shouldFail = true;
             var result = await controller.ChangeObjectMaterial(messagePayload);
-            Assert.IsFalse(result.IsSuccess);
-            Assert.AreEqual($"Error downloading image from {messagePayload["material"]["texture"]}", result.Error);
+            Assert.IsFalse(result.isSuccess);
+            Assert.AreEqual($"Error downloading image from {messagePayload["material"]["texture"]}", result.error);
 
         }
 

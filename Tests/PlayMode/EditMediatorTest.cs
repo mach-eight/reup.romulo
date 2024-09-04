@@ -104,7 +104,6 @@ public class EditMediatorTest : MonoBehaviour
         public bool throwError = false;        
         public Task<TaskResult> ChangeObjectMaterial(JObject materialChangeInfo)
         {
-            Debug.Log("entra");
             if (throwError) {
                 return Task.FromResult(TaskResult.Failure("ERROR, Fail to change materials")); 
             }
