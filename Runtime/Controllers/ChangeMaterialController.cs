@@ -44,13 +44,13 @@ namespace ReupVirtualTwin.controllers
             float height = materialChangeInfo["material"]["heightMilimeters"].ToObject<float>();
             Vector2 materialDimensionsInMilimeters = new Vector2(width, height);
             Texture2D texture = await textureDownloader.DownloadTextureFromUrl(materialUrl);
-            Texture2D compressedTexture = textureCompresser.GetASTC12x12CompressedTexture(texture);
-            GameObject.Destroy(texture);
-            if (!compressedTexture)
+            if (!texture)
             {
                 mediator.Notify(ReupEvent.error, $"Error downloading image from {materialUrl}");
                 return;
             }
+            Texture2D compressedTexture = textureCompresser.GetASTC12x12CompressedTexture(texture);
+            GameObject.Destroy(texture);
             List<GameObject> objects = objectRegistry.GetObjectsWithGuids(objectIds);
             Material newMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));
             newMaterial.SetTexture("_BaseMap", compressedTexture);
