@@ -21,6 +21,7 @@ namespace ReupVirtualTwin.editor
         private List<Tag> selectedTags = new List<Tag>();
         private string subStringFilterText = "";
         private float totalWidth;
+        private List<Dictionary<string, bool>> objectsVisibilityStates = new List<Dictionary<string, bool>>();
 
         [MenuItem("Reup Romulo/Tag Scanner")]
         public static void ShowWindow()
@@ -71,13 +72,20 @@ namespace ReupVirtualTwin.editor
             EditorGUILayout.BeginHorizontal();
                 if (GUILayout.Button("Apply filters"))
                 {
+                    objectsVisibilityStates.Add(ObjectVisibilityUtils.GetVisibilityStateOfAllObjects(building, new IdController()));
                     ApplyFilters(building);
                 }
-                if (GUILayout.Button("Undo filters"))
+                if (GUILayout.Button("Restore last objects visibility") && objectsVisibilityStates.Count > 0)
                 {
-                    MisapplyFilters(building);
+                    UndoLastFilters(building);
                 }
             EditorGUILayout.EndHorizontal();
+        }
+
+        private void UndoLastFilters(GameObject building)
+        {
+            Dictionary<string, bool> lastVisibilityState = objectsVisibilityStates.PopLast();
+            ObjectVisibilityUtils.ApplyVisibilityState(building, lastVisibilityState, new IdController());
         }
 
         private void ApplyFilters(GameObject building)
@@ -96,10 +104,6 @@ namespace ReupVirtualTwin.editor
             }
         }
 
-        private void MisapplyFilters(GameObject building)
-        {
-            sceneVisibilityManager.Show(building, true);
-        }
         private void ShowFilters()
         {
             float filterNameWidth = totalWidth * 0.6f;
