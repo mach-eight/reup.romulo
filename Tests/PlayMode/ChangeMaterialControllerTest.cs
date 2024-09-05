@@ -1,5 +1,4 @@
 using NUnit.Framework;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,8 +7,6 @@ using System.Threading.Tasks;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.webRequestersInterfaces;
 using Tests.PlayMode.Mocks;
-using ReupVirtualTwin.managerInterfaces;
-using ReupVirtualTwin.enums;
 using Newtonsoft.Json.Linq;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.helperInterfaces;

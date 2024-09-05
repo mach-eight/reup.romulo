@@ -105,7 +105,7 @@ public class EditMediatorTest : MonoBehaviour
         public Task<TaskResult> ChangeObjectMaterial(JObject materialChangeInfo)
         {
             if (throwError) {
-                return Task.FromResult(TaskResult.Failure("ERROR, Fail to change materials")); 
+                return Task.FromResult(TaskResult.Failure("ERROR, Fail to change materials from spy")); 
             }
             if (!DataValidator.ValidateObjectToSchema(materialChangeInfo, RomuloInternalSchema.materialChangeInfo))
             {
@@ -634,7 +634,7 @@ public class EditMediatorTest : MonoBehaviour
         string actualErrorMessage = sentMessage.payload["errorMessage"].ToString();
 
         Assert.AreEqual(WebMessageType.requestSceneLoadFailure, sentMessage.type);
-        Assert.AreEqual("ERROR, Fail to change materials", actualErrorMessage);
+        Assert.AreEqual("ERROR, Fail to change materials from spy", actualErrorMessage);
     }
 
     [UnityTest]
@@ -778,7 +778,6 @@ public class EditMediatorTest : MonoBehaviour
         await editMediator.ReceiveWebMessage(serializedMessage);
 
         WebMessage<string> sentMessage = (WebMessage<string>)mockWebMessageSender.sentMessages[0];
-        Debug.Log(sentMessage);
         Assert.AreEqual(WebMessageType.error, sentMessage.type);
     }
 

@@ -236,7 +236,8 @@ namespace ReupVirtualTwin.managers
                     TaskResult result = await _changeMaterialController.ChangeObjectMaterial((JObject)payload);
                     if (!result.isSuccess) 
                     {
-                        SendErrorMessage("Cannot change the material");
+                        SendErrorMessage(result.error);
+                        return;
                     }
                     ProcessObjectMaterialsChange((JObject)payload);
                     break;
@@ -280,8 +281,8 @@ namespace ReupVirtualTwin.managers
             TaskResult finalResult = TaskResult.CombineResults(materialWasChanged, colorWasChanged);
             if (!finalResult.isSuccess)
             {
-                originalSceneController?.RestoreOriginalScene();
-                SendFailureLoadSceneMessage(requestPayload, finalResult.error);
+                originalSceneController.RestoreOriginalScene();
+                SendLoadSceneFailureMessage(requestPayload, finalResult.error);
                 return;
             }
 
@@ -300,7 +301,7 @@ namespace ReupVirtualTwin.managers
             _webMessageSender.SendWebMessage(successMessage);
         }
 
-        private void SendFailureLoadSceneMessage(JObject requestPayload, string errorMessage)
+        private void SendLoadSceneFailureMessage(JObject requestPayload, string errorMessage)
         {
           
              WebMessage<JObject> failureMessage = new()
