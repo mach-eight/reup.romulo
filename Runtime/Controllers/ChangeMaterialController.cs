@@ -42,15 +42,15 @@ namespace ReupVirtualTwin.controllers
             float width = materialChangeInfo["material"]["widthMilimeters"].ToObject<float>();
             float height = materialChangeInfo["material"]["heightMilimeters"].ToObject<float>();
             Vector2 materialDimensionsInMilimeters = new Vector2(width, height);
-            Texture2D texture = await textureDownloader.DownloadTextureFromUrl(materialUrl);
-            if (!texture)
+            Texture2D compressedTexture = await GetCompressedTextureFromUrl(materialUrl);
+            if (!compressedTexture)
             {
                 mediator.Notify(ReupEvent.error, $"Error downloading image from {materialUrl}");
                 return;
             }
             List<GameObject> objects = objectRegistry.GetObjectsWithGuids(objectIds);
             Material newMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-            newMaterial.SetTexture("_BaseMap", texture);
+            newMaterial.SetTexture("_BaseMap", compressedTexture);
             for (int i = 0; i < objects.Count; i++)
             {
                 if (objects[i].GetComponent<Renderer>() != null)
@@ -65,6 +65,16 @@ namespace ReupVirtualTwin.controllers
             {
                 mediator.Notify(ReupEvent.objectMaterialChanged, materialChangeInfo);
             }
+        }
+
+        private async Task<Texture2D> GetCompressedTextureFromUrl(string materialUrl)
+        {
+            Texture2D texture = await textureDownloader.DownloadTextureFromUrl(materialUrl);
+            Texture2D compressedTexture = new Texture2D(texture.width, texture.height, TextureFormat.ASTC_12x12, false);
+            byte[] textureBytes = texture.EncodeToPNG();
+            ImageConversion.LoadImage(compressedTexture, textureBytes);
+            GameObject.Destroy(texture);
+            return compressedTexture;
         }
     }
 }
