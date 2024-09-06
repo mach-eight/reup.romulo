@@ -7,9 +7,9 @@ namespace ReupVirtualTwin.helpers
 {
     public class MaterialScaler : IMaterialScaler
     {
-        public void AdjustUVScaleToDimensions(GameObject obj, Vector2 dimensionsInMilimeters)
+        public void AdjustUVScaleToDimensions(GameObject obj, Vector2 dimensionsInMillimeters)
         {
-            UvUtils.AdjustUVScaleToDimensions(obj, dimensionsInMilimeters);
+            UvUtils.AdjustUVScaleToDimensions(obj, dimensionsInMillimeters);
         }
     }
 }
