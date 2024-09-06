@@ -1,65 +1,72 @@
 using Newtonsoft.Json.Linq;
-using System.Collections;
+using Newtonsoft.Json.Schema;
+using ReupVirtualTwin.dataSchemas;
+using ReupVirtualTwin.enums;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace ReupVirtualTwin.helpers
 {
     public class IncomingMessageValidator
     {
-        private List<RegisteredMessage> registeredMessages = new List<RegisteredMessage>();
-        private JObject objectWithTypeSchema = new JObject
+        private static Dictionary<string, JSchema> payloadJSchemaForMessageType = new Dictionary<string, JSchema>
         {
-            { "type", DataValidator.objectType },
-            { "properties", new JObject 
-                {
-                    { "type", DataValidator.stringSchema }
-                }
-            }
+            { WebMessageType.activatePositionTransform, null },
+            { WebMessageType.activateRotationTransform, null },
+            { WebMessageType.deactivateTransformMode, null },
+            { WebMessageType.requestModelInfo, null },
+            { WebMessageType.clearSelectedObjects, null },
+            { WebMessageType.allowSelection, null },
+            { WebMessageType.disableSelection, null },
+            { WebMessageType.setEditMode, BasicTypesSchemas.boolSchema },
+            { WebMessageType.deleteObjects, BasicTypesSchemas.stringSchema },
+            { WebMessageType.loadObject, BasicTypesSchemas.stringSchema },
+            { WebMessageType.changeObjectColor, BasicTypesSchemas.stringSchema },
+            { WebMessageType.changeObjectsMaterial, RomuloExternalSchema.changeObjectMaterialPayloadSchema },
+            { WebMessageType.requestSceneState, RomuloExternalSchema.requestSceneStatePayloadSchema },
+            { WebMessageType.requestSceneLoad, RomuloExternalSchema.requestLoadScenePayloadSchema },
         };
 
-        private class RegisteredMessage
+        public bool ValidateMessage(JObject incomingMessage, out IList<string> errorMessages)
         {
-            public string type;
-            public JObject schema;
-        }
-        public void RegisterMessage(string type)
-        {
-            registeredMessages.Add(new RegisteredMessage
+            errorMessages = new List<string>();
+            if (!incomingMessage.ContainsKey("type"))
             {
-                type = type,
-            });
-        }
-        public void RegisterMessage(string type, JObject schema)
-        {
-            registeredMessages.Add(new RegisteredMessage
-            {
-                type = type,
-                schema = schema
-            });
-        }
-        public bool ValidateMessage(string message)
-        {
-            if (!DataValidator.ValidateJsonStringToSchema(message, objectWithTypeSchema))
-            {
-                Debug.LogWarning("Received message does not contain a type key");
+                errorMessages.Add("Incoming message does not contain a type field");
                 return false;
             }
-            JObject messageObject = JObject.Parse(message);
-            string messageType = (string)messageObject["type"];
-            foreach (RegisteredMessage registeredMessage in registeredMessages)
+            string messageType = incomingMessage["type"].ToString();
+            if (!payloadJSchemaForMessageType.ContainsKey(messageType))
             {
-                if (messageType == registeredMessage.type)
-                {
-                    if (registeredMessage.schema == null)
-                    {
-                        return true;
-                    }
-                    return DataValidator.ValidateObjectToSchema(messageObject["payload"], registeredMessage.schema);
-                }
+                errorMessages.Add($"Incoming message type '{messageType}' is not supported");
+                return false;
             }
-            Debug.LogWarning($"Message type {messageType} not registered: ");
-            return false;
+
+            JToken payload = incomingMessage["payload"];
+            JSchema schema = payloadJSchemaForMessageType[messageType];
+
+            return ValidateMessagePayload(payload, schema, out errorMessages);
+        }
+
+        private bool ValidateMessagePayload(JToken payload, JSchema schema, out IList<string> errorMessages)
+        {
+            errorMessages = new List<string>();
+            if (schema == null)
+            {
+                if (payload != null)
+                {
+                    errorMessages.Add("Incoming message should not contain a payload");
+                    return false;
+                }
+                return true;
+            };
+
+            if (payload == null)
+            {
+                errorMessages.Add("Incoming message should contain a payload");
+                return false;
+            }
+
+            return payload.IsValid(schema, out errorMessages);
         }
     }
 }
