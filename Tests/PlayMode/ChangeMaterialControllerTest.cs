@@ -45,8 +45,8 @@ namespace ReupVirtualTwinTests.controllers
                     {
                         { "id", 1234567890 },
                         { "texture", "material-url.com" },
-                        { "widthMilimeters", 2000 },
-                        { "heightMilimeters", 1500 },
+                        { "widthMillimeters", 2000 },
+                        { "heightMillimeters", 1500 },
                     }
                 }
             };

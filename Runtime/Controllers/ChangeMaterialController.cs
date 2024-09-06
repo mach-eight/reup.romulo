@@ -41,9 +41,9 @@ namespace ReupVirtualTwin.controllers
             }
             string materialUrl = materialChangeInfo["material"]["texture"].ToString();
             string[] objectIds = materialChangeInfo["objectIds"].ToObject<string[]>();
-            float width = materialChangeInfo["material"]["widthMilimeters"].ToObject<float>();
-            float height = materialChangeInfo["material"]["heightMilimeters"].ToObject<float>();
-            Vector2 materialDimensionsInMilimeters = new Vector2(width, height);
+            float width = materialChangeInfo["material"]["widthMillimeters"].ToObject<float>();
+            float height = materialChangeInfo["material"]["heightMillimeters"].ToObject<float>();
+            Vector2 materialDimensionsInMillimeters = new Vector2(width, height);
             Texture2D texture = await textureDownloader.DownloadTextureFromUrl(materialUrl);
             if (!texture)
             {
@@ -62,7 +62,7 @@ namespace ReupVirtualTwin.controllers
                     objects[i].GetComponent<Renderer>().material = newMaterial;
                     objects[i].GetComponent<IObjectInfo>().materialWasChanged = true;
                     ObjectMetaDataUtils.AssignMaterialIdMetaDataToObject(objects[i], materialChangeInfo["material"]["id"].ToObject<int>());
-                    materialScaler.AdjustUVScaleToDimensions(objects[i], materialDimensionsInMilimeters);
+                    materialScaler.AdjustUVScaleToDimensions(objects[i], materialDimensionsInMillimeters);
                 }
             }
             if (notify)
