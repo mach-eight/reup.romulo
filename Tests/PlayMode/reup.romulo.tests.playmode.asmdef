@@ -20,7 +20,8 @@
         "reup.romulo.webRequestersInterfaces",
         "reup.romulo.webRequesters",
         "reup.romulo.dataSchemas",
-        "reup.romulo.tests.utils"
+        "reup.romulo.tests.utils",
+        "reup.romulo.tests.mocks"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

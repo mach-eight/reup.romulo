@@ -14,7 +14,7 @@ using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.helperInterfaces;
 using System.Linq;
 using ReupVirtualTwinTests.utils;
-using ReupVirtualTwinTests.utils.mocks;
+using ReupVirtualTwinTests.mocks;
 
 namespace ReupVirtualTwinTests.controllers
 {

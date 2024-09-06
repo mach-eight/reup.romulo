@@ -13,7 +13,7 @@ using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.helperInterfaces;
-using ReupVirtualTwinTests.utils.mocks;
+using ReupVirtualTwinTests.mocks;
 
 public class SelectedObjectsManagerTest : MonoBehaviour
 {

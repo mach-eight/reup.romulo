@@ -17,7 +17,7 @@ using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.dataSchemas;
 using Newtonsoft.Json.Schema;
-using ReupVirtualTwinTests.utils.mocks;
+using ReupVirtualTwinTests.mocks;
 
 public class EditMediatorTest : MonoBehaviour
 {

@@ -4,7 +4,7 @@ using NUnit.Framework;
 using System.Threading.Tasks;
 using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.managers;
-using ReupVirtualTwinTests.utils.mocks;
+using ReupVirtualTwinTests.mocks;
 
 public class TagsApiManagerTest : MonoBehaviour
 {

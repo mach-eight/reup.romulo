@@ -12,7 +12,7 @@ using ReupVirtualTwin.enums;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using ReupVirtualTwinTests.utils;
-using ReupVirtualTwinTests.utils.mocks;
+using ReupVirtualTwinTests.mocks;
 
 public class ModelInfoManagerTest : MonoBehaviour
 {
@@ -178,6 +178,8 @@ public class ModelInfoManagerTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldGetColorInfoInSceneStateMessage()
     {
+        Debug.Log("buildingGameObject");
+        Debug.Log(buildingGameObject);
         MetaDataComponentMock metaDataComponent = buildingGameObject.AddComponent<MetaDataComponentMock>();
         JObject parentMetaData = new JObject
         {

@@ -4,7 +4,7 @@ using UnityEngine;
 
 using ReupVirtualTwin.helperInterfaces;
 
-namespace ReupVirtualTwinTests.utils.mocks
+namespace ReupVirtualTwinTests.mocks
 {
     public class ObjectHighlighterSpy : IObjectHighlighter
     {

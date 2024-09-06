@@ -2,7 +2,7 @@ using ReupVirtualTwin.webRequestersInterfaces;
 using ReupVirtualTwin.dataModels;
 using System.Threading.Tasks;
 
-namespace ReupVirtualTwinTests.utils.mocks
+namespace ReupVirtualTwinTests.mocks
 {
     public class EmptyStringsTagsWebRequesterSpy : ITagsApiConsumer
     {

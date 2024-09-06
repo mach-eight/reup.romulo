@@ -7,7 +7,7 @@ using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwin.behaviours;
 using UnityEngine.TestTools;
 using ReupVirtualTwin.managerInterfaces;
-using ReupVirtualTwinTests.utils.mocks;
+using ReupVirtualTwinTests.mocks;
 
 namespace ReupVirtualTwinTests.behaviours
 {
