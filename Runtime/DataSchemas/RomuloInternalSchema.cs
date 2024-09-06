@@ -1,112 +1,78 @@
-using Newtonsoft.Json.Linq;
-using ReupVirtualTwin.helpers;
+using Newtonsoft.Json.Schema;
 
 namespace ReupVirtualTwin.dataSchemas
 {
     public static class RomuloInternalSchema
     {
-        public static JObject materialChangeInfo { get; private set; }
-        public static JObject sceneStateSchema { get; private set; }
-        public static JObject sceneStateAppearanceSchema { get; private set; }
-        public static JObject objectWithChangedMaterialSceneSchema { get; private set; }
-        public static JObject objectWithChangedColorSceneSchema { get; private set; }
-        public static JObject objectWithNoChangesSceneSchema { get; private set; }
-        public static JObject materialSchema { get; private set; }
+        public static readonly JSchema materialSchema = JSchema.Parse(@"{
+            ""type"": ""object"",
+            ""properties"": {
+                ""id"": { ""type"": ""integer"" },
+                ""texture"": { ""type"": ""string"" },
+                ""widthMilimeters"": { ""type"": ""integer"" },
+                ""heightMilimeters"": { ""type"": ""integer"" }
+            },
+            ""required"": [""id"", ""texture"", ""widthMilimeters"", ""heightMilimeters""]
+        }");
 
-        static RomuloInternalSchema()
-        {
+        public static readonly JSchema materialChangeInfoSchema = JSchema.Parse(@"{
+            ""type"": ""object"",
+            ""properties"": {
+                ""material"": " + materialSchema.ToString() + @",
+                ""objectIds"": { ""type"": ""array"", ""items"": { ""type"": ""string"" } }
+            },
+            ""required"": [""objectIds"", ""material""]
+        }");
 
-            materialSchema = new()
-            {
-                { "type", DataValidator.objectType },
-                { "properties", new JObject
-                    {
-                        { "id", DataValidator.intSchema },
-                        { "texture", DataValidator.stringSchema },
-                        { "widthMilimeters", DataValidator.intSchema },
-                        { "heightMilimeters", DataValidator.intSchema },
-                    }
-                },
-                { "required", new JArray { "id", "texture", "widthMilimeters", "heightMilimeters" } }
-            };
+        public static readonly JSchema sceneStateAppearanceSchema = JSchema.Parse(@"{
+            ""type"": ""object"",
+            ""properties"": {
+                ""color"": { ""type"": ""string"" },
+                ""materialId"": { ""type"": ""string"" }
+            }
+        }");
 
-            materialChangeInfo = new()
-            {
-                { "type", DataValidator.objectType },
-                { "properties", new JObject
-                    {
-                        { "material", materialSchema },
-                        { "objectIds",  DataValidator.CreateArraySchema(DataValidator.stringSchema)},
-                    }
-                },
-                { "required", new JArray { "objectIds", "material" } }
-            };
-
-            sceneStateAppearanceSchema = new()
-            {
-                { "type", DataValidator.objectType },
-                { "properties", new JObject
-                    {
-                        { "color", DataValidator.stringSchema },
-                        { "materialId", DataValidator.stringSchema}
-                    }
+        public static readonly JSchema sceneStateSchema = JSchema.Parse(@"{
+            ""type"": ""object"",
+            ""properties"": {
+                ""id"": { ""type"": ""string"" },
+                ""appearance"": " + sceneStateAppearanceSchema.ToString() + @",
+                ""children"": {
+                    ""type"": ""array"",
+                    ""items"": { ""$ref"": ""#"" }
                 }
-            };
+            },
+            ""required"": [""id""]
+        }");
 
-            sceneStateSchema = new()
-            {
-                { "type", DataValidator.objectType },
-                { "name", "sceneStateSchema" },
-                { "properties", new JObject
-                    {
-                        { "id", DataValidator.stringSchema },
-                        { "appearance", sceneStateAppearanceSchema },
-                        { "children", DataValidator.CreateArraySchema(DataValidator.CreateRefSchema("sceneStateSchema"))
-                        },
-                    }
-                },
-                { "required", new JArray { "id" } }
-            };
+        public static readonly JSchema objectWithChangedMaterialSceneSchema = JSchema.Parse(@"{
+            ""type"": ""object"",
+            ""properties"": {
+                ""objectId"": { ""type"": ""string"" },
+                ""material"": " + materialSchema.ToString() + @",
+                ""color"": { ""type"": ""null"" }
+            },
+            ""required"": [""objectId"", ""material"", ""color""]
+        }");
 
-            objectWithChangedMaterialSceneSchema = new()
-            {
-                { "type", DataValidator.objectType },
-                { "properties", new JObject
-                    {
-                        { "objectId", DataValidator.stringSchema},
-                        { "material", materialSchema },
-                        { "color", DataValidator.nullSchema },
-                    }
-                },
-                { "required", new JArray { "objectId", "material", "color" } }
-            };
+        public static readonly JSchema objectWithChangedColorSceneSchema = JSchema.Parse(@"{
+            ""type"": ""object"",
+            ""properties"": {
+                ""objectId"": { ""type"": ""string"" },
+                ""material"": { ""type"": ""null"" },
+                ""color"": { ""type"": ""string"" }
+            },
+            ""required"": [""objectId"", ""material"", ""color""]
+        }");
 
-            objectWithChangedColorSceneSchema = new()
-            {
-                { "type", DataValidator.objectType },
-                { "properties", new JObject
-                    {
-                        { "objectId", DataValidator.stringSchema},
-                        { "material", DataValidator.nullSchema },
-                        { "color", DataValidator.stringSchema },
-                    }
-                },
-                { "required", new JArray { "objectId", "material", "color" } }
-            };
-
-            objectWithNoChangesSceneSchema = new()
-            {
-                { "type", DataValidator.objectType },
-                { "properties", new JObject
-                    {
-                        { "objectId", DataValidator.stringSchema},
-                        { "material", DataValidator.nullSchema },
-                        { "color", DataValidator.nullSchema },
-                    }
-                },
-                { "required", new JArray { "objectId", "material", "color" } }
-            };
-
-        }
+        public static readonly JSchema objectWithNoChangesSceneSchema = JSchema.Parse(@"{
+            ""type"": ""object"",
+            ""properties"": {
+                ""objectId"": { ""type"": ""string"" },
+                ""material"": { ""type"": ""null"" },
+                ""color"": { ""type"": ""null"" }
+            },
+            ""required"": [""objectId"", ""material"", ""color""]
+        }");
     }
 }

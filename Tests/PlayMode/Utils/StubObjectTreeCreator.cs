@@ -68,7 +68,7 @@ public static class StubObjectTreeCreator
         if (deepChildDepth > 0)
         {
             GameObject deepChild = CreateDeepChainedLineOfObjects(deepChildDepth);
-            deepChild.transform.parent = child1.transform;
+            deepChild.transform.parent = parent.transform;
         }
 
         return parent;

@@ -8,6 +8,7 @@ using ReupVirtualTwin.managerInterfaces;
 using Newtonsoft.Json.Linq;
 using ReupVirtualTwin.romuloEnvironment;
 using ReupVirtualTwin.dataSchemas;
+using Newtonsoft.Json.Schema;
 
 
 namespace ReupVirtualTwin.managers
@@ -36,7 +37,7 @@ namespace ReupVirtualTwin.managers
             JObject sceneState = _objectMapper.GetTreeSceneState(buildingObject);
             if (
                 RomuloEnvironment.development &&
-                !DataValidator.ValidateObjectToSchema(sceneState, RomuloInternalSchema.sceneStateSchema))
+                !sceneState.IsValid(RomuloInternalSchema.sceneStateSchema))
             {
                 throw new System.Exception("Scene state does not match schema");
             }

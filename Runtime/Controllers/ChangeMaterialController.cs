@@ -11,6 +11,7 @@ using ReupVirtualTwin.romuloEnvironment;
 using ReupVirtualTwin.dataSchemas;
 using Newtonsoft.Json.Linq;
 using ReupVirtualTwin.helperInterfaces;
+using Newtonsoft.Json.Schema;
 
 namespace ReupVirtualTwin.controllers
 {
@@ -29,7 +30,7 @@ namespace ReupVirtualTwin.controllers
         {
             if (RomuloEnvironment.development)
             {
-                if (!DataValidator.ValidateObjectToSchema(materialChangeInfo, RomuloInternalSchema.materialChangeInfo))
+                if (!materialChangeInfo.IsValid(RomuloInternalSchema.materialChangeInfoSchema))
                 {
                     return TaskResult.Failure("Error, the provided material change information does not conform to the expected schema");
                 }

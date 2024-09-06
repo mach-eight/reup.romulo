@@ -1,77 +1,130 @@
-using NUnit.Framework;
-using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
-
+using UnityEngine;
+using NUnit.Framework;
+using UnityEngine.TestTools;
 using ReupVirtualTwin.helpers;
+
 using Newtonsoft.Json.Linq;
+using ReupVirtualTwin.enums;
 
 public class IncomingMessageValidatorTest
 {
-    string messageWithBoolPayloadType;
     IncomingMessageValidator incomingMessageValidator;
-    JObject invalidTypeMessage;
-    JObject messageWithBoolPayload;
-    JObject messageWithIncorrectPayload;
-    JObject messageWithNoPayload;
 
     [SetUp]
     public void SetUp()
     {
-        messageWithBoolPayloadType = "message with bool payload";
         incomingMessageValidator = new IncomingMessageValidator();
-        invalidTypeMessage = new JObject
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldNotValidateMessageWithoutTypeField()
+    {
+        JObject incomingMessage = new JObject()
         {
-            { "type", "this is an invalid type" },
+            ["noTypeField"] = "test"
         };
-        messageWithBoolPayload = new JObject
+        IList<string> errors;
+        bool isValid = incomingMessageValidator.ValidateMessage(incomingMessage, out errors);
+        Assert.IsFalse(isValid);
+        Assert.AreEqual(1, errors.Count);
+        Assert.AreEqual("Incoming message does not contain a type field", errors[0]);
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldNotValidateMessageWithUnsupportedType()
+    {
+        string unsupportedType = "unsupportedType";
+        JObject incomingMessage = new JObject()
         {
-            { "type", messageWithBoolPayloadType },
-            { "payload", true }
+            ["type"] = unsupportedType
         };
-        messageWithIncorrectPayload = new JObject
+        IList<string> errors;
+        bool isValid = incomingMessageValidator.ValidateMessage(incomingMessage, out errors);
+        Assert.IsFalse(isValid);
+        Assert.AreEqual(1, errors.Count);
+        Assert.AreEqual($"Incoming message type '{unsupportedType}' is not supported", errors[0]);
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldValidateMessageWithSupportedTypeAndNoPayloadWhenNoPayloadIsExpected()
+    {
+        string supportedType = WebMessageType.activatePositionTransform;
+        JObject incomingMessage = new JObject()
         {
-            { "type", messageWithBoolPayloadType },
-            { "payload", "I am supposed to be a boolean, not a string" }
+            ["type"] = supportedType
         };
-        messageWithNoPayload = new JObject
+        IList<string> errors;
+        bool isValid = incomingMessageValidator.ValidateMessage(incomingMessage, out errors);
+        Assert.IsTrue(isValid);
+        Assert.AreEqual(0, errors.Count);
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldNotValidateMessageWithSupportedTypeAndNotExpectedPayload()
+    {
+        string supportedType = WebMessageType.activatePositionTransform;
+        JObject incomingMessage = new JObject()
         {
-            { "type", "message with no payload" }
+            ["type"] = supportedType,
+            ["payload"] = "UnexpectedPayload"
         };
+        IList<string> errors;
+        bool isValid = incomingMessageValidator.ValidateMessage(incomingMessage, out errors);
+        Assert.IsFalse(isValid);
+        Assert.AreEqual(1, errors.Count);
+        yield return null;
     }
 
-    [Test]
-    public void IncomingMessageValidatorExists()
+    [UnityTest]
+    public IEnumerator ShouldNotValidateMessageWithInvalidPayload()
     {
-        Assert.IsNotNull(incomingMessageValidator);
+        string supportedType = WebMessageType.setEditMode;
+        JObject incomingMessage = new JObject()
+        {
+            ["type"] = supportedType,
+            ["payload"] = "invalidPayload"
+        };
+        IList<string> errors;
+        bool isValid = incomingMessageValidator.ValidateMessage(incomingMessage, out errors);
+        Assert.IsFalse(isValid);
+        Assert.AreEqual(1, errors.Count);
+        yield return null;
     }
 
-    [Test]
-    public void ShouldFailAllMessageByDefault()
+    [UnityTest]
+    public IEnumerator ShouldValidateMessageWithValidPayload()
     {
-        Assert.IsFalse(incomingMessageValidator.ValidateMessage(messageWithBoolPayload.ToString()));
+        string supportedType = WebMessageType.setEditMode;
+        JObject incomingMessage = new JObject()
+        {
+            ["type"] = supportedType,
+            ["payload"] = true
+        };
+        IList<string> errors;
+        bool isValid = incomingMessageValidator.ValidateMessage(incomingMessage, out errors);
+        Assert.IsTrue(isValid);
+        Assert.AreEqual(0, errors.Count);
+        yield return null;
     }
 
-    [Test]
-    public void ShouldFailIncorrectJson()
+    [UnityTest]
+    public IEnumerator ShouldNotValidateMessageWithNullPayloadWhenPayloadIsExpected()
     {
-        Assert.IsFalse(incomingMessageValidator.ValidateMessage("\"this is not a valid message json\""));
-    }
-
-    [Test]
-    public void ShouldApproveMessage_if_typeAndPayloadSchemaIsRegistered()
-    {
-        incomingMessageValidator.RegisterMessage((string)messageWithBoolPayload["type"], DataValidator.boolSchema);
-        Assert.IsTrue(incomingMessageValidator.ValidateMessage(messageWithBoolPayload.ToString()));
-        Assert.IsFalse(incomingMessageValidator.ValidateMessage(invalidTypeMessage.ToString()));
-        Assert.IsFalse(incomingMessageValidator.ValidateMessage(messageWithIncorrectPayload.ToString()));
-    }
-
-    [Test]
-    public void ShouldApproveMessageWithNoPayload()
-    {
-        Assert.IsFalse(incomingMessageValidator.ValidateMessage(messageWithNoPayload.ToString()));
-        incomingMessageValidator.RegisterMessage((string)messageWithNoPayload["type"]);
-        Assert.IsTrue(incomingMessageValidator.ValidateMessage(messageWithNoPayload.ToString()));
-    }
+        string supportedType = WebMessageType.setEditMode;
+        JObject incomingMessage = new JObject()
+        {
+            ["type"] = supportedType,
+        };
+        IList<string> errors;
+        bool isValid = incomingMessageValidator.ValidateMessage(incomingMessage, out errors);
+        Assert.IsFalse(isValid);
+        Assert.AreEqual(1, errors.Count);
+        yield return null;
+    }       
 
 }
