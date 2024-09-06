@@ -8,6 +8,7 @@ using ReupVirtualTwin.dataModels;
 using System.Linq;
 using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwin.controllers;
+using ReupVirtualTwinTests.utils;
 
 public class ObjectMapperTest : MonoBehaviour
 {

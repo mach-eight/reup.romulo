@@ -1,15 +1,14 @@
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.TestTools;
 using UnityEditor;
-using System.Collections;
 using System.Collections.Generic;
-using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.controllers;
 using System.Linq;
+using ReupVirtualTwinTests.utils;
+using ReupVirtualTwin.editor;
 
-namespace ReupVirtualTwinTests.helpers
+namespace ReupVirtualTwinTests.editor
 {
     public class ObjectVisibilityUtilsTest
     {
@@ -26,7 +25,7 @@ namespace ReupVirtualTwinTests.helpers
         [TearDown]
         public void TearDown()
         {
-            GameObject.Destroy(building);
+            GameObject.DestroyImmediate(building);
         }
 
         public void AssertAllObjectsVisible(GameObject parent)

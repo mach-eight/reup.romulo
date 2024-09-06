@@ -2,9 +2,9 @@ using ReupVirtualTwin.webRequestersInterfaces;
 using System.Threading.Tasks;
 using ReupVirtualTwin.dataModels;
 
-namespace Tests.PlayMode.Mocks
+namespace ReupVirtualTwinTests.mocks
 {
-    class TagsWebRequesterSpy : ITagsApiConsumer
+    public class TagsWebRequesterSpy : ITagsApiConsumer
     {
         public int lastPageRequested;
         public int lastPageSizeRequested;

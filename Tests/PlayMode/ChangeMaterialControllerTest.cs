@@ -7,13 +7,14 @@ using UnityEngine.TestTools;
 using System.Threading.Tasks;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.webRequestersInterfaces;
-using Tests.PlayMode.Mocks;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.enums;
 using Newtonsoft.Json.Linq;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.helperInterfaces;
 using System.Linq;
+using ReupVirtualTwinTests.utils;
+using ReupVirtualTwinTests.mocks;
 
 namespace ReupVirtualTwinTests.controllers
 {

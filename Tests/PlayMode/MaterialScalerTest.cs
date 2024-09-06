@@ -2,6 +2,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEditor;
 using ReupVirtualTwin.helpers;
+using ReupVirtualTwinTests.utils;
 
 namespace ReupVirtualTwinTests.helpers
 {

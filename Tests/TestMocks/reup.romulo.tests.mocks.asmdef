@@ -1,0 +1,21 @@
+{
+    "name": "reup.romulo.tests.mocks",
+    "rootNamespace": "",
+    "references": [
+        "GUID:2fff08516fe8b484ea0191f9747e8d2b",
+        "GUID:ef71f4f9d4e9ed44987e6a7778893414",
+        "GUID:a94387ec035d5514c93dfbc1c4e15171",
+        "GUID:b80692fab1cf7c548bafc2ed4f6ff8ea",
+        "GUID:5f723ba0ce93eb64ca6f59169571c5ed",
+        "GUID:1f8fa41a8be0a6f4e8779e83989ae122"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

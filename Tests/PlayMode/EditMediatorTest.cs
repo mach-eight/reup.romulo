@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-using Tests.PlayMode.Mocks;
 using ReupVirtualTwin.managers;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.enums;
@@ -16,9 +15,9 @@ using ReupVirtualTwin.behaviourInterfaces;
 using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwin.controllerInterfaces;
-using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.dataSchemas;
 using Newtonsoft.Json.Schema;
+using ReupVirtualTwinTests.mocks;
 
 public class EditMediatorTest : MonoBehaviour
 {
