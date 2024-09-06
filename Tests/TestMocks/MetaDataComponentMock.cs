@@ -4,9 +4,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Tests.PlayMode.Mocks
+namespace ReupVirtualTwinTests.mocks
 {
-    class MetaDataComponentMock : MonoBehaviour, IObjectMetaDataGetterSetter
+    public class MetaDataComponentMock : MonoBehaviour, IObjectMetaDataGetterSetter
     {
         public JObject _objectMetaData;
         public JObject objectMetaData { get => _objectMetaData; set => _objectMetaData = value; }

@@ -2,6 +2,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEditor;
 using ReupVirtualTwin.helpers;
+using ReupVirtualTwinTests.utils;
 
 namespace ReupVirtualTwinTests.helpers
 {
@@ -12,7 +13,7 @@ namespace ReupVirtualTwinTests.helpers
         GameObject wallInstanceInM;
         GameObject wallInstanceInCm;
         MaterialScaler materialScaler;
-        Vector2 originalTextureDimensionsInMilimeters;
+        Vector2 originalTextureDimensionsInMillimeters;
         Vector2 desiredTextureDimensionsInM;
         Vector2 expectedMaterialScale;
 
@@ -21,10 +22,10 @@ namespace ReupVirtualTwinTests.helpers
         {
             wallInstanceInCm = (GameObject)PrefabUtility.InstantiatePrefab(wallPrefabInCm);
             wallInstanceInM = (GameObject)PrefabUtility.InstantiatePrefab(wallPrefabInM);
-            originalTextureDimensionsInMilimeters = new Vector2(100, 140);
+            originalTextureDimensionsInMillimeters = new Vector2(100, 140);
             float xScale = 5;
             float yScale = 10;
-            desiredTextureDimensionsInM = new Vector2(originalTextureDimensionsInMilimeters.x * xScale, originalTextureDimensionsInMilimeters.y * yScale);
+            desiredTextureDimensionsInM = new Vector2(originalTextureDimensionsInMillimeters.x * xScale, originalTextureDimensionsInMillimeters.y * yScale);
             expectedMaterialScale = new Vector2(1/xScale, 1/yScale);
             materialScaler = new MaterialScaler();
         }

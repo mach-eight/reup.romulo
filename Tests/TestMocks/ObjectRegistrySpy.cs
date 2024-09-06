@@ -5,7 +5,7 @@ using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.models;
 using ReupVirtualTwin.controllers;
 
-namespace Tests.PlayMode.Mocks
+namespace ReupVirtualTwinTests.mocks
 {
     public class ObjectRegistrySpy : IObjectRegistry
     {

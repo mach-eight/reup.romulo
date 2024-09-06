@@ -10,10 +10,10 @@ using ReupVirtualTwin.enums;
 using ReupVirtualTwin.models;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.dataModels;
-using Tests.PlayMode.Mocks;
 using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.helperInterfaces;
+using ReupVirtualTwinTests.mocks;
 
 public class SelectedObjectsManagerTest : MonoBehaviour
 {

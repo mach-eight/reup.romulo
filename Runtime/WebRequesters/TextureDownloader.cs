@@ -14,7 +14,9 @@ namespace ReupVirtualTwin.webRequesters
             WebRequestResult result = await request.SendWebRequestTask();
             if (result.IsSuccess)
             {
-                return DownloadHandlerTexture.GetContent(request);
+                Texture2D texture = DownloadHandlerTexture.GetContent(request);
+                request.downloadHandler.Dispose();
+                return texture;
             }
             return null;
         }

@@ -1,39 +1,35 @@
-using Newtonsoft.Json.Linq;
-using ReupVirtualTwin.helpers;
+using Newtonsoft.Json.Schema;
 
 namespace ReupVirtualTwin.dataSchemas
 {
     public class RomuloExternalSchema
     {
-        public static readonly JObject changeObjectMaterialPayloadSchema = RomuloInternalSchema.materialChangeInfo;
+        public static readonly JSchema changeObjectMaterialPayloadSchema = RomuloInternalSchema.materialChangeInfoSchema;
 
-        public static readonly JObject requestSceneStatePayloadSchema = new JObject
-        {
-            { "type", DataValidator.objectType },
-            { "properties", new JObject
-                {
-                    { "requestTimestamp", DataValidator.intSchema },
+        public static readonly JSchema requestSceneStatePayloadSchema = JSchema.Parse(@"{
+            ""type"": ""object"",
+            ""properties"": {
+                ""requestTimestamp"": { ""type"": ""integer"" }
+            },
+            ""required"": [""requestTimestamp""]
+        }");
+
+        public static readonly JSchema requestLoadScenePayloadSchema = JSchema.Parse(@"{
+            ""type"": ""object"",
+            ""properties"": {
+                ""requestTimestamp"": { ""type"": ""integer"" },
+                ""objects"": {
+                    ""type"": ""array"",
+                    ""items"": {
+                        ""oneOf"": [
+                            " + RomuloInternalSchema.objectWithChangedMaterialSceneSchema.ToString() + @",
+                            " + RomuloInternalSchema.objectWithChangedColorSceneSchema.ToString() + @",
+                            " + RomuloInternalSchema.objectWithNoChangesSceneSchema.ToString() + @"
+                        ]
+                    }
                 }
             },
-            { "required", new JArray { "requestTimestamp" } },
-        };
-
-        public static readonly JObject requestLoadScenePayloadSchema = new JObject()
-        {
-            {"type", DataValidator.objectType },
-            {"properties", new JObject
-                {
-                    { "requestTimestamp", DataValidator.intSchema },
-                    { "objects", DataValidator.CreateArraySchema
-                        (
-                            RomuloInternalSchema.objectWithNoChangesSceneSchema,
-                            RomuloInternalSchema.objectWithChangedColorSceneSchema,
-                            RomuloInternalSchema.objectWithChangedMaterialSceneSchema
-                        )
-                    },
-                }
-            },
-            { "required", new JArray { "requestTimestamp", "objects" } },
-        };
+            ""required"": [""requestTimestamp"", ""objects""]
+        }");
     }
 }

@@ -5,6 +5,7 @@ using UnityEngine.TestTools;
 
 using ReupVirtualTwin.behaviours;
 using ReupVirtualTwin.managerInterfaces;
+using ReupVirtualTwinTests.utils;
 
 namespace ReupVirtualTwinTests
 {

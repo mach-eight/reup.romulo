@@ -39,6 +39,7 @@ public class AutoBuildEditor : MonoBehaviour
         };
 
 
+        EditorUserBuildSettings.webGLBuildSubtarget = WebGLTextureSubtarget.ASTC;
         BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
         BuildSummary summary = report.summary;
 

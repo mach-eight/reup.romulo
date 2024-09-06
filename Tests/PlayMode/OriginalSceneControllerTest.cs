@@ -1,20 +1,11 @@
 using NUnit.Framework;
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.TestTools;
-using System.Threading.Tasks;
-using Tests.PlayMode.Mocks;
-using Newtonsoft.Json.Linq;
 using UnityEditor;
 
-using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.modelInterfaces;
-using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.controllers;
-using ReupVirtualTwin.webRequestersInterfaces;
-using ReupVirtualTwin.enums;
 using ReupVirtualTwin.models;
 
 namespace ReupVirtualTwinTests.controllers
