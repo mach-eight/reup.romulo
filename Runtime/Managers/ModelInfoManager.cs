@@ -36,10 +36,10 @@ namespace ReupVirtualTwin.managers
             GameObject buildingObject = ObtainBuildingObject();
             JObject sceneState = _objectMapper.GetTreeSceneState(buildingObject);
             if (
-               RomuloEnvironment.development &&
-               !sceneState.IsValid(RomuloInternalSchema.sceneStateSchema))
+                RomuloEnvironment.development &&
+                !sceneState.IsValid(RomuloInternalSchema.sceneStateSchema))
             {
-               throw new System.Exception("Scene state does not match schema");
+                throw new System.Exception("Scene state does not match schema");
             }
             return sceneState;
         }
