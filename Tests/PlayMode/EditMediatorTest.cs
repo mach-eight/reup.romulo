@@ -109,7 +109,7 @@ public class EditMediatorTest : MonoBehaviour
             {
                foreach (string errorMessage in errorMessages)
                {
-                   Debug.LogError(errorMessage);
+                    Debug.LogError(errorMessage);
                }
                throw new Exception("Invalid material change info object");
             }
@@ -230,7 +230,6 @@ public class EditMediatorTest : MonoBehaviour
 
         public void SendWebMessage<T>(WebMessage<T> webMessage)
         {
-            Debug.Log($"Sending message: {JsonConvert.SerializeObject(webMessage)}");
             sentMessages.Add(webMessage);
         }
     }
@@ -655,7 +654,7 @@ public class EditMediatorTest : MonoBehaviour
             { "payload", new JObject()
                 {
                     { "objectIds", new JArray(new string[] { "id-0", "id-1" }) },
-                    { "material", material }
+                    { "material", material },
                 }
             }
         };
@@ -698,7 +697,7 @@ public class EditMediatorTest : MonoBehaviour
         );
         editMediator.ReceiveWebMessage(message.ToString());
         yield return null;
-        WebMessage<string> sentMessage = (WebMessage<string>)mockWebMessageSender.sentMessages[0];
+        WebMessage<string[]> sentMessage = (WebMessage<string[]>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.error, sentMessage.type);
         yield return null;
     }
@@ -712,7 +711,7 @@ public class EditMediatorTest : MonoBehaviour
         };
         editMediator.ReceiveWebMessage(message.ToString());
         yield return null;
-        WebMessage<string> sentMessage = (WebMessage<string>)mockWebMessageSender.sentMessages[0];
+        WebMessage<string[]> sentMessage = (WebMessage<string[]>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.error, sentMessage.type);
         yield return null;
     }
@@ -740,7 +739,7 @@ public class EditMediatorTest : MonoBehaviour
         var serializedMessage = JsonConvert.SerializeObject(sceneStateRequestMessage);
         editMediator.ReceiveWebMessage(serializedMessage);
         yield return null;
-        WebMessage<string> sentMessage = (WebMessage<string>)mockWebMessageSender.sentMessages[0];
+        WebMessage<string[]> sentMessage = (WebMessage<string[]>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.error, sentMessage.type);
         yield return null;
     }
@@ -754,7 +753,7 @@ public class EditMediatorTest : MonoBehaviour
             type = WebMessageType.requestSceneState,
             payload = new Dictionary<string, object>()
             {
-                {"requestTimestamp", requestTimestamp }
+                { "requestTimestamp", requestTimestamp }
             }
         };
         editMediator.ReceiveWebMessage(JsonConvert.SerializeObject(sceneStateRequestMessage));
@@ -789,7 +788,7 @@ public class EditMediatorTest : MonoBehaviour
         var serializedMessage = JsonConvert.SerializeObject(messageWithNoMaterialId);
         editMediator.ReceiveWebMessage(serializedMessage);
         yield return null;
-        WebMessage<string> sentMessage = (WebMessage<string>)mockWebMessageSender.sentMessages[0];
+        WebMessage<string[]> sentMessage = (WebMessage<string[]>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.error, sentMessage.type);
         yield return null;
     }

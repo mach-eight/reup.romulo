@@ -26,47 +26,47 @@ namespace ReupVirtualTwin.helpers
             { WebMessageType.requestSceneLoad, RomuloExternalSchema.requestLoadScenePayloadSchema },
         };
 
-        public bool ValidateMessage(JObject incomingMessage, out IList<string> errorMessage)
+        public bool ValidateMessage(JObject incomingMessage, out IList<string> errorMessages)
         {
-            errorMessage = new List<string>();
+            errorMessages = new List<string>();
             if (!incomingMessage.ContainsKey("type"))
             {
-                errorMessage.Add("Incoming message does not contain a type field");
+                errorMessages.Add("Incoming message does not contain a type field");
                 return false;
             }
             string messageType = incomingMessage["type"].ToString();
             if (!payloadJSchemaForMessageType.ContainsKey(messageType))
             {
-                errorMessage.Add($"Incoming message type {messageType} is not supported");
+                errorMessages.Add($"Incoming message type '{messageType}' is not supported");
                 return false;
             }
 
             JToken payload = incomingMessage["payload"];
             JSchema schema = payloadJSchemaForMessageType[messageType];
 
-            return ValidateMessagePayload(payload, schema, out errorMessage);
+            return ValidateMessagePayload(payload, schema, out errorMessages);
         }
 
-        private bool ValidateMessagePayload(JToken payload, JSchema schema, out IList<string> errorMessage)
+        private bool ValidateMessagePayload(JToken payload, JSchema schema, out IList<string> errorMessages)
         {
-            errorMessage = new List<string>();
+            errorMessages = new List<string>();
             if (schema == null)
             {
                 if (payload != null)
                 {
-                    errorMessage.Add("Incoming message should not contain a payload");
+                    errorMessages.Add("Incoming message should not contain a payload");
                     return false;
                 }
                 return true;
-            }
-            IList<string> validationsErrors;
-            bool isPayloadValid = payload.IsValid(schema, out validationsErrors);
-            if (!isPayloadValid)
+            };
+
+            if (payload == null)
             {
-                errorMessage = validationsErrors;
+                errorMessages.Add("Incoming message should contain a payload");
                 return false;
             }
-            return true;
+
+            return payload.IsValid(schema, out errorMessages);
         }
     }
 }

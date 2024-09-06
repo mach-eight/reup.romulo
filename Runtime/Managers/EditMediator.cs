@@ -166,7 +166,7 @@ namespace ReupVirtualTwin.managers
                 {
                     Debug.LogWarning(error);
                 }
-                SendErrorMessage(string.Join("", errorMessages));
+                SendErrorMessages(errorMessages.ToArray());
                 return;
             }
             string type = message["type"].ToString();
@@ -535,6 +535,16 @@ namespace ReupVirtualTwin.managers
             {
                 type = WebMessageType.error,
                 payload = message,
+            });
+        }
+
+        private void SendErrorMessages(string[] errorMessages)
+        {
+
+            _webMessageSender.SendWebMessage(new WebMessage<string[]>
+            {
+                type = WebMessageType.error,
+                payload = errorMessages,
             });
         }
 

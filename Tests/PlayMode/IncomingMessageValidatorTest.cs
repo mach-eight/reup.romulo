@@ -45,7 +45,7 @@ public class IncomingMessageValidatorTest
         bool isValid = incomingMessageValidator.ValidateMessage(incomingMessage, out errors);
         Assert.IsFalse(isValid);
         Assert.AreEqual(1, errors.Count);
-        Assert.AreEqual($"Incoming message type {unsupportedType} is not supported", errors[0]);
+        Assert.AreEqual($"Incoming message type '{unsupportedType}' is not supported", errors[0]);
         yield return null;
     }
 
@@ -111,5 +111,20 @@ public class IncomingMessageValidatorTest
         Assert.AreEqual(0, errors.Count);
         yield return null;
     }
+
+    [UnityTest]
+    public IEnumerator ShouldNotValidateMessageWithNullPayloadWhenPayloadIsExpected()
+    {
+        string supportedType = WebMessageType.setEditMode;
+        JObject incomingMessage = new JObject()
+        {
+            ["type"] = supportedType,
+        };
+        IList<string> errors;
+        bool isValid = incomingMessageValidator.ValidateMessage(incomingMessage, out errors);
+        Assert.IsFalse(isValid);
+        Assert.AreEqual(1, errors.Count);
+        yield return null;
+    }       
 
 }
