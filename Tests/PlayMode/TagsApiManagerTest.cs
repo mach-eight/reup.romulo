@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using NUnit.Framework;
 using System.Threading.Tasks;
-using Tests.PlayMode.Mocks;
 using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.managers;
+using ReupVirtualTwinTests.utils.mocks;
 
 public class TagsApiManagerTest : MonoBehaviour
 {

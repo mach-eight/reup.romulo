@@ -2,7 +2,7 @@ using ReupVirtualTwin.webRequestersInterfaces;
 using ReupVirtualTwin.dataModels;
 using System.Threading.Tasks;
 
-namespace Tests.PlayMode.Mocks
+namespace ReupVirtualTwinTests.utils.mocks
 {
     public class DelayTagsWebRequesterSpy : ITagsApiConsumer
     {

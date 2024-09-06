@@ -4,10 +4,10 @@ using UnityEngine;
 using NUnit.Framework;
 
 using ReupVirtualTwin.helperInterfaces;
-using Tests.PlayMode.Mocks;
 using ReupVirtualTwin.behaviours;
 using UnityEngine.TestTools;
 using ReupVirtualTwin.managerInterfaces;
+using ReupVirtualTwinTests.utils.mocks;
 
 namespace ReupVirtualTwinTests.behaviours
 {

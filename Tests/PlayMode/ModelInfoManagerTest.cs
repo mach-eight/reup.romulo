@@ -11,8 +11,8 @@ using ReupVirtualTwin.managers;
 using ReupVirtualTwin.enums;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using ReupVirtualTwin.modelInterfaces;
-using Tests.PlayMode.Mocks;
+using ReupVirtualTwinTests.utils;
+using ReupVirtualTwinTests.utils.mocks;
 
 public class ModelInfoManagerTest : MonoBehaviour
 {
