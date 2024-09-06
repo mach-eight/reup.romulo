@@ -1,5 +1,4 @@
 using ReupVirtualTwin.managers;
-using ReupVirtualTwin.models;
 using ReupVirtualTwin.behaviours;
 using UnityEditor;
 using UnityEngine;
