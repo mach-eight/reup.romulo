@@ -19,6 +19,7 @@ namespace ReupVirtualTwin.controllers
     public class ChangeMaterialController : IChangeMaterialController
     {
         public IMaterialScaler materialScaler = new MaterialScaler();
+        public ITextureCompresser textureCompresser = new TextureCompresser();
         readonly ITextureDownloader textureDownloader;
         readonly IObjectRegistry objectRegistry;
         readonly IMediator mediator;
@@ -49,9 +50,11 @@ namespace ReupVirtualTwin.controllers
                 mediator.Notify(ReupEvent.error, $"Error downloading image from {materialUrl}");
                 return;
             }
+            Texture2D compressedTexture = textureCompresser.GetASTC12x12CompressedTexture(texture);
+            GameObject.Destroy(texture);
             List<GameObject> objects = objectRegistry.GetObjectsWithGuids(objectIds);
             Material newMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-            newMaterial.SetTexture("_BaseMap", texture);
+            newMaterial.SetTexture("_BaseMap", compressedTexture);
             for (int i = 0; i < objects.Count; i++)
             {
                 if (objects[i].GetComponent<Renderer>() != null)

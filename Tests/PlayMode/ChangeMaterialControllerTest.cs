@@ -20,6 +20,7 @@ namespace ReupVirtualTwinTests.controllers
     public class ChangeMaterialControllerTest
     {
         TextureDownloaderSpy textureDownloaderSpy;
+        TextureCompresserSpy textureCompresserSpy;
         ChangeMaterialController controller;
         JObject messagePayload;
         SomeObjectWithMaterialRegistrySpy objectRegistry;
@@ -31,8 +32,10 @@ namespace ReupVirtualTwinTests.controllers
         {
             mediatorSpy = new MediatorSpy();
             textureDownloaderSpy = new TextureDownloaderSpy();
+            textureCompresserSpy = new TextureCompresserSpy();
             objectRegistry = new SomeObjectWithMaterialRegistrySpy();
             controller = new ChangeMaterialController(textureDownloaderSpy, objectRegistry, mediatorSpy);
+            controller.textureCompresser = textureCompresserSpy;
             materialScalerSpy = new MaterialScalerSpy();
             controller.materialScaler = materialScalerSpy;
             messagePayload = new JObject()
@@ -67,6 +70,17 @@ namespace ReupVirtualTwinTests.controllers
                 callCount++;
                 calledObjects.Add(obj);
                 calledDimensions.Add(dimensionsInM);
+            }
+        }
+
+        private class TextureCompresserSpy : ITextureCompresser
+        {
+            public Texture2D passedTexture;
+            public Texture2D returnedTexture = new Texture2D(2, 2);
+            public Texture2D GetASTC12x12CompressedTexture(Texture2D texture)
+            {
+                passedTexture = texture;
+                return returnedTexture;
             }
         }
 
@@ -154,9 +168,10 @@ namespace ReupVirtualTwinTests.controllers
         {
             await controller.ChangeObjectMaterial(messagePayload);
             List<Material> newMaterials = GetMaterialsFromObjects(objectRegistry.objects);
+            Assert.AreEqual(textureDownloaderSpy.texture, textureCompresserSpy.passedTexture);
             for(int i = 0; i < newMaterials.Count; i++)
             {
-                Assert.AreEqual(textureDownloaderSpy.texture, newMaterials[i].GetTexture("_BaseMap"));
+                Assert.AreEqual(textureCompresserSpy.returnedTexture, newMaterials[i].GetTexture("_BaseMap"));
             }
         }
 
