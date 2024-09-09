@@ -35,6 +35,7 @@ public class AutoBuildEditor : MonoBehaviour
 
         if (!CheckObjectsActiveStatus(building))
         {
+            EditorUtility.DisplayDialog("Error", "Build canceled", "OK");
             return;
         }
 
