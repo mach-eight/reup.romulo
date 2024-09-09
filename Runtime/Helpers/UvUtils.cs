@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using AM = Accord.Math;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace ReupVirtualTwin.helpers
@@ -63,7 +62,8 @@ namespace ReupVirtualTwin.helpers
                 {0, 0, 0, 0, uv2.x, uv2.y, 0, 0, 1, point2.z},
             };
 
-            double[,] reducedMatrix = new AM.ReducedRowEchelonForm(augmentedMatrix).Result;
+            double[,] roundedMatrix = RoundMatrixZeros(augmentedMatrix, 0.001f);
+            double[,] reducedMatrix = new AM.ReducedRowEchelonForm(roundedMatrix).Result;
 
             // supposing the transformation we want to return is of the type:
             // ( a b )   ( u )   ( x0 )     ( x )
@@ -135,5 +135,30 @@ namespace ReupVirtualTwin.helpers
             }
             return false;
         }
+
+        public static double[,] RoundMatrixZeros(double[,] matrix, float threshold)
+        {
+            int rows = matrix.GetLength(0);
+            int columns = matrix.GetLength(1);
+            double[,] roundedMatrix = new double[rows, columns];
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < columns; j++)
+                {
+                    roundedMatrix[i, j] = RoundToZero(matrix[i, j], threshold);
+                }
+            }
+            return roundedMatrix;
+        }
+
+        public static double RoundToZero(double n, float threshold)
+        {
+            if (Math.Abs(n) > threshold)
+            {
+                return n;
+            }
+            return 0;
+        }
+
     }
 }
