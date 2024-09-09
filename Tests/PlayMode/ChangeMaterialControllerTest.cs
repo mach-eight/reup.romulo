@@ -6,9 +6,6 @@ using UnityEngine.TestTools;
 using System.Threading.Tasks;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.webRequestersInterfaces;
-using Tests.PlayMode.Mocks;
-using ReupVirtualTwin.managerInterfaces;
-using ReupVirtualTwin.enums;
 using Newtonsoft.Json.Linq;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.helperInterfaces;
@@ -33,7 +30,7 @@ namespace ReupVirtualTwinTests.controllers
             textureDownloaderSpy = new TextureDownloaderSpy();
             textureCompresserSpy = new TextureCompresserSpy();
             objectRegistry = new SomeObjectWithMaterialRegistrySpy();
-            controller = new ChangeMaterialController(textureDownloaderSpy, objectRegistry, mediatorSpy);
+            controller = new ChangeMaterialController(textureDownloaderSpy, objectRegistry);
             controller.textureCompresser = textureCompresserSpy;
             materialScalerSpy = new MaterialScalerSpy();
             controller.materialScaler = materialScalerSpy;

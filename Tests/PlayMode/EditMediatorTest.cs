@@ -611,8 +611,8 @@ public class EditMediatorTest : MonoBehaviour
         {
             { "id", 1 },
             { "texture", "material-1-url" },
-            { "widthMilimeters", 2000 },
-            { "heightMilimeters", 1500}
+            { "widthMillimeters", 2000 },
+            { "heightMillimeters", 1500}
         };
         requestSceneLoadMessage["payload"]["objects"] = new JArray(
             new JObject[]
@@ -766,8 +766,8 @@ public class EditMediatorTest : MonoBehaviour
         {
             { "id", 1 },
             { "texture", "material-1-url" },
-            { "widthMilimeters", 2000 },
-            { "heightMilimeters", 1500}
+            { "widthMillimeters", 2000 },
+            { "heightMillimeters", 1500}
         };
 
         JObject requesMessage = new JObject(
