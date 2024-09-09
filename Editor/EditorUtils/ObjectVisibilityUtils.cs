@@ -6,7 +6,7 @@ using UnityEngine;
 using ReupVirtualTwin.controllerInterfaces;
 using System.Linq;
 
-namespace ReupVirtualTwin.helpers
+namespace ReupVirtualTwin.editor
 {
     public static class ObjectVisibilityUtils
     {

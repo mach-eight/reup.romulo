@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-using Tests.PlayMode.Mocks;
 using ReupVirtualTwin.managers;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.enums;
@@ -16,9 +15,9 @@ using ReupVirtualTwin.behaviourInterfaces;
 using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwin.controllerInterfaces;
-using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.dataSchemas;
 using Newtonsoft.Json.Schema;
+using ReupVirtualTwinTests.mocks;
 
 public class EditMediatorTest : MonoBehaviour
 {
@@ -720,8 +719,8 @@ public class EditMediatorTest : MonoBehaviour
         {
             { "id", 123456 },
             { "texture", "material-1-url" },
-            { "widthMilimeters", 2000 },
-            { "heightMilimeters", 1500 }
+            { "widthMillimeters", 2000 },
+            { "heightMillimeters", 1500 }
         };
         JObject message = new JObject()
         {
@@ -747,8 +746,8 @@ public class EditMediatorTest : MonoBehaviour
         {
             { "id", 12345 },
             { "texture", "material-1-url" },
-            { "widthMilimeters", 2000 },
-            { "heightMilimeters", 1500}
+            { "widthMillimeters", 2000 },
+            { "heightMillimeters", 1500}
         };
         JObject materialChangeInfo = new JObject(
             new JProperty("material", material),
@@ -880,8 +879,8 @@ public class EditMediatorTest : MonoBehaviour
                     { "material", new JObject()
                         {
                             ["texture"] = "material-1-url",
-                            ["widthMilimeters"] = 2000,
-                            ["heightMilimeters"] = 1500
+                            ["widthMillimeters"] = 2000,
+                            ["heightMillimeters"] = 1500
                         }
                     },
                     {"objectIds", new string[] { "id-0", "id-1" } },
@@ -1023,8 +1022,8 @@ public class EditMediatorTest : MonoBehaviour
         {
             { "id", 123456 },
             { "texture", "material-1-url" },
-            { "widthMilimeters", 2000 },
-            { "heightMilimeters", 1500}
+            { "widthMillimeters", 2000 },
+            { "heightMillimeters", 1500}
         };
         requestSceneLoadMessage["payload"]["objects"] = new JArray(
             new JObject[]
@@ -1067,15 +1066,15 @@ public class EditMediatorTest : MonoBehaviour
         {
             { "id", 123456 },
             { "texture", "material-1-url" },
-            { "widthMilimeters", 2000 },
-            { "heightMilimeters", 1500}
+            { "widthMillimeters", 2000 },
+            { "heightMillimeters", 1500}
         };
         JObject material2 = new JObject()
         {
             { "id", 1234567 },
             { "texture", "material-2-url" },
-            { "widthMilimeters", 20000 },
-            { "heightMilimeters", 15000 }
+            { "widthMillimeters", 20000 },
+            { "heightMillimeters", 15000 }
         };
         requestSceneLoadMessage["payload"]["objects"] = new JArray(
             new JObject[]
@@ -1141,8 +1140,8 @@ public class EditMediatorTest : MonoBehaviour
                         {
                             { "id", 12345 },
                             { "texture", "material-1-url" },
-                            { "widthMilimeters", 2000 },
-                            { "heightMilimeters", 1500}
+                            { "widthMillimeters", 2000 },
+                            { "heightMillimeters", 1500}
                         }
                     }
                 },

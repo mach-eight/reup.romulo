@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.TestTools;
 
 using ReupVirtualTwin.managers;
+using ReupVirtualTwinTests.utils;
 
 public class CharacterPositionManagerTest : MonoBehaviour
 {

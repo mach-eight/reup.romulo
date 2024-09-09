@@ -1,0 +1,29 @@
+{
+    "name": "reup.romulo.tests.utils",
+    "rootNamespace": "",
+    "references": [
+        "GUID:f423d50bd16e5af44b5de6fb9aa6914c",
+        "GUID:a94387ec035d5514c93dfbc1c4e15171",
+        "GUID:2fff08516fe8b484ea0191f9747e8d2b",
+        "GUID:ef71f4f9d4e9ed44987e6a7778893414",
+        "GUID:b80692fab1cf7c548bafc2ed4f6ff8ea",
+        "GUID:5f723ba0ce93eb64ca6f59169571c5ed",
+        "GUID:1f8fa41a8be0a6f4e8779e83989ae122",
+        "GUID:1772869efacc54544ac5d329d23fc591",
+        "GUID:51949aeab7ddd114ea276b96726cb4bb",
+        "GUID:15c1dcf2b670848439ceff09bf17acd2",
+        "GUID:0da6763f50b07ec4c9363bdf3985cee5",
+        "GUID:3e29f3cf4a29b6f4a8ecdaccb3a3a2ba"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

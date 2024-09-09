@@ -1,5 +1,5 @@
 {
-    "name": "PlayMode.romulo_Tests_Editor_Tests",
+    "name": "reup.romulo.tests.playmode",
     "rootNamespace": "",
     "references": [
         "UnityEngine.TestRunner",
@@ -19,7 +19,9 @@
         "reup.romulo.modelInterfaces",
         "reup.romulo.webRequestersInterfaces",
         "reup.romulo.webRequesters",
-        "reup.romulo.dataSchemas"
+        "reup.romulo.dataSchemas",
+        "reup.romulo.tests.utils",
+        "reup.romulo.tests.mocks"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

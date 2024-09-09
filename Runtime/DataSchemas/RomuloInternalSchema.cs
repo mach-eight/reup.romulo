@@ -9,10 +9,10 @@ namespace ReupVirtualTwin.dataSchemas
             ""properties"": {
                 ""id"": { ""type"": ""integer"" },
                 ""texture"": { ""type"": ""string"" },
-                ""widthMilimeters"": { ""type"": ""integer"" },
-                ""heightMilimeters"": { ""type"": ""integer"" }
+                ""widthMillimeters"": { ""type"": ""integer"" },
+                ""heightMillimeters"": { ""type"": ""integer"" }
             },
-            ""required"": [""id"", ""texture"", ""widthMilimeters"", ""heightMilimeters""]
+            ""required"": [""id"", ""texture"", ""widthMillimeters"", ""heightMillimeters""]
         }");
 
         public static readonly JSchema materialChangeInfoSchema = JSchema.Parse(@"{

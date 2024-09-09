@@ -18,6 +18,7 @@ namespace ReupVirtualTwin.controllers
     public class ChangeMaterialController : IChangeMaterialController
     {
         public IMaterialScaler materialScaler = new MaterialScaler();
+        public ITextureCompresser textureCompresser = new TextureCompresser();
         readonly ITextureDownloader textureDownloader;
         readonly IObjectRegistry objectRegistry;
         public ChangeMaterialController(ITextureDownloader textureDownloader, IObjectRegistry objectRegistry)
@@ -37,18 +38,21 @@ namespace ReupVirtualTwin.controllers
             }
             string materialUrl = materialChangeInfo["material"]["texture"].ToString();
             string[] objectIds = materialChangeInfo["objectIds"].ToObject<string[]>();
-            float width = materialChangeInfo["material"]["widthMilimeters"].ToObject<float>();
-            float height = materialChangeInfo["material"]["heightMilimeters"].ToObject<float>();
-            Vector2 materialDimensionsInMilimeters = new Vector2(width, height);
+            float width = materialChangeInfo["material"]["widthMillimeters"].ToObject<float>();
+            float height = materialChangeInfo["material"]["heightMillimeters"].ToObject<float>();
+            Vector2 materialDimensionsInMillimeters = new Vector2(width, height);
             Texture2D texture = await textureDownloader.DownloadTextureFromUrl(materialUrl);
             if (!texture)
             {
                 return TaskResult.Failure($"Error downloading image from {materialUrl}");
             }
+            Texture2D compressedTexture = textureCompresser.GetASTC12x12CompressedTexture(texture);
+            GameObject.Destroy(texture);
             List<GameObject> objects = objectRegistry.GetObjectsWithGuids(objectIds);
 
             Material newMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-            newMaterial.SetTexture("_BaseMap", texture);
+
+            newMaterial.SetTexture("_BaseMap", compressedTexture);
 
             for (int i = 0; i < objects.Count; i++)
             {
@@ -57,7 +61,7 @@ namespace ReupVirtualTwin.controllers
                     objects[i].GetComponent<Renderer>().material = newMaterial;
                     objects[i].GetComponent<IObjectInfo>().materialWasChanged = true;
                     ObjectMetaDataUtils.AssignMaterialIdMetaDataToObject(objects[i], materialChangeInfo["material"]["id"].ToObject<int>());
-                    materialScaler.AdjustUVScaleToDimensions(objects[i], materialDimensionsInMilimeters);
+                    materialScaler.AdjustUVScaleToDimensions(objects[i], materialDimensionsInMillimeters);
                 }
             }
             return TaskResult.Success();

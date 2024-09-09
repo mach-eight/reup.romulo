@@ -4,6 +4,7 @@ using NUnit.Framework;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.controllerInterfaces;
 using System.Collections.Generic;
+using ReupVirtualTwinTests.utils;
 
 namespace ReupVirtualTwinTests.controllers
 {

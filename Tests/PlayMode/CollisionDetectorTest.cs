@@ -5,6 +5,7 @@ using UnityEditor;
 using System.Collections;
 
 using ReupVirtualTwin.managers;
+using ReupVirtualTwinTests.utils;
 
 public class CollisionDetectorTest : MonoBehaviour
 {

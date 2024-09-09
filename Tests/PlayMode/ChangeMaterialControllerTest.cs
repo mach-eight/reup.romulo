@@ -7,16 +7,21 @@ using System.Threading.Tasks;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.webRequestersInterfaces;
 using Tests.PlayMode.Mocks;
+using ReupVirtualTwin.managerInterfaces;
+using ReupVirtualTwin.enums;
 using Newtonsoft.Json.Linq;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.helperInterfaces;
 using System.Linq;
+using ReupVirtualTwinTests.utils;
+using ReupVirtualTwinTests.mocks;
 
 namespace ReupVirtualTwinTests.controllers
 {
     public class ChangeMaterialControllerTest
     {
         TextureDownloaderSpy textureDownloaderSpy;
+        TextureCompresserSpy textureCompresserSpy;
         ChangeMaterialController controller;
         JObject messagePayload;
         SomeObjectWithMaterialRegistrySpy objectRegistry;
@@ -26,8 +31,10 @@ namespace ReupVirtualTwinTests.controllers
         public IEnumerator SetUp()
         {
             textureDownloaderSpy = new TextureDownloaderSpy();
+            textureCompresserSpy = new TextureCompresserSpy();
             objectRegistry = new SomeObjectWithMaterialRegistrySpy();
-            controller = new ChangeMaterialController(textureDownloaderSpy, objectRegistry);
+            controller = new ChangeMaterialController(textureDownloaderSpy, objectRegistry, mediatorSpy);
+            controller.textureCompresser = textureCompresserSpy;
             materialScalerSpy = new MaterialScalerSpy();
             controller.materialScaler = materialScalerSpy;
             messagePayload = new JObject()
@@ -37,8 +44,8 @@ namespace ReupVirtualTwinTests.controllers
                     {
                         { "id", 1234567890 },
                         { "texture", "material-url.com" },
-                        { "widthMilimeters", 2000 },
-                        { "heightMilimeters", 1500 },
+                        { "widthMillimeters", 2000 },
+                        { "heightMillimeters", 1500 },
                     }
                 }
             };
@@ -62,6 +69,17 @@ namespace ReupVirtualTwinTests.controllers
                 callCount++;
                 calledObjects.Add(obj);
                 calledDimensions.Add(dimensionsInM);
+            }
+        }
+
+        private class TextureCompresserSpy : ITextureCompresser
+        {
+            public Texture2D passedTexture;
+            public Texture2D returnedTexture = new Texture2D(2, 2);
+            public Texture2D GetASTC12x12CompressedTexture(Texture2D texture)
+            {
+                passedTexture = texture;
+                return returnedTexture;
             }
         }
 
@@ -137,9 +155,10 @@ namespace ReupVirtualTwinTests.controllers
         {
             await controller.ChangeObjectMaterial(messagePayload);
             List<Material> newMaterials = GetMaterialsFromObjects(objectRegistry.objects);
+            Assert.AreEqual(textureDownloaderSpy.texture, textureCompresserSpy.passedTexture);
             for(int i = 0; i < newMaterials.Count; i++)
             {
-                Assert.AreEqual(textureDownloaderSpy.texture, newMaterials[i].GetTexture("_BaseMap"));
+                Assert.AreEqual(textureCompresserSpy.returnedTexture, newMaterials[i].GetTexture("_BaseMap"));
             }
         }
 

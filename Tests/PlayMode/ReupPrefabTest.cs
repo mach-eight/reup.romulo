@@ -9,6 +9,7 @@ using ReupVirtualTwin.behaviours;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.helperInterfaces;
+using ReupVirtualTwinTests.utils;
 
 public class ReupPrefabTest : MonoBehaviour
 {

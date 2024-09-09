@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Tests.PlayMode.Mocks
+namespace ReupVirtualTwinTests.mocks
 {
     public class FailingTagsWebRequesterSpy : ITagsApiConsumer
     {

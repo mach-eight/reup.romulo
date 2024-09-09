@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Tests.PlayMode.Mocks
+namespace ReupVirtualTwinTests.mocks
 {
     public class SomeObjectWithMaterialRegistrySpy : IObjectRegistry
     {
