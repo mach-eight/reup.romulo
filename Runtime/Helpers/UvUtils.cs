@@ -145,20 +145,10 @@ namespace ReupVirtualTwin.helpers
             {
                 for (int j = 0; j < columns; j++)
                 {
-                    roundedMatrix[i, j] = RoundToZero(matrix[i, j], threshold);
+                    roundedMatrix[i, j] = Math.Abs(n) > threshold : n : 0;
                 }
             }
             return roundedMatrix;
         }
-
-        public static double RoundToZero(double n, float threshold)
-        {
-            if (Math.Abs(n) > threshold)
-            {
-                return n;
-            }
-            return 0;
-        }
-
     }
 }
