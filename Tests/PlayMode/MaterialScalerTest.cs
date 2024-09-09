@@ -79,5 +79,32 @@ namespace ReupVirtualTwinTests.helpers
             Material material = wall.GetComponent<Renderer>().material;
             AssertUtils.AssertVector2sAreEqual(new Vector2(0.5f, 0.5f), material.mainTextureScale);
         }
+
+        [Test]
+        public void ShouldAdjustUVScaleToDimensions_even_when_infinitesimalArePresentUVOr3DPoints()
+        {
+            GameObject obj = new GameObject();
+            MeshRenderer meshRenderer = obj.AddComponent<MeshRenderer>();
+            meshRenderer.sharedMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));;
+            MeshFilter meshFilter = obj.AddComponent<MeshFilter>();
+            Mesh mesh = new Mesh();
+            mesh.vertices = new Vector3[] {
+                new Vector3(-14.1f, 2.9f,  0.12f),
+                new Vector3(2.40000009340928E-15f, 1, 1),
+                new Vector3(1.2999999687846E-10f, 0, 1),
+            };
+            mesh.uv = new Vector2[] {
+                new Vector2(-2.80407665368125E-26f, -2.80407665368125E-26f),
+                new Vector2(-2.80407665368125E-26f, 1.06952011585236f),
+                new Vector2(0.41801193356514f, 1.06952011585236f),
+            };
+            mesh.triangles = new int[] {
+                0, 1, 2,
+            };
+            meshFilter.sharedMesh = mesh;
+            materialScaler.AdjustUVScaleToDimensions(obj, new Vector2(2000, 2000));
+            Material material = obj.GetComponent<Renderer>().material;
+            AssertUtils.AssertVector2sAreEqual(new Vector2(1.196138f, 6.66403f), material.mainTextureScale);
+        }
     }
 }
