@@ -1,5 +1,4 @@
 using NUnit.Framework;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,8 +6,6 @@ using UnityEngine.TestTools;
 using System.Threading.Tasks;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.webRequestersInterfaces;
-using ReupVirtualTwin.managerInterfaces;
-using ReupVirtualTwin.enums;
 using Newtonsoft.Json.Linq;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.helperInterfaces;
@@ -25,17 +22,15 @@ namespace ReupVirtualTwinTests.controllers
         ChangeMaterialController controller;
         JObject messagePayload;
         SomeObjectWithMaterialRegistrySpy objectRegistry;
-        MediatorSpy mediatorSpy;
         MaterialScalerSpy materialScalerSpy;
 
         [UnitySetUp]
         public IEnumerator SetUp()
         {
-            mediatorSpy = new MediatorSpy();
             textureDownloaderSpy = new TextureDownloaderSpy();
             textureCompresserSpy = new TextureCompresserSpy();
             objectRegistry = new SomeObjectWithMaterialRegistrySpy();
-            controller = new ChangeMaterialController(textureDownloaderSpy, objectRegistry, mediatorSpy);
+            controller = new ChangeMaterialController(textureDownloaderSpy, objectRegistry);
             controller.textureCompresser = textureCompresserSpy;
             materialScalerSpy = new MaterialScalerSpy();
             controller.materialScaler = materialScalerSpy;
@@ -88,29 +83,17 @@ namespace ReupVirtualTwinTests.controllers
         private class TextureDownloaderSpy : ITextureDownloader
         {
             public string url;
+            public bool shouldFail= false;
             public Texture2D texture = new Texture2D(1,1);
             public async Task<Texture2D> DownloadTextureFromUrl(string url)
             {
                 this.url = url;
                 await Task.Delay(1);
-                return texture;
-            }
-        }
-
-        private class MediatorSpy : IMediator
-        {
-            public JObject changeMaterialInfo = null;
-            public void Notify(ReupEvent eventName)
-            {
-                throw new NotImplementedException();
-            }
-
-            public void Notify<T>(ReupEvent eventName, T payload)
-            {
-                if (eventName == ReupEvent.objectMaterialChanged)
+                if (shouldFail)
                 {
-                    changeMaterialInfo = payload as JObject;
+                    return null;
                 }
+                return texture;
             }
         }
 
@@ -177,18 +160,22 @@ namespace ReupVirtualTwinTests.controllers
         }
 
         [Test]
-        public async Task ShouldNotifyMediator_When_MaterialsChange()
+        public async Task ShouldReturnSuccess_When_MaterialsChange()
         {
-            await controller.ChangeObjectMaterial(messagePayload);
-            Assert.AreEqual(messagePayload["materialUrl"], mediatorSpy.changeMaterialInfo["materialUrl"]);
-            Assert.AreEqual(messagePayload["objectIds"], mediatorSpy.changeMaterialInfo["objectIds"]);
+            var result = await controller.ChangeObjectMaterial(messagePayload);
+
+            Assert.IsTrue(result.isSuccess, "The material change operation should succeed.");
+
         }
 
         [Test]
-        public async Task ShouldNotNotifyMediator_When_MaterialsChange()
+        public async Task ShouldReturnFailure_When_TextureDownloadFails()
         {
-            await controller.ChangeObjectMaterial(messagePayload, false);
-            Assert.IsNull(mediatorSpy.changeMaterialInfo);
+            textureDownloaderSpy.shouldFail = true;
+            var result = await controller.ChangeObjectMaterial(messagePayload);
+            Assert.IsFalse(result.isSuccess);
+            Assert.AreEqual($"Error downloading image from {messagePayload["material"]["texture"]}", result.error);
+
         }
 
         [Test]

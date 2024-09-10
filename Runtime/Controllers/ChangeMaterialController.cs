@@ -5,8 +5,7 @@ using System.Threading.Tasks;
 using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.webRequestersInterfaces;
 using ReupVirtualTwin.modelInterfaces;
-using ReupVirtualTwin.managerInterfaces;
-using ReupVirtualTwin.enums;
+using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.romuloEnvironment;
 using ReupVirtualTwin.dataSchemas;
@@ -22,21 +21,19 @@ namespace ReupVirtualTwin.controllers
         public ITextureCompresser textureCompresser = new TextureCompresser();
         readonly ITextureDownloader textureDownloader;
         readonly IObjectRegistry objectRegistry;
-        readonly IMediator mediator;
-        public ChangeMaterialController(ITextureDownloader textureDownloader, IObjectRegistry objectRegistry, IMediator mediator)
+        public ChangeMaterialController(ITextureDownloader textureDownloader, IObjectRegistry objectRegistry)
         {
             this.textureDownloader = textureDownloader;
             this.objectRegistry = objectRegistry;
-            this.mediator = mediator;
         }
 
-        public async Task ChangeObjectMaterial(JObject materialChangeInfo, bool notify = true)
+        public async Task<TaskResult> ChangeObjectMaterial(JObject materialChangeInfo)
         {
             if (RomuloEnvironment.development)
             {
                 if (!materialChangeInfo.IsValid(RomuloInternalSchema.materialChangeInfoSchema))
                 {
-                    return;
+                    return TaskResult.Failure("Error, the provided material change information does not conform to the expected schema");
                 }
             }
             string materialUrl = materialChangeInfo["material"]["texture"].ToString();
@@ -47,14 +44,16 @@ namespace ReupVirtualTwin.controllers
             Texture2D texture = await textureDownloader.DownloadTextureFromUrl(materialUrl);
             if (!texture)
             {
-                mediator.Notify(ReupEvent.error, $"Error downloading image from {materialUrl}");
-                return;
+                return TaskResult.Failure($"Error downloading image from {materialUrl}");
             }
             Texture2D compressedTexture = textureCompresser.GetASTC12x12CompressedTexture(texture);
             GameObject.Destroy(texture);
             List<GameObject> objects = objectRegistry.GetObjectsWithGuids(objectIds);
+
             Material newMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+
             newMaterial.SetTexture("_BaseMap", compressedTexture);
+
             for (int i = 0; i < objects.Count; i++)
             {
                 if (objects[i].GetComponent<Renderer>() != null)
@@ -65,10 +64,7 @@ namespace ReupVirtualTwin.controllers
                     materialScaler.AdjustUVScaleToDimensions(objects[i], materialDimensionsInMillimeters);
                 }
             }
-            if (notify)
-            {
-                mediator.Notify(ReupEvent.objectMaterialChanged, materialChangeInfo);
-            }
+            return TaskResult.Success();
         }
     }
 }
