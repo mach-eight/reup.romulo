@@ -50,7 +50,7 @@ namespace ReupVirtualTwinTests.utils
         public static void AssertVector2sAreEqual(Vector2 expected, Vector2 real)
         {
             float distance = Vector2.Distance(expected, real);
-            Assert.IsTrue(distance < 1e-6);
+            Assert.Less(distance, 1e-6);
         }
 
 
