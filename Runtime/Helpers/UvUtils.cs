@@ -145,7 +145,7 @@ namespace ReupVirtualTwin.helpers
             {
                 for (int j = 0; j < columns; j++)
                 {
-                    roundedMatrix[i, j] = Math.Abs(n) > threshold : n : 0;
+                    roundedMatrix[i, j] = Math.Abs(matrix[i,j]) > threshold ? matrix[i,j] : 0;
                 }
             }
             return roundedMatrix;
