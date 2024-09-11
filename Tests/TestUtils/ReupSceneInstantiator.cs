@@ -2,6 +2,8 @@ using ReupVirtualTwin.managers;
 using ReupVirtualTwin.behaviours;
 using UnityEditor;
 using UnityEngine;
+using ReupVirtualTwin.controller;
+using ReupVirtualTwin.controllerInterfaces;
 
 namespace ReupVirtualTwinTests.utils
 {
@@ -18,7 +20,7 @@ namespace ReupVirtualTwinTests.utils
             public SetupBuilding setupbuilding;
             public SelectSelectableObject selectSelectableObject;
             public SelectedObjectsManager selectedObjectsManager;
-            public ViewModeManager viewModeManager;
+            public EditMediator editMediator;
         }
 
         public static SceneObjects InstantiateScene()
@@ -30,6 +32,9 @@ namespace ReupVirtualTwinTests.utils
             GameObject building = CreateBuilding();
             SetupBuilding setupBuilding = baseGlobalScriptGameObject.transform.Find("SetupBuilding").GetComponent<SetupBuilding>();
             setupBuilding.building = building;
+
+            EditMediator editMediator = baseGlobalScriptGameObject.transform
+                .Find("EditMediator").GetComponent<EditMediator>();
 
             ChangeColorManager changeColorManager = baseGlobalScriptGameObject.transform
                 .Find("EditMediator")
@@ -45,9 +50,6 @@ namespace ReupVirtualTwinTests.utils
                .Find("EditMediator")
                .Find("SelectedObjectsManager")
                .GetComponent<SelectedObjectsManager>();
-            
-            ViewModeManager viewModeManager = baseGlobalScriptGameObject.transform
-                .Find("ViewModeManager").GetComponent<ViewModeManager>();
 
             return new SceneObjects
             {
@@ -59,7 +61,7 @@ namespace ReupVirtualTwinTests.utils
                 setupbuilding = setupBuilding,
                 selectSelectableObject = selectSelectableObject,
                 selectedObjectsManager = selectedObjectsManager,
-                viewModeManager = viewModeManager,
+                editMediator = editMediator,
             };
         }
 

@@ -140,4 +140,11 @@ public class ReupPrefabTest : MonoBehaviour
         yield return null;
     }
 
+    [UnityTest]
+    public IEnumerator EditMediatorShouldHaveAViewModeController()
+    {
+        Assert.IsNotNull(editMediator.viewModeController);
+        yield return null;
+    }
+
 }

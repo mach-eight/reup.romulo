@@ -24,6 +24,8 @@ namespace ReupVirtualTwin.helpers
             { WebMessageType.changeObjectsMaterial, RomuloExternalSchema.changeObjectMaterialPayloadSchema },
             { WebMessageType.requestSceneState, RomuloExternalSchema.requestSceneStatePayloadSchema },
             { WebMessageType.requestSceneLoad, RomuloExternalSchema.requestLoadScenePayloadSchema },
+            { WebMessageType.activateDHV, null },
+            { WebMessageType.activateFPV, null },
         };
 
         public bool ValidateMessage(JObject incomingMessage, out IList<string> errorMessages)
