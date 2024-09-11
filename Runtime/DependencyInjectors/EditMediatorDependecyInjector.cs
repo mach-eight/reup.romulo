@@ -7,7 +7,6 @@ using ReupVirtualTwin.managers;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.webRequesters;
-using ReupVirtualTwin.controller;
 
 namespace ReupVirtualTwin.dependencyInjectors
 {

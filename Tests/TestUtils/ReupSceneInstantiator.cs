@@ -2,7 +2,7 @@ using ReupVirtualTwin.managers;
 using ReupVirtualTwin.behaviours;
 using UnityEditor;
 using UnityEngine;
-using ReupVirtualTwin.controller;
+using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.controllerInterfaces;
 
 namespace ReupVirtualTwinTests.utils

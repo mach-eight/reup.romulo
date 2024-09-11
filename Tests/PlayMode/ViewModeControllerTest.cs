@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-using ReupVirtualTwin.controller;
+using ReupVirtualTwin.controllers;
 using NUnit.Framework;
 using ReupVirtualTwin.enums;
 using ReupVirtualTwinTests.utils;
