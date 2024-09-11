@@ -241,6 +241,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 750237606206558042, guid: 6f1f1c16a02f5034d9fe1338ca73a63d, type: 3}
   m_PrefabInstance: {fileID: 1940689160094875461}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6945057754034383331 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8831413430191478438, guid: 6f1f1c16a02f5034d9fe1338ca73a63d, type: 3}
+  m_PrefabInstance: {fileID: 1940689160094875461}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c609fa679fd3b6b4489b41825d5dcd5c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &6737159228072708804
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -253,6 +264,10 @@ PrefabInstance:
       propertyPath: jumpPoints.Array.size
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 1852941098794457292, guid: 0a661a8d20f9d7049b04205d674fffa8, type: 3}
+      propertyPath: characterPositionManager
+      value: 
+      objectReference: {fileID: 6945057754034383331}
     - target: {fileID: 3742521412799980478, guid: 0a661a8d20f9d7049b04205d674fffa8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

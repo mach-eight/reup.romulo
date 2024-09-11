@@ -147,4 +147,11 @@ public class ReupPrefabTest : MonoBehaviour
         yield return null;
     }
 
+    //[UnityTest]
+    //public IEnumerator ViewModeControllerShouldHaveCharacterPositionManager()
+    //{
+    //    Assert.IsNotNull(editMediator.viewModeController.);
+    //    yield return null;
+    //}
+
 }

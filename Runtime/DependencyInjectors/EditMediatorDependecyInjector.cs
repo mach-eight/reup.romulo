@@ -28,9 +28,22 @@ namespace ReupVirtualTwin.dependencyInjectors
         GameObject changeColorManager;
         [SerializeField]
         GameObject modelInfoManager;
+        [SerializeField]
+        CharacterPositionManager characterPositionManager;
 
         private void Awake()
         {
+            if(!insertPositionLocation ||
+                !editModeManager ||
+                !selectedObjectsManager ||
+                !transformObjectsManager ||
+                !deleteObjectsManager ||
+                !changeColorManager ||
+                !modelInfoManager ||
+                !characterPositionManager)
+            {
+                throw new System.Exception("Some dependencies are missing");
+            }
             editMediator = GetComponent<EditMediator>();
             ICharacterRotationManager characterRotationManager = ObjectFinder.FindCharacter().GetComponent<ICharacterRotationManager>();
             editMediator.characterRotationManager = characterRotationManager;
@@ -60,7 +73,9 @@ namespace ReupVirtualTwin.dependencyInjectors
                 registry
             );
             editMediator.originalSceneController = new OriginalSceneController(registry);
-            editMediator.viewModeController = new ViewModeController();
+            Debug.Log("characterPositionManager");
+            Debug.Log(characterPositionManager);
+            editMediator.viewModeController = new ViewModeController(characterPositionManager);
         }
     }
 }
