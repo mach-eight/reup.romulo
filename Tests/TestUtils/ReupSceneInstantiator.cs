@@ -18,6 +18,7 @@ namespace ReupVirtualTwinTests.utils
             public SetupBuilding setupbuilding;
             public SelectSelectableObject selectSelectableObject;
             public SelectedObjectsManager selectedObjectsManager;
+            public ViewModeManager viewModeManager;
         }
 
         public static SceneObjects InstantiateScene()
@@ -44,6 +45,9 @@ namespace ReupVirtualTwinTests.utils
                .Find("EditMediator")
                .Find("SelectedObjectsManager")
                .GetComponent<SelectedObjectsManager>();
+            
+            ViewModeManager viewModeManager = baseGlobalScriptGameObject.transform
+                .Find("ViewModeManager").GetComponent<ViewModeManager>();
 
             return new SceneObjects
             {
@@ -55,6 +59,7 @@ namespace ReupVirtualTwinTests.utils
                 setupbuilding = setupBuilding,
                 selectSelectableObject = selectSelectableObject,
                 selectedObjectsManager = selectedObjectsManager,
+                viewModeManager = viewModeManager,
             };
         }
 
