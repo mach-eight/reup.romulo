@@ -1224,4 +1224,17 @@ public class EditMediatorTest : MonoBehaviour
         Assert.AreEqual(1, viewModeControllerSpy.activateDHVCallsCount);
     }
 
+    [Test]
+    public async Task ShouldRequestActivationgOfFPV_When_Receive_ActivateFPVMessage()
+    {
+        JObject activateDHVMessage = new JObject
+        {
+            { "type", WebMessageType.activateFPV }
+        };
+        string serializedMessage = JsonConvert.SerializeObject(activateDHVMessage);
+        Assert.Zero(viewModeControllerSpy.activateFPVCallsCount);
+        await editMediator.ReceiveWebMessage(serializedMessage);
+        Assert.AreEqual(1, viewModeControllerSpy.activateFPVCallsCount);
+    }
+
 }

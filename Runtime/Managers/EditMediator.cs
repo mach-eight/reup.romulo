@@ -240,6 +240,9 @@ namespace ReupVirtualTwin.managers
                 case WebMessageType.activateDHV:
                     _viewModeController.ActivateDHV();
                     break;
+                case WebMessageType.activateFPV:
+                    _viewModeController.ActivateFPV();
+                    break;
             }
         }
 
