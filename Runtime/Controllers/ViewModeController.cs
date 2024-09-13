@@ -21,12 +21,14 @@ namespace ReupVirtualTwin.controllers
 
         public void ActivateDHV()
         {
+            Debug.Log("activate DHV");
             viewMode = ViewMode.DHV;
             characterPositionManager.MakeKinematic();
         }
 
         public void ActivateFPV()
         {
+            Debug.Log("activate FPV");
             viewMode = ViewMode.FPV;
         }
     }

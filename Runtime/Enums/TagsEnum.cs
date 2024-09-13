@@ -22,5 +22,6 @@ namespace ReupVirtualTwin.enums
         public const string tagsApiManager = "TagsApiManager";
 
         public const string character = "Character";
+        public const string editMediator = "EditMediator";
     }
 }

@@ -73,8 +73,6 @@ namespace ReupVirtualTwin.dependencyInjectors
                 registry
             );
             editMediator.originalSceneController = new OriginalSceneController(registry);
-            Debug.Log("characterPositionManager");
-            Debug.Log(characterPositionManager);
             editMediator.viewModeController = new ViewModeController(characterPositionManager);
         }
     }

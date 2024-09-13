@@ -1,5 +1,10 @@
 using UnityEngine;
 using UnityEditor;
+using ReupVirtualTwin.behaviourInterfaces;
+using ReupVirtualTwin.helpers;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using ReupVirtualTwin.enums;
 
 
 namespace ReupVirtualTwin.editor
@@ -7,19 +12,16 @@ namespace ReupVirtualTwin.editor
     public class AppProxy : EditorWindow
     {
         bool viewControls = false;
-        bool dollhouseView;
-        bool firstPersonView;
-        public string[] selStrings = new string[] {"Grid 1", "Grid 2", "Grid 3", "Grid 4"};
-
+        IWebMessageReceiver webMessageReceiver;
 
         [MenuItem("Reup Romulo/App proxy")]
-
         public static void ShowWindow()
         {
             GetWindow<AppProxy>("App proxy");
         }
         void OnGUI()
         {
+            GetDependencies();
             viewControls = EditorGUILayout.Foldout(viewControls, "View controls");
             if (viewControls)
             {
@@ -27,10 +29,31 @@ namespace ReupVirtualTwin.editor
             }
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
         }
+        void GetDependencies()
+        {
+            if (Application.isPlaying)
+            {
+                webMessageReceiver = ObjectFinder.FindWebMessageReceiver();
+            }
+        }
         void ViewControls()
         {
-            dollhouseView = EditorGUILayout.Toggle("Dollhouse view", dollhouseView);
-            firstPersonView = EditorGUILayout.Toggle("First-person view", firstPersonView);
+            if (GUILayout.Button("Activate dollhouse view"))
+            {
+                string message = JsonConvert.SerializeObject(new JObject
+                {
+                    { "type", WebMessageType.activateDHV },
+                });
+                webMessageReceiver.ReceiveWebMessage(message);
+            }
+            if (GUILayout.Button("Activate first person view"))
+            {
+                string message = JsonConvert.SerializeObject(new JObject
+                {
+                    { "type", WebMessageType.activateDHV },
+                });
+                webMessageReceiver.ReceiveWebMessage(message);
+            }
         }
     }
 }
