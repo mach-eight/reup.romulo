@@ -46,8 +46,8 @@ namespace ReupVirtualTwin.enums
         public const string requestSceneLoadSuccess = "[Load Save Scene] Load Scene Success";
         public const string requestSceneLoadFailure = "[Load Save Scene] Load Scene Failure";
 
-        public const string activateDHV = "[View Mode] Activate DHV";
-        public const string activateFPV = "[View Mode] Activate FPV";
+        public const string activateDHV = "[View Mode] Activate Dollhouse View";
+        public const string activateFPV = "[View Mode] Activate First-person View";
 
     }
 }

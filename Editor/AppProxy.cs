@@ -31,7 +31,7 @@ namespace ReupVirtualTwin.editor
         }
         void GetDependencies()
         {
-            if (Application.isPlaying)
+            if (Application.isPlaying && webMessageReceiver == null)
             {
                 webMessageReceiver = ObjectFinder.FindWebMessageReceiver();
             }
