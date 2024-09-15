@@ -52,7 +52,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62aeefefe9b233f4badaed44e901ed96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myInt: 0
   noInsertObjectIdErrorMessage: No object id provided for insertion
   noInsertObjectUrlErrorMessage: No 3d model url provided for insertion
 --- !u!114 &8950963653470224177
@@ -75,6 +74,8 @@ MonoBehaviour:
   changeColorManager: {fileID: 4771352667378813239}
   modelInfoManager: {fileID: 0}
   characterPositionManager: {fileID: 0}
+  FirstPersonCamera: {fileID: 0}
+  DHVCamera: {fileID: 0}
 --- !u!114 &6976859030307673124
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113,7 +114,7 @@ Transform:
   m_GameObject: {fileID: 7459117009516608047}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -50,7 +50,7 @@ namespace ReupVirtualTwin.editor
             {
                 string message = JsonConvert.SerializeObject(new JObject
                 {
-                    { "type", WebMessageType.activateDHV },
+                    { "type", WebMessageType.activateFPV },
                 });
                 webMessageReceiver.ReceiveWebMessage(message);
             }

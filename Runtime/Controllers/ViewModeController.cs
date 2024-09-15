@@ -1,10 +1,5 @@
-using Newtonsoft.Json.Linq;
 using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.enums;
-using ReupVirtualTwin.managerInterfaces;
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace ReupVirtualTwin.controllers
@@ -12,24 +7,37 @@ namespace ReupVirtualTwin.controllers
     public class ViewModeController : IViewModeController
     {
         public ViewMode viewMode = ViewMode.FPV;
-        ICharacterPositionManager characterPositionManager;
+        public GameObject firstPersonViewCamera;
+        public GameObject dollhouseViewCamera;
 
-        public ViewModeController(ICharacterPositionManager characterPositionManager)
+        public ViewModeController(GameObject fpvCamera, GameObject dhvCamera)
         {
-           this.characterPositionManager = characterPositionManager;
+            firstPersonViewCamera = fpvCamera;
+            dollhouseViewCamera = dhvCamera;
         }
 
         public void ActivateDHV()
         {
-            Debug.Log("activate DHV");
             viewMode = ViewMode.DHV;
-            characterPositionManager.MakeKinematic();
+            ActivateDHVCamera();
         }
 
         public void ActivateFPV()
         {
-            Debug.Log("activate FPV");
             viewMode = ViewMode.FPV;
+            ActivateFPVCamera();
+        }
+
+        private void ActivateDHVCamera()
+        {
+            firstPersonViewCamera.SetActive(false);
+            dollhouseViewCamera.SetActive(true);
+        }
+
+        private void ActivateFPVCamera()
+        {
+            firstPersonViewCamera.SetActive(true);
+            dollhouseViewCamera.SetActive(false);
         }
     }
 }
