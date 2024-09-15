@@ -15,23 +15,26 @@ namespace ReupVirtualTwinTests.playmode.controller
         GameObject fpvCamera;
         GameObject dhvCamera;
         List<GameObject> cameras;
+        GameObject character;
 
         [SetUp]
         public void SetUp()
         {
-            CreateCameras();
-            viewModelController = new ViewModeController(fpvCamera, dhvCamera);
+            CreateStubGameObjects();
+            viewModelController = new ViewModeController(character, fpvCamera, dhvCamera);
         }
 
         [TearDown]
         public void TearDown()
         {
+            Destroy(character);
             Destroy(fpvCamera);
             Destroy(dhvCamera);
         }
 
-        private void CreateCameras()
+        private void CreateStubGameObjects()
         {
+            character = new GameObject();
             fpvCamera = new GameObject();
             dhvCamera = new GameObject();
             cameras = new List<GameObject> { fpvCamera, dhvCamera };
@@ -85,6 +88,16 @@ namespace ReupVirtualTwinTests.playmode.controller
             Assert.IsFalse(dhvCamera.activeSelf);
             viewModelController.ActivateDHV();
             AssertOnlyOneCameraIsActive(dhvCamera);
+        }
+
+        [Test]
+        public void CharacterShouldBeDeactivated_when_inDHV()
+        {
+            Assert.IsTrue(character.activeSelf);
+            viewModelController.ActivateDHV();
+            Assert.IsFalse(character.activeSelf);
+            viewModelController.ActivateFPV();
+            Assert.IsTrue(character.activeSelf);
         }
 
     }

@@ -29,11 +29,13 @@ namespace ReupVirtualTwin.dependencyInjectors
         [SerializeField]
         GameObject modelInfoManager;
         [SerializeField]
-        CharacterPositionManager characterPositionManager;
+        GameObject character;
         [SerializeField]
         GameObject fpvCamera;
         [SerializeField]
         GameObject dhvCamera;
+
+        public ViewModeController viewModeController;
 
         private void Awake()
         {
@@ -46,7 +48,7 @@ namespace ReupVirtualTwin.dependencyInjectors
                 !modelInfoManager ||
                 !fpvCamera ||
                 !dhvCamera ||
-                !characterPositionManager)
+                !character)
             {
                 throw new System.Exception("Some dependencies are missing");
             }
@@ -79,7 +81,8 @@ namespace ReupVirtualTwin.dependencyInjectors
                 registry
             );
             editMediator.originalSceneController = new OriginalSceneController(registry);
-            editMediator.viewModeController = new ViewModeController(fpvCamera, dhvCamera);
+            viewModeController = new ViewModeController(character, fpvCamera, dhvCamera);
+            editMediator.viewModeController = viewModeController;
         }
     }
 }

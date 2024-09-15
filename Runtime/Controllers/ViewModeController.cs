@@ -9,9 +9,11 @@ namespace ReupVirtualTwin.controllers
         public ViewMode viewMode = ViewMode.FPV;
         public GameObject firstPersonViewCamera;
         public GameObject dollhouseViewCamera;
+        public GameObject character;
 
-        public ViewModeController(GameObject fpvCamera, GameObject dhvCamera)
+        public ViewModeController(GameObject character, GameObject fpvCamera, GameObject dhvCamera)
         {
+            this.character = character;
             firstPersonViewCamera = fpvCamera;
             dollhouseViewCamera = dhvCamera;
         }
@@ -20,12 +22,14 @@ namespace ReupVirtualTwin.controllers
         {
             viewMode = ViewMode.DHV;
             ActivateDHVCamera();
+            character.SetActive(false);
         }
 
         public void ActivateFPV()
         {
             viewMode = ViewMode.FPV;
             ActivateFPVCamera();
+            character.SetActive(true);
         }
 
         private void ActivateDHVCamera()
