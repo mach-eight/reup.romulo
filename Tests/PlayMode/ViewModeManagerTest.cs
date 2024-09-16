@@ -57,6 +57,12 @@ namespace ReupVirtualTwinTests.playmode.managers
         }
 
         [Test]
+        public void ShouldHaveDHVCameraDeactivatedByDefault()
+        {
+           Assert.IsFalse(dhvCamera.activeInHierarchy);
+        }
+
+        [Test]
         public void ShouldChangeViewModeToHDV()
         {
             viewModelManager.ActivateDHV();
