@@ -23,6 +23,9 @@ namespace ReupVirtualTwinTests.utils
             public EditMediator editMediator;
             public SensedObjectHighlighter selectableObjectHighlighter;
             public MoveDhvCamera moveDHVCamera;
+            public GameObject dhvCamera;
+            public GameObject fpvCamera;
+            public ViewModeManager viewModeManager;
         }
 
         public static SceneObjects InstantiateScene()
@@ -56,8 +59,16 @@ namespace ReupVirtualTwinTests.utils
             SensedObjectHighlighter selectableObjectHighlighter = baseGlobalScriptGameObject.transform
                 .Find("HoverOverSelectablesObjects").GetComponent<SensedObjectHighlighter>();
 
-            MoveDhvCamera moveDhvCamera = baseGlobalScriptGameObject.transform
-                .Find("DHVCameraMovement").GetComponent<MoveDhvCamera>();
+            MoveDhvCamera moveDhvCamera = reupGameObject.transform
+                .Find("DHVCinemachineCamera").GetComponent<MoveDhvCamera>();
+
+            GameObject dhvCamera = reupGameObject.transform.Find("DHVCinemachineCamera").gameObject;
+            GameObject fpvCamera = character.transform.Find("InnerCharacter").Find("FPVCinemachineCamera").gameObject;
+
+            ViewModeManager viewModeManager = baseGlobalScriptGameObject.transform
+                .Find("EditMediator")
+                .Find("ViewModeManager").GetComponent<ViewModeManager>();
+
 
             return new SceneObjects
             {
@@ -72,6 +83,9 @@ namespace ReupVirtualTwinTests.utils
                 editMediator = editMediator,
                 selectableObjectHighlighter = selectableObjectHighlighter,
                 moveDHVCamera = moveDhvCamera,
+                dhvCamera = dhvCamera,
+                fpvCamera = fpvCamera,
+                viewModeManager = viewModeManager,
             };
         }
 

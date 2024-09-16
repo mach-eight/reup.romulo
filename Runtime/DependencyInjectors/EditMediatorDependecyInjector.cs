@@ -34,8 +34,8 @@ namespace ReupVirtualTwin.dependencyInjectors
         GameObject fpvCamera;
         [SerializeField]
         GameObject dhvCamera;
-
-        public ViewModeController viewModeController;
+        [SerializeField]
+        ViewModeManager viewModeManager;
 
         private void Awake()
         {
@@ -81,8 +81,9 @@ namespace ReupVirtualTwin.dependencyInjectors
                 registry
             );
             editMediator.originalSceneController = new OriginalSceneController(registry);
-            viewModeController = new ViewModeController(character, fpvCamera, dhvCamera);
-            editMediator.viewModeController = viewModeController;
+            viewModeManager.character = character;
+            viewModeManager.dollhouseViewCamera = dhvCamera;
+            editMediator.viewModeManager = viewModeManager;
         }
     }
 }
