@@ -22,6 +22,7 @@ namespace ReupVirtualTwinTests.utils
             public SelectedObjectsManager selectedObjectsManager;
             public EditMediator editMediator;
             public SensedObjectHighlighter selectableObjectHighlighter;
+            public MoveDhvCamera moveDHVCamera;
         }
 
         public static SceneObjects InstantiateScene()
@@ -55,6 +56,9 @@ namespace ReupVirtualTwinTests.utils
             SensedObjectHighlighter selectableObjectHighlighter = baseGlobalScriptGameObject.transform
                 .Find("HoverOverSelectablesObjects").GetComponent<SensedObjectHighlighter>();
 
+            MoveDhvCamera moveDhvCamera = baseGlobalScriptGameObject.transform
+                .Find("DHVCameraMovement").GetComponent<MoveDhvCamera>();
+
             return new SceneObjects
             {
                 reupObject = reupGameObject,
@@ -67,6 +71,7 @@ namespace ReupVirtualTwinTests.utils
                 selectedObjectsManager = selectedObjectsManager,
                 editMediator = editMediator,
                 selectableObjectHighlighter = selectableObjectHighlighter,
+                moveDHVCamera = moveDhvCamera,
             };
         }
 

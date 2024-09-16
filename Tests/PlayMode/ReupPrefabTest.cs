@@ -11,6 +11,7 @@ using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwinTests.utils;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.dependencyInjectors;
+using ReupVirtualTwin.behaviours;
 
 public class ReupPrefabTest : MonoBehaviour
 {
@@ -164,6 +165,13 @@ public class ReupPrefabTest : MonoBehaviour
     {
         ViewModeController viewModeController = editMediator.GetComponent<EditMediatorDependecyInjector>().viewModeController;
         Assert.IsNotNull(viewModeController.character);
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator DHVCameraMovementShouldHaveADHVCameraTransformHandler()
+    {
+        Assert.IsNotNull(sceneObjects.moveDHVCamera.dhvCameraTransformHandler);
         yield return null;
     }
 

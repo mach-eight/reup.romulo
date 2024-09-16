@@ -7,8 +7,7 @@ namespace ReupVirtualTwin.behaviours
 {
     public class MoveDhvCamera : MonoBehaviour
     {
-        [SerializeField]
-        Transform dhvCameraTransformHandler;
+        public Transform dhvCameraTransformHandler;
 
         InputProvider _inputProvider;
         float MOVE_CAMERA_SPEED_M_PER_SECOND = 3.5f;
