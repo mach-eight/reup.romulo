@@ -244,8 +244,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5684383910040997618}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0.25881845, y: 0, z: 0, w: 0.965926}
+  m_LocalPosition: {x: 0, y: 4.999999, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -481,6 +481,14 @@ PrefabInstance:
       propertyPath: jumpPoints.Array.size
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 1103392437245331526, guid: 0a661a8d20f9d7049b04205d674fffa8, type: 3}
+      propertyPath: dhvCameraObjectHandler
+      value: 
+      objectReference: {fileID: 2934016240435041401}
+    - target: {fileID: 1103392437245331526, guid: 0a661a8d20f9d7049b04205d674fffa8, type: 3}
+      propertyPath: dhvCameraTransformHandler
+      value: 
+      objectReference: {fileID: 6969359003655323705}
     - target: {fileID: 1852941098794457292, guid: 0a661a8d20f9d7049b04205d674fffa8, type: 3}
       propertyPath: DHVCamera
       value: 
