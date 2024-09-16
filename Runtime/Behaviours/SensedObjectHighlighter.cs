@@ -38,6 +38,10 @@ namespace ReupVirtualTwin.behaviours
                 return;
             }
             GameObject sensedObject = _objectSensor.Sense();
+            if (sensedObject == highlightedObject && _selectedObjectsManager.IsObjectPartOfSelection(sensedObject))
+            {
+                objectHighlighter.UnhighlightObject(sensedObject);
+            }
             if (sensedObject != highlightedObject)
             {
                 if (highlightedObject != null)
