@@ -5,14 +5,17 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.TestTools;
+using UnityEditor;
 
 namespace ReupVirtualTwinTests.behaviours
 {
     public class MoveCharacterTests
     {
+        GameObject frontWallMock = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Tests/TestAssets/FrontWallMock.prefab");
         InputTestFixture input;
         ReupSceneInstantiator.SceneObjects sceneObjects;
         Keyboard keyboard;
+        Mouse mouse;
         Transform characterTransform;
 
         float timeInSecsForEachAction = 0.25f;
@@ -20,9 +23,10 @@ namespace ReupVirtualTwinTests.behaviours
         [UnitySetUp]
         public IEnumerator Setup()
         {
-            sceneObjects = ReupSceneInstantiator.InstantiateScene();
+            sceneObjects = ReupSceneInstantiator.InstantiateSceneWithBuildingFromPrefab(frontWallMock);
             input = sceneObjects.input;
             keyboard = InputSystem.AddDevice<Keyboard>();
+            mouse = InputSystem.AddDevice<Mouse>();
             characterTransform = sceneObjects.character.transform;
             yield return null;
         }
@@ -91,6 +95,44 @@ namespace ReupVirtualTwinTests.behaviours
             yield return null;
         }
 
+        [UnityTest]
+        public IEnumerator ClickInObjectMoveCharacterToObject()
+        {
+            Assert.AreEqual(Vector3.zero, characterTransform.position);
+            var desiredMousePositionInScreen = Camera.main.ViewportToScreenPoint(new Vector3(0.5f, 0.5f, 0));
+            input.Move(mouse.position, new Vector2(desiredMousePositionInScreen.x, desiredMousePositionInScreen.y));
+            input.PressAndRelease(mouse.leftButton);
+            yield return new WaitForSeconds(2);
+            Assert.GreaterOrEqual(characterTransform.position.z, 4.5f); // Wall is at 5 meters away, so it should stop at 4.5
+            Assert.Zero(characterTransform.position.x);
+            Assert.Zero(characterTransform.position.y);
+        }
+
+        [UnityTest]
+        public IEnumerator UpArrowKeyShouldMoveCharacterForward()
+        {
+            Assert.AreEqual(Vector3.zero, characterTransform.position);
+            input.Press(keyboard.upArrowKey);
+            yield return new WaitForSeconds(timeInSecsForEachAction);
+            input.Release(keyboard.upArrowKey);
+            Assert.GreaterOrEqual(characterTransform.position.z, CharacterMovementKeyboard.WALK_SPEED_M_PER_SECOND * timeInSecsForEachAction);
+            Assert.Zero(characterTransform.position.x);
+            Assert.Zero(characterTransform.position.y);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator DownArrowKeyShouldMoveCharacterBackwards()
+        {
+            Assert.AreEqual(Vector3.zero, characterTransform.position);
+            input.Press(keyboard.downArrowKey);
+            yield return new WaitForSeconds(timeInSecsForEachAction);
+            input.Release(keyboard.downArrowKey);
+            Assert.LessOrEqual(characterTransform.position.z, -1 * CharacterMovementKeyboard.WALK_SPEED_M_PER_SECOND * timeInSecsForEachAction);
+            Assert.Zero(characterTransform.position.x);
+            Assert.Zero(characterTransform.position.y);
+            yield return null;
+        }
 
     }
 }
