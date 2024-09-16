@@ -5,11 +5,12 @@ using UnityEngine.TestTools;
 
 using ReupVirtualTwin.managers;
 using ReupVirtualTwin.modelInterfaces;
-using ReupVirtualTwin.behaviours;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwinTests.utils;
+using ReupVirtualTwin.controllers;
+using ReupVirtualTwin.dependencyInjectors;
 
 public class ReupPrefabTest : MonoBehaviour
 {
@@ -19,7 +20,6 @@ public class ReupPrefabTest : MonoBehaviour
     IObjectRegistry objectRegistry;
 
     EditMediator editMediator;
-    SensedObjectHighlighter selectableObjectHighlighter;
     EditModeManager editModeManager;
 
 
@@ -41,10 +41,6 @@ public class ReupPrefabTest : MonoBehaviour
         editModeManager = editMediatorGameObject.transform.Find("EditModeManager").GetComponent<EditModeManager>();
 
         character = sceneObjects.character;
-        selectableObjectHighlighter = character.transform
-            .Find("Behaviours")
-            .Find("HoverOverSelectablesObjects")
-            .gameObject.GetComponent<SensedObjectHighlighter>();
     }
 
     [UnityTearDown]
@@ -71,28 +67,28 @@ public class ReupPrefabTest : MonoBehaviour
     [UnityTest]
     public IEnumerator SelectableObjectHighlighter_should_have_objectSensor()
     {
-        Assert.IsNotNull(selectableObjectHighlighter.objectSensor);
+        Assert.IsNotNull(sceneObjects.selectableObjectHighlighter.objectSensor);
         yield return null;
     }
 
     [UnityTest]
     public IEnumerator SelectableObjectHighlighter_should_have_objectHighlighter()
     {
-        Assert.IsNotNull(selectableObjectHighlighter.objectHighlighter);
+        Assert.IsNotNull(sceneObjects.selectableObjectHighlighter.objectHighlighter);
         yield return null;
     }
 
     [UnityTest]
     public IEnumerator SelectableObjectHighlighter_should_have_selectedObjectsManager()
     {
-        Assert.IsNotNull(selectableObjectHighlighter.selectedObjectsManager);
+        Assert.IsNotNull(sceneObjects.selectableObjectHighlighter.selectedObjectsManager);
         yield return null;
     }
 
     [UnityTest]
     public IEnumerator SelectableObjectHighlighterObjectSensor_should_haveSelectableObjectSelector()
     {
-        ObjectSensor selectableObjectSensorHighligherObjectSensor = (ObjectSensor) selectableObjectHighlighter.objectSensor;
+        ObjectSensor selectableObjectSensorHighligherObjectSensor = (ObjectSensor) sceneObjects.selectableObjectHighlighter.objectSensor;
         Assert.AreEqual(typeof(SelectableObjectSelector), selectableObjectSensorHighligherObjectSensor.objectSelector.GetType());
         yield return null;
     }
@@ -100,14 +96,14 @@ public class ReupPrefabTest : MonoBehaviour
     [UnityTest]
     public IEnumerator SelectableObjectsHighlighter_should_beEnabled_onlyWhen_EditModeIsEnabled()
     {
-        Assert.IsFalse(selectableObjectHighlighter.enableHighlighting);
+        Assert.IsFalse(sceneObjects.selectableObjectHighlighter.enableHighlighting);
 
         editModeManager.editMode = true;
         yield return null;
-        Assert.IsTrue(selectableObjectHighlighter.enableHighlighting);
+        Assert.IsTrue(sceneObjects.selectableObjectHighlighter.enableHighlighting);
         editModeManager.editMode = false;
         yield return null;
-        Assert.IsFalse(selectableObjectHighlighter.enableHighlighting);
+        Assert.IsFalse(sceneObjects.selectableObjectHighlighter.enableHighlighting);
         yield return null;
     }
 
@@ -137,6 +133,37 @@ public class ReupPrefabTest : MonoBehaviour
     {
         IObjectRegistry objectRegistry = sceneObjects.selectedObjectsManager.objectRegistry;
         Assert.IsNotNull(objectRegistry);
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator EditMediatorShouldHaveAViewModeController()
+    {
+        Assert.IsNotNull(editMediator.viewModeController);
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator ViewModeControllerShouldHaveAFPVCameraProperty()
+    {
+        ViewModeController viewModeController = editMediator.GetComponent<EditMediatorDependecyInjector>().viewModeController;
+        Assert.IsNotNull(viewModeController.firstPersonViewCamera);
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator ViewModeControllerShouldHaveADHVCameraProperty()
+    {
+        ViewModeController viewModeController = editMediator.GetComponent<EditMediatorDependecyInjector>().viewModeController;
+        Assert.IsNotNull(viewModeController.dollhouseViewCamera);
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator ViewModeControllerShouldHaveACharacterProperty()
+    {
+        ViewModeController viewModeController = editMediator.GetComponent<EditMediatorDependecyInjector>().viewModeController;
+        Assert.IsNotNull(viewModeController.character);
         yield return null;
     }
 

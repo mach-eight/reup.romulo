@@ -2,6 +2,8 @@ using ReupVirtualTwin.managers;
 using ReupVirtualTwin.behaviours;
 using UnityEditor;
 using UnityEngine;
+using ReupVirtualTwin.controllers;
+using ReupVirtualTwin.controllerInterfaces;
 
 namespace ReupVirtualTwinTests.utils
 {
@@ -18,6 +20,8 @@ namespace ReupVirtualTwinTests.utils
             public SetupBuilding setupbuilding;
             public SelectSelectableObject selectSelectableObject;
             public SelectedObjectsManager selectedObjectsManager;
+            public EditMediator editMediator;
+            public SensedObjectHighlighter selectableObjectHighlighter;
         }
 
         public static SceneObjects InstantiateScene()
@@ -29,6 +33,9 @@ namespace ReupVirtualTwinTests.utils
             GameObject building = CreateBuilding();
             SetupBuilding setupBuilding = baseGlobalScriptGameObject.transform.Find("SetupBuilding").GetComponent<SetupBuilding>();
             setupBuilding.building = building;
+
+            EditMediator editMediator = baseGlobalScriptGameObject.transform
+                .Find("EditMediator").GetComponent<EditMediator>();
 
             ChangeColorManager changeColorManager = baseGlobalScriptGameObject.transform
                 .Find("EditMediator")
@@ -45,6 +52,9 @@ namespace ReupVirtualTwinTests.utils
                .Find("SelectedObjectsManager")
                .GetComponent<SelectedObjectsManager>();
 
+            SensedObjectHighlighter selectableObjectHighlighter = baseGlobalScriptGameObject.transform
+                .Find("HoverOverSelectablesObjects").GetComponent<SensedObjectHighlighter>();
+
             return new SceneObjects
             {
                 reupObject = reupGameObject,
@@ -55,6 +65,8 @@ namespace ReupVirtualTwinTests.utils
                 setupbuilding = setupBuilding,
                 selectSelectableObject = selectSelectableObject,
                 selectedObjectsManager = selectedObjectsManager,
+                editMediator = editMediator,
+                selectableObjectHighlighter = selectableObjectHighlighter,
             };
         }
 

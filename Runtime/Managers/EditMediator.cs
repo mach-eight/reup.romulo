@@ -56,6 +56,9 @@ namespace ReupVirtualTwin.managers
             get => _changeMaterialController; set => _changeMaterialController = value;
         }
 
+        private IViewModeController _viewModeController;
+        public IViewModeController viewModeController { set => _viewModeController = value; get => _viewModeController; }
+
         private IncomingMessageValidator incomingMessageValidator = new IncomingMessageValidator();
 
         [HideInInspector]
@@ -233,6 +236,12 @@ namespace ReupVirtualTwin.managers
                     break;
                 case WebMessageType.disableSelection:
                     _selectedObjectsManager.allowEditSelection = false;
+                    break;
+                case WebMessageType.activateDHV:
+                    _viewModeController.ActivateDHV();
+                    break;
+                case WebMessageType.activateFPV:
+                    _viewModeController.ActivateFPV();
                     break;
             }
         }
