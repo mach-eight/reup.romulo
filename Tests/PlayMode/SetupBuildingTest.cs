@@ -2,8 +2,9 @@ using UnityEngine;
 using NUnit.Framework;
 using ReupVirtualTwin.models;
 using ReupVirtualTwinTests.utils;
+using ReupVirtualTwin.behaviours;
 
-namespace ReupVirtualTwin.behaviours
+namespace ReupVirtualTwinTests.behaviours
 {
     public class SetupBuildingTest
     {

@@ -2,8 +2,7 @@ using ReupVirtualTwin.managers;
 using ReupVirtualTwin.behaviours;
 using UnityEditor;
 using UnityEngine;
-using ReupVirtualTwin.controllers;
-using ReupVirtualTwin.controllerInterfaces;
+using UnityEngine.InputSystem;
 
 namespace ReupVirtualTwinTests.utils
 {
@@ -26,10 +25,13 @@ namespace ReupVirtualTwinTests.utils
             public GameObject dhvCamera;
             public GameObject fpvCamera;
             public ViewModeManager viewModeManager;
+            public InputTestFixture input;
         }
 
         public static SceneObjects InstantiateScene()
         {
+            InputTestFixture input = new InputTestFixture();
+            input.Setup();
             GameObject reupGameObject = (GameObject)PrefabUtility.InstantiatePrefab(reupPrefab);
             GameObject baseGlobalScriptGameObject = reupGameObject.transform.Find("BaseGlobalScripts").gameObject;
             GameObject character = reupGameObject.transform.Find("Character").gameObject;
@@ -86,6 +88,7 @@ namespace ReupVirtualTwinTests.utils
                 dhvCamera = dhvCamera,
                 fpvCamera = fpvCamera,
                 viewModeManager = viewModeManager,
+                input = input,
             };
         }
 
@@ -93,6 +96,7 @@ namespace ReupVirtualTwinTests.utils
         {
             Object.Destroy(sceneObjects.reupObject);
             Object.Destroy(sceneObjects.building);
+            sceneObjects.input.TearDown();
         }
 
         private static GameObject CreateBuilding()
