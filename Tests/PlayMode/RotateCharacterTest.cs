@@ -1,12 +1,11 @@
+using System;
 using NUnit.Framework;
-using ReupVirtualTwin.behaviours;
 using ReupVirtualTwinTests.utils;
 using System.Collections;
 using UnityEngine;
 using InSys = UnityEngine.InputSystem;
 using UnityEngine.InputSystem;
 using UnityEngine.TestTools;
-using UnityEditor;
 
 
 namespace ReupVirtualTwinTests.behaviours
@@ -19,10 +18,7 @@ namespace ReupVirtualTwinTests.behaviours
         Keyboard keyboard;
         Mouse mouse;
         Touchscreen touch;
-
         float zeroThreshold = 1e-5f;
-
-        //float timeInSecsForEachAction = 0.25f;
 
         [UnitySetUp]
         public IEnumerator Setup()
@@ -50,22 +46,58 @@ namespace ReupVirtualTwinTests.behaviours
             Assert.LessOrEqual(vector.z, zeroThreshold);
         }
 
+        IEnumerator DragMouseLeftButton(Vector2 startMousePoint, Vector2 endMousePoint, int steps)
+        {
+            return MovePointer(
+                startMousePoint,
+                endMousePoint,
+                steps,
+                (Vector2 startPosition) => { input.Move(mouse.position, startPosition); input.Press(mouse.leftButton); },
+                (Vector2 currentPosition, Vector2 delta) => {
+                    input.Move(mouse.position, currentPosition, delta);
+                    input.Set(mouse.delta, delta);
+                },
+                (Vector2 endPosition) => input.Release(mouse.leftButton)
+            );
+        }
+
         IEnumerator MoveFinger(int touchId, Vector2 startScreenPosition, Vector2 endScreenPosition, int steps)
         {
-            Vector2 touchStartPosition = Camera.main.ViewportToScreenPoint(startScreenPosition);
-            Vector2 touchEndPosition = Camera.main.ViewportToScreenPoint(endScreenPosition);
-            input.SetTouch(touchId, InSys.TouchPhase.Began, touchStartPosition, Vector2.zero, true, touch);
+            return MovePointer(
+                startScreenPosition,
+                endScreenPosition,
+                steps,
+                (Vector2 startPosition) => input.SetTouch(touchId, InSys.TouchPhase.Began, startPosition, Vector2.zero, true, touch),
+                (Vector2 currentPosition, Vector2 delta) => input.SetTouch(touchId, InSys.TouchPhase.Moved, currentPosition, delta, true, touch),
+                (Vector2 endPosition) => input.EndTouch(touchId, endPosition, Vector2.zero, true, touch)
+            );
+        }
+
+        IEnumerator MovePointer(
+            Vector2 startScreenPosition,
+            Vector2 endScreenPosition,
+            int steps,
+            Action<Vector2> startAction,
+            Action<Vector2, Vector2> stepAction,
+            Action<Vector2> endAction
+        ) {
+            Vector2 startPosition = Camera.main.ViewportToScreenPoint(startScreenPosition);
+            Vector2 endPosition = Camera.main.ViewportToScreenPoint(endScreenPosition);
+            startAction(startPosition);
+            Debug.Log("start Action done");
             for (int i = 1; i < steps + 1; i++)
             {
                 float prevT = (float)(i-1) / steps;
                 float t = (float)i / steps;
-                Vector2 prevPostion = Vector2.Lerp(touchStartPosition, touchEndPosition, prevT);
-                Vector2 currentPosition = Vector2.Lerp(touchStartPosition, touchEndPosition, t);
+                Vector2 prevPostion = Vector2.Lerp(startPosition, endPosition, prevT);
+                Vector2 currentPosition = Vector2.Lerp(startPosition, endPosition, t);
                 Vector2 delta = currentPosition - prevPostion;
-                input.SetTouch(touchId, InSys.TouchPhase.Moved, currentPosition, delta, true, touch);
+                stepAction(currentPosition, delta);
+                Debug.Log("step action done");
                 yield return null;
             }
-            input.EndTouch(touchId, touchEndPosition, Vector2.zero, true, touch);
+            endAction(endPosition);
+            yield return null;
         }
 
         [UnityTest]
@@ -73,7 +105,7 @@ namespace ReupVirtualTwinTests.behaviours
         {
             AssertVectorIsZero(characterTransform.eulerAngles);
             int touchId = 0;
-            yield return MoveFinger(touchId, new Vector2(0.5f, 0.5f), new Vector2(0.9f, 0.5f), 90);
+            yield return MoveFinger(touchId, new Vector2(0.5f, 0.5f), new Vector2(0.7f, 0.5f), 90);
             bool characterTurnedLeft = (characterTransform.eulerAngles.y > 180 && characterTransform.eulerAngles.y < 360) ||
                 (characterTransform.eulerAngles.y < 0 && characterTransform.eulerAngles.y > -180);
             Assert.IsTrue(characterTurnedLeft);
@@ -85,40 +117,14 @@ namespace ReupVirtualTwinTests.behaviours
         [UnityTest]
         public IEnumerator RotateHorizontallyWithMouse()
         {
-            Vector2 mouseStartPosition = Camera.main.ViewportToScreenPoint(new Vector3(0.5f, 0.5f, 0));
-            Vector2 touchEndPosition = Camera.main.ViewportToScreenPoint(new Vector3(0.9f, 0.5f, 0));
-
-            //int touchId = 0;
-            //InSys.TouchPhase phase = InSys.TouchPhase.Began;
-            //Debug.Log("set touch");
-            //input.SetTouch(touchId, phase, touchStartPosition, 1.0f, Vector2.zero, true, touch);
-            input.Move(mouse.position, mouseStartPosition);
-            input.Press(mouse.leftButton);
-            //Debug.Log("touch set");
-            //float duration = 1.5f;
-            int steps = 90;
-            //float timeStep = duration / steps;
-            //Debug.Log("timeStep");
-            //Debug.Log(timeStep);
-
-            for (int i = 0; i < steps; i++)
-            {
-                float t = (float)i / steps;
-                //Debug.Log("t");
-                //Debug.Log(t);
-                Vector2 currentPosition = Vector2.Lerp(mouseStartPosition, touchEndPosition, t);
-                //Debug.Log("currentPosition");
-                //Debug.Log(currentPosition);
-                //input.MoveTouch(touchId, currentPosition);
-                input.Move(mouse.position, currentPosition);
-                yield return null;
-                //yield return new WaitForSeconds(timeStep);
-            }
-
-            //input.EndTouch(touchId, touchEndPosition);
-            input.Release(mouse.leftButton);
-
-            yield return new WaitForSeconds(2);
+            AssertVectorIsZero(characterTransform.eulerAngles);
+            yield return DragMouseLeftButton(new Vector2(0.5f, 0.5f), new Vector2(0.3f, 0.5f), 90);
+            bool characterTurnedLeft = (characterTransform.eulerAngles.y > 180 && characterTransform.eulerAngles.y < 360) ||
+                (characterTransform.eulerAngles.y < 0 && characterTransform.eulerAngles.y > -180);
+            Assert.IsTrue(characterTurnedLeft);
+            Assert.LessOrEqual(characterTransform.eulerAngles.x, zeroThreshold);
+            Assert.LessOrEqual(characterTransform.eulerAngles.z, zeroThreshold);
+            yield return null;
         }
 
     }
