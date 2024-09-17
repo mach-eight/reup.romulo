@@ -1,3 +1,4 @@
+using System;
 using ReupVirtualTwin.managers;
 using ReupVirtualTwin.behaviours;
 using UnityEditor;
@@ -29,10 +30,17 @@ namespace ReupVirtualTwinTests.utils
             public ViewModeManager viewModeManager;
             public InputTestFixture input;
             public EventSystem eventSystem;
+            public HeightMediator heightMediator;
         }
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab)
         {
             GameObject building = (GameObject)PrefabUtility.InstantiatePrefab(buildingPrefab);
+            return SceneObjectsWithBuilding(building);
+        }
+        public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab, Action<GameObject> modifyBuilding)
+        {
+            GameObject building = (GameObject)PrefabUtility.InstantiatePrefab(buildingPrefab);
+            modifyBuilding(building);
             return SceneObjectsWithBuilding(building);
         }
 
@@ -88,6 +96,8 @@ namespace ReupVirtualTwinTests.utils
                 .Find("EditMediator")
                 .Find("ViewModeManager").GetComponent<ViewModeManager>();
 
+            HeightMediator heightMediator = character.transform.Find("Behaviours")
+                .Find("HeightMediator").GetComponent<HeightMediator>();
 
             return new SceneObjects
             {
@@ -108,14 +118,15 @@ namespace ReupVirtualTwinTests.utils
                 viewModeManager = viewModeManager,
                 input = input,
                 eventSystem = eventSystem,
+                heightMediator = heightMediator,
             };
         }
 
         public static void DestroySceneObjects(SceneObjects sceneObjects)
         {
-            Object.Destroy(sceneObjects.reupObject);
-            Object.Destroy(sceneObjects.building);
-            Object.Destroy(sceneObjects.eventSystem.gameObject);
+            GameObject.Destroy(sceneObjects.reupObject);
+            GameObject.Destroy(sceneObjects.building);
+            GameObject.Destroy(sceneObjects.eventSystem.gameObject);
             sceneObjects.input.TearDown();
         }
 
