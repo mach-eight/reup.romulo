@@ -9,7 +9,7 @@ using ReupVirtualTwinTests.utils;
 public class CharacterPositionManagerTest : MonoBehaviour
 {
     ReupSceneInstantiator.SceneObjects sceneObjects;
-    GameObject character;
+    Transform character;
 
     CharacterPositionManager posManager;
 

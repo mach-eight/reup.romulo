@@ -13,7 +13,8 @@ namespace ReupVirtualTwinTests.utils
         public class SceneObjects
         {
             public GameObject reupObject;
-            public GameObject character;
+            public Transform character;
+            public Transform innerCharacter;
             public GameObject baseGlobalScriptGameObject;
             public GameObject building;
             public ChangeColorManager changeColorManager;
@@ -49,7 +50,9 @@ namespace ReupVirtualTwinTests.utils
             input.Setup();
             GameObject reupGameObject = (GameObject)PrefabUtility.InstantiatePrefab(reupPrefab);
             GameObject baseGlobalScriptGameObject = reupGameObject.transform.Find("BaseGlobalScripts").gameObject;
-            GameObject character = reupGameObject.transform.Find("Character").gameObject;
+            Transform character = reupGameObject.transform.Find("Character");
+            Transform innerCharacter = reupGameObject.transform.Find("Character").Find("InnerCharacter");
+
 
             SetupBuilding setupBuilding = baseGlobalScriptGameObject.transform.Find("SetupBuilding").GetComponent<SetupBuilding>();
             setupBuilding.building = building;
@@ -90,6 +93,7 @@ namespace ReupVirtualTwinTests.utils
             {
                 reupObject = reupGameObject,
                 character = character,
+                innerCharacter = innerCharacter,
                 baseGlobalScriptGameObject = baseGlobalScriptGameObject,
                 building = building,
                 changeColorManager = changeColorManager,

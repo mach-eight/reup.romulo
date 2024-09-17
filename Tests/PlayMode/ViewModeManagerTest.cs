@@ -18,7 +18,7 @@ namespace ReupVirtualTwinTests.playmode.managers
         GameObject fpvCamera;
         GameObject dhvCamera;
         List<GameObject> cameras;
-        GameObject character;
+        Transform character;
 
         [UnitySetUp]
         public IEnumerator SetUp()
@@ -81,7 +81,7 @@ namespace ReupVirtualTwinTests.playmode.managers
         [Test]
         public void ShouldActivateFPVCamera_when_changeViewModeToFPV()
         {
-            character.SetActive(false);
+            character.gameObject.SetActive(false);
             Assert.IsFalse(fpvCamera.activeInHierarchy);
             viewModelManager.ActivateFPV();
             AssertOnlyOneCameraIsActive(fpvCamera);
@@ -99,11 +99,11 @@ namespace ReupVirtualTwinTests.playmode.managers
         [Test]
         public void CharacterShouldBeDeactivated_when_inDHV()
         {
-            Assert.IsTrue(character.activeSelf);
+            Assert.IsTrue(character.gameObject.activeSelf);
             viewModelManager.ActivateDHV();
-            Assert.IsFalse(character.activeSelf);
+            Assert.IsFalse(character.gameObject.activeSelf);
             viewModelManager.ActivateFPV();
-            Assert.IsTrue(character.activeSelf);
+            Assert.IsTrue(character.gameObject.activeSelf);
         }
 
     }

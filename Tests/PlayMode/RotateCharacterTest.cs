@@ -14,7 +14,8 @@ namespace ReupVirtualTwinTests.behaviours
     {
         InputTestFixture input;
         ReupSceneInstantiator.SceneObjects sceneObjects;
-        Transform characterTransform;
+        Transform character;
+        Transform innerCharacter;
         Keyboard keyboard;
         Mouse mouse;
         Touchscreen touch;
@@ -28,7 +29,8 @@ namespace ReupVirtualTwinTests.behaviours
             keyboard = InputSystem.AddDevice<Keyboard>();
             mouse = InputSystem.AddDevice<Mouse>();
             touch = InputSystem.AddDevice<Touchscreen>();
-            characterTransform = sceneObjects.character.transform;
+            character = sceneObjects.character;
+            innerCharacter = sceneObjects.innerCharacter;
             yield return null;
         }
 
@@ -84,7 +86,6 @@ namespace ReupVirtualTwinTests.behaviours
             Vector2 startPosition = Camera.main.ViewportToScreenPoint(startScreenPosition);
             Vector2 endPosition = Camera.main.ViewportToScreenPoint(endScreenPosition);
             startAction(startPosition);
-            Debug.Log("start Action done");
             for (int i = 1; i < steps + 1; i++)
             {
                 float prevT = (float)(i-1) / steps;
@@ -93,7 +94,6 @@ namespace ReupVirtualTwinTests.behaviours
                 Vector2 currentPosition = Vector2.Lerp(startPosition, endPosition, t);
                 Vector2 delta = currentPosition - prevPostion;
                 stepAction(currentPosition, delta);
-                Debug.Log("step action done");
                 yield return null;
             }
             endAction(endPosition);
@@ -101,29 +101,64 @@ namespace ReupVirtualTwinTests.behaviours
         }
 
         [UnityTest]
-        public IEnumerator RotateHorizontallyWithTouch()
+        public IEnumerator ShouldRotateHorizontallyInTouchscreen()
         {
-            AssertVectorIsZero(characterTransform.eulerAngles);
+            AssertVectorIsZero(character.eulerAngles);
+            AssertVectorIsZero(innerCharacter.localEulerAngles);
             int touchId = 0;
             yield return MoveFinger(touchId, new Vector2(0.5f, 0.5f), new Vector2(0.7f, 0.5f), 90);
-            bool characterTurnedLeft = (characterTransform.eulerAngles.y > 180 && characterTransform.eulerAngles.y < 360) ||
-                (characterTransform.eulerAngles.y < 0 && characterTransform.eulerAngles.y > -180);
+            bool characterTurnedLeft = (character.eulerAngles.y > 180 && character.eulerAngles.y < 360) ||
+                (character.eulerAngles.y < 0 && character.eulerAngles.y > -180);
             Assert.IsTrue(characterTurnedLeft);
-            Assert.LessOrEqual(characterTransform.eulerAngles.x, zeroThreshold);
-            Assert.LessOrEqual(characterTransform.eulerAngles.z, zeroThreshold);
+            Assert.LessOrEqual(character.eulerAngles.x, zeroThreshold);
+            Assert.LessOrEqual(character.eulerAngles.z, zeroThreshold);
+            AssertVectorIsZero(innerCharacter.localEulerAngles);
             yield return null;
         }
 
         [UnityTest]
-        public IEnumerator RotateHorizontallyWithMouse()
+        public IEnumerator ShouldRotateHorizontallyWithMouse()
         {
-            AssertVectorIsZero(characterTransform.eulerAngles);
+            AssertVectorIsZero(character.eulerAngles);
+            AssertVectorIsZero(innerCharacter.localEulerAngles);
             yield return DragMouseLeftButton(new Vector2(0.5f, 0.5f), new Vector2(0.3f, 0.5f), 90);
-            bool characterTurnedLeft = (characterTransform.eulerAngles.y > 180 && characterTransform.eulerAngles.y < 360) ||
-                (characterTransform.eulerAngles.y < 0 && characterTransform.eulerAngles.y > -180);
+            bool characterTurnedLeft = (character.eulerAngles.y > 180 && character.eulerAngles.y < 360) ||
+                (character.eulerAngles.y < 0 && character.eulerAngles.y > -180);
             Assert.IsTrue(characterTurnedLeft);
-            Assert.LessOrEqual(characterTransform.eulerAngles.x, zeroThreshold);
-            Assert.LessOrEqual(characterTransform.eulerAngles.z, zeroThreshold);
+            Assert.LessOrEqual(character.eulerAngles.x, zeroThreshold);
+            Assert.LessOrEqual(character.eulerAngles.z, zeroThreshold);
+            AssertVectorIsZero(innerCharacter.localEulerAngles);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldRotateVerticallyWithMouse()
+        {
+            AssertVectorIsZero(character.eulerAngles);
+            AssertVectorIsZero(innerCharacter.localEulerAngles);
+            yield return DragMouseLeftButton(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.7f), 90);
+            bool characterLookedUp = (innerCharacter.eulerAngles.x < 0 && innerCharacter.eulerAngles.x > -180) ||
+                (innerCharacter.eulerAngles.x > 180 && innerCharacter.eulerAngles.x < 360);
+            AssertVectorIsZero(character.eulerAngles);
+            Assert.IsTrue(characterLookedUp);
+            Assert.LessOrEqual(innerCharacter.eulerAngles.y, zeroThreshold);
+            Assert.LessOrEqual(innerCharacter.eulerAngles.y, zeroThreshold);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldRotateVerticallyInTouchscreen()
+        {
+            AssertVectorIsZero(character.eulerAngles);
+            AssertVectorIsZero(innerCharacter.localEulerAngles);
+            int touchId = 0;
+            yield return MoveFinger(touchId, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.3f), 90);
+            bool characterLookedUp = (innerCharacter.eulerAngles.x < 0 && innerCharacter.eulerAngles.x > -180) ||
+                (innerCharacter.eulerAngles.x > 180 && innerCharacter.eulerAngles.x < 360);
+            AssertVectorIsZero(character.eulerAngles);
+            Assert.IsTrue(characterLookedUp);
+            Assert.LessOrEqual(innerCharacter.eulerAngles.y, zeroThreshold);
+            Assert.LessOrEqual(innerCharacter.eulerAngles.y, zeroThreshold);
             yield return null;
         }
 
