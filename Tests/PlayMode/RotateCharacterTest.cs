@@ -21,6 +21,8 @@ namespace ReupVirtualTwinTests.behaviours
         Touchscreen touch;
         float zeroThreshold = 1e-5f;
 
+        float timeInSecsForHoldingButton = 0.25f;
+
         [UnitySetUp]
         public IEnumerator Setup()
         {
@@ -159,6 +161,40 @@ namespace ReupVirtualTwinTests.behaviours
             Assert.IsTrue(characterLookedUp);
             Assert.LessOrEqual(innerCharacter.eulerAngles.y, zeroThreshold);
             Assert.LessOrEqual(innerCharacter.eulerAngles.y, zeroThreshold);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldRotateHorizontallyUsingLeftArrowKey()
+        {
+            AssertVectorIsZero(character.eulerAngles);
+            AssertVectorIsZero(innerCharacter.localEulerAngles);
+            input.Press(keyboard.leftArrowKey);
+            yield return new WaitForSeconds(timeInSecsForHoldingButton);
+            input.Release(keyboard.leftArrowKey);
+            bool characterTurnedLeft = (character.eulerAngles.y > 180 && character.eulerAngles.y < 360) ||
+                (character.eulerAngles.y < 0 && character.eulerAngles.y > -180);
+            Assert.IsTrue(characterTurnedLeft);
+            Assert.LessOrEqual(character.eulerAngles.x, zeroThreshold);
+            Assert.LessOrEqual(character.eulerAngles.z, zeroThreshold);
+            AssertVectorIsZero(innerCharacter.localEulerAngles);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldRotateHorizontallyUsingRightArrowKey()
+        {
+            AssertVectorIsZero(character.eulerAngles);
+            AssertVectorIsZero(innerCharacter.localEulerAngles);
+            input.Press(keyboard.rightArrowKey);
+            yield return new WaitForSeconds(timeInSecsForHoldingButton);
+            input.Release(keyboard.rightArrowKey);
+            bool characterTurnedLeft = (character.eulerAngles.y > 180 && character.eulerAngles.y < 360) ||
+                (character.eulerAngles.y < 0 && character.eulerAngles.y > -180);
+            Assert.IsFalse(characterTurnedLeft);
+            Assert.LessOrEqual(character.eulerAngles.x, zeroThreshold);
+            Assert.LessOrEqual(character.eulerAngles.z, zeroThreshold);
+            AssertVectorIsZero(innerCharacter.localEulerAngles);
             yield return null;
         }
 
