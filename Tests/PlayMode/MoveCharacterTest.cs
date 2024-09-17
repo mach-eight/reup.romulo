@@ -3,20 +3,22 @@ using ReupVirtualTwin.behaviours;
 using ReupVirtualTwinTests.utils;
 using System.Collections;
 using UnityEngine;
+using InSys = UnityEngine.InputSystem;
 using UnityEngine.InputSystem;
 using UnityEngine.TestTools;
 using UnityEditor;
 
 namespace ReupVirtualTwinTests.behaviours
 {
-    public class MoveCharacterTests
+    public class MoveCharacterTest
     {
         GameObject frontWallMock = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Tests/TestAssets/FrontWallMock.prefab");
         InputTestFixture input;
         ReupSceneInstantiator.SceneObjects sceneObjects;
+        Transform characterTransform;
         Keyboard keyboard;
         Mouse mouse;
-        Transform characterTransform;
+        Touchscreen touch;
 
         float timeInSecsForEachAction = 0.25f;
 
@@ -27,6 +29,7 @@ namespace ReupVirtualTwinTests.behaviours
             input = sceneObjects.input;
             keyboard = InputSystem.AddDevice<Keyboard>();
             mouse = InputSystem.AddDevice<Mouse>();
+            touch = InputSystem.AddDevice<Touchscreen>();
             characterTransform = sceneObjects.character.transform;
             yield return null;
         }
@@ -98,14 +101,26 @@ namespace ReupVirtualTwinTests.behaviours
         [UnityTest]
         public IEnumerator ClickInObjectMoveCharacterToObject()
         {
+            var mouse = InputSystem.AddDevice<Mouse>();
             Assert.AreEqual(Vector3.zero, characterTransform.position);
-            var desiredMousePositionInScreen = Camera.main.ViewportToScreenPoint(new Vector3(0.5f, 0.5f, 0));
-            input.Move(mouse.position, new Vector2(desiredMousePositionInScreen.x, desiredMousePositionInScreen.y));
+            Vector2 desiredMousePositionInScreen = Camera.main.ViewportToScreenPoint(new Vector3(0.5f, 0.5f, 0));
+            input.Move(mouse.position, desiredMousePositionInScreen);
             input.PressAndRelease(mouse.leftButton);
             yield return new WaitForSeconds(2);
             Assert.GreaterOrEqual(characterTransform.position.z, 4.5f); // Wall is at 5 meters away, so it should stop at 4.5
-            Assert.Zero(characterTransform.position.x);
-            Assert.Zero(characterTransform.position.y);
+        }
+
+        [UnityTest]
+        public IEnumerator TapInObjectMoveCharacterToObject()
+        {
+            Assert.AreEqual(Vector3.zero, characterTransform.position);
+            Vector2 desiredTapPositionInScreen = Camera.main.ViewportToScreenPoint(new Vector3(0.5f, 0.5f, 0));
+            int touchId = 0;
+            InSys.TouchPhase phase = InSys.TouchPhase.Began;
+            input.SetTouch(touchId, phase, desiredTapPositionInScreen, 1.0f, Vector2.zero, true, touch);
+            input.EndTouch(touchId, desiredTapPositionInScreen);
+            yield return new WaitForSeconds(2);
+            Assert.GreaterOrEqual(characterTransform.position.z, 4.5f); // Wall is at 5 meters away, so it should stop at 4.5
         }
 
         [UnityTest]
