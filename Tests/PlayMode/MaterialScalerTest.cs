@@ -81,6 +81,33 @@ namespace ReupVirtualTwinTests.helpers
         }
 
         [Test]
+        public void ShouldAdjustUVScaleToDimensions_withTrianglesIndexesNotFollowingAnyOrder()
+        {
+            GameObject wall = new GameObject();
+            MeshRenderer meshRenderer = wall.AddComponent<MeshRenderer>();
+            meshRenderer.sharedMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));;
+            MeshFilter meshFilter = wall.AddComponent<MeshFilter>();
+            Mesh mesh = new Mesh();
+            mesh.vertices = new Vector3[] {
+                new Vector3(0,0,0),
+                new Vector3(0,1,1),
+                new Vector3(0,0,1),
+            };
+            mesh.uv = new Vector2[] {
+                new Vector2(0,0),
+                new Vector2(1,1),
+                new Vector2(0,1),
+            };
+            mesh.triangles = new int[] {
+                2,0,1
+            };
+            meshFilter.sharedMesh = mesh;
+            materialScaler.AdjustUVScaleToDimensions(wall, new Vector2(2000, 2000));
+            Material material = wall.GetComponent<Renderer>().material;
+            AssertUtils.AssertVector2sAreEqual(new Vector2(0.5f, 0.5f), material.mainTextureScale);
+        }
+
+        [Test]
         public void ShouldAdjustUVScaleToDimensions_even_when_infinitesimalArePresentUVOr3DPoints()
         {
             GameObject obj = new GameObject();
@@ -135,7 +162,7 @@ namespace ReupVirtualTwinTests.helpers
             materialScaler.AdjustUVScaleToDimensions(wall, new Vector2(2000, 2000));
             Material material = wall.GetComponent<Renderer>().material;
             AssertUtils.AssertVector2sAreEqual(new Vector2(0.5f, 0.5f), material.mainTextureScale);
-
         }
+
     }
 }

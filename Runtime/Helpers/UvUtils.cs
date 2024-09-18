@@ -115,13 +115,15 @@ namespace ReupVirtualTwin.helpers
                 if (
                     !ArePointsCollinear(
                         vertices[triangles[triangleIndex]],
-                        vertices[triangles[triangleIndex] + 1],
-                        vertices[triangles[triangleIndex] + 2]) &&
+                        vertices[triangles[triangleIndex + 1]],
+                        vertices[triangles[triangleIndex + 2]]
+                    ) &&
                     !ArePointsCollinear(
                         uvs[triangles[triangleIndex]],
-                        uvs[triangles[triangleIndex] + 1],
-                        uvs[triangles[triangleIndex] + 2]))
-                {
+                        uvs[triangles[triangleIndex + 1]],
+                        uvs[triangles[triangleIndex + 2]]
+                    )
+                ) {
                     return triangles.AsSpan(triangleIndex, 3).ToArray();
                 }
                 triangleIndex = triangleIndex + 3;
