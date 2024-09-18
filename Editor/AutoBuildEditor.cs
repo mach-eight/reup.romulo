@@ -165,9 +165,12 @@ public class AutoBuildEditor : MonoBehaviour
 
     private static string CreateDisableObjectsMessage(List<GameObject> disabledObjects)
     {
-        string disableObjectsNames = string.Join("\n", disabledObjects.Select(obj => obj.name));
-        return $"The following objects are disabled:\n{disableObjectsNames}\n\n" +
-               "This could damage the correct behavior of the model.\n\n" +
+        var firstTenDisabledObjects = disabledObjects.Take(10).Select(obj => obj.name);
+        string disableObjectsNames = string.Join("\n", firstTenDisabledObjects);
+        int totalDisabledObjectsCount = disabledObjects.Count;
+        return $"Total number of disabled objects: {totalDisabledObjectsCount}\n\n" +
+               $"Here is a list of the first 10 disabled objects:\n{disableObjectsNames}\n\n" +
+               "This could damage the correct behavior of the model.\n" +
                "Do you want to continue?";
     }
 }
