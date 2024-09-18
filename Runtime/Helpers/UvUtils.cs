@@ -94,7 +94,7 @@ namespace ReupVirtualTwin.helpers
             int[] triangles = mesh.triangles;
             Vector3[] vertices = mesh.vertices;
             Vector2[] uvs = mesh.uv;
-            int[] choosenTriangle = FirstNonColinearTriangle(triangles, vertices);
+            int[] choosenTriangle = FirstNonColinearTriangle(triangles, vertices, uvs);
             return choosenTriangle.Select(triangle => new UvPointPair
             {
                 uv = uvs[triangle],
@@ -107,16 +107,21 @@ namespace ReupVirtualTwin.helpers
             public Vector3 point;
         }
 
-        private static int[] FirstNonColinearTriangle(int[] triangles, Vector3[] vertices)
+        private static int[] FirstNonColinearTriangle(int[] triangles, Vector3[] vertices, Vector2[] uvs)
         {
             int triangleIndex = 0;
             while (triangleIndex < triangles.Length)
             {
-                if (!ArePointsCollinear(
-                    vertices[triangles[triangleIndex]],
-                    vertices[triangles[triangleIndex] + 1],
-                    vertices[triangles[triangleIndex] + 2]
-                )){
+                if (
+                    !ArePointsCollinear(
+                        vertices[triangles[triangleIndex]],
+                        vertices[triangles[triangleIndex] + 1],
+                        vertices[triangles[triangleIndex] + 2]) &&
+                    !ArePointsCollinear(
+                        uvs[triangles[triangleIndex]],
+                        uvs[triangles[triangleIndex] + 1],
+                        uvs[triangles[triangleIndex] + 2]))
+                {
                     return triangles.AsSpan(triangleIndex, 3).ToArray();
                 }
                 triangleIndex = triangleIndex + 3;

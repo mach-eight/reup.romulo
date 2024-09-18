@@ -106,5 +106,36 @@ namespace ReupVirtualTwinTests.helpers
             Material material = obj.GetComponent<Renderer>().material;
             AssertUtils.AssertVector2sAreEqual(new Vector2(1.196138f, 6.66403f), material.mainTextureScale);
         }
+
+        [Test]
+        public void ShouldMakeSureUVcoordinatesAreNotCollinear()
+        {
+            GameObject wall = new GameObject();
+            MeshRenderer meshRenderer = wall.AddComponent<MeshRenderer>();
+            meshRenderer.sharedMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));;
+            MeshFilter meshFilter = wall.AddComponent<MeshFilter>();
+            Mesh mesh = new Mesh();
+            mesh.vertices = new Vector3[] {
+                new Vector3(0,0,0),
+                new Vector3(0,0,1),
+                new Vector3(0,1,1),
+                new Vector3(0,1,0),
+            };
+            mesh.uv = new Vector2[] {
+                new Vector2(0, 1), // This coordinates are wrong on purpose, it should be 0,0 but this makes the first triangle collinear in uvs
+                new Vector2(0, 1),
+                new Vector2(1, 1),
+                new Vector2(1, 0),
+            };
+            mesh.triangles = new int[] {
+                0, 1, 2, // this triangle is collinear in uvs
+                1, 2, 3, // this triangle is the one that should be used to calculate the texture dimensions
+            };
+            meshFilter.sharedMesh = mesh;
+            materialScaler.AdjustUVScaleToDimensions(wall, new Vector2(2000, 2000));
+            Material material = wall.GetComponent<Renderer>().material;
+            AssertUtils.AssertVector2sAreEqual(new Vector2(0.5f, 0.5f), material.mainTextureScale);
+
+        }
     }
 }
