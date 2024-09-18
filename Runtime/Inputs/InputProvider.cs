@@ -75,6 +75,40 @@ namespace ReupVirtualTwin.inputs
                 _input.Player.Hold.canceled -= value;
             }
         }
+        public event Action<InputAction.CallbackContext> dhvZoomRotationTouchPerformedT1
+        {
+            add { _input.Player.DHVZoomRotationTouchT1.performed += value; }
+            remove { _input.Player.DHVZoomRotationTouchT1.performed -= value; }
+        }
+
+        public event Action<InputAction.CallbackContext> dhvZoomRotationTouchStartedT1
+        {
+            add { _input.Player.DHVZoomRotationTouchT1.started += value; }
+            remove { _input.Player.DHVZoomRotationTouchT1.started -= value; }
+        }
+
+        public event Action<InputAction.CallbackContext> dhvZoomRotationTouchCanceledT1
+        {
+            add { _input.Player.DHVZoomRotationTouchT1.canceled += value; }
+            remove { _input.Player.DHVZoomRotationTouchT1.canceled -= value; }
+        }
+        public event Action<InputAction.CallbackContext> dhvZoomRotationTouchPerformedT2
+        {
+            add { _input.Player.DHVZoomRotationTouchT2.performed += value; }
+            remove { _input.Player.DHVZoomRotationTouchT2.performed -= value; }
+        }
+
+        public event Action<InputAction.CallbackContext> dhvZoomRotationTouchStartedT2
+        {
+            add { _input.Player.DHVZoomRotationTouchT2.started += value; }
+            remove { _input.Player.DHVZoomRotationTouchT2.started -= value; }
+        }
+
+        public event Action<InputAction.CallbackContext> dhvZoomRotationTouchCanceledT2
+        {
+            add { _input.Player.DHVZoomRotationTouchT2.canceled += value; }
+            remove { _input.Player.DHVZoomRotationTouchT2.canceled -= value; }
+        }
         public void Enable()
         {
             _input.Player.Enable();
@@ -106,6 +140,41 @@ namespace ReupVirtualTwin.inputs
         public float ChangeHeightInput()
         {
             return _input.Player.ChangeHeight.ReadValue<float>();
+        }
+
+        public Vector2 DhvMovementInput()
+        {
+            return _input.Player.DHVMovement.ReadValue<Vector2>();
+        }
+
+        public Vector2 DhvZoomInput()
+        {
+            return _input.Player.DHVZoom.ReadValue<Vector2>();
+        }
+
+        public Vector2 DhvRotationInput()
+        {
+            return _input.Player.DHVRotateKeyboard.ReadValue<Vector2>();
+        }
+
+        public Vector2 DhvMovementMouseAndTouch()
+        {
+            return _input.Player.DHVMovementMouseTouch.ReadValue<Vector2>();
+        }
+
+        public Vector2 DhvZoomRotationTouchT1Input()
+        {
+            return _input.Player.DHVZoomRotationTouchT1.ReadValue<Vector2>();
+        }
+
+        public Vector2 DhvZoomRotationTouchT2Input()
+        {
+            return _input.Player.DHVZoomRotationTouchT2.ReadValue<Vector2>();
+        }
+
+        public InputActionPhase DhvZoomRotationTouchT2InputPhase()
+        {
+            return _input.Player.DHVZoomRotationTouchT2.phase;
         }
     }
 }

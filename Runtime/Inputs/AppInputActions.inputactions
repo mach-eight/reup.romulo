@@ -67,6 +67,60 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "DHV-Movement",
+                    "type": "Value",
+                    "id": "719827fb-6559-4a0f-8181-1d7660791c8b",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "DHV-Zoom",
+                    "type": "Value",
+                    "id": "51fed608-7593-4ecb-9e20-77f7eb48b20a",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "DHV-Rotate-Keyboard",
+                    "type": "Value",
+                    "id": "30f89e67-d21d-4bf9-a22f-85c719a58ac7",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "DHV-Movement-Mouse-Touch",
+                    "type": "Value",
+                    "id": "ed0ab754-81d7-42b3-a116-7d3f4aabe07c",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "DHV-Zoom-Rotation-Touch-T1",
+                    "type": "Value",
+                    "id": "3c4cf473-4537-4eb8-b30d-4e94ff50a3f7",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "DHV-Zoom-Rotation-Touch-T2",
+                    "type": "Value",
+                    "id": "5a4e7b97-954f-4842-a799-9f1d7b670bcb",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -333,6 +387,182 @@
                     "action": "ChangeHeight",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "AWSD",
+                    "id": "30accff8-05f7-4e44-bd1a-a8d812a801db",
+                    "path": "2DVector",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DHV-Movement",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "up",
+                    "id": "7493cc40-a080-4626-a5b8-4931e88fabba",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardAndMouse",
+                    "action": "DHV-Movement",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "f04490de-24c6-4a53-91a3-7e03ac548c90",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardAndMouse",
+                    "action": "DHV-Movement",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "left",
+                    "id": "d1379247-7c20-4c8a-8f82-3909ffb1a33a",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardAndMouse",
+                    "action": "DHV-Movement",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "b0ae7eb5-6036-4d81-a043-8ba462b80e1a",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardAndMouse",
+                    "action": "DHV-Movement",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "2D Vector",
+                    "id": "f68a710a-236d-4380-8428-c14f4371ca66",
+                    "path": "2DVector",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DHV-Zoom",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "up",
+                    "id": "5bf206fc-1f54-4d64-8b93-e327c52632bd",
+                    "path": "<Mouse>/scroll/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardAndMouse",
+                    "action": "DHV-Zoom",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "77b040fe-9c5f-4c25-9528-3235d7f478a2",
+                    "path": "<Mouse>/scroll/down",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardAndMouse",
+                    "action": "DHV-Zoom",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "arrows",
+                    "id": "d4536aed-de4d-4733-a045-25313e94e18f",
+                    "path": "2DVector",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DHV-Rotate-Keyboard",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "up",
+                    "id": "278fca7e-c9ce-44c6-bab2-bdd26f1a43a4",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DHV-Rotate-Keyboard",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "b0c24131-0c07-428b-83f2-d2dd9bdbe948",
+                    "path": "<Keyboard>/downArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DHV-Rotate-Keyboard",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "35efa184-ed89-439a-ac0a-e8e3c7a317df",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "InvertVector2",
+                    "groups": "KeyboardAndMouse",
+                    "action": "DHV-Movement-Mouse-Touch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c092e980-3d00-45dd-9988-99724d3210f2",
+                    "path": "<Pen>/delta",
+                    "interactions": "",
+                    "processors": "InvertVector2",
+                    "groups": "",
+                    "action": "DHV-Movement-Mouse-Touch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e1bada5a-0e7f-49c2-82e3-057cc3a4ad17",
+                    "path": "<Touchscreen>/primaryTouch/delta",
+                    "interactions": "",
+                    "processors": "InvertVector2",
+                    "groups": "Touchscreen",
+                    "action": "DHV-Movement-Mouse-Touch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fe2f2f45-74df-49da-bdea-0237123b6ed3",
+                    "path": "<Touchscreen>/touch0/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Touchscreen",
+                    "action": "DHV-Zoom-Rotation-Touch-T1",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0e568b07-9ab2-4900-b16f-f63d9d43328a",
+                    "path": "<Touchscreen>/touch1/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Touchscreen",
+                    "action": "DHV-Zoom-Rotation-Touch-T2",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },

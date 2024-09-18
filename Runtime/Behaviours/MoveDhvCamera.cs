@@ -10,7 +10,7 @@ namespace ReupVirtualTwin.behaviours
         public Transform dhvCameraTransformHandler;
 
         InputProvider _inputProvider;
-        float MOVE_CAMERA_SPEED_M_PER_SECOND = 3.5f;
+        float MOVE_CAMERA_SPEED_M_PER_SECOND = 10f;
 
         void Awake()
         {
@@ -24,16 +24,19 @@ namespace ReupVirtualTwin.behaviours
 
         void UpdatePosition()
         {
-            Vector2 inputValue = _inputProvider.MovementInput().normalized;
+            Vector2 inputValue = _inputProvider.DhvMovementInput().normalized;
             PerformMovement(inputValue);
         }
 
         void PerformMovement(Vector2 direction)
         {
-            Vector3 directionIn3D = new Vector3(direction.x, 0, direction.y);
-            Vector3 normalizedDirection = Vector3.Normalize(directionIn3D);
-            dhvCameraTransformHandler.position = dhvCameraTransformHandler.position
-                + normalizedDirection * MOVE_CAMERA_SPEED_M_PER_SECOND * Time.deltaTime;
+            Vector3 movementVector = new Vector3(direction.x, 0, direction.y);
+            Vector3 cameraForward = Vector3.ProjectOnPlane(dhvCameraTransformHandler.forward, Vector3.up).normalized;
+            Vector3 cameraRight = Vector3.Cross(Vector3.up, cameraForward).normalized;
+            Vector3 finalMovement = cameraRight * movementVector.x + cameraForward * movementVector.z;
+            Vector3 normalizedDirection = Vector3.Normalize(finalMovement);
+            float movementDistance = MOVE_CAMERA_SPEED_M_PER_SECOND * Time.deltaTime;
+            dhvCameraTransformHandler.position += normalizedDirection * movementDistance;
         }
 
     }
