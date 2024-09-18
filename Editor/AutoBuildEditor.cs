@@ -25,6 +25,17 @@ public class AutoBuildEditor : MonoBehaviour
             return;
         }
 
+        if (!CheckOneCameraInScene())
+        {
+            EditorUtility.DisplayDialog(
+                "Error", 
+                "More than one camera found in the scene\n\n" +
+                "Please erase any additional cameras outside the Reup Prefab", 
+                "OK"
+            );
+            return;
+        }
+
         GameObject building = GetBuilding();
 
         if (building == null)
@@ -172,5 +183,17 @@ public class AutoBuildEditor : MonoBehaviour
                $"Here is a list of the first 10 disabled objects:\n{disableObjectsNames}\n\n" +
                "This could damage the correct behavior of the model.\n" +
                "Do you want to continue?";
+    }
+
+    private static bool CheckOneCameraInScene()
+    {
+        int cameraCount = Camera.allCamerasCount;
+
+        if (cameraCount > 1)
+        {
+            Debug.LogWarning("More than one camera found in the scene.");
+            return false;
+        }
+        return true;
     }
 }
