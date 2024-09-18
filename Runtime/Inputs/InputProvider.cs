@@ -84,7 +84,7 @@ namespace ReupVirtualTwin.inputs
         public void Disable()
         {
             _input.Player.Disable();
-            _input.DollhouseView.Enable();
+            _input.DollhouseView.Disable();
         }
 
         public Vector2 RotateViewInput()
