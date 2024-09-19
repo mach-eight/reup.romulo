@@ -1,5 +1,6 @@
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.inputs;
+using ReupVirtualTwin.managers;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,12 +16,14 @@ namespace ReupVirtualTwin.behaviours
         public static readonly float POINTER_MOVE_CAMERA_DISTANCE_IN_METERS_SQUARE_VIEWPORT = 10;
 
         float distancePerPixel;
+        DragManager dragManager;
 
         void Awake()
         {
             _inputProvider = new InputProvider();
             int pixelsInSquareViewport = ViewportUtils.MinViewportDimension(Camera.main);
             distancePerPixel = POINTER_MOVE_CAMERA_DISTANCE_IN_METERS_SQUARE_VIEWPORT / pixelsInSquareViewport;
+            dragManager = ObjectFinder.FindDragManager().GetComponent<DragManager>();
         }
 
         void Update()
@@ -46,6 +49,10 @@ namespace ReupVirtualTwin.behaviours
 
         void PointerUpdatePosition()
         {
+            if (!dragManager.dragging)
+            {
+               return;
+            }
             Vector2 inputValue = _inputProvider.PointerMoveDhvCamera();
             if (inputValue == Vector2.zero)
             {

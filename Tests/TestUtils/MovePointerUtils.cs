@@ -8,6 +8,25 @@ namespace ReupVirtualTwinTests.utils
 {
     public static class MovePointerUtils
     {
+        public static IEnumerator MoveMouse(
+            InputTestFixture input,
+            Mouse mouse,
+            Vector2 startMousePoint,
+            Vector2 endMousePoint,
+            int steps
+        ) {
+            return MovePointer(
+                startMousePoint,
+                endMousePoint,
+                steps,
+                (Vector2 startPosition) => input.Move(mouse.position, startPosition),
+                (Vector2 currentPosition, Vector2 delta) => {
+                    input.Move(mouse.position, currentPosition, delta);
+                    input.Set(mouse.delta, delta);
+                },
+                (Vector2 endPosition) => { }
+            );
+        }
         public static IEnumerator DragMouseLeftButton(
             InputTestFixture input,
             Mouse mouse,

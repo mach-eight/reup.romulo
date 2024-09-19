@@ -3,10 +3,8 @@ using ReupVirtualTwin.behaviours;
 using ReupVirtualTwinTests.utils;
 using System.Collections;
 using UnityEngine;
-using InSys = UnityEngine.InputSystem;
 using UnityEngine.InputSystem;
 using UnityEngine.TestTools;
-using UnityEditor;
 
 
 namespace ReupVirtualTwinTests.behaviours
@@ -22,6 +20,7 @@ namespace ReupVirtualTwinTests.behaviours
         float moveSpeedMetresPerSecond;
         float timeInSecsForHoldingButton = 0.25f;
         float errorToleranceInMeters = 0.1f;
+        int pointerSteps = 10;
 
         [UnitySetUp]
         public IEnumerator Setup()
@@ -102,16 +101,40 @@ namespace ReupVirtualTwinTests.behaviours
         }
 
         [UnityTest]
+        public IEnumerator ShouldNotMoveSidewaysWithMouseWhenNoDragging()
+        {
+            Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
+            yield return MovePointerUtils.MoveMouse(input, mouse, Vector2.zero, new Vector2(1,1), pointerSteps);
+            Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
+            yield return null;
+        }
+
+        [UnityTest]
         public IEnumerator ShouldMoveSidewaysWithMouse()
         {
             Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
             float relativeMovement = 0.4f;
             Vector2 initialPosition = new Vector2(0.5f, 0.5f);
             Vector2 finalPosition = new Vector2(0.5f + relativeMovement, 0.5f);
-            yield return MovePointerUtils.DragMouseLeftButton(input, mouse, initialPosition, finalPosition, 1);
-            float expectedHorizontalMovement = -1 * relativeMovement * MoveDhvCamera.POINTER_MOVE_CAMERA_DISTANCE_IN_METERS_SQUARE_VIEWPORT;
-            Assert.LessOrEqual(dollhouseViewWrapper.position.x, expectedHorizontalMovement + errorToleranceInMeters);
+            yield return MovePointerUtils.DragMouseLeftButton(input, mouse, initialPosition, finalPosition, pointerSteps);
+            float expectedMovement = -1 * relativeMovement * MoveDhvCamera.POINTER_MOVE_CAMERA_DISTANCE_IN_METERS_SQUARE_VIEWPORT;
+            Assert.LessOrEqual(dollhouseViewWrapper.position.x, expectedMovement + errorToleranceInMeters);
             Assert.Zero(dollhouseViewWrapper.position.z);
+            Assert.Zero(dollhouseViewWrapper.position.y);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldMoveForwardWithMouse()
+        {
+            Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
+            float relativeMovement = 0.4f;
+            Vector2 initialPosition = new Vector2(0.5f, 0.5f);
+            Vector2 finalPosition = new Vector2(0.5f, relativeMovement + 0.5f);
+            yield return MovePointerUtils.DragMouseLeftButton(input, mouse, initialPosition, finalPosition, pointerSteps);
+            float expectedMovement = -1 * relativeMovement * MoveDhvCamera.POINTER_MOVE_CAMERA_DISTANCE_IN_METERS_SQUARE_VIEWPORT;
+            Assert.Zero(dollhouseViewWrapper.position.x);
+            Assert.GreaterOrEqual(dollhouseViewWrapper.position.z, expectedMovement - errorToleranceInMeters);
             Assert.Zero(dollhouseViewWrapper.position.y);
             yield return null;
         }
