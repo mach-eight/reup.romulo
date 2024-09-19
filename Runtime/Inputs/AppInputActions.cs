@@ -537,6 +537,17 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""PointerMoveCamera"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""32dcf154-1c93-403d-8e48-3bad44b476c9"",
+                    ""path"": ""<Touchscreen>/primaryTouch/delta"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Touchscreen"",
+                    ""action"": ""PointerMoveCamera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }

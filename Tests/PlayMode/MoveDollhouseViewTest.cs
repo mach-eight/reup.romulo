@@ -139,5 +139,37 @@ namespace ReupVirtualTwinTests.behaviours
             yield return null;
         }
 
+        [UnityTest]
+        public IEnumerator ShouldMoveSidewaysWithTouch()
+        {
+            Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
+            float relativeMovement = 0.4f;
+            Vector2 initialPosition = new Vector2(0.5f, 0.5f);
+            Vector2 finalPosition = new Vector2(0.5f + relativeMovement, 0.5f);
+            int touchId = 0;
+            yield return MovePointerUtils.MoveFinger(input, touch, touchId, initialPosition, finalPosition, pointerSteps);
+            float expectedMovement = -1 * relativeMovement * MoveDhvCamera.POINTER_MOVE_CAMERA_DISTANCE_IN_METERS_SQUARE_VIEWPORT;
+            Assert.LessOrEqual(dollhouseViewWrapper.position.x, expectedMovement + errorToleranceInMeters);
+            Assert.Zero(dollhouseViewWrapper.position.z);
+            Assert.Zero(dollhouseViewWrapper.position.y);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldMoveForwardWithTouch()
+        {
+            Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
+            float relativeMovement = 0.4f;
+            Vector2 initialPosition = new Vector2(0.5f, 0.5f);
+            Vector2 finalPosition = new Vector2(0.5f, relativeMovement + 0.5f);
+            int touchId = 0;
+            yield return MovePointerUtils.MoveFinger(input, touch, touchId, initialPosition, finalPosition, pointerSteps);
+            float expectedMovement = -1 * relativeMovement * MoveDhvCamera.POINTER_MOVE_CAMERA_DISTANCE_IN_METERS_SQUARE_VIEWPORT;
+            Assert.Zero(dollhouseViewWrapper.position.x);
+            Assert.GreaterOrEqual(dollhouseViewWrapper.position.z, expectedMovement - errorToleranceInMeters);
+            Assert.Zero(dollhouseViewWrapper.position.y);
+            yield return null;
+        }
+
     }
 }
