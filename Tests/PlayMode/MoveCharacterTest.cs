@@ -20,7 +20,7 @@ namespace ReupVirtualTwinTests.behaviours
         Mouse mouse;
         Touchscreen touch;
 
-        float timeInSecsForEachAction = 0.25f;
+        float timeInSecsForHoldingButton = 0.25f;
 
         [UnitySetUp]
         public IEnumerator Setup()
@@ -51,9 +51,9 @@ namespace ReupVirtualTwinTests.behaviours
         {
             Assert.AreEqual(Vector3.zero, characterTransform.position);
             input.Press(keyboard.wKey);
-            yield return new WaitForSeconds(timeInSecsForEachAction);
+            yield return new WaitForSeconds(timeInSecsForHoldingButton);
             input.Release(keyboard.wKey);
-            Assert.GreaterOrEqual(characterTransform.position.z, CharacterMovementKeyboard.WALK_SPEED_M_PER_SECOND * timeInSecsForEachAction);
+            Assert.GreaterOrEqual(characterTransform.position.z, CharacterMovementKeyboard.WALK_SPEED_M_PER_SECOND * timeInSecsForHoldingButton);
             Assert.Zero(characterTransform.position.x);
             Assert.Zero(characterTransform.position.y);
             yield return null;
@@ -64,9 +64,9 @@ namespace ReupVirtualTwinTests.behaviours
         {
             Assert.AreEqual(Vector3.zero, characterTransform.position);
             input.Press(keyboard.aKey);
-            yield return new WaitForSeconds(timeInSecsForEachAction);
+            yield return new WaitForSeconds(timeInSecsForHoldingButton);
             input.Release(keyboard.aKey);
-            Assert.LessOrEqual(characterTransform.position.x, -1 * CharacterMovementKeyboard.WALK_SPEED_M_PER_SECOND * timeInSecsForEachAction);
+            Assert.LessOrEqual(characterTransform.position.x, -1 * CharacterMovementKeyboard.WALK_SPEED_M_PER_SECOND * timeInSecsForHoldingButton);
             Assert.Zero(characterTransform.position.z);
             Assert.Zero(characterTransform.position.y);
             yield return null;
@@ -77,9 +77,9 @@ namespace ReupVirtualTwinTests.behaviours
         {
             Assert.AreEqual(Vector3.zero, characterTransform.position);
             input.Press(keyboard.dKey);
-            yield return new WaitForSeconds(timeInSecsForEachAction);
+            yield return new WaitForSeconds(timeInSecsForHoldingButton);
             input.Release(keyboard.dKey);
-            Assert.GreaterOrEqual(characterTransform.position.x, CharacterMovementKeyboard.WALK_SPEED_M_PER_SECOND * timeInSecsForEachAction);
+            Assert.GreaterOrEqual(characterTransform.position.x, CharacterMovementKeyboard.WALK_SPEED_M_PER_SECOND * timeInSecsForHoldingButton);
             Assert.Zero(characterTransform.position.z);
             Assert.Zero(characterTransform.position.y);
             yield return null;
@@ -90,9 +90,9 @@ namespace ReupVirtualTwinTests.behaviours
         {
             Assert.AreEqual(Vector3.zero, characterTransform.position);
             input.Press(keyboard.sKey);
-            yield return new WaitForSeconds(timeInSecsForEachAction);
+            yield return new WaitForSeconds(timeInSecsForHoldingButton);
             input.Release(keyboard.sKey);
-            Assert.LessOrEqual(characterTransform.position.z, -1 * CharacterMovementKeyboard.WALK_SPEED_M_PER_SECOND * timeInSecsForEachAction);
+            Assert.LessOrEqual(characterTransform.position.z, -1 * CharacterMovementKeyboard.WALK_SPEED_M_PER_SECOND * timeInSecsForHoldingButton);
             Assert.Zero(characterTransform.position.x);
             Assert.Zero(characterTransform.position.y);
             yield return null;
@@ -128,9 +128,9 @@ namespace ReupVirtualTwinTests.behaviours
         {
             Assert.AreEqual(Vector3.zero, characterTransform.position);
             input.Press(keyboard.upArrowKey);
-            yield return new WaitForSeconds(timeInSecsForEachAction);
+            yield return new WaitForSeconds(timeInSecsForHoldingButton);
             input.Release(keyboard.upArrowKey);
-            Assert.GreaterOrEqual(characterTransform.position.z, CharacterMovementKeyboard.WALK_SPEED_M_PER_SECOND * timeInSecsForEachAction);
+            Assert.GreaterOrEqual(characterTransform.position.z, CharacterMovementKeyboard.WALK_SPEED_M_PER_SECOND * timeInSecsForHoldingButton);
             Assert.Zero(characterTransform.position.x);
             Assert.Zero(characterTransform.position.y);
             yield return null;
@@ -141,9 +141,9 @@ namespace ReupVirtualTwinTests.behaviours
         {
             Assert.AreEqual(Vector3.zero, characterTransform.position);
             input.Press(keyboard.downArrowKey);
-            yield return new WaitForSeconds(timeInSecsForEachAction);
+            yield return new WaitForSeconds(timeInSecsForHoldingButton);
             input.Release(keyboard.downArrowKey);
-            Assert.LessOrEqual(characterTransform.position.z, -1 * CharacterMovementKeyboard.WALK_SPEED_M_PER_SECOND * timeInSecsForEachAction);
+            Assert.LessOrEqual(characterTransform.position.z, -1 * CharacterMovementKeyboard.WALK_SPEED_M_PER_SECOND * timeInSecsForHoldingButton);
             Assert.Zero(characterTransform.position.x);
             Assert.Zero(characterTransform.position.y);
             yield return null;
