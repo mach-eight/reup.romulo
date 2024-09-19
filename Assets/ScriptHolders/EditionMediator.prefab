@@ -77,7 +77,7 @@ MonoBehaviour:
   character: {fileID: 0}
   fpvCamera: {fileID: 0}
   dhvCamera: {fileID: 0}
-  viewModeController: {fileID: 0}
+  viewModeManager: {fileID: 0}
 --- !u!114 &6976859030307673124
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -135,8 +135,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   viewMode: 0
-  firstPersonViewCamera: {fileID: 0}
-  dollhouseViewCamera: {fileID: 0}
+  dollhouseViewCameraWrapper: {fileID: 0}
   character: {fileID: 0}
 --- !u!1 &7459117009516608047
 GameObject:

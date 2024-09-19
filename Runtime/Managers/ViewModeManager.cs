@@ -7,13 +7,13 @@ namespace ReupVirtualTwin.managers
     public class ViewModeManager : MonoBehaviour, IViewModeManager
     {
         public ViewMode viewMode;
-        public GameObject dollhouseViewCamera;
+        public GameObject dollhouseViewWrapper;
         public GameObject character;
 
         private void Awake()
         {
             viewMode = ViewMode.FPV;
-            dollhouseViewCamera.SetActive(false);
+            dollhouseViewWrapper.SetActive(false);
         }
 
         public void ActivateDHV()
@@ -31,13 +31,13 @@ namespace ReupVirtualTwin.managers
         private void ActivateDHVCamera()
         {
             character.SetActive(false);
-            dollhouseViewCamera.SetActive(true);
+            dollhouseViewWrapper.SetActive(true);
         }
 
         private void ActivateFPVCamera()
         {
             character.SetActive(true);
-            dollhouseViewCamera.SetActive(false);
+            dollhouseViewWrapper.SetActive(false);
         }
     }
 }

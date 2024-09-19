@@ -77,3 +77,4 @@ crashlytics-build.properties
 
 ignored*
 Tests/PlayMode/DummyTests.cs*
+Runtime/Managers/DummyManager.cs*
