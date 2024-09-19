@@ -33,6 +33,7 @@ namespace ReupVirtualTwinTests.behaviours
             touch = InputSystem.AddDevice<Touchscreen>();
             dollhouseViewWrapper = sceneObjects.dollhouseViewWrapper;
             moveSpeedMetresPerSecond = MoveDhvCamera.MOVE_CAMERA_SPEED_M_PER_SECOND;
+            sceneObjects.viewModeManager.ActivateDHV();
             yield return null;
         }
         [UnityTearDown]

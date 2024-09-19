@@ -178,8 +178,6 @@ public class ModelInfoManagerTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldGetColorInfoInSceneStateMessage()
     {
-        Debug.Log("buildingGameObject");
-        Debug.Log(buildingGameObject);
         MetaDataComponentMock metaDataComponent = buildingGameObject.AddComponent<MetaDataComponentMock>();
         JObject parentMetaData = new JObject
         {
