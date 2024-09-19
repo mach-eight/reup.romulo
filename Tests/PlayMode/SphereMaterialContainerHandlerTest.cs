@@ -7,10 +7,11 @@ using ReupVirtualTwin.enums;
 using UnityEditor;
 using ReupVirtualTwin.models;
 using ReupVirtualTwin.helpers;
+using ReupVirtualTwinTests.utils;
 
 public class SphereMaterialContainerHandlerTest
 {
-    private GameObject objectPoolPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Assets/ScriptHolders/ObjectPool.prefab");
+    ReupSceneInstantiator.SceneObjects sceneObjects;
     private GameObject materialContainerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Tests/TestAssets/MaterialContainerTest.prefab");
     private GameObject materialSpherePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Assets/MaterialSelector/materialSphere.prefab");
     private GameObject triggerObject;
@@ -21,10 +22,11 @@ public class SphereMaterialContainerHandlerTest
     private Camera camera;
     private SpheresMaterialContainerHandler spheresMaterialContainerHandler;
 
-    [SetUp]
-    public void SetUp()
+    [UnitySetUp]
+    public IEnumerator SetUp()
     {
-        objectPool = (GameObject)PrefabUtility.InstantiatePrefab(objectPoolPrefab);
+        sceneObjects = ReupSceneInstantiator.InstantiateScene();
+        objectPool = sceneObjects.objectPool;
 
         extensionSceneTriggers = new GameObject();
         extensionSceneTriggers.tag = TagsEnum.extensionsTriggers;
@@ -41,17 +43,17 @@ public class SphereMaterialContainerHandlerTest
         pool = objectPool.GetComponent<IObjectPool>();
         pool.AddPrefabType(materialContainerPrefab);
 
-        camera = new GameObject().AddComponent<Camera>();
-        camera.tag = TagsEnum.mainCamera;
+        camera = sceneObjects.mainCamera;
+        yield return null;
     }
 
-    [TearDown]
-    public void TearDown()
+    [UnityTearDown]
+    public IEnumerator TearDownCoroutine()
     {
-        Object.Destroy(objectPool);
         Object.Destroy(extensionSceneTriggers);
         Object.Destroy(triggerObject);
-        Object.Destroy(camera);
+        ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
+        yield return null;
     }
 
     [UnityTest]

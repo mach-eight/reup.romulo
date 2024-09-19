@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
+using ReupVirtualTwin.models;
 
 namespace ReupVirtualTwinTests.utils
 {
@@ -32,6 +33,10 @@ namespace ReupVirtualTwinTests.utils
             public InputTestFixture input;
             public EventSystem eventSystem;
             public HeightMediator heightMediator;
+            public ModelInfoManager modelInfoManager;
+            public GameObject objectRegistry;
+            public GameObject objectPool;
+            public Camera mainCamera;
         }
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab)
         {
@@ -99,6 +104,14 @@ namespace ReupVirtualTwinTests.utils
 
             MoveDhvCamera moveDhvCamera = dollhouseViewWrapper.GetComponent<MoveDhvCamera>();
 
+            ModelInfoManager modelInfoManager = baseGlobalScriptGameObject.transform.Find("ModelInfo").GetComponent<ModelInfoManager>();
+
+            GameObject objectRegistry = baseGlobalScriptGameObject.transform.Find("ObjectRegistry").gameObject;
+
+            GameObject objectPool = baseGlobalScriptGameObject.transform.Find("ObjectPool").gameObject;
+            
+            Camera mainCamera = reupGameObject.transform.Find("Main_Camera").GetComponent<Camera>();
+
             return new SceneObjects
             {
                 reupObject = reupGameObject,
@@ -120,6 +133,10 @@ namespace ReupVirtualTwinTests.utils
                 eventSystem = eventSystem,
                 heightMediator = heightMediator,
                 moveDHVCamera = moveDhvCamera,
+                modelInfoManager = modelInfoManager,
+                objectRegistry = objectRegistry,
+                objectPool = objectPool,
+                mainCamera = mainCamera,
             };
         }
 

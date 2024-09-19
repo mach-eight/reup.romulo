@@ -6,6 +6,7 @@ using ReupVirtualTwin.models;
 using UnityEditor;
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.controllers;
+using ReupVirtualTwinTests.utils;
 
 
 
@@ -13,8 +14,7 @@ namespace ReupVirtualTwinTests.Registry
 {
     public class IdControllerTest : MonoBehaviour
     {
-        GameObject ObjectRegistryPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Assets/ScriptHolders/ObjectRegistry.prefab");
-        GameObject objectRegistryGameObject;
+        ReupSceneInstantiator.SceneObjects sceneObjects;
         IObjectRegistry objectRegistry;
         GameObject parent;
         GameObject child0;
@@ -22,11 +22,11 @@ namespace ReupVirtualTwinTests.Registry
         GameObject grandchild00;
         IdController idController;
 
-        [SetUp]
-        public void SetUp()
+        [UnitySetUp]
+        public IEnumerator SetUp()
         {
-            objectRegistryGameObject = (GameObject)PrefabUtility.InstantiatePrefab(ObjectRegistryPrefab);
-            objectRegistry = objectRegistryGameObject.GetComponent<IObjectRegistry>();
+            sceneObjects = ReupSceneInstantiator.InstantiateScene();
+            objectRegistry = sceneObjects.objectRegistry.GetComponent<IObjectRegistry>();
 
             idController = new IdController();
             parent = new GameObject("testObj1");
@@ -36,6 +36,7 @@ namespace ReupVirtualTwinTests.Registry
             child0.transform.parent = parent.transform;
             child1.transform.parent = parent.transform;
             grandchild00.transform.parent = child0.transform;
+            yield return null;
         }
         
         [UnityTearDown]
@@ -45,8 +46,8 @@ namespace ReupVirtualTwinTests.Registry
             Destroy(child0);
             Destroy(child1);
             Destroy(grandchild00);
-            Destroy(objectRegistryGameObject);
-            yield return new WaitForSeconds(0.2f);
+            ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
+            yield return null;
         }
 
         [UnityTest]

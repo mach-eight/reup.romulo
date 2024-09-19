@@ -14,12 +14,13 @@ using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.webRequestersInterfaces;
 using System.Collections;
 using ReupVirtualTwin.helpers;
+using ReupVirtualTwinTests.utils;
 
 namespace ReupVirtualTwinTests.controllers
 {
     public class InsertObjectControllerTest : MonoBehaviour
     {
-        GameObject ObjectRegistryPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Assets/ScriptHolders/ObjectRegistry.prefab");
+        ReupSceneInstantiator.SceneObjects sceneObjects;
         GameObject objectRegistryGameObject;
         MediatorSpy mediatorSpy;
         MeshDownloaderSpy meshDownloaderSpy;
@@ -29,15 +30,6 @@ namespace ReupVirtualTwinTests.controllers
         ITagsController tagsReader;
         IIdGetterController idReader;
         Vector3 insertPosition;
-
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
-        {
-            // we set the objectRegistry only once because some objects that depend on it are using the ObjectFinder class to find it
-            // if we create a different objectRegistry for each test in the SetUp method, the ObjectFinder sometimes finds
-            // an old objectRegistry why this happens is still unknown to me
-            objectRegistryGameObject = (GameObject)PrefabUtility.InstantiatePrefab(ObjectRegistryPrefab);
-        }
 
         private void RequesObject(InsertObjectMessagePayload message)
         {
@@ -62,9 +54,11 @@ namespace ReupVirtualTwinTests.controllers
             return true;
         }
 
-        [SetUp]
-        public void SetUp()
+        [UnitySetUp]
+        public IEnumerator SetUp()
         {
+            sceneObjects = ReupSceneInstantiator.InstantiateScene();
+            objectRegistryGameObject = sceneObjects.objectRegistry;
             mediatorSpy = new MediatorSpy();
             meshDownloaderSpy = new MeshDownloaderSpy();
             mockModelInfoManager = new MockModelInfoManager();
@@ -80,12 +74,14 @@ namespace ReupVirtualTwinTests.controllers
             RequesObject(insertObjectMessagePayload);
             tagsReader = new TagsController();
             idReader = new IdController();
+            yield return null;
         }
 
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
+        [UnityTearDown]
+        public IEnumerator TearDown()
         {
-            Destroy(objectRegistryGameObject);
+            ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
+            yield return null;
         }
 
         [UnityTest]

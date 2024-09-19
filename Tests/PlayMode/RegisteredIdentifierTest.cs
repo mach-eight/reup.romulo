@@ -5,31 +5,25 @@ using ReupVirtualTwin.modelInterfaces;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
+using ReupVirtualTwinTests.utils;
 
 namespace ReupVirtualTwinTests.Registry
 {
     public class RegisteredIdentifierTest : MonoBehaviour
     {
-        GameObject ObjectRegistryPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Assets/ScriptHolders/ObjectRegistry.prefab");
-        GameObject objectRegistryGameObject;
+        ReupSceneInstantiator.SceneObjects sceneObjects;
         IObjectRegistry objectRegistry;
         GameObject testObj;
 
 
-        [SetUp]
-        public void SetUp()
+        [UnitySetUp]
+        public IEnumerator SetUp()
         {
-            objectRegistryGameObject = (GameObject)PrefabUtility.InstantiatePrefab(ObjectRegistryPrefab);
-            objectRegistry = objectRegistryGameObject.GetComponent<IObjectRegistry>();
+            sceneObjects = ReupSceneInstantiator.InstantiateScene();
+            objectRegistry = sceneObjects.objectRegistry.GetComponent<IObjectRegistry>();
             testObj = new GameObject("testObj");
             testObj.AddComponent<RegisteredIdentifier>();
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            Destroy(testObj);
-            Destroy(objectRegistryGameObject);
+            yield return null;
         }
 
         [UnityTearDown]
@@ -37,8 +31,8 @@ namespace ReupVirtualTwinTests.Registry
         {
             Destroy(testObj);
             objectRegistry.ClearRegistry();
-            Destroy(objectRegistryGameObject);
-            yield return new WaitForSeconds(0.2f);
+            ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
+            yield return null;
         }
 
         [UnityTest]
