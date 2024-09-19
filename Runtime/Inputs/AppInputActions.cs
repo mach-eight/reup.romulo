@@ -453,9 +453,18 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
             ""id"": ""7eff1063-e733-49a9-86c8-cd345c4d3b41"",
             ""actions"": [
                 {
-                    ""name"": ""MoveCamera"",
+                    ""name"": ""KeyboardMoveCamera"",
                     ""type"": ""Button"",
                     ""id"": ""0911c579-a2b7-4be7-876f-94d6d150bee6"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""PointerMoveCamera"",
+                    ""type"": ""Button"",
+                    ""id"": ""2f9e69ec-705e-478f-a061-1fca0a84cfaa"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -470,7 +479,7 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""MoveCamera"",
+                    ""action"": ""KeyboardMoveCamera"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -481,7 +490,7 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KeyboardAndMouse"",
-                    ""action"": ""MoveCamera"",
+                    ""action"": ""KeyboardMoveCamera"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -492,7 +501,7 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KeyboardAndMouse"",
-                    ""action"": ""MoveCamera"",
+                    ""action"": ""KeyboardMoveCamera"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -503,7 +512,7 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KeyboardAndMouse"",
-                    ""action"": ""MoveCamera"",
+                    ""action"": ""KeyboardMoveCamera"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -514,9 +523,20 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KeyboardAndMouse"",
-                    ""action"": ""MoveCamera"",
+                    ""action"": ""KeyboardMoveCamera"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f959a891-e13e-4b67-91ee-e9954d158207"",
+                    ""path"": ""<Mouse>/delta"",
+                    ""interactions"": """",
+                    ""processors"": ""InvertVector2(invertX=false,invertY=false)"",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""PointerMoveCamera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -567,7 +587,8 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
         m_UI_ScrollWheel = m_UI.FindAction("ScrollWheel", throwIfNotFound: true);
         // DollhouseView
         m_DollhouseView = asset.FindActionMap("DollhouseView", throwIfNotFound: true);
-        m_DollhouseView_MoveCamera = m_DollhouseView.FindAction("MoveCamera", throwIfNotFound: true);
+        m_DollhouseView_KeyboardMoveCamera = m_DollhouseView.FindAction("KeyboardMoveCamera", throwIfNotFound: true);
+        m_DollhouseView_PointerMoveCamera = m_DollhouseView.FindAction("PointerMoveCamera", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -785,12 +806,14 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
     // DollhouseView
     private readonly InputActionMap m_DollhouseView;
     private List<IDollhouseViewActions> m_DollhouseViewActionsCallbackInterfaces = new List<IDollhouseViewActions>();
-    private readonly InputAction m_DollhouseView_MoveCamera;
+    private readonly InputAction m_DollhouseView_KeyboardMoveCamera;
+    private readonly InputAction m_DollhouseView_PointerMoveCamera;
     public struct DollhouseViewActions
     {
         private @AppInputActions m_Wrapper;
         public DollhouseViewActions(@AppInputActions wrapper) { m_Wrapper = wrapper; }
-        public InputAction @MoveCamera => m_Wrapper.m_DollhouseView_MoveCamera;
+        public InputAction @KeyboardMoveCamera => m_Wrapper.m_DollhouseView_KeyboardMoveCamera;
+        public InputAction @PointerMoveCamera => m_Wrapper.m_DollhouseView_PointerMoveCamera;
         public InputActionMap Get() { return m_Wrapper.m_DollhouseView; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -800,16 +823,22 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_DollhouseViewActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_DollhouseViewActionsCallbackInterfaces.Add(instance);
-            @MoveCamera.started += instance.OnMoveCamera;
-            @MoveCamera.performed += instance.OnMoveCamera;
-            @MoveCamera.canceled += instance.OnMoveCamera;
+            @KeyboardMoveCamera.started += instance.OnKeyboardMoveCamera;
+            @KeyboardMoveCamera.performed += instance.OnKeyboardMoveCamera;
+            @KeyboardMoveCamera.canceled += instance.OnKeyboardMoveCamera;
+            @PointerMoveCamera.started += instance.OnPointerMoveCamera;
+            @PointerMoveCamera.performed += instance.OnPointerMoveCamera;
+            @PointerMoveCamera.canceled += instance.OnPointerMoveCamera;
         }
 
         private void UnregisterCallbacks(IDollhouseViewActions instance)
         {
-            @MoveCamera.started -= instance.OnMoveCamera;
-            @MoveCamera.performed -= instance.OnMoveCamera;
-            @MoveCamera.canceled -= instance.OnMoveCamera;
+            @KeyboardMoveCamera.started -= instance.OnKeyboardMoveCamera;
+            @KeyboardMoveCamera.performed -= instance.OnKeyboardMoveCamera;
+            @KeyboardMoveCamera.canceled -= instance.OnKeyboardMoveCamera;
+            @PointerMoveCamera.started -= instance.OnPointerMoveCamera;
+            @PointerMoveCamera.performed -= instance.OnPointerMoveCamera;
+            @PointerMoveCamera.canceled -= instance.OnPointerMoveCamera;
         }
 
         public void RemoveCallbacks(IDollhouseViewActions instance)
@@ -863,6 +892,7 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
     }
     public interface IDollhouseViewActions
     {
-        void OnMoveCamera(InputAction.CallbackContext context);
+        void OnKeyboardMoveCamera(InputAction.CallbackContext context);
+        void OnPointerMoveCamera(InputAction.CallbackContext context);
     }
 }

@@ -431,9 +431,18 @@
             "id": "7eff1063-e733-49a9-86c8-cd345c4d3b41",
             "actions": [
                 {
-                    "name": "MoveCamera",
+                    "name": "KeyboardMoveCamera",
                     "type": "Button",
                     "id": "0911c579-a2b7-4be7-876f-94d6d150bee6",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "PointerMoveCamera",
+                    "type": "Button",
+                    "id": "2f9e69ec-705e-478f-a061-1fca0a84cfaa",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -448,7 +457,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "MoveCamera",
+                    "action": "KeyboardMoveCamera",
                     "isComposite": true,
                     "isPartOfComposite": false
                 },
@@ -459,7 +468,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardAndMouse",
-                    "action": "MoveCamera",
+                    "action": "KeyboardMoveCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -470,7 +479,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardAndMouse",
-                    "action": "MoveCamera",
+                    "action": "KeyboardMoveCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -481,7 +490,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardAndMouse",
-                    "action": "MoveCamera",
+                    "action": "KeyboardMoveCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -492,9 +501,20 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardAndMouse",
-                    "action": "MoveCamera",
+                    "action": "KeyboardMoveCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "f959a891-e13e-4b67-91ee-e9954d158207",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "InvertVector2(invertX=false,invertY=false)",
+                    "groups": "KeyboardAndMouse",
+                    "action": "PointerMoveCamera",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }

@@ -20,8 +20,8 @@ namespace ReupVirtualTwinTests.behaviours
         Mouse mouse;
         Touchscreen touch;
         float moveSpeedMetresPerSecond;
-
         float timeInSecsForHoldingButton = 0.25f;
+        float errorToleranceInMeters = 0.1f;
 
         [UnitySetUp]
         public IEnumerator Setup()
@@ -32,7 +32,7 @@ namespace ReupVirtualTwinTests.behaviours
             mouse = InputSystem.AddDevice<Mouse>();
             touch = InputSystem.AddDevice<Touchscreen>();
             dollhouseViewWrapper = sceneObjects.dollhouseViewWrapper;
-            moveSpeedMetresPerSecond = MoveDhvCamera.MOVE_CAMERA_SPEED_M_PER_SECOND;
+            moveSpeedMetresPerSecond = MoveDhvCamera.KEYBOARD_MOVE_CAMERA_SPEED_METERS_PER_SECOND;
             sceneObjects.viewModeManager.ActivateDHV();
             yield return null;
         }
@@ -101,6 +101,20 @@ namespace ReupVirtualTwinTests.behaviours
             yield return null;
         }
 
+        [UnityTest]
+        public IEnumerator ShouldMoveSidewaysWithMouse()
+        {
+            Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
+            float relativeMovement = 0.4f;
+            Vector2 initialPosition = new Vector2(0.5f, 0.5f);
+            Vector2 finalPosition = new Vector2(0.5f + relativeMovement, 0.5f);
+            yield return MovePointerUtils.DragMouseLeftButton(input, mouse, initialPosition, finalPosition, 1);
+            float expectedHorizontalMovement = -1 * relativeMovement * MoveDhvCamera.POINTER_MOVE_CAMERA_DISTANCE_IN_METERS_SQUARE_VIEWPORT;
+            Assert.LessOrEqual(dollhouseViewWrapper.position.x, expectedHorizontalMovement + errorToleranceInMeters);
+            Assert.Zero(dollhouseViewWrapper.position.z);
+            Assert.Zero(dollhouseViewWrapper.position.y);
+            yield return null;
+        }
 
     }
 }
