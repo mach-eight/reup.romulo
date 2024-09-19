@@ -2,8 +2,8 @@ using ReupVirtualTwin.managers;
 using ReupVirtualTwin.behaviours;
 using UnityEditor;
 using UnityEngine;
-using ReupVirtualTwin.controllers;
-using ReupVirtualTwin.controllerInterfaces;
+using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 namespace ReupVirtualTwinTests.utils
 {
@@ -13,7 +13,8 @@ namespace ReupVirtualTwinTests.utils
         public class SceneObjects
         {
             public GameObject reupObject;
-            public GameObject character;
+            public Transform character;
+            public Transform innerCharacter;
             public GameObject baseGlobalScriptGameObject;
             public GameObject building;
             public ChangeColorManager changeColorManager;
@@ -26,15 +27,33 @@ namespace ReupVirtualTwinTests.utils
             public GameObject dhvCamera;
             public GameObject fpvCamera;
             public ViewModeManager viewModeManager;
+            public InputTestFixture input;
+            public EventSystem eventSystem;
+        }
+        public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab)
+        {
+            GameObject building = (GameObject)PrefabUtility.InstantiatePrefab(buildingPrefab);
+            return SceneObjectsWithBuilding(building);
         }
 
         public static SceneObjects InstantiateScene()
         {
+            GameObject building = CreateDefaultBuilding();
+            return SceneObjectsWithBuilding(building);
+        }
+
+        private static SceneObjects SceneObjectsWithBuilding(GameObject building)
+        {
+            GameObject eventSystemGameObject = new GameObject("EventSystem");
+            EventSystem eventSystem = eventSystemGameObject.AddComponent<EventSystem>();
+            InputTestFixture input = new InputTestFixture();
+            input.Setup();
             GameObject reupGameObject = (GameObject)PrefabUtility.InstantiatePrefab(reupPrefab);
             GameObject baseGlobalScriptGameObject = reupGameObject.transform.Find("BaseGlobalScripts").gameObject;
-            GameObject character = reupGameObject.transform.Find("Character").gameObject;
+            Transform character = reupGameObject.transform.Find("Character");
+            Transform innerCharacter = reupGameObject.transform.Find("Character").Find("InnerCharacter");
 
-            GameObject building = CreateBuilding();
+
             SetupBuilding setupBuilding = baseGlobalScriptGameObject.transform.Find("SetupBuilding").GetComponent<SetupBuilding>();
             setupBuilding.building = building;
 
@@ -74,6 +93,7 @@ namespace ReupVirtualTwinTests.utils
             {
                 reupObject = reupGameObject,
                 character = character,
+                innerCharacter = innerCharacter,
                 baseGlobalScriptGameObject = baseGlobalScriptGameObject,
                 building = building,
                 changeColorManager = changeColorManager,
@@ -86,6 +106,8 @@ namespace ReupVirtualTwinTests.utils
                 dhvCamera = dhvCamera,
                 fpvCamera = fpvCamera,
                 viewModeManager = viewModeManager,
+                input = input,
+                eventSystem = eventSystem,
             };
         }
 
@@ -93,9 +115,11 @@ namespace ReupVirtualTwinTests.utils
         {
             Object.Destroy(sceneObjects.reupObject);
             Object.Destroy(sceneObjects.building);
+            Object.Destroy(sceneObjects.eventSystem.gameObject);
+            sceneObjects.input.TearDown();
         }
 
-        private static GameObject CreateBuilding()
+        private static GameObject CreateDefaultBuilding()
         {
             GameObject building = new GameObject("building");
             GameObject child0 = new GameObject("child0");

@@ -9,14 +9,11 @@ using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwinTests.utils;
-using ReupVirtualTwin.controllers;
-using ReupVirtualTwin.dependencyInjectors;
-using ReupVirtualTwin.behaviours;
 
 public class ReupPrefabTest : MonoBehaviour
 {
     ReupSceneInstantiator.SceneObjects sceneObjects;
-    GameObject character;
+    Transform character;
 
     IObjectRegistry objectRegistry;
 

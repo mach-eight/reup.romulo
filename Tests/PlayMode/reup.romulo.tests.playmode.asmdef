@@ -21,7 +21,9 @@
         "reup.romulo.webRequesters",
         "reup.romulo.dataSchemas",
         "reup.romulo.tests.utils",
-        "reup.romulo.tests.mocks"
+        "reup.romulo.tests.mocks",
+        "Unity.InputSystem",
+        "Unity.InputSystem.TestFramework"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

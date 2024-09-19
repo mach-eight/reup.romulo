@@ -13,7 +13,7 @@ public class MaintainHeightTest : MonoBehaviour
 {
     ReupSceneInstantiator.SceneObjects sceneObjects;
     GameObject platformPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Tests/TestAssets/Platform.prefab");
-    GameObject character;
+    Transform character;
     GameObject widePlatform;
 
     float HEIGHT_CLOSENESS_THRESHOLD = 0.02f;

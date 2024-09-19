@@ -6,9 +6,15 @@ namespace ReupVirtualTwin.managers
 {
     public class ViewModeManager : MonoBehaviour, IViewModeManager
     {
-        public ViewMode viewMode = ViewMode.FPV;
+        public ViewMode viewMode;
         public GameObject dollhouseViewCamera;
         public GameObject character;
+
+        private void Awake()
+        {
+            viewMode = ViewMode.FPV;
+            dollhouseViewCamera.SetActive(false);
+        }
 
         public void ActivateDHV()
         {
