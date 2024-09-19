@@ -35,7 +35,7 @@ public class EditMediatorTest : MonoBehaviour
     MockModelInfoManager mockModelInfoManager;
     JObject requestSceneLoadMessage;
     OriginalSceneControllerSpy originalSceneControllerSpy;
-    ViewModeControllerSpy viewModeControllerSpy;
+    ViewModeManagerSpy viewModeManagerSpy;
 
     [SetUp]
     public void SetUp()
@@ -72,11 +72,11 @@ public class EditMediatorTest : MonoBehaviour
         );
         originalSceneControllerSpy = new OriginalSceneControllerSpy();
         editMediator.originalSceneController = originalSceneControllerSpy;
-        viewModeControllerSpy = new ViewModeControllerSpy();
-        editMediator.viewModeController = viewModeControllerSpy;
+        viewModeManagerSpy = new ViewModeManagerSpy();
+        editMediator.viewModeManager = viewModeManagerSpy;
     }
 
-    private class ViewModeControllerSpy : IViewModeController
+    private class ViewModeManagerSpy : IViewModeManager
     {
         public int activateDHVCallsCount = 0;
         public int activateFPVCallsCount = 0;
@@ -1219,9 +1219,9 @@ public class EditMediatorTest : MonoBehaviour
             { "type", WebMessageType.activateDHV }
         };
         string serializedMessage = JsonConvert.SerializeObject(activateDHVMessage);
-        Assert.Zero(viewModeControllerSpy.activateDHVCallsCount);
+        Assert.Zero(viewModeManagerSpy.activateDHVCallsCount);
         await editMediator.ReceiveWebMessage(serializedMessage);
-        Assert.AreEqual(1, viewModeControllerSpy.activateDHVCallsCount);
+        Assert.AreEqual(1, viewModeManagerSpy.activateDHVCallsCount);
     }
 
     [Test]
@@ -1232,9 +1232,9 @@ public class EditMediatorTest : MonoBehaviour
             { "type", WebMessageType.activateFPV }
         };
         string serializedMessage = JsonConvert.SerializeObject(activateDHVMessage);
-        Assert.Zero(viewModeControllerSpy.activateFPVCallsCount);
+        Assert.Zero(viewModeManagerSpy.activateFPVCallsCount);
         await editMediator.ReceiveWebMessage(serializedMessage);
-        Assert.AreEqual(1, viewModeControllerSpy.activateFPVCallsCount);
+        Assert.AreEqual(1, viewModeManagerSpy.activateFPVCallsCount);
     }
 
 }

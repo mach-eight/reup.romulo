@@ -11,6 +11,7 @@ using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwinTests.utils;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.dependencyInjectors;
+using ReupVirtualTwin.behaviours;
 
 public class ReupPrefabTest : MonoBehaviour
 {
@@ -139,31 +140,30 @@ public class ReupPrefabTest : MonoBehaviour
     [UnityTest]
     public IEnumerator EditMediatorShouldHaveAViewModeController()
     {
-        Assert.IsNotNull(editMediator.viewModeController);
-        yield return null;
-    }
-
-    [UnityTest]
-    public IEnumerator ViewModeControllerShouldHaveAFPVCameraProperty()
-    {
-        ViewModeController viewModeController = editMediator.GetComponent<EditMediatorDependecyInjector>().viewModeController;
-        Assert.IsNotNull(viewModeController.firstPersonViewCamera);
+        Assert.IsNotNull(editMediator.viewModeManager);
         yield return null;
     }
 
     [UnityTest]
     public IEnumerator ViewModeControllerShouldHaveADHVCameraProperty()
     {
-        ViewModeController viewModeController = editMediator.GetComponent<EditMediatorDependecyInjector>().viewModeController;
-        Assert.IsNotNull(viewModeController.dollhouseViewCamera);
+        ViewModeManager viewModeManager = sceneObjects.viewModeManager;
+        Assert.IsNotNull(viewModeManager.dollhouseViewCamera);
         yield return null;
     }
 
     [UnityTest]
     public IEnumerator ViewModeControllerShouldHaveACharacterProperty()
     {
-        ViewModeController viewModeController = editMediator.GetComponent<EditMediatorDependecyInjector>().viewModeController;
-        Assert.IsNotNull(viewModeController.character);
+        ViewModeManager viewModeManager = sceneObjects.viewModeManager;
+        Assert.IsNotNull(viewModeManager.character);
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator DHVCameraMovementShouldHaveADHVCameraTransformHandler()
+    {
+        Assert.IsNotNull(sceneObjects.moveDHVCamera.dhvCameraTransformHandler);
         yield return null;
     }
 
