@@ -160,7 +160,7 @@ public class ReupPrefabTest : MonoBehaviour
     [UnityTest]
     public IEnumerator DHVCameraMovementShouldHaveADHVCameraTransformHandler()
     {
-        Assert.IsNotNull(sceneObjects.moveDHVCamera.dhvCameraTransformHandler);
+        Assert.IsNotNull(sceneObjects.moveDHVCamera.dollhouseViewWrapperTransform);
         yield return null;
     }
 

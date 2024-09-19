@@ -30,7 +30,7 @@ namespace ReupVirtualTwinTests.behaviours
             keyboard = InputSystem.AddDevice<Keyboard>();
             mouse = InputSystem.AddDevice<Mouse>();
             touch = InputSystem.AddDevice<Touchscreen>();
-            characterTransform = sceneObjects.character.transform;
+            characterTransform = sceneObjects.character;
             yield return null;
         }
         [UnityTearDown]
