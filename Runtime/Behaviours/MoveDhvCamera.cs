@@ -12,8 +12,8 @@ namespace ReupVirtualTwin.behaviours
         public Transform dollhouseViewWrapperTransform;
 
         InputProvider _inputProvider;
-        public static readonly float KEYBOARD_MOVE_CAMERA_SPEED_METERS_PER_SECOND = 10;
-        public static readonly float POINTER_MOVE_CAMERA_DISTANCE_IN_METERS_SQUARE_VIEWPORT = 10;
+        public static readonly float KEYBOARD_MOVE_CAMERA_SPEED_METERS_PER_SECOND = 40;
+        public static readonly float POINTER_MOVE_CAMERA_DISTANCE_IN_METERS_SQUARE_VIEWPORT = 40;
 
         float distancePerPixel;
         DragManager dragManager;
