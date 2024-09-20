@@ -132,7 +132,7 @@ public class AutoBuildEditor : MonoBehaviour
         {
             string message = CreateDisableObjectsMessage(disabledObjects);
             bool continueBuild = EditorUtility.DisplayDialog(
-                "Disabled Objects Found",
+                "Warning: Disabled Object(s) Found",
                 message,
                 "Continue",
                 "Cancel"
@@ -165,12 +165,19 @@ public class AutoBuildEditor : MonoBehaviour
 
     private static string CreateDisableObjectsMessage(List<GameObject> disabledObjects)
     {
+        int totalDisabledObjectsCount = disabledObjects.Count;
         var firstTenDisabledObjects = disabledObjects.Take(10).Select(obj => obj.name);
         string disableObjectsNames = string.Join("\n", firstTenDisabledObjects);
-        int totalDisabledObjectsCount = disabledObjects.Count;
-        return $"Total number of disabled objects: {totalDisabledObjectsCount}\n\n" +
-               $"Here is a list of the first 10 disabled objects:\n{disableObjectsNames}\n\n" +
-               "This could damage the correct behavior of the model.\n" +
-               "Do you want to continue?";
+
+        string message = $"{totalDisabledObjectsCount} disabled object(s) found in the scene:\n\n";
+        message += $"{disableObjectsNames}\n";
+
+        if (totalDisabledObjectsCount > 10) {
+            message += $"... and {totalDisabledObjectsCount - 10} more.\n";
+        }
+        message += "\nThis may affect the model's behavior.\n\n";
+        message += "Do you want to continue with the build?";
+
+        return message;
     }
 }
