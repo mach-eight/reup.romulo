@@ -25,6 +25,17 @@ public class AutoBuildEditor : MonoBehaviour
             return;
         }
 
+        if (Camera.allCamerasCount > 1)
+        {
+            EditorUtility.DisplayDialog(
+                "Error", 
+                "More than one camera found in the scene\n\n" +
+                "Please erase any additional cameras outside the Reup Prefab", 
+                "OK"
+            );
+            return;
+        }
+
         GameObject building = GetBuilding();
 
         if (building == null)
