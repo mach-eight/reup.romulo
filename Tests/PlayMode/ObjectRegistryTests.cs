@@ -20,7 +20,7 @@ namespace ReupVirtualTwinTests.Registry
         public IEnumerator SetUp()
         {
             sceneObjects = ReupSceneInstantiator.InstantiateScene();
-            objectRegistry = sceneObjects.objectRegistry.GetComponent<IObjectRegistry>();
+            objectRegistry = sceneObjects.objectRegistry;
             yield return null;
         }
 

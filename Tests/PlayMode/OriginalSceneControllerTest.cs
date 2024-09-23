@@ -27,7 +27,7 @@ namespace ReupVirtualTwinTests.controllers
         public IEnumerator SetUp()
         {
             sceneObjects = ReupSceneInstantiator.InstantiateScene();
-            objectRegistry = sceneObjects.objectRegistry.GetComponent<IObjectRegistry>();
+            objectRegistry = sceneObjects.objectRegistry;
             originalSceneController = new OriginalSceneController(objectRegistry);
             SetObjectsAndMaterials();
             yield return null;

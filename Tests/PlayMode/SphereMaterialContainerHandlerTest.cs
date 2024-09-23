@@ -16,7 +16,7 @@ public class SphereMaterialContainerHandlerTest
     private GameObject materialSpherePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Assets/MaterialSelector/materialSphere.prefab");
     private GameObject triggerObject;
     private MaterialSelectionTrigger trigger;
-    private GameObject objectPool;
+    private ObjectPool objectPool;
     private GameObject extensionSceneTriggers;
     private IObjectPool pool;
     private Camera camera;

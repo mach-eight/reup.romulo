@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using ReupVirtualTwin.models;
+using ReupVirtualTwin.helpers;
 
 namespace ReupVirtualTwinTests.utils
 {
@@ -21,7 +22,7 @@ namespace ReupVirtualTwinTests.utils
             public GameObject baseGlobalScriptGameObject;
             public GameObject building;
             public ChangeColorManager changeColorManager;
-            public SetupBuilding setupbuilding;
+            public SetupBuilding setupBuilding;
             public SelectSelectableObject selectSelectableObject;
             public SelectedObjectsManager selectedObjectsManager;
             public EditMediator editMediator;
@@ -34,8 +35,8 @@ namespace ReupVirtualTwinTests.utils
             public EventSystem eventSystem;
             public HeightMediator heightMediator;
             public ModelInfoManager modelInfoManager;
-            public GameObject objectRegistry;
-            public GameObject objectPool;
+            public ObjectRegistry objectRegistry;
+            public ObjectPool objectPool;
             public Camera mainCamera;
         }
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab)
@@ -106,9 +107,9 @@ namespace ReupVirtualTwinTests.utils
 
             ModelInfoManager modelInfoManager = baseGlobalScriptGameObject.transform.Find("ModelInfo").GetComponent<ModelInfoManager>();
 
-            GameObject objectRegistry = baseGlobalScriptGameObject.transform.Find("ObjectRegistry").gameObject;
+            ObjectRegistry objectRegistry = baseGlobalScriptGameObject.transform.Find("ObjectRegistry").GetComponent<ObjectRegistry>();
 
-            GameObject objectPool = baseGlobalScriptGameObject.transform.Find("ObjectPool").gameObject;
+            ObjectPool objectPool = baseGlobalScriptGameObject.transform.Find("ObjectPool").GetComponent<ObjectPool>();
             
             Camera mainCamera = reupGameObject.transform.Find("Main_Camera").GetComponent<Camera>();
 
@@ -121,7 +122,7 @@ namespace ReupVirtualTwinTests.utils
                 baseGlobalScriptGameObject = baseGlobalScriptGameObject,
                 building = building,
                 changeColorManager = changeColorManager,
-                setupbuilding = setupBuilding,
+                setupBuilding = setupBuilding,
                 selectSelectableObject = selectSelectableObject,
                 selectedObjectsManager = selectedObjectsManager,
                 editMediator = editMediator,

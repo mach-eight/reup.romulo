@@ -15,13 +15,14 @@ using ReupVirtualTwin.webRequestersInterfaces;
 using System.Collections;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwinTests.utils;
+using ReupVirtualTwin.models;
 
 namespace ReupVirtualTwinTests.controllers
 {
     public class InsertObjectControllerTest : MonoBehaviour
     {
         ReupSceneInstantiator.SceneObjects sceneObjects;
-        GameObject objectRegistryGameObject;
+        ObjectRegistry objectRegistryGameObject;
         MediatorSpy mediatorSpy;
         MeshDownloaderSpy meshDownloaderSpy;
         InsertObjectMessagePayload insertObjectMessagePayload;
