@@ -87,7 +87,11 @@ namespace ReupVirtualTwinTests.utils
             SensedObjectHighlighter selectableObjectHighlighter = baseGlobalScriptGameObject.transform
                 .Find("HoverOverSelectablesObjects").GetComponent<SensedObjectHighlighter>();
 
-            GameObject dhvCamera = reupGameObject.transform.Find("DollhouseViewWrapper").Find("DHVCinemachineCamera").gameObject;
+            GameObject dhvCamera = reupGameObject.transform
+                .Find("DollhouseViewWrapper")
+                .Find("VerticalRotationWrapper")
+                .Find("DHVCinemachineCamera").gameObject;
+                
             GameObject fpvCamera = character.transform.Find("InnerCharacter").Find("FPVCinemachineCamera").gameObject;
 
             ViewModeManager viewModeManager = baseGlobalScriptGameObject.transform
