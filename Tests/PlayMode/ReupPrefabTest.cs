@@ -145,7 +145,7 @@ public class ReupPrefabTest : MonoBehaviour
     public IEnumerator ViewModeControllerShouldHaveADHVCameraProperty()
     {
         ViewModeManager viewModeManager = sceneObjects.viewModeManager;
-        Assert.IsNotNull(viewModeManager.dollhouseViewCamera);
+        Assert.IsNotNull(viewModeManager.dollhouseViewWrapper);
         yield return null;
     }
 
@@ -160,7 +160,7 @@ public class ReupPrefabTest : MonoBehaviour
     [UnityTest]
     public IEnumerator DHVCameraMovementShouldHaveADHVCameraTransformHandler()
     {
-        Assert.IsNotNull(sceneObjects.moveDHVCamera.dhvCameraTransformHandler);
+        Assert.IsNotNull(sceneObjects.moveDHVCamera.dollhouseViewWrapperTransform);
         yield return null;
     }
 

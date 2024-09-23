@@ -76,3 +76,5 @@ crashlytics-build.properties
 /[Cc]odeCoverage/
 
 ignored*
+Tests/PlayMode/DummyTests.cs*
+Runtime/Managers/DummyManager.cs*

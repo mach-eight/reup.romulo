@@ -249,7 +249,6 @@ GameObject:
   - component: {fileID: 750237606206558042}
   - component: {fileID: 5985767643881352044}
   - component: {fileID: 7341686661031932331}
-  - component: {fileID: 750237606206558041}
   - component: {fileID: 573970562480206382}
   - component: {fileID: 8831413430191478438}
   - component: {fileID: 5576018931146217886}
@@ -317,22 +316,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _innerCharacterTransform: {fileID: 4912725852084423976}
---- !u!114 &750237606206558041
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 151350736762601885}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d530fd359e264957b79453c38330b38, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dragging: 0
-  prevDragging: 0
-  selectInputInUI: 0
-  prevSelectInputInUI: 0
 --- !u!114 &573970562480206382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -371,7 +354,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sensitivity: 0.4
   _characterRotationManager: {fileID: 7341686661031932331}
-  _dragManager: {fileID: 750237606206558041}
+  _dragManager: {fileID: 0}
 --- !u!1 &1678713438409449124
 GameObject:
   m_ObjectHideFlags: 0
@@ -930,7 +913,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sensitivity: 0.5
   _characterRotationManager: {fileID: 7341686661031932331}
-  _dragManager: {fileID: 750237606206558041}
+  _dragManager: {fileID: 0}
 --- !u!1 &8445747170392874798
 GameObject:
   m_ObjectHideFlags: 0

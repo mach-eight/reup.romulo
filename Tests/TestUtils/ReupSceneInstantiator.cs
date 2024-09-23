@@ -16,6 +16,7 @@ namespace ReupVirtualTwinTests.utils
             public GameObject reupObject;
             public Transform character;
             public Transform innerCharacter;
+            public Transform dollhouseViewWrapper;
             public GameObject baseGlobalScriptGameObject;
             public GameObject building;
             public ChangeColorManager changeColorManager;
@@ -60,7 +61,7 @@ namespace ReupVirtualTwinTests.utils
             GameObject baseGlobalScriptGameObject = reupGameObject.transform.Find("BaseGlobalScripts").gameObject;
             Transform character = reupGameObject.transform.Find("Character");
             Transform innerCharacter = reupGameObject.transform.Find("Character").Find("InnerCharacter");
-
+            Transform dollhouseViewWrapper = reupGameObject.transform.Find("DollhouseViewWrapper");
 
             SetupBuilding setupBuilding = baseGlobalScriptGameObject.transform.Find("SetupBuilding").GetComponent<SetupBuilding>();
             setupBuilding.building = building;
@@ -86,10 +87,11 @@ namespace ReupVirtualTwinTests.utils
             SensedObjectHighlighter selectableObjectHighlighter = baseGlobalScriptGameObject.transform
                 .Find("HoverOverSelectablesObjects").GetComponent<SensedObjectHighlighter>();
 
-            MoveDhvCamera moveDhvCamera = reupGameObject.transform
-                .Find("DHVCinemachineCamera").GetComponent<MoveDhvCamera>();
-
-            GameObject dhvCamera = reupGameObject.transform.Find("DHVCinemachineCamera").gameObject;
+            GameObject dhvCamera = reupGameObject.transform
+                .Find("DollhouseViewWrapper")
+                .Find("VerticalRotationWrapper")
+                .Find("DHVCinemachineCamera").gameObject;
+                
             GameObject fpvCamera = character.transform.Find("InnerCharacter").Find("FPVCinemachineCamera").gameObject;
 
             ViewModeManager viewModeManager = baseGlobalScriptGameObject.transform
@@ -99,11 +101,14 @@ namespace ReupVirtualTwinTests.utils
             HeightMediator heightMediator = character.transform.Find("Behaviours")
                 .Find("HeightMediator").GetComponent<HeightMediator>();
 
+            MoveDhvCamera moveDhvCamera = dollhouseViewWrapper.GetComponent<MoveDhvCamera>();
+
             return new SceneObjects
             {
                 reupObject = reupGameObject,
                 character = character,
                 innerCharacter = innerCharacter,
+                dollhouseViewWrapper = dollhouseViewWrapper,
                 baseGlobalScriptGameObject = baseGlobalScriptGameObject,
                 building = building,
                 changeColorManager = changeColorManager,
@@ -112,13 +117,13 @@ namespace ReupVirtualTwinTests.utils
                 selectedObjectsManager = selectedObjectsManager,
                 editMediator = editMediator,
                 selectableObjectHighlighter = selectableObjectHighlighter,
-                moveDHVCamera = moveDhvCamera,
                 dhvCamera = dhvCamera,
                 fpvCamera = fpvCamera,
                 viewModeManager = viewModeManager,
                 input = input,
                 eventSystem = eventSystem,
                 heightMediator = heightMediator,
+                moveDHVCamera = moveDhvCamera,
             };
         }
 

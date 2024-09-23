@@ -57,9 +57,10 @@ namespace ReupVirtualTwinTests.playmode.managers
         }
 
         [Test]
-        public void ShouldHaveDHVCameraDeactivatedByDefault()
+        public void ShouldHaveDHVCameraWrapperDeactivatedByDefault()
         {
-           Assert.IsFalse(dhvCamera.activeInHierarchy);
+            Assert.IsFalse(dhvCamera.activeInHierarchy);
+            Assert.IsFalse(sceneObjects.dollhouseViewWrapper.gameObject.activeInHierarchy);
         }
 
         [Test]
@@ -90,8 +91,7 @@ namespace ReupVirtualTwinTests.playmode.managers
         [Test]
         public void ShouldActivateDHVCamera_when_changeViewModeToDHV()
         {
-            dhvCamera.SetActive(false);
-            Assert.IsFalse(dhvCamera.activeSelf);
+            Assert.IsFalse(dhvCamera.activeInHierarchy);
             viewModelManager.ActivateDHV();
             AssertOnlyOneCameraIsActive(dhvCamera);
         }

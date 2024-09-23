@@ -1,5 +1,37 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1051954993894211330
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6635093000473319460}
+  m_Layer: 0
+  m_Name: VerticalRotationWrapper
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6635093000473319460
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1051954993894211330}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.42261827, y: 0, z: 0, w: 0.9063079}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6969359003655323705}
+  m_Father: {fileID: 9159391732123767118}
+  m_LocalEulerAnglesHint: {x: 50, y: 0, z: 0}
 --- !u!1 &1259473726147856764
 GameObject:
   m_ObjectHideFlags: 0
@@ -138,7 +170,7 @@ Transform:
   - {fileID: 1191157721440923679}
   - {fileID: 680367125633172352}
   - {fileID: 3377086067190760999}
-  - {fileID: 6969359003655323705}
+  - {fileID: 9159391732123767118}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2934016240435041401
@@ -151,7 +183,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6969359003655323705}
   - component: {fileID: 4100760355927257321}
-  - component: {fileID: 546213664047959642}
   m_Layer: 0
   m_Name: DHVCinemachineCamera
   m_TagString: Untagged
@@ -167,13 +198,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2934016240435041401}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.25881845, y: -0, z: -0, w: 0.965926}
-  m_LocalPosition: {x: 0, y: 4.999999, z: -10}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -50}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1178337683573207492}
-  m_LocalEulerAnglesHint: {x: 30, y: 0, z: 0}
+  m_Father: {fileID: 6635093000473319460}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4100760355927257321
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -217,19 +248,52 @@ MonoBehaviour:
       BarrelClipping: 0.25
       Anamorphism: 0
   BlendHint: 0
---- !u!114 &546213664047959642
+--- !u!1 &3974215403706331356
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9159391732123767118}
+  - component: {fileID: 3556301964205038658}
+  m_Layer: 0
+  m_Name: DollhouseViewWrapper
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9159391732123767118
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3974215403706331356}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6635093000473319460}
+  m_Father: {fileID: 1178337683573207492}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3556301964205038658
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2934016240435041401}
+  m_GameObject: {fileID: 3974215403706331356}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a70fc8afffd209d4bb75f4b334d094f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dhvCameraTransformHandler: {fileID: 6969359003655323705}
+  dollhouseViewWrapperTransform: {fileID: 9159391732123767118}
 --- !u!1 &5684383910040997618
 GameObject:
   m_ObjectHideFlags: 0
@@ -258,8 +322,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5684383910040997618}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.25881845, y: 0, z: 0, w: 0.965926}
-  m_LocalPosition: {x: 0, y: 4.999999, z: -10}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -50}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -699,6 +763,10 @@ PrefabInstance:
       propertyPath: dollhouseViewCamera
       value: 
       objectReference: {fileID: 2934016240435041401}
+    - target: {fileID: 7733098935005779374, guid: 0a661a8d20f9d7049b04205d674fffa8, type: 3}
+      propertyPath: dollhouseViewWrapper
+      value: 
+      objectReference: {fileID: 3974215403706331356}
     - target: {fileID: 8577674977601168461, guid: 0a661a8d20f9d7049b04205d674fffa8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

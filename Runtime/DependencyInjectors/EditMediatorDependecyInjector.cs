@@ -81,8 +81,6 @@ namespace ReupVirtualTwin.dependencyInjectors
                 registry
             );
             editMediator.originalSceneController = new OriginalSceneController(registry);
-            viewModeManager.character = character;
-            viewModeManager.dollhouseViewCamera = dhvCamera;
             editMediator.viewModeManager = viewModeManager;
         }
     }

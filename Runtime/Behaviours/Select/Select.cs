@@ -21,7 +21,7 @@ namespace ReupVirtualTwin.behaviours
         }
         protected virtual void Start()
         {
-            _dragManager = ObjectFinder.FindCharacter().GetComponent<DragManager>();
+            _dragManager = ObjectFinder.FindDragManager().GetComponent<DragManager>();
         }
 
         private void OnEnable()
