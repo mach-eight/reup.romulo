@@ -166,9 +166,9 @@ public class SelectedObjectsManagerTest : MonoBehaviour
     {
         ObjectRegistrySpy objectRegistry = new ObjectRegistrySpy();
         selectedObjectsManager.objectRegistry = objectRegistry;
-        tagsController.AddTagToObject(objectRegistry.objects[0], EditionTagsCreator.CreateSelectableTag());
-        tagsController.AddTagToObject(objectRegistry.objects[1], EditionTagsCreator.CreateSelectableTag());
-        tagsController.AddTagToObject(objectRegistry.objects[3], EditionTagsCreator.CreateSelectableTag());
+        tagsController.AddTagToObject(objectRegistry.objects[0], SystemTagsCreator.CreateSelectableTag());
+        tagsController.AddTagToObject(objectRegistry.objects[1], SystemTagsCreator.CreateSelectableTag());
+        tagsController.AddTagToObject(objectRegistry.objects[3], SystemTagsCreator.CreateSelectableTag());
         yield return null;
         selectedObjectsManager.HighlightSelectableObjects();
         Assert.AreEqual(highlighAnimatorMock.requestedGameObjectsList.Count, 1);

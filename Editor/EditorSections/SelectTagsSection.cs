@@ -121,12 +121,12 @@ namespace ReupVirtualTwin.editor
 
         private async Task GetTags()
         {
-            allTags = EditionTagsCreator.ApplyEditionTags(await tagsApiManager.GetTags());
+            allTags = SystemTagsCreator.AddSystemTagsToTags(await tagsApiManager.GetTags());
         }
 
         private async Task GetMoreTags()
         {
-            allTags = EditionTagsCreator.ApplyEditionTags(await tagsApiManager.LoadMoreTags());
+            allTags = SystemTagsCreator.AddSystemTagsToTags(await tagsApiManager.LoadMoreTags());
         }
 
         private bool IsTagAlreadyPresent(Tag tag)

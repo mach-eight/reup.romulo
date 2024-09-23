@@ -52,7 +52,7 @@ namespace ReupVirtualTwin.controllers
         private void AddTags(GameObject obj)
         {
             IObjectTags objectTags = tagSystemController.AssignTagSystemToObject(obj);
-            objectTags.AddTags(EditionTagsCreator.CreateEditionTags().ToArray());
+            objectTags.AddTags(SystemTagsCreator.CreateSystemTags().ToArray());
         }
         private void SetLoadPosition(GameObject obj)
         {

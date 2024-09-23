@@ -107,7 +107,7 @@ namespace ReupVirtualTwin.managers
         public void HighlightSelectableObjects()
         {
             List<GameObject> selectableObjects = objectRegistry.GetObjects()
-                .Where(obj => tagsController.DoesObjectHaveTag(obj, EditionTagsCreator.CreateSelectableTag().id))
+                .Where(obj => tagsController.DoesObjectHaveTag(obj, SystemTagsCreator.CreateSelectableTag().id))
                 .ToList();
             highlightAnimator.HighlighObjectsEaseInEaseOut(selectableObjects);
         }

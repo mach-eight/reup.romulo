@@ -125,7 +125,7 @@ namespace ReupVirtualTwinTests.controllers
         public IEnumerator InsertedObjectShouldHaveSelectableTag()
         {
             yield return new WaitUntil(() => mediatorSpy.allRequestedObjectsAreLoaded);
-            Assert.IsTrue(tagsReader.DoesObjectHaveTag(mediatorSpy.GetLastLoadedObject(), EditionTagsCreator.CreateSelectableTag().id));
+            Assert.IsTrue(tagsReader.DoesObjectHaveTag(mediatorSpy.GetLastLoadedObject(), SystemTagsCreator.CreateSelectableTag().id));
             yield return null;
         }
 
@@ -133,7 +133,7 @@ namespace ReupVirtualTwinTests.controllers
         public IEnumerator InsertedObjectShouldHaveTransformableTag()
         {
             yield return new WaitUntil(() => mediatorSpy.allRequestedObjectsAreLoaded);
-            Assert.IsTrue(tagsReader.DoesObjectHaveTag(mediatorSpy.GetLastLoadedObject(), EditionTagsCreator.CreateTransformableTag().id));
+            Assert.IsTrue(tagsReader.DoesObjectHaveTag(mediatorSpy.GetLastLoadedObject(), SystemTagsCreator.CreateTransformableTag().id));
             yield return null;
         }
 
@@ -141,7 +141,7 @@ namespace ReupVirtualTwinTests.controllers
         public IEnumerator InsertedObjectShouldHaveDeletableTag()
         {
             yield return new WaitUntil(() => mediatorSpy.allRequestedObjectsAreLoaded);
-            Assert.IsTrue(tagsReader.DoesObjectHaveTag(mediatorSpy.GetLastLoadedObject(), EditionTagsCreator.CreateDeletableTag().id));
+            Assert.IsTrue(tagsReader.DoesObjectHaveTag(mediatorSpy.GetLastLoadedObject(), SystemTagsCreator.CreateDeletableTag().id));
             yield return null;
         }
 

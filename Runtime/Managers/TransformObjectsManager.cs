@@ -93,7 +93,7 @@ namespace ReupVirtualTwin.managers
         private bool AreWrappedObjectsTransformable(List<GameObject> objects)
         {
             if (objects.Count == 0) return false;
-            return objects.All(obj => _tagsController.DoesObjectHaveTag(obj, EditionTagsCreator.CreateTransformableTag().id));
+            return objects.All(obj => _tagsController.DoesObjectHaveTag(obj, SystemTagsCreator.CreateTransformableTag().id));
         }
     }
 }

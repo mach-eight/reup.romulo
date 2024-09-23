@@ -54,9 +54,9 @@ namespace ReupVirtualTwin.managers
         {
             foreach (var item in objects)
             {
-                var iss = _tagsController.DoesObjectHaveTag(item, EditionTagsCreator.CreateDeletableTag().id);
+                var iss = _tagsController.DoesObjectHaveTag(item, SystemTagsCreator.CreateDeletableTag().id);
             }
-            return objects.All(obj => _tagsController.DoesObjectHaveTag(obj, EditionTagsCreator.CreateDeletableTag().id));
+            return objects.All(obj => _tagsController.DoesObjectHaveTag(obj, SystemTagsCreator.CreateDeletableTag().id));
         }
         public void DeleteObjects(List<GameObject> objectsToDelete)
         {     
