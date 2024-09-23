@@ -1,23 +1,21 @@
 using UnityEngine;
 using ReupVirtualTwin.enums;
+using System.Collections.Generic;
 
 namespace ReupVirtualTwin.helpers
 {
     public class MoveToHitSelector : RayCastHitSelector
     {
-        private string[] ignoreTags = new string[]
+        private HashSet<string> ignoreTags = new HashSet<string>
         {
             TagsEnum.trigger,
-            TagsEnum.materialSelection,
+            TagsEnum.materialSelection
         };
         protected override GameObject GetSelectedObjectFromHitObject(GameObject obj)
         {
-            foreach(string tag in ignoreTags)
+            if (ignoreTags.Contains(obj.tag))
             {
-                if (obj.CompareTag(tag))
-                {
-                    return null;
-                }
+                return null;
             }
             return obj;
         }
