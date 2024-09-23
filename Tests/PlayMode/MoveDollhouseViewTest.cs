@@ -136,8 +136,8 @@ namespace ReupVirtualTwinTests.behaviours
             yield return MovePointerUtils.DragMouseLeftButton(input, mouse, initialPosition, finalPosition, pointerSteps);
             float expectedMovement = relativeMovement * MoveDhvCamera.POINTER_MOVE_CAMERA_DISTANCE_IN_METERS_SQUARE_VIEWPORT;
             Assert.Zero(dollhouseViewWrapper.position.x);
-            Assert.GreaterOrEqual(dollhouseViewWrapper.position.z, expectedMovement - errorToleranceInMeters);
             Assert.Zero(dollhouseViewWrapper.position.y);
+            Assert.GreaterOrEqual(dollhouseViewWrapper.position.z, expectedMovement - errorToleranceInMeters);
             yield return null;
         }
 

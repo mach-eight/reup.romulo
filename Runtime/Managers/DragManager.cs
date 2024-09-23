@@ -40,8 +40,6 @@ namespace ReupVirtualTwin.managers
 
         void Update()
         {
-            Ray ray = Camera.main.ScreenPointToRay(_inputProvider.PointerInput());
-            Debug.DrawRay(ray.origin, ray.direction * 100, Color.yellow);
             prevDragging = dragging;
             prevSelectInputInUI = selectInputInUI;
             if (_isHolding == true && dragging == false)

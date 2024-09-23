@@ -7,13 +7,13 @@ using UnityEditor;
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.models;
+using ReupVirtualTwinTests.utils;
 
 namespace ReupVirtualTwinTests.controllers
 {
     public class OriginalSceneControllerTest : MonoBehaviour
     {
-        GameObject ObjectRegistryPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Assets/ScriptHolders/ObjectRegistry.prefab");
-        GameObject objectRegistryGameObject;
+        ReupSceneInstantiator.SceneObjects sceneObjects;
         IObjectRegistry objectRegistry;
         OriginalSceneController originalSceneController;
 
@@ -26,8 +26,8 @@ namespace ReupVirtualTwinTests.controllers
         [UnitySetUp]
         public IEnumerator SetUp()
         {
-            objectRegistryGameObject = (GameObject)PrefabUtility.InstantiatePrefab(ObjectRegistryPrefab);
-            objectRegistry = objectRegistryGameObject.GetComponent<IObjectRegistry>();
+            sceneObjects = ReupSceneInstantiator.InstantiateScene();
+            objectRegistry = sceneObjects.objectRegistry;
             originalSceneController = new OriginalSceneController(objectRegistry);
             SetObjectsAndMaterials();
             yield return null;
@@ -37,7 +37,7 @@ namespace ReupVirtualTwinTests.controllers
         public IEnumerator TearDownCoroutine()
         {
             objectRegistry.ClearRegistry();
-            Destroy(objectRegistryGameObject);
+            ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
             yield return null;
         }
 
