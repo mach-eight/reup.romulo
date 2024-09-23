@@ -18,6 +18,7 @@ namespace ReupVirtualTwinTests.behaviours
         Mouse mouse;
         Touchscreen touch;
         float moveSpeedMetresPerSecond;
+        float limitFromBuildingInMeters;
         float timeInSecsForHoldingButton = 0.25f;
         float errorToleranceInMeters = 0.1f;
         int pointerSteps = 10;
@@ -30,6 +31,7 @@ namespace ReupVirtualTwinTests.behaviours
             keyboard = InputSystem.AddDevice<Keyboard>();
             mouse = InputSystem.AddDevice<Mouse>();
             touch = InputSystem.AddDevice<Touchscreen>();
+            limitFromBuildingInMeters = sceneObjects.moveDHVCamera.LIMIT_DISTANCE_FROM_BUILDING_IN_METERS;
             dollhouseViewWrapper = sceneObjects.dollhouseViewWrapper;
             moveSpeedMetresPerSecond = MoveDhvCamera.KEYBOARD_MOVE_CAMERA_SPEED_METERS_PER_SECOND;
             sceneObjects.viewModeManager.ActivateDHV();
@@ -45,7 +47,7 @@ namespace ReupVirtualTwinTests.behaviours
         [Test]
         public void MoveDhvCameraSpeedIsDefined()
         {
-            Assert.AreEqual(10, moveSpeedMetresPerSecond);
+            Assert.AreEqual(40, moveSpeedMetresPerSecond);
         }
 
         [UnityTest]
@@ -171,5 +173,24 @@ namespace ReupVirtualTwinTests.behaviours
             yield return null;
         }
 
+        [UnityTest]
+        public IEnumerator ShouldStopMovementWhenBoundariesAreReached()
+        {
+            Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
+
+            float extraDistanceInMeters = 5;
+            float movementDistanceBeyondBoundaries = limitFromBuildingInMeters + extraDistanceInMeters;
+            float timeToMoveBeyondBoundaries = movementDistanceBeyondBoundaries / moveSpeedMetresPerSecond;
+            
+            input.Press(keyboard.wKey);
+            yield return new WaitForSeconds(timeToMoveBeyondBoundaries);
+            input.Release(keyboard.wKey);
+
+            Vector3 expectedFinalPosition = new Vector3(0, 0, limitFromBuildingInMeters);
+
+            Assert.LessOrEqual(dollhouseViewWrapper.position.z, expectedFinalPosition.z);
+
+            yield return null;
+        }
     }
 }

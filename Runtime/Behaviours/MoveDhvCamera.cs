@@ -1,8 +1,6 @@
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.inputs;
 using ReupVirtualTwin.managers;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace ReupVirtualTwin.behaviours
@@ -10,6 +8,7 @@ namespace ReupVirtualTwin.behaviours
     public class MoveDhvCamera : MonoBehaviour
     {
         public Transform dollhouseViewWrapperTransform;
+        public float LIMIT_DISTANCE_FROM_BUILDING_IN_METERS = 35;
 
         InputProvider _inputProvider;
         public static readonly float KEYBOARD_MOVE_CAMERA_SPEED_METERS_PER_SECOND = 40;
@@ -17,6 +16,8 @@ namespace ReupVirtualTwin.behaviours
 
         float distancePerPixel;
         DragManager dragManager;
+        GameObject building;
+        private Vector3 centerOfTheBuilding;
 
         void Awake()
         {
@@ -24,6 +25,8 @@ namespace ReupVirtualTwin.behaviours
             int pixelsInSquareViewport = ViewportUtils.MinViewportDimension(Camera.main);
             distancePerPixel = POINTER_MOVE_CAMERA_DISTANCE_IN_METERS_SQUARE_VIEWPORT / pixelsInSquareViewport;
             dragManager = ObjectFinder.FindDragManager().GetComponent<DragManager>();
+            building = ObjectFinder.FindSetupBuilding().GetComponent<SetupBuilding>().building;
+            centerOfTheBuilding = BoundariesUtils.CalculateCenter(building);
         }
 
         void Update()
@@ -44,7 +47,9 @@ namespace ReupVirtualTwin.behaviours
             Vector3 finalMovement = cameraRight * inputValue.x + cameraForward * inputValue.y;
             Vector3 normalizedDirection = Vector3.Normalize(finalMovement);
             float movementDistance = KEYBOARD_MOVE_CAMERA_SPEED_METERS_PER_SECOND * Time.deltaTime;
-            dollhouseViewWrapperTransform.position += normalizedDirection * movementDistance;
+            Vector3 nextPosition = dollhouseViewWrapperTransform.position + (normalizedDirection * movementDistance);
+            
+            PerformMovement(nextPosition);
         }
 
         void PointerUpdatePosition()
@@ -63,8 +68,29 @@ namespace ReupVirtualTwin.behaviours
             float sideMovement = inputValue.x * distancePerPixel;
             float forwardMovement = inputValue.y * distancePerPixel;
             Vector3 movement = cameraRight * sideMovement + cameraForward * forwardMovement;
-            dollhouseViewWrapperTransform.position += movement;
+            Vector3 nextPosition = dollhouseViewWrapperTransform.position + movement;
 
+            PerformMovement(nextPosition);
+        }
+
+        private void PerformMovement(Vector3 nextPosition)
+        {
+            if (!isNextPositionInsideBoundaries(nextPosition))
+            {
+                return;
+            }
+            dollhouseViewWrapperTransform.position = nextPosition;
+        }
+
+        private bool isNextPositionInsideBoundaries(Vector3 positionToCheck) 
+        {
+            Vector3 offsetFromCenter = positionToCheck - centerOfTheBuilding;
+
+            // Handle distance checks separately for each axis (X and Z) to ensure square boundaries
+            bool withinXBounds = Mathf.Abs(offsetFromCenter.x) <= LIMIT_DISTANCE_FROM_BUILDING_IN_METERS;
+            bool withinZBounds = Mathf.Abs(offsetFromCenter.z) <= LIMIT_DISTANCE_FROM_BUILDING_IN_METERS;
+
+            return withinXBounds && withinZBounds;
         }
 
     }
