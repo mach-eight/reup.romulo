@@ -8,7 +8,7 @@ namespace ReupVirtualTwin.behaviours
     public class MoveDhvCamera : MonoBehaviour
     {
         public Transform dollhouseViewWrapperTransform;
-        public float LIMIT_DISTANCE_FROM_BUILDING_IN_METERS = 35;
+        public float limitDistanceFromBuildingInMeters = 35;
 
         InputProvider _inputProvider;
         public static readonly float KEYBOARD_MOVE_CAMERA_SPEED_METERS_PER_SECOND = 40;
@@ -17,7 +17,7 @@ namespace ReupVirtualTwin.behaviours
         float distancePerPixel;
         DragManager dragManager;
         GameObject building;
-        private Vector3 centerOfTheBuilding;
+        private Vector3 buildingCenter;
 
         void Awake()
         {
@@ -26,7 +26,7 @@ namespace ReupVirtualTwin.behaviours
             distancePerPixel = POINTER_MOVE_CAMERA_DISTANCE_IN_METERS_SQUARE_VIEWPORT / pixelsInSquareViewport;
             dragManager = ObjectFinder.FindDragManager().GetComponent<DragManager>();
             building = ObjectFinder.FindSetupBuilding().GetComponent<SetupBuilding>().building;
-            centerOfTheBuilding = BoundariesUtils.CalculateCenter(building);
+            buildingCenter = BoundariesUtils.CalculateCenter(building);
         }
 
         void Update()
@@ -84,11 +84,10 @@ namespace ReupVirtualTwin.behaviours
 
         private bool isNextPositionInsideBoundaries(Vector3 positionToCheck) 
         {
-            Vector3 offsetFromCenter = positionToCheck - centerOfTheBuilding;
+            Vector3 offsetFromCenter = positionToCheck - buildingCenter;
 
-            // Handle distance checks separately for each axis (X and Z) to ensure square boundaries
-            bool withinXBounds = Mathf.Abs(offsetFromCenter.x) <= LIMIT_DISTANCE_FROM_BUILDING_IN_METERS;
-            bool withinZBounds = Mathf.Abs(offsetFromCenter.z) <= LIMIT_DISTANCE_FROM_BUILDING_IN_METERS;
+            bool withinXBounds = Mathf.Abs(offsetFromCenter.x) <= limitDistanceFromBuildingInMeters;
+            bool withinZBounds = Mathf.Abs(offsetFromCenter.z) <= limitDistanceFromBuildingInMeters;
 
             return withinXBounds && withinZBounds;
         }

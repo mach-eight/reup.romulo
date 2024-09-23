@@ -31,7 +31,7 @@ namespace ReupVirtualTwinTests.behaviours
             keyboard = InputSystem.AddDevice<Keyboard>();
             mouse = InputSystem.AddDevice<Mouse>();
             touch = InputSystem.AddDevice<Touchscreen>();
-            limitFromBuildingInMeters = sceneObjects.moveDHVCamera.LIMIT_DISTANCE_FROM_BUILDING_IN_METERS;
+            limitFromBuildingInMeters = sceneObjects.moveDHVCamera.limitDistanceFromBuildingInMeters;
             dollhouseViewWrapper = sceneObjects.dollhouseViewWrapper;
             moveSpeedMetresPerSecond = MoveDhvCamera.KEYBOARD_MOVE_CAMERA_SPEED_METERS_PER_SECOND;
             sceneObjects.viewModeManager.ActivateDHV();
