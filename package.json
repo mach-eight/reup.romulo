@@ -1,6 +1,6 @@
 {
   "name": "com.reup.romulo",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "displayName": "Romulo",
   "description": "This package contains the assets to create virtual twins of properties for the ReUp platform.",
   "unity": "2019.1",
@@ -9,7 +9,8 @@
     "com.unity.render-pipelines.universal": "12.1.11",
     "com.unity.textmeshpro": "3.0.6",
     "com.unity.visualscripting": "1.9.4",
-    "com.unity.test-framework": "2.0.1-exp.1"
+    "com.unity.test-framework": "2.0.1-exp.1",
+    "com.unity.cinemachine": "3.1.1"
   },
   "keywords": [],
   "author": {

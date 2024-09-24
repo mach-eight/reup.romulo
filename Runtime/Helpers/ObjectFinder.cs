@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using ReupVirtualTwin.enums;
 using ReupVirtualTwin.managerInterfaces;
+using ReupVirtualTwin.behaviourInterfaces;
 
 namespace ReupVirtualTwin.helpers
 {
@@ -50,6 +51,15 @@ namespace ReupVirtualTwin.helpers
         public static ITagsApiManager FindTagsApiManager()
         {
             return GameObject.FindGameObjectWithTag(TagsEnum.tagsApiManager).GetComponent<ITagsApiManager>();
+        }
+
+        public static IWebMessageReceiver FindWebMessageReceiver()
+        {
+            return GameObject.FindGameObjectWithTag(TagsEnum.editMediator).GetComponent<IWebMessageReceiver>();
+        }
+        public static GameObject FindDragManager()
+        {
+            return GameObject.FindGameObjectWithTag(TagsEnum.dragManager);
         }
 
     }

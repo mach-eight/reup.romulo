@@ -2,8 +2,9 @@ using UnityEngine;
 using NUnit.Framework;
 using ReupVirtualTwin.models;
 using ReupVirtualTwinTests.utils;
+using ReupVirtualTwin.behaviours;
 
-namespace ReupVirtualTwin.behaviours
+namespace ReupVirtualTwinTests.behaviours
 {
     public class SetupBuildingTest
     {
@@ -17,7 +18,7 @@ namespace ReupVirtualTwin.behaviours
         public void SetUp()
         {
             sceneObjects = ReupSceneInstantiator.InstantiateScene();
-            setupbuilding = sceneObjects.setupbuilding;
+            setupbuilding = sceneObjects.setupBuilding;
             building = sceneObjects.building;
             child0 = building.transform.GetChild(0).gameObject;
             grandChild0 = child0.transform.GetChild(0).gameObject;

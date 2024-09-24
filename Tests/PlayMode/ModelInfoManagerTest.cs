@@ -16,9 +16,8 @@ using ReupVirtualTwinTests.mocks;
 
 public class ModelInfoManagerTest : MonoBehaviour
 {
+    ReupSceneInstantiator.SceneObjects sceneObjects;
     ObjectMapper objectMapper = new ObjectMapper(new TagsController(), new IdController());
-    GameObject ModelInfoManagerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Assets/ScriptHolders/ModelInfoManager.prefab");
-    GameObject ModelInfoManagerContainerGameObject;
     GameObject setupBuildingGameObject;
     GameObject buildingGameObject;
     ModelInfoManager modelInfoManager;
@@ -29,15 +28,15 @@ public class ModelInfoManagerTest : MonoBehaviour
     public IEnumerator SetUp()
     {
         CreateStubSetupBuilding();
-        ModelInfoManagerContainerGameObject = Instantiate(ModelInfoManagerPrefab);
-        modelInfoManager = ModelInfoManagerContainerGameObject.GetComponent<ModelInfoManager>();
+        sceneObjects = ReupSceneInstantiator.InstantiateScene();
+        modelInfoManager = sceneObjects.modelInfoManager;
         yield return null;
     }
     [UnityTearDown]
     public IEnumerator TearDown()
     {
-        Destroy(ModelInfoManagerContainerGameObject);
         Destroy(setupBuildingGameObject);
+        ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
         Destroy(buildingGameObject);
         yield return null;
     }
@@ -178,8 +177,6 @@ public class ModelInfoManagerTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldGetColorInfoInSceneStateMessage()
     {
-        Debug.Log("buildingGameObject");
-        Debug.Log(buildingGameObject);
         MetaDataComponentMock metaDataComponent = buildingGameObject.AddComponent<MetaDataComponentMock>();
         JObject parentMetaData = new JObject
         {

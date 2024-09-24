@@ -1,3 +1,4 @@
+using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.inputs;
 using ReupVirtualTwin.managers;
 using UnityEngine;
@@ -11,13 +12,13 @@ namespace ReupVirtualTwin.behaviours
 
         [SerializeField]
         private CharacterRotationManager _characterRotationManager;
-        [SerializeField]
         private DragManager _dragManager;
         private InputProvider _inputProvider;
 
         private void Awake()
         {
             _inputProvider = new InputProvider();
+            _dragManager = ObjectFinder.FindDragManager().GetComponent<DragManager>();
         }
 
 

@@ -78,11 +78,13 @@ namespace ReupVirtualTwin.inputs
         public void Enable()
         {
             _input.Player.Enable();
+            _input.DollhouseView.Enable();
         }
 
         public void Disable()
         {
             _input.Player.Disable();
+            _input.DollhouseView.Disable();
         }
 
         public Vector2 RotateViewInput()
@@ -106,6 +108,14 @@ namespace ReupVirtualTwin.inputs
         public float ChangeHeightInput()
         {
             return _input.Player.ChangeHeight.ReadValue<float>();
+        }
+        public Vector2 KeyboardMoveDhvCamera()
+        {
+            return _input.DollhouseView.KeyboardMoveCamera.ReadValue<Vector2>();
+        }
+        public Vector2 PointerMoveDhvCamera()
+        {
+            return -1 * _input.DollhouseView.PointerMoveCamera.ReadValue<Vector2>();
         }
     }
 }

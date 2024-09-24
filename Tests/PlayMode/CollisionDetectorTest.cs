@@ -10,7 +10,7 @@ using ReupVirtualTwinTests.utils;
 public class CollisionDetectorTest : MonoBehaviour
 {
     ReupSceneInstantiator.SceneObjects sceneObjects;
-    GameObject character;
+    Transform character;
 
     CharacterPositionManager posManager;
     GameObject cubePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Tests/TestAssets/Cube.prefab");

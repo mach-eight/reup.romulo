@@ -8,8 +8,9 @@ namespace ReupVirtualTwin.behaviours
 {
     public class ChangeHeight : MonoBehaviour
     {
+        public static float CHANGE_SPEED_M_PER_SECOND = 1;
+
         private InputProvider _inputProvider;
-        private float CHANGE_SPEED_M_PER_SECOND = 1;
         private bool _movingHeight = false;
         private IMediator _mediator;
         public IMediator mediator { set => _mediator = value; }

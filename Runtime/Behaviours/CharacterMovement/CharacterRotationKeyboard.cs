@@ -27,6 +27,10 @@ namespace ReupVirtualTwin.behaviours
         private void UpdateRotation()
         {
             Vector2 look = _inputProvider.RotateViewKeyboardInput();
+            if (look == Vector2.zero)
+            {
+                return;
+            }
             float deltaSpeed = ROTATION_SPEED_DEG_PER_SECOND * Time.deltaTime;
             _characterRotationManager.horizontalRotation += (look.x * deltaSpeed);
             _characterRotationManager.verticalRotation += (look.y * deltaSpeed * -1);

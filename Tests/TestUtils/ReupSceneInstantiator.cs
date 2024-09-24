@@ -1,7 +1,12 @@
+using System;
 using ReupVirtualTwin.managers;
 using ReupVirtualTwin.behaviours;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
+using ReupVirtualTwin.models;
+using ReupVirtualTwin.helpers;
 
 namespace ReupVirtualTwinTests.utils
 {
@@ -11,24 +16,64 @@ namespace ReupVirtualTwinTests.utils
         public class SceneObjects
         {
             public GameObject reupObject;
-            public GameObject character;
+            public Transform character;
+            public Transform innerCharacter;
+            public Transform dollhouseViewWrapper;
             public GameObject baseGlobalScriptGameObject;
             public GameObject building;
             public ChangeColorManager changeColorManager;
-            public SetupBuilding setupbuilding;
+            public SetupBuilding setupBuilding;
             public SelectSelectableObject selectSelectableObject;
             public SelectedObjectsManager selectedObjectsManager;
+            public EditMediator editMediator;
+            public SensedObjectHighlighter selectableObjectHighlighter;
+            public MoveDhvCamera moveDHVCamera;
+            public GameObject dhvCamera;
+            public GameObject fpvCamera;
+            public ViewModeManager viewModeManager;
+            public InputTestFixture input;
+            public EventSystem eventSystem;
+            public HeightMediator heightMediator;
+            public ModelInfoManager modelInfoManager;
+            public ObjectRegistry objectRegistry;
+            public ObjectPool objectPool;
+            public Camera mainCamera;
+        }
+        public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab)
+        {
+            GameObject building = (GameObject)PrefabUtility.InstantiatePrefab(buildingPrefab);
+            return SceneObjectsWithBuilding(building);
+        }
+        public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab, Action<GameObject> modifyBuilding)
+        {
+            GameObject building = (GameObject)PrefabUtility.InstantiatePrefab(buildingPrefab);
+            modifyBuilding(building);
+            return SceneObjectsWithBuilding(building);
         }
 
         public static SceneObjects InstantiateScene()
         {
+            GameObject building = CreateDefaultBuilding();
+            return SceneObjectsWithBuilding(building);
+        }
+
+        private static SceneObjects SceneObjectsWithBuilding(GameObject building)
+        {
+            GameObject eventSystemGameObject = new GameObject("EventSystem");
+            EventSystem eventSystem = eventSystemGameObject.AddComponent<EventSystem>();
+            InputTestFixture input = new InputTestFixture();
+            input.Setup();
             GameObject reupGameObject = (GameObject)PrefabUtility.InstantiatePrefab(reupPrefab);
             GameObject baseGlobalScriptGameObject = reupGameObject.transform.Find("BaseGlobalScripts").gameObject;
-            GameObject character = reupGameObject.transform.Find("Character").gameObject;
+            Transform character = reupGameObject.transform.Find("Character");
+            Transform innerCharacter = reupGameObject.transform.Find("Character").Find("InnerCharacter");
+            Transform dollhouseViewWrapper = reupGameObject.transform.Find("DollhouseViewWrapper");
 
-            GameObject building = CreateBuilding();
             SetupBuilding setupBuilding = baseGlobalScriptGameObject.transform.Find("SetupBuilding").GetComponent<SetupBuilding>();
             setupBuilding.building = building;
+
+            EditMediator editMediator = baseGlobalScriptGameObject.transform
+                .Find("EditMediator").GetComponent<EditMediator>();
 
             ChangeColorManager changeColorManager = baseGlobalScriptGameObject.transform
                 .Find("EditMediator")
@@ -45,26 +90,70 @@ namespace ReupVirtualTwinTests.utils
                .Find("SelectedObjectsManager")
                .GetComponent<SelectedObjectsManager>();
 
+            SensedObjectHighlighter selectableObjectHighlighter = baseGlobalScriptGameObject.transform
+                .Find("HoverOverSelectablesObjects").GetComponent<SensedObjectHighlighter>();
+
+            GameObject dhvCamera = reupGameObject.transform
+                .Find("DollhouseViewWrapper")
+                .Find("VerticalRotationWrapper")
+                .Find("DHVCinemachineCamera").gameObject;
+                
+            GameObject fpvCamera = character.transform.Find("InnerCharacter").Find("FPVCinemachineCamera").gameObject;
+
+            ViewModeManager viewModeManager = baseGlobalScriptGameObject.transform
+                .Find("EditMediator")
+                .Find("ViewModeManager").GetComponent<ViewModeManager>();
+
+            HeightMediator heightMediator = character.transform.Find("Behaviours")
+                .Find("HeightMediator").GetComponent<HeightMediator>();
+
+            MoveDhvCamera moveDhvCamera = dollhouseViewWrapper.GetComponent<MoveDhvCamera>();
+
+            ModelInfoManager modelInfoManager = baseGlobalScriptGameObject.transform.Find("ModelInfo").GetComponent<ModelInfoManager>();
+
+            ObjectRegistry objectRegistry = baseGlobalScriptGameObject.transform.Find("ObjectRegistry").GetComponent<ObjectRegistry>();
+
+            ObjectPool objectPool = baseGlobalScriptGameObject.transform.Find("ObjectPool").GetComponent<ObjectPool>();
+            
+            Camera mainCamera = reupGameObject.transform.Find("Main_Camera").GetComponent<Camera>();
+
             return new SceneObjects
             {
                 reupObject = reupGameObject,
                 character = character,
+                innerCharacter = innerCharacter,
+                dollhouseViewWrapper = dollhouseViewWrapper,
                 baseGlobalScriptGameObject = baseGlobalScriptGameObject,
                 building = building,
                 changeColorManager = changeColorManager,
-                setupbuilding = setupBuilding,
+                setupBuilding = setupBuilding,
                 selectSelectableObject = selectSelectableObject,
                 selectedObjectsManager = selectedObjectsManager,
+                editMediator = editMediator,
+                selectableObjectHighlighter = selectableObjectHighlighter,
+                dhvCamera = dhvCamera,
+                fpvCamera = fpvCamera,
+                viewModeManager = viewModeManager,
+                input = input,
+                eventSystem = eventSystem,
+                heightMediator = heightMediator,
+                moveDHVCamera = moveDhvCamera,
+                modelInfoManager = modelInfoManager,
+                objectRegistry = objectRegistry,
+                objectPool = objectPool,
+                mainCamera = mainCamera,
             };
         }
 
         public static void DestroySceneObjects(SceneObjects sceneObjects)
         {
-            Object.Destroy(sceneObjects.reupObject);
-            Object.Destroy(sceneObjects.building);
+            GameObject.Destroy(sceneObjects.reupObject);
+            GameObject.Destroy(sceneObjects.building);
+            GameObject.Destroy(sceneObjects.eventSystem.gameObject);
+            sceneObjects.input.TearDown();
         }
 
-        private static GameObject CreateBuilding()
+        private static GameObject CreateDefaultBuilding()
         {
             GameObject building = new GameObject("building");
             GameObject child0 = new GameObject("child0");

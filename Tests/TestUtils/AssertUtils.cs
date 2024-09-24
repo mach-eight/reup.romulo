@@ -53,6 +53,12 @@ namespace ReupVirtualTwinTests.utils
             Assert.Less(distance, 1e-6);
         }
 
+        public static void AssertVectorIsZero(Vector3 vector, float zeroThreshold)
+        {
+            Assert.LessOrEqual(vector.x, zeroThreshold);
+            Assert.LessOrEqual(vector.y, zeroThreshold);
+            Assert.LessOrEqual(vector.z, zeroThreshold);
+        }
 
     }
 }
