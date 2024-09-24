@@ -18,7 +18,7 @@ namespace ReupVirtualTwinTests.behaviours
         public void SetUp()
         {
             sceneObjects = ReupSceneInstantiator.InstantiateScene();
-            setupbuilding = sceneObjects.setupbuilding;
+            setupbuilding = sceneObjects.setupBuilding;
             building = sceneObjects.building;
             child0 = building.transform.GetChild(0).gameObject;
             grandChild0 = child0.transform.GetChild(0).gameObject;
