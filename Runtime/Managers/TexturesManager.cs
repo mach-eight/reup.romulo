@@ -9,7 +9,10 @@ namespace ReupVirtualTwin.managers
     {
         public void ApplyMaterialToObject(GameObject obj, Material material)
         {
-            obj.GetComponent<Renderer>().material = material;
+            Renderer renderer = obj.GetComponent<Renderer>();
+            Texture oldTexture = renderer.material.GetTexture("_BaseMap");
+            renderer.material = material;
+            Destroy(oldTexture);
         }
     }
 
