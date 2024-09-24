@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using ReupVirtualTwin.models;
 using ReupVirtualTwin.helpers;
+using ReupVirtualTwin.managerInterfaces;
 
 namespace ReupVirtualTwinTests.utils
 {
@@ -38,6 +39,7 @@ namespace ReupVirtualTwinTests.utils
             public ObjectRegistry objectRegistry;
             public ObjectPool objectPool;
             public Camera mainCamera;
+            public ITexturesManager texturesManager;
         }
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab)
         {
@@ -71,6 +73,7 @@ namespace ReupVirtualTwinTests.utils
 
             SetupBuilding setupBuilding = baseGlobalScriptGameObject.transform.Find("SetupBuilding").GetComponent<SetupBuilding>();
             setupBuilding.building = building;
+            setupBuilding.AssignIdsAndObjectInfoToBuilding();
 
             EditMediator editMediator = baseGlobalScriptGameObject.transform
                 .Find("EditMediator").GetComponent<EditMediator>();
@@ -97,7 +100,7 @@ namespace ReupVirtualTwinTests.utils
                 .Find("DollhouseViewWrapper")
                 .Find("VerticalRotationWrapper")
                 .Find("DHVCinemachineCamera").gameObject;
-                
+
             GameObject fpvCamera = character.transform.Find("InnerCharacter").Find("FPVCinemachineCamera").gameObject;
 
             ViewModeManager viewModeManager = baseGlobalScriptGameObject.transform
@@ -114,8 +117,10 @@ namespace ReupVirtualTwinTests.utils
             ObjectRegistry objectRegistry = baseGlobalScriptGameObject.transform.Find("ObjectRegistry").GetComponent<ObjectRegistry>();
 
             ObjectPool objectPool = baseGlobalScriptGameObject.transform.Find("ObjectPool").GetComponent<ObjectPool>();
-            
+
             Camera mainCamera = reupGameObject.transform.Find("Main_Camera").GetComponent<Camera>();
+
+            ITexturesManager texturesManager = baseGlobalScriptGameObject.transform.Find("TexturesManager").GetComponent<ITexturesManager>();
 
             return new SceneObjects
             {
@@ -142,6 +147,7 @@ namespace ReupVirtualTwinTests.utils
                 objectRegistry = objectRegistry,
                 objectPool = objectPool,
                 mainCamera = mainCamera,
+                texturesManager = texturesManager,
             };
         }
 
