@@ -1,5 +1,6 @@
 using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,13 +14,16 @@ namespace ReupVirtualTwin.helpers
             {
                 CreateDeletableTag(), CreateSelectableTag(), CreateTransformableTag(),
                 CreateWallTag(),
-            };
+            }
+            .Concat(CreateFloorWallTags())
+            .Concat(CreateFloorTags())
+            .ToList();
         }
         public static Tag CreateDeletableTag()
         {
             return new Tag()
             {
-                id = SystemTagId.DELETABLE.ToString(),
+                id = "DELETABLE",
                 name = SystemTagId.DELETABLE.ToString(),
                 description = "this is an action tag burn into unity"
             };
@@ -28,7 +32,7 @@ namespace ReupVirtualTwin.helpers
         {
             return new Tag()
             {
-                id = SystemTagId.TRANSFORMABLE.ToString(),
+                id = "TRANSFORMABLE",
                 name = SystemTagId.TRANSFORMABLE.ToString(),
                 description = "this is an action tag burn into unity"
             };
@@ -37,7 +41,7 @@ namespace ReupVirtualTwin.helpers
         {
             return new Tag()
             {
-                id = SystemTagId.SELECTABLE.ToString(),
+                id = "SELECTABLE",
                 name = SystemTagId.SELECTABLE.ToString(),
                 description = "this is an action tag burn into unity"
             };
@@ -47,7 +51,7 @@ namespace ReupVirtualTwin.helpers
         {
             return new Tag()
             {
-                id = SystemTagId.WALL.ToString(),
+                id = "WALL",
                 name = SystemTagId.WALL.ToString(),
                 description = "tag to identify wall faces"
             };
@@ -56,6 +60,36 @@ namespace ReupVirtualTwin.helpers
         public static List<Tag> AddSystemTagsToTags(List<Tag> tags)
         {
             return SystemTagsCreator.CreateSystemTags().Concat(tags).ToList();
+        }
+
+        public static Tag CreateFloorLocationTag(int floorLevel)
+        {
+            return new Tag()
+            {
+                id = $"FLOOR_{floorLevel}",
+                name = SystemTagId.InFloorLocation(floorLevel).ToString(),
+                description = $"tag to identify objects in floor {OrdinalNumberUtils.GetOrdinal(floorLevel)}"
+            };
+        }
+
+        public static List<Tag> CreateFloorTags()
+        {
+            return Enumerable.Range(1, 11).Select(floor => CreateFloorLocationTag(floor)).ToList();
+        }
+
+        public static Tag CreateWallFloorTag(int floorLevel)
+        {
+            return new Tag()
+            {
+                id = $"WALL_FLOOR_{floorLevel}",
+                name = SystemTagId.WallFloor(floorLevel).ToString(),
+                description = $"tag to identify wall in floor {floorLevel}"
+            };
+        }
+
+        public static List<Tag> CreateFloorWallTags()
+        {
+            return Enumerable.Range(1, 11).Select(floor => CreateWallFloorTag(floor)).ToList();
         }
     }
 }
