@@ -21,7 +21,7 @@ namespace ReupVirtualTwin.behaviours
 
         public override void OnSelect(InputAction.CallbackContext ctx)
         {
-            if (!_dragManager.prevDragging && !OverUICheck.PointerOverUI() && !_dragManager.prevSelectInputInUI)
+            if (!_dragManager.prevDragging && !_dragManager.prevSelectInputInUI)
             {
                 Ray ray = _rayProvider.GetRay();
                 //Debug.DrawRay(ray.origin, ray.direction, Color.red, 1);

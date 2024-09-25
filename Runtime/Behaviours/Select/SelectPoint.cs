@@ -1,8 +1,5 @@
-using ReupVirtualTwin;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.EventSystems;
-using System.Collections.Generic;
 using ReupVirtualTwin.helpers;
 
 namespace ReupVirtualTwin.behaviours
@@ -27,7 +24,7 @@ namespace ReupVirtualTwin.behaviours
 
         public override void OnSelect(InputAction.CallbackContext ctx)
         {
-            if (!_dragManager.prevDragging && !OverUICheck.PointerOverUI() && !_dragManager.prevSelectInputInUI)
+            if (!_dragManager.prevDragging && !_dragManager.prevSelectInputInUI)
             {
                 Ray ray = _rayProvider.GetRay();
                 RaycastHit? hit = _hitSelector.GetHit(ray);

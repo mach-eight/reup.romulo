@@ -52,15 +52,8 @@ namespace ReupVirtualTwin.managers
 
         private void OnHold(InputAction.CallbackContext obj)
         {
-            if (OverUICheck.PointerOverUI())
-            {
-                selectInputInUI = true;
-            }
-            else
-            {
-                _isHolding = true;
-                _selectPosition = _inputProvider.PointerInput();
-            }
+            _isHolding = true;
+            _selectPosition = _inputProvider.PointerInput();
         }
 
         private void OnHoldCanceled(InputAction.CallbackContext obj)
