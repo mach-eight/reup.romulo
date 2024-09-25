@@ -13,7 +13,7 @@ using Newtonsoft.Json.Schema;
 
 namespace ReupVirtualTwin.managers
 {
-    public class ModelInfoManager: MonoBehaviour, IModelInfoManager, ISceneStateManager
+    public class ModelInfoManager : MonoBehaviour, IModelInfoManager, ISceneStateManager
     {
         public string buildVersion { get => _buildVersion; }
         public IObjectMapper objectMapper { set => _objectMapper = value; }
@@ -44,10 +44,10 @@ namespace ReupVirtualTwin.managers
             return sceneState;
         }
 
-        public WebMessage<ModelInfoMessage> ObtainModelInfoMessage()
+        public WebMessage<JObject> ObtainModelInfoMessage()
         {
-            ModelInfoMessage messagePayload = ObtainModelInfoMessagePayload();
-            WebMessage<ModelInfoMessage> message = new()
+            JObject messagePayload = ObtainModelInfoMessagePayload();
+            WebMessage<JObject> message = new()
             {
                 type = WebMessageType.requestModelInfoSuccess,
                 payload = messagePayload,
@@ -82,13 +82,13 @@ namespace ReupVirtualTwin.managers
             return updateBuildingMessage;
         }
 
-        private ModelInfoMessage ObtainModelInfoMessagePayload()
+        private JObject ObtainModelInfoMessagePayload()
         {
             ObjectDTO buildingDTO = ObtainBuildingDTO();
-            ModelInfoMessage startupMessage = new()
+            JObject startupMessage = new()
             {
-                buildVersion = buildVersion,
-                building = buildingDTO,
+                {"buildVersion", buildVersion},
+                {"building", JObject.FromObject(buildingDTO)},
             };
             return startupMessage;
         }

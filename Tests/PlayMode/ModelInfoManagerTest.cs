@@ -1,7 +1,5 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
 using ReupVirtualTwin.dataModels;
@@ -59,33 +57,9 @@ public class ModelInfoManagerTest : MonoBehaviour
 
     private bool CompareObjectDTOs(ObjectDTO expected, ObjectDTO obtained)
     {
-        if (expected.id != obtained.id)
-        {
-            return false;
-        }
-        if (expected.tags.Length != obtained.tags.Length)
-        {
-            return false;
-        }
-        for (int i = 0; i < expected.tags.Length; i++)
-        {
-            if (expected.tags[i] != obtained.tags[i])
-            {
-                return false;
-            }
-        }
-        if (expected.children.Length != obtained.children.Length)
-        {
-            return false;
-        }
-        for (int i = 0; i < expected.children.Length; i++)
-        {
-            if (!CompareObjectDTOs(expected.children[i], obtained.children[i]))
-            {
-                return false;
-            }
-        }
-        return true;
+        JObject expectedJson = JObject.FromObject(expected);
+        JObject obtainedJson = JObject.FromObject(obtained);
+        return JToken.DeepEquals(expectedJson, obtainedJson);
     }
 
     bool IdStructureAreEqual(JObject expected, JObject obtained)
@@ -115,11 +89,11 @@ public class ModelInfoManagerTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldObtainTheModelInfoMessage()
     {
-        WebMessage<ModelInfoMessage> message = modelInfoManager.ObtainModelInfoMessage();
+        WebMessage<JObject> message = modelInfoManager.ObtainModelInfoMessage();
         Assert.IsNotNull(message);
         Assert.AreEqual(WebMessageType.requestModelInfoSuccess, message.type);
         Assert.IsNotNull(message.payload);
-        Assert.AreEqual(modelInfoManager.buildVersion, message.payload.buildVersion);
+        Assert.AreEqual(modelInfoManager.buildVersion, message.payload["buildVersion"].ToString());
         yield return null;
     }
 
@@ -137,8 +111,8 @@ public class ModelInfoManagerTest : MonoBehaviour
     public IEnumerator ShouldObtainBuildingTreeDataStructure()
     {
         ObjectDTO expectedBuildingTreeDataStructure = objectMapper.MapObjectTree(buildingGameObject);
-        WebMessage<ModelInfoMessage> message = modelInfoManager.ObtainModelInfoMessage();
-        ObjectDTO buildingTreeDataStructure = message.payload.building;
+        WebMessage<JObject> message = modelInfoManager.ObtainModelInfoMessage();
+        ObjectDTO buildingTreeDataStructure = message.payload["building"].ToObject<ObjectDTO>();
         Assert.IsTrue(CompareObjectDTOs(expectedBuildingTreeDataStructure, buildingTreeDataStructure));
         Assert.AreEqual(NumberOfObjectsInTree(expectedBuildingTreeDataStructure), NumberOfObjectsInTree(buildingTreeDataStructure));
         yield return null;
@@ -149,8 +123,8 @@ public class ModelInfoManagerTest : MonoBehaviour
     {
         int numberOfObjectsByDefaultInStubBuilding = 4;
         int numberOfObjectsInTotal = numberOfObjectsByDefaultInStubBuilding + BUILDING_CHILDREN_DEPTH;
-        WebMessage<ModelInfoMessage> message = modelInfoManager.ObtainModelInfoMessage();
-        ObjectDTO buildingTreeDataStructure = message.payload.building;
+        WebMessage<JObject> message = modelInfoManager.ObtainModelInfoMessage();
+        ObjectDTO buildingTreeDataStructure = message.payload["building"].ToObject<ObjectDTO>();
         Assert.AreEqual(numberOfObjectsInTotal, NumberOfObjectsInTree(buildingTreeDataStructure));
         yield return null;
     }

@@ -119,21 +119,22 @@ public class EditMediatorTest : MonoBehaviour
     {
         public JObject lastReceivedMessageRequest;
         public List<JObject> receivedMessageRequests = new List<JObject>();
-        public bool throwError = false;        
+        public bool throwError = false;
         public Task<TaskResult> ChangeObjectMaterial(JObject materialChangeInfo)
         {
-            if (throwError) {
-                return Task.FromResult(TaskResult.Failure("ERROR, Fail to change materials from spy")); 
+            if (throwError)
+            {
+                return Task.FromResult(TaskResult.Failure("ERROR, Fail to change materials from spy"));
             }
-       
+
             bool isValid = materialChangeInfo.IsValid(RomuloInternalSchema.materialChangeInfoSchema, out IList<string> errorMessages);
             if (!isValid)
             {
-               foreach (string errorMessage in errorMessages)
-               {
+                foreach (string errorMessage in errorMessages)
+                {
                     Debug.LogError(errorMessage);
-               }
-               throw new Exception("Invalid material change info object");
+                }
+                throw new Exception("Invalid material change info object");
             }
             receivedMessageRequests.Add(materialChangeInfo);
             lastReceivedMessageRequest = materialChangeInfo;
@@ -208,15 +209,15 @@ public class EditMediatorTest : MonoBehaviour
             };
         }
 
-        public WebMessage<ModelInfoMessage> ObtainModelInfoMessage()
+        public WebMessage<JObject> ObtainModelInfoMessage()
         {
-            WebMessage<ModelInfoMessage> message = new()
+            WebMessage<JObject> message = new()
             {
                 type = WebMessageType.requestModelInfoSuccess,
-                payload = new ModelInfoMessage()
+                payload = new JObject()
                 {
-                    buildVersion = "2024-04-05",
-                    building = building,
+                    {"buildVersion", "2024-04-05"},
+                    {"building", JObject.FromObject(building)},
                 },
             };
             return message;
@@ -539,7 +540,7 @@ public class EditMediatorTest : MonoBehaviour
         WebMessage<ObjectDTO> sentMessage = (WebMessage<ObjectDTO>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.loadObjectSuccess, sentMessage.type);
         Assert.AreEqual(mockObjectMapper.objectDTOs[0], sentMessage.payload);
-        WebMessage<UpdateBuildingMessage> sentUpdateBuildingMessage = (WebMessage<UpdateBuildingMessage>)mockWebMessageSender.sentMessages[1];  
+        WebMessage<UpdateBuildingMessage> sentUpdateBuildingMessage = (WebMessage<UpdateBuildingMessage>)mockWebMessageSender.sentMessages[1];
         Assert.AreEqual(WebMessageType.updateBuilding, sentUpdateBuildingMessage.type);
         Assert.AreEqual(mockModelInfoManager.building, sentUpdateBuildingMessage.payload.building);
     }
@@ -703,7 +704,7 @@ public class EditMediatorTest : MonoBehaviour
         ChangeColorObjectMessagePayload payload = new ChangeColorObjectMessagePayload
         {
             color = color,
-            objectIds = new string[] {"id-0", "id-1"},
+            objectIds = new string[] { "id-0", "id-1" },
         };
         string message = dummyJsonCreator.createWebMessage(WebMessageType.changeObjectColor, payload);
         editMediator.ReceiveWebMessage(message);
@@ -720,7 +721,7 @@ public class EditMediatorTest : MonoBehaviour
         ChangeColorObjectMessagePayload payload = new ChangeColorObjectMessagePayload
         {
             color = color,
-            objectIds = new string[] {"id-0", "id-1"},
+            objectIds = new string[] { "id-0", "id-1" },
         };
         string message = dummyJsonCreator.createWebMessage(WebMessageType.changeObjectColor, payload);
         editMediator.ReceiveWebMessage(message);
