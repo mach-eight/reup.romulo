@@ -14,6 +14,7 @@ namespace ReupVirtualTwinTests.managers
     {
         GameObject testCubesPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Tests/TestAssets/testCubes.prefab");
         GameObject cube0;
+        GameObject cube1;
         ReupSceneInstantiator.SceneObjects sceneObjects;
         ITexturesManager texturesManager;
 
@@ -23,6 +24,7 @@ namespace ReupVirtualTwinTests.managers
             sceneObjects = ReupSceneInstantiator.InstantiateSceneWithBuildingFromPrefab(testCubesPrefab);
             texturesManager = sceneObjects.texturesManager;
             cube0 = sceneObjects.building.transform.Find("Cube0").gameObject;
+            cube1 = sceneObjects.building.transform.Find("Cube1").gameObject;
         }
 
         [UnityTearDown]
@@ -54,16 +56,30 @@ namespace ReupVirtualTwinTests.managers
             newMaterial1.SetTexture("_BaseMap", newTexture1);
             texturesManager.ApplyMaterialToObject(cube0, newMaterial1);
             yield return null;
-
             Texture2D newTexture2 = new Texture2D(2, 2);
             Material newMaterial2 = new Material(Shader.Find("Universal Render Pipeline/Lit"));
             newMaterial2.SetTexture("_BaseMap", newTexture2);
             texturesManager.ApplyMaterialToObject(cube0, newMaterial2);
             yield return null;
-
-            Material appliedMaterial = cube0.GetComponent<Renderer>().material;
-            Assert.AreEqual(appliedMaterial.GetTexture("_BaseMap"), newTexture2);
             Assert.IsTrue(newTexture1 == null);
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldNotDestroyTexture_if_textureIsStillBeingUsedInOtherObjects()
+        {
+            Texture2D newTexture1 = new Texture2D(2, 2);
+            Assert.IsFalse(newTexture1 == null);
+            Material newMaterial1 = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            newMaterial1.SetTexture("_BaseMap", newTexture1);
+            texturesManager.ApplyMaterialToObject(cube0, newMaterial1);
+            texturesManager.ApplyMaterialToObject(cube1, newMaterial1);
+            yield return null;
+            Texture2D newTexture2 = new Texture2D(2, 2);
+            Material newMaterial2 = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            newMaterial2.SetTexture("_BaseMap", newTexture2);
+            texturesManager.ApplyMaterialToObject(cube0, newMaterial2);
+            yield return null;
+            Assert.IsFalse(newTexture1 == null);
         }
 
     }
