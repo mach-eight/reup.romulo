@@ -42,7 +42,7 @@ namespace ReupVirtualTwin.helpers
         {
             ObjectDTO objectDTO = MapObjectToDTO(obj);
             objectDTO.children = new ObjectDTO[obj.transform.childCount];
-            for(int i = 0; i < obj.transform.childCount; i++)
+            for (int i = 0; i < obj.transform.childCount; i++)
             {
                 objectDTO.children[i] = MapObjectTree(obj.transform.GetChild(i).gameObject);
             }
@@ -53,7 +53,7 @@ namespace ReupVirtualTwin.helpers
         {
             JObject parentSceneState = GetObjectSceneState(obj);
             JArray children = new JArray();
-            for(int i = 0; i < obj.transform.childCount; i++)
+            for (int i = 0; i < obj.transform.childCount; i++)
             {
                 children.Add(GetTreeSceneState(obj.transform.GetChild(i).gameObject));
             }

@@ -40,22 +40,22 @@ namespace ReupVirtualTwinTests.utils
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab)
         {
             GameObject building = (GameObject)PrefabUtility.InstantiatePrefab(buildingPrefab);
-            return SceneObjectsWithBuilding(building);
+            return InstantiateSceneWithBuildingWithBuildingObject(building);
         }
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab, Action<GameObject> modifyBuilding)
         {
             GameObject building = (GameObject)PrefabUtility.InstantiatePrefab(buildingPrefab);
             modifyBuilding(building);
-            return SceneObjectsWithBuilding(building);
+            return InstantiateSceneWithBuildingWithBuildingObject(building);
         }
 
         public static SceneObjects InstantiateScene()
         {
             GameObject building = CreateDefaultBuilding();
-            return SceneObjectsWithBuilding(building);
+            return InstantiateSceneWithBuildingWithBuildingObject(building);
         }
 
-        private static SceneObjects SceneObjectsWithBuilding(GameObject building)
+        public static SceneObjects InstantiateSceneWithBuildingWithBuildingObject(GameObject building)
         {
             InputTestFixture input = new InputTestFixture();
             input.Setup();
@@ -67,6 +67,7 @@ namespace ReupVirtualTwinTests.utils
 
             SetupBuilding setupBuilding = baseGlobalScriptGameObject.transform.Find("SetupBuilding").GetComponent<SetupBuilding>();
             setupBuilding.building = building;
+            setupBuilding.AssignIdsAndObjectInfoToBuilding();
 
             EditMediator editMediator = baseGlobalScriptGameObject.transform
                 .Find("EditMediator").GetComponent<EditMediator>();

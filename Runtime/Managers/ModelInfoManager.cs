@@ -19,18 +19,9 @@ namespace ReupVirtualTwin.managers
         public IObjectMapper objectMapper { set => _objectMapper = value; }
 
         string _buildVersion = "2024-09-24"; // format: YYYY-MM-DD
-        IOnBuildingSetup setupBuilding;
+        public IOnBuildingSetup setupBuilding { get; set; }
         IObjectMapper _objectMapper;
 
-        private void Awake()
-        {
-            LookForDependencySingletons();
-        }
-
-        private void LookForDependencySingletons()
-        {
-            setupBuilding = ObjectFinder.FindSetupBuilding()?.GetComponent<IOnBuildingSetup>();
-        }
         public JObject GetSceneState()
         {
             GameObject buildingObject = ObtainBuildingObject();

@@ -10,7 +10,7 @@ using ReupVirtualTwin.enums;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using ReupVirtualTwinTests.utils;
-using ReupVirtualTwinTests.mocks;
+using ReupVirtualTwin.modelInterfaces;
 
 public class ModelInfoManagerTest : MonoBehaviour
 {
@@ -25,8 +25,8 @@ public class ModelInfoManagerTest : MonoBehaviour
     [UnitySetUp]
     public IEnumerator SetUp()
     {
-        CreateStubSetupBuilding();
-        sceneObjects = ReupSceneInstantiator.InstantiateScene();
+        buildingGameObject = StubObjectTreeCreator.CreateMockBuilding(BUILDING_CHILDREN_DEPTH);
+        sceneObjects = ReupSceneInstantiator.InstantiateSceneWithBuildingWithBuildingObject(buildingGameObject);
         modelInfoManager = sceneObjects.modelInfoManager;
         yield return null;
     }
@@ -151,7 +151,7 @@ public class ModelInfoManagerTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldGetColorInfoInSceneStateMessage()
     {
-        MetaDataComponentMock metaDataComponent = buildingGameObject.AddComponent<MetaDataComponentMock>();
+        IObjectMetaDataGetterSetter metaDataComponent = buildingGameObject.GetComponent<IObjectMetaDataGetterSetter>();
         JObject parentMetaData = new JObject
         {
             { "appearance", new JObject
@@ -162,7 +162,7 @@ public class ModelInfoManagerTest : MonoBehaviour
         };
         metaDataComponent.objectMetaData = parentMetaData;
 
-        MetaDataComponentMock metaDataChildComponent = buildingGameObject.transform.GetChild(0).gameObject.AddComponent<MetaDataComponentMock>();
+        IObjectMetaDataGetterSetter metaDataChildComponent = buildingGameObject.transform.GetChild(0).gameObject.GetComponent<IObjectMetaDataGetterSetter>();
         JObject childMetaData = new JObject
         {
             { "appearance", new JObject
@@ -173,9 +173,9 @@ public class ModelInfoManagerTest : MonoBehaviour
         };
         metaDataChildComponent.objectMetaData = childMetaData;
 
-        JObject sceneSTate = modelInfoManager.GetSceneState();
-        Assert.AreEqual(parentMetaData["appearance"]["color"], sceneSTate["appearance"]["color"]);
-        Assert.AreEqual(childMetaData["appearance"]["color"], sceneSTate["children"][0]["appearance"]["color"]);
+        JObject sceneState = modelInfoManager.GetSceneState();
+        Assert.AreEqual(parentMetaData["appearance"]["color"], sceneState["appearance"]["color"]);
+        Assert.AreEqual(childMetaData["appearance"]["color"], sceneState["children"][0]["appearance"]["color"]);
         yield return null;
     }
 
