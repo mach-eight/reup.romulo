@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using ReupVirtualTwin.enums;
-using ReupVirtualTwin.models;
+using System;
 
 namespace ReupVirtualTwin.models
 {
@@ -12,13 +12,25 @@ namespace ReupVirtualTwin.models
 
         public void UpdateSpaces()
         {
+            if (!SpaceTagIsDefined())
+            {
+                jumpPoints = new List<SpaceJumpPoint>() { };
+                return;
+            }
             GameObject[] spaces = GameObject.FindGameObjectsWithTag(TagsEnum.spaceSelector);
             jumpPoints.Clear();
             foreach (GameObject room in spaces)
             {
-                var roomSelector = room.GetComponent<SpaceJumpPoint>();
+                SpaceJumpPoint roomSelector = room.GetComponent<SpaceJumpPoint>();
                 jumpPoints.Add(roomSelector);
             }
+        }
+        public bool SpaceTagIsDefined()
+        {
+            return Array.Exists(
+                   UnityEditorInternal.InternalEditorUtility.tags,
+                   element => element == TagsEnum.spaceSelector
+               );
         }
     }
 }
