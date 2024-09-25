@@ -310,6 +310,7 @@ MonoBehaviour:
   fpvCamera: {fileID: 8060287538316763243}
   dhvCamera: {fileID: 2401207048260687702}
   viewModeManager: {fileID: 3904143813462744938}
+  texturesManager: {fileID: 7203003387684823839}
 --- !u!114 &6350977991642200349
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1681,8 +1682,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5684383910040997618}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0.42261827, y: 0, z: 0, w: 0.9063079}
+  m_LocalPosition: {x: 0, y: 42.673183, z: -26.930277}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

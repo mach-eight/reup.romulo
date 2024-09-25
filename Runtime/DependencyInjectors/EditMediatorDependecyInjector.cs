@@ -36,10 +36,12 @@ namespace ReupVirtualTwin.dependencyInjectors
         GameObject dhvCamera;
         [SerializeField]
         ViewModeManager viewModeManager;
+        [SerializeField]
+        TexturesManager texturesManager;
 
         private void Awake()
         {
-            if(!insertPositionLocation ||
+            if (!insertPositionLocation ||
                 !editModeManager ||
                 !selectedObjectsManager ||
                 !transformObjectsManager ||
@@ -48,6 +50,7 @@ namespace ReupVirtualTwin.dependencyInjectors
                 !modelInfoManager ||
                 !fpvCamera ||
                 !dhvCamera ||
+                !texturesManager ||
                 !character)
             {
                 throw new System.Exception("Some dependencies are missing");
@@ -62,7 +65,7 @@ namespace ReupVirtualTwin.dependencyInjectors
             editMediator.changeColorManager = changeColorManager.GetComponent<IChangeColorManager>();
             editMediator.modelInfoManager = modelInfoManager.GetComponent<IModelInfoManager>();
             IWebMessagesSender webMessageSender = GetComponent<IWebMessagesSender>();
-            if (webMessageSender == null )
+            if (webMessageSender == null)
             {
                 throw new System.Exception("WebMessageSender not found to inject to edit mediator");
             }
@@ -78,9 +81,10 @@ namespace ReupVirtualTwin.dependencyInjectors
             );
             editMediator.changeMaterialController = new ChangeMaterialController(
                 new TextureDownloader(),
-                registry
+                registry,
+                texturesManager
             );
-            editMediator.originalSceneController = new OriginalSceneController(registry);
+            editMediator.originalSceneController = new OriginalSceneController(registry, texturesManager);
             editMediator.viewModeManager = viewModeManager;
         }
     }

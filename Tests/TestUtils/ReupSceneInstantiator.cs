@@ -72,6 +72,7 @@ namespace ReupVirtualTwinTests.utils
             Transform dollhouseViewWrapper = reupGameObject.transform.Find("DollhouseViewWrapper");
 
             SetupBuilding setupBuilding = baseGlobalScriptGameObject.transform.Find("SetupBuilding").GetComponent<SetupBuilding>();
+
             setupBuilding.building = building;
             setupBuilding.AssignIdsAndObjectInfoToBuilding();
 
