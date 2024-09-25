@@ -7,5 +7,6 @@ namespace ReupVirtualTwin.managerInterfaces
     public interface ITexturesManager
     {
         public void ApplyMaterialToObject(GameObject obj, Material material);
+        public void ApplyProtectedMaterialToObject(GameObject obj, Material material);
     }
 }

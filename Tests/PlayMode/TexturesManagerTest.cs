@@ -101,6 +101,41 @@ namespace ReupVirtualTwinTests.managers
             Assert.IsTrue(newTexture1 == null);
         }
 
+        [UnityTest]
+        public IEnumerator ShouldNotDestroyTexturesFromProtectedMaterials()
+        {
+            Texture2D protectedTexture = new Texture2D(2, 2);
+            Assert.IsFalse(protectedTexture == null);
+            Material protectedMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            protectedMaterial.SetTexture("_BaseMap", protectedTexture);
+            texturesManager.ApplyProtectedMaterialToObject(cube0, protectedMaterial);
+            yield return null;
+            Texture2D nonProtectedTexture = new Texture2D(2, 2);
+            Material nonProtectedMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            nonProtectedMaterial.SetTexture("_BaseMap", nonProtectedTexture);
+            texturesManager.ApplyMaterialToObject(cube0, nonProtectedMaterial);
+            yield return null;
+            Assert.IsFalse(protectedTexture == null);
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldDestroyNonProtectedTextures_when_applyingProtectedTextures()
+        {
+
+            Texture2D nonProtectedTexture = new Texture2D(2, 2);
+            Material nonProtectedMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            nonProtectedMaterial.SetTexture("_BaseMap", nonProtectedTexture);
+            texturesManager.ApplyMaterialToObject(cube0, nonProtectedMaterial);
+            yield return null;
+            Texture2D protectedTexture = new Texture2D(2, 2);
+            Material protectedMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            protectedMaterial.SetTexture("_BaseMap", protectedTexture);
+            texturesManager.ApplyProtectedMaterialToObject(cube0, protectedMaterial);
+            yield return null;
+            Assert.IsTrue(nonProtectedTexture == null);
+
+        }
+
     }
 
 }
