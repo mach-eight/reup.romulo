@@ -469,6 +469,33 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ScrollWheelZoom"",
+                    ""type"": ""Value"",
+                    ""id"": ""af634b69-5c62-4466-9137-f1d5c9c87534"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""GestureTouch1 "",
+                    ""type"": ""Value"",
+                    ""id"": ""7d4984f7-0b63-4d71-b4d6-3fffec8772da"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""GestureTouch2"",
+                    ""type"": ""Value"",
+                    ""id"": ""9eeeea93-8ad0-4cca-9233-f3f8d1ea3cec"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -548,6 +575,87 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""PointerMoveCamera"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c9abe30f-8a07-4475-b8f7-721a2632a1fa"",
+                    ""path"": ""<Touchscreen>/touch0/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Touchscreen"",
+                    ""action"": ""GestureTouch1 "",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5b06c429-e95f-47b6-9595-71f10040c6c5"",
+                    ""path"": ""<Touchscreen>/touch1/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Touchscreen"",
+                    ""action"": ""GestureTouch2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ae8218fb-ca9e-488b-9905-7dcb0ff88676"",
+                    ""path"": ""<Mouse>/scroll"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""ScrollWheelZoom"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""MultiTouch"",
+            ""id"": ""b0e97067-6625-41ce-bda2-5ee62f05679e"",
+            ""actions"": [
+                {
+                    ""name"": ""PrimaryTouch"",
+                    ""type"": ""Button"",
+                    ""id"": ""106b9b19-699b-419d-8cec-b2a727f82e0a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""SecondaryTouch"",
+                    ""type"": ""Button"",
+                    ""id"": ""e11880a2-c565-4107-b367-12be984842b0"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""c4437d2c-189d-4322-b1c1-462ceb8da3f0"",
+                    ""path"": ""<Touchscreen>/touch1/press"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Touchscreen"",
+                    ""action"": ""SecondaryTouch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a97f2fcc-06fc-491e-a908-a711ff6ea45b"",
+                    ""path"": ""<Touchscreen>/touch0/press"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Touchscreen"",
+                    ""action"": ""PrimaryTouch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -600,6 +708,13 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
         m_DollhouseView = asset.FindActionMap("DollhouseView", throwIfNotFound: true);
         m_DollhouseView_KeyboardMoveCamera = m_DollhouseView.FindAction("KeyboardMoveCamera", throwIfNotFound: true);
         m_DollhouseView_PointerMoveCamera = m_DollhouseView.FindAction("PointerMoveCamera", throwIfNotFound: true);
+        m_DollhouseView_ScrollWheelZoom = m_DollhouseView.FindAction("ScrollWheelZoom", throwIfNotFound: true);
+        m_DollhouseView_GestureTouch1 = m_DollhouseView.FindAction("GestureTouch1 ", throwIfNotFound: true);
+        m_DollhouseView_GestureTouch2 = m_DollhouseView.FindAction("GestureTouch2", throwIfNotFound: true);
+        // MultiTouch
+        m_MultiTouch = asset.FindActionMap("MultiTouch", throwIfNotFound: true);
+        m_MultiTouch_PrimaryTouch = m_MultiTouch.FindAction("PrimaryTouch", throwIfNotFound: true);
+        m_MultiTouch_SecondaryTouch = m_MultiTouch.FindAction("SecondaryTouch", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -819,12 +934,18 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
     private List<IDollhouseViewActions> m_DollhouseViewActionsCallbackInterfaces = new List<IDollhouseViewActions>();
     private readonly InputAction m_DollhouseView_KeyboardMoveCamera;
     private readonly InputAction m_DollhouseView_PointerMoveCamera;
+    private readonly InputAction m_DollhouseView_ScrollWheelZoom;
+    private readonly InputAction m_DollhouseView_GestureTouch1;
+    private readonly InputAction m_DollhouseView_GestureTouch2;
     public struct DollhouseViewActions
     {
         private @AppInputActions m_Wrapper;
         public DollhouseViewActions(@AppInputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @KeyboardMoveCamera => m_Wrapper.m_DollhouseView_KeyboardMoveCamera;
         public InputAction @PointerMoveCamera => m_Wrapper.m_DollhouseView_PointerMoveCamera;
+        public InputAction @ScrollWheelZoom => m_Wrapper.m_DollhouseView_ScrollWheelZoom;
+        public InputAction @GestureTouch1 => m_Wrapper.m_DollhouseView_GestureTouch1;
+        public InputAction @GestureTouch2 => m_Wrapper.m_DollhouseView_GestureTouch2;
         public InputActionMap Get() { return m_Wrapper.m_DollhouseView; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -840,6 +961,15 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
             @PointerMoveCamera.started += instance.OnPointerMoveCamera;
             @PointerMoveCamera.performed += instance.OnPointerMoveCamera;
             @PointerMoveCamera.canceled += instance.OnPointerMoveCamera;
+            @ScrollWheelZoom.started += instance.OnScrollWheelZoom;
+            @ScrollWheelZoom.performed += instance.OnScrollWheelZoom;
+            @ScrollWheelZoom.canceled += instance.OnScrollWheelZoom;
+            @GestureTouch1.started += instance.OnGestureTouch1;
+            @GestureTouch1.performed += instance.OnGestureTouch1;
+            @GestureTouch1.canceled += instance.OnGestureTouch1;
+            @GestureTouch2.started += instance.OnGestureTouch2;
+            @GestureTouch2.performed += instance.OnGestureTouch2;
+            @GestureTouch2.canceled += instance.OnGestureTouch2;
         }
 
         private void UnregisterCallbacks(IDollhouseViewActions instance)
@@ -850,6 +980,15 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
             @PointerMoveCamera.started -= instance.OnPointerMoveCamera;
             @PointerMoveCamera.performed -= instance.OnPointerMoveCamera;
             @PointerMoveCamera.canceled -= instance.OnPointerMoveCamera;
+            @ScrollWheelZoom.started -= instance.OnScrollWheelZoom;
+            @ScrollWheelZoom.performed -= instance.OnScrollWheelZoom;
+            @ScrollWheelZoom.canceled -= instance.OnScrollWheelZoom;
+            @GestureTouch1.started -= instance.OnGestureTouch1;
+            @GestureTouch1.performed -= instance.OnGestureTouch1;
+            @GestureTouch1.canceled -= instance.OnGestureTouch1;
+            @GestureTouch2.started -= instance.OnGestureTouch2;
+            @GestureTouch2.performed -= instance.OnGestureTouch2;
+            @GestureTouch2.canceled -= instance.OnGestureTouch2;
         }
 
         public void RemoveCallbacks(IDollhouseViewActions instance)
@@ -867,6 +1006,60 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
         }
     }
     public DollhouseViewActions @DollhouseView => new DollhouseViewActions(this);
+
+    // MultiTouch
+    private readonly InputActionMap m_MultiTouch;
+    private List<IMultiTouchActions> m_MultiTouchActionsCallbackInterfaces = new List<IMultiTouchActions>();
+    private readonly InputAction m_MultiTouch_PrimaryTouch;
+    private readonly InputAction m_MultiTouch_SecondaryTouch;
+    public struct MultiTouchActions
+    {
+        private @AppInputActions m_Wrapper;
+        public MultiTouchActions(@AppInputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @PrimaryTouch => m_Wrapper.m_MultiTouch_PrimaryTouch;
+        public InputAction @SecondaryTouch => m_Wrapper.m_MultiTouch_SecondaryTouch;
+        public InputActionMap Get() { return m_Wrapper.m_MultiTouch; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(MultiTouchActions set) { return set.Get(); }
+        public void AddCallbacks(IMultiTouchActions instance)
+        {
+            if (instance == null || m_Wrapper.m_MultiTouchActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_MultiTouchActionsCallbackInterfaces.Add(instance);
+            @PrimaryTouch.started += instance.OnPrimaryTouch;
+            @PrimaryTouch.performed += instance.OnPrimaryTouch;
+            @PrimaryTouch.canceled += instance.OnPrimaryTouch;
+            @SecondaryTouch.started += instance.OnSecondaryTouch;
+            @SecondaryTouch.performed += instance.OnSecondaryTouch;
+            @SecondaryTouch.canceled += instance.OnSecondaryTouch;
+        }
+
+        private void UnregisterCallbacks(IMultiTouchActions instance)
+        {
+            @PrimaryTouch.started -= instance.OnPrimaryTouch;
+            @PrimaryTouch.performed -= instance.OnPrimaryTouch;
+            @PrimaryTouch.canceled -= instance.OnPrimaryTouch;
+            @SecondaryTouch.started -= instance.OnSecondaryTouch;
+            @SecondaryTouch.performed -= instance.OnSecondaryTouch;
+            @SecondaryTouch.canceled -= instance.OnSecondaryTouch;
+        }
+
+        public void RemoveCallbacks(IMultiTouchActions instance)
+        {
+            if (m_Wrapper.m_MultiTouchActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IMultiTouchActions instance)
+        {
+            foreach (var item in m_Wrapper.m_MultiTouchActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_MultiTouchActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public MultiTouchActions @MultiTouch => new MultiTouchActions(this);
     private int m_KeyboardAndMouseSchemeIndex = -1;
     public InputControlScheme KeyboardAndMouseScheme
     {
@@ -905,5 +1098,13 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
     {
         void OnKeyboardMoveCamera(InputAction.CallbackContext context);
         void OnPointerMoveCamera(InputAction.CallbackContext context);
+        void OnScrollWheelZoom(InputAction.CallbackContext context);
+        void OnGestureTouch1(InputAction.CallbackContext context);
+        void OnGestureTouch2(InputAction.CallbackContext context);
+    }
+    public interface IMultiTouchActions
+    {
+        void OnPrimaryTouch(InputAction.CallbackContext context);
+        void OnSecondaryTouch(InputAction.CallbackContext context);
     }
 }

@@ -38,6 +38,8 @@ namespace ReupVirtualTwinTests.utils
             public ObjectRegistry objectRegistry;
             public ObjectPool objectPool;
             public Camera mainCamera;
+            public GesturesManager gesturesManager;
+            public ZoomDhvCamera zoomDhvCamera;
         }
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab)
         {
@@ -109,6 +111,8 @@ namespace ReupVirtualTwinTests.utils
 
             MoveDhvCamera moveDhvCamera = dollhouseViewWrapper.GetComponent<MoveDhvCamera>();
 
+            ZoomDhvCamera zoomDhvCamera = dollhouseViewWrapper.GetComponent<ZoomDhvCamera>();
+
             ModelInfoManager modelInfoManager = baseGlobalScriptGameObject.transform.Find("ModelInfo").GetComponent<ModelInfoManager>();
 
             ObjectRegistry objectRegistry = baseGlobalScriptGameObject.transform.Find("ObjectRegistry").GetComponent<ObjectRegistry>();
@@ -117,6 +121,8 @@ namespace ReupVirtualTwinTests.utils
             
             Camera mainCamera = reupGameObject.transform.Find("Main_Camera").GetComponent<Camera>();
 
+            GesturesManager gesturesManager = baseGlobalScriptGameObject.transform.Find("GesturesManager").GetComponent<GesturesManager>();
+            
             return new SceneObjects
             {
                 reupObject = reupGameObject,
@@ -142,6 +148,8 @@ namespace ReupVirtualTwinTests.utils
                 objectRegistry = objectRegistry,
                 objectPool = objectPool,
                 mainCamera = mainCamera,
+                gesturesManager = gesturesManager,
+                zoomDhvCamera = zoomDhvCamera,
             };
         }
 

@@ -16,6 +16,7 @@ namespace ReupVirtualTwin.enums
 
         // managers
         public const string dragManager = "DragManager";
+        public const string gesturesManager = "GesturesManager";
         public const string spacesRecord = "SpacesRecord";
         public const string webMessages = "WebMessages";
         public const string editModeManager = "EditModeManager";

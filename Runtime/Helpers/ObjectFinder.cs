@@ -62,5 +62,10 @@ namespace ReupVirtualTwin.helpers
             return GameObject.FindGameObjectWithTag(TagsEnum.dragManager);
         }
 
+        public static GameObject FindGesturesManager()
+        {
+            return GameObject.FindGameObjectWithTag(TagsEnum.gesturesManager);
+        }
+
     }
 }

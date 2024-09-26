@@ -192,5 +192,21 @@ namespace ReupVirtualTwinTests.behaviours
 
             yield return null;
         }
+
+        [UnityTest]
+        public IEnumerator ShouldStopMovementWhenTouchGestureInProgress()
+        {
+            Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
+
+            Vector2 startFinger1 = new Vector2(1000, 1000);
+            Vector2 startFinger2 = new Vector2(5000, 5000);
+            Vector2 endFinger1 = new Vector2(2000, 2000);
+            Vector2 endFinger2 = new Vector2(4000, 4000);
+
+            yield return MovePointerUtils.TouchGesture(input, touch, startFinger1, startFinger2, endFinger1, endFinger2, 10);
+
+            Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
+            yield return null;
+        }
     }
 }

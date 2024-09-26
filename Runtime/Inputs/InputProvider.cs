@@ -75,16 +75,62 @@ namespace ReupVirtualTwin.inputs
                 _input.Player.Hold.canceled -= value;
             }
         }
+        public event Action<InputAction.CallbackContext> firstTouchStarted
+        {
+            add
+            {
+                _input.MultiTouch.PrimaryTouch.started += value;
+            }
+            remove
+            {
+                _input.MultiTouch.PrimaryTouch.started -= value;
+            }
+        }
+        public event Action<InputAction.CallbackContext> firstTouchCanceled
+        {
+            add
+            {
+                _input.MultiTouch.PrimaryTouch.canceled += value;
+            }
+            remove
+            {
+                _input.MultiTouch.PrimaryTouch.canceled -= value;
+            }
+        }
+        public event Action<InputAction.CallbackContext> secondTouchStarted
+        {
+            add
+            {
+                _input.MultiTouch.SecondaryTouch.started += value;
+            }
+            remove
+            {
+                _input.MultiTouch.SecondaryTouch.started -= value;
+            }
+        }
+        public event Action<InputAction.CallbackContext> secondTouchCanceled
+        {
+            add
+            {
+                _input.MultiTouch.SecondaryTouch.canceled += value;
+            }
+            remove
+            {
+                _input.MultiTouch.SecondaryTouch.canceled -= value;
+            }
+        }
         public void Enable()
         {
             _input.Player.Enable();
             _input.DollhouseView.Enable();
+            _input.MultiTouch.Enable();
         }
 
         public void Disable()
         {
             _input.Player.Disable();
             _input.DollhouseView.Disable();
+            _input.MultiTouch.Disable();
         }
 
         public Vector2 RotateViewInput()
@@ -116,6 +162,18 @@ namespace ReupVirtualTwin.inputs
         public Vector2 PointerMoveDhvCamera()
         {
             return -1 * _input.DollhouseView.PointerMoveCamera.ReadValue<Vector2>();
+        }
+        public Vector2 GestureTouch1Dhv()
+        {
+            return _input.DollhouseView.GestureTouch1.ReadValue<Vector2>(); 
+        }
+        public Vector2 GestureTouch2Dhv()
+        {
+            return _input.DollhouseView.GestureTouch2.ReadValue<Vector2>(); 
+        }
+        public Vector2 ScrollWheelZoomDhvCamera()
+        {
+            return _input.DollhouseView.ScrollWheelZoom.ReadValue<Vector2>();
         }
     }
 }
