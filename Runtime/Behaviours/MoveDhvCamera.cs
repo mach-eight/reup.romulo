@@ -7,25 +7,24 @@ namespace ReupVirtualTwin.behaviours
 {
     public class MoveDhvCamera : MonoBehaviour
     {
-        public Transform dollhouseViewWrapperTransform;
-        public float limitDistanceFromBuildingInMeters = 35;
+        [SerializeField] public Transform dollhouseViewWrapperTransform;
+        [SerializeField] public float limitDistanceFromBuildingInMeters = 35;
+        [SerializeField] public float KeyboardMoveCameraSpeedMetersPerSecond = 40;
+        [SerializeField] public float PointerMoveCameraDistanceInMetersSquareViewport = 40;
 
         InputProvider _inputProvider;
-        public static readonly float KEYBOARD_MOVE_CAMERA_SPEED_METERS_PER_SECOND = 40;
-        public static readonly float POINTER_MOVE_CAMERA_DISTANCE_IN_METERS_SQUARE_VIEWPORT = 40;
-        public static readonly float BASE_FIELD_OF_VIEW = 60;
-
         float distancePerPixel;
         DragManager dragManager;
         GesturesManager gesturesManager;
         GameObject building;
         private Vector3 buildingCenter;
+        private float baseFieldOfView = 60;
 
         void Awake()
         {
             _inputProvider = new InputProvider();
             int pixelsInSquareViewport = ViewportUtils.MinViewportDimension(Camera.main);
-            distancePerPixel = POINTER_MOVE_CAMERA_DISTANCE_IN_METERS_SQUARE_VIEWPORT / pixelsInSquareViewport;
+            distancePerPixel = PointerMoveCameraDistanceInMetersSquareViewport / pixelsInSquareViewport;
             dragManager = ObjectFinder.FindDragManager().GetComponent<DragManager>();
             gesturesManager = ObjectFinder.FindGesturesManager().GetComponent<GesturesManager>();
             building = ObjectFinder.FindSetupBuilding().GetComponent<SetupBuilding>().building;
@@ -53,7 +52,7 @@ namespace ReupVirtualTwin.behaviours
             Vector3 finalMovement = cameraRight * inputValue.x + cameraForward * inputValue.y;
             Vector3 normalizedDirection = Vector3.Normalize(finalMovement);
 
-            float movementDistance = KEYBOARD_MOVE_CAMERA_SPEED_METERS_PER_SECOND * fovMultiplier * Time.deltaTime;
+            float movementDistance = KeyboardMoveCameraSpeedMetersPerSecond * fovMultiplier * Time.deltaTime;
             Vector3 nextPosition = dollhouseViewWrapperTransform.position + (normalizedDirection * movementDistance);
 
             PerformMovement(nextPosition);
@@ -105,7 +104,7 @@ namespace ReupVirtualTwin.behaviours
 
         private float GetFieldOfViewMultiplier()
         {
-            return Camera.main.fieldOfView / BASE_FIELD_OF_VIEW;
+            return Camera.main.fieldOfView / baseFieldOfView;
         }
     }
 }
