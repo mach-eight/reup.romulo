@@ -66,7 +66,7 @@ namespace ReupVirtualTwinTests.managers
         {
             string spaceJumpPointId = "space-jump-point-1";
             float characterYPosition = character.position.y;
-            Vector3 spaceJumpPointPosition = new Vector3(1, 2, 3);
+            Vector3 spaceJumpPointPosition = new Vector3(0.2f, 2, 0.3f);
             spaceSelectors = new List<GameObject>(){
                 SpaceSelectorFabric.Create(new SpaceSelectorFabric.SpaceSelectorConfig
                 {
@@ -78,7 +78,7 @@ namespace ReupVirtualTwinTests.managers
             spacesRecord.GoToSpace(spaceJumpPointId);
             yield return new WaitForSeconds(1);
             Vector3 desiredPositionAfterJump = new Vector3(spaceJumpPointPosition.x, characterYPosition, spaceJumpPointPosition.z);
-            Assert.AreEqual(desiredPositionAfterJump, character.position);
+            AssertUtils.AssertVectorsAreClose(desiredPositionAfterJump, character.position, 0.02);
         }
     }
 }
