@@ -148,6 +148,17 @@ namespace ReupVirtualTwin.managers
                     }
                     ProcessObjectMaterialsChange((JObject)(object)payload);
                     break;
+                case ReupEvent.spaceJumpPointReached:
+                    if (RomuloEnvironment.development)
+                    {
+                        if (!((JObject)(object)payload).IsValid(RomuloInternalSchema.spaceJumpPointReachedEventPayload))
+                        {
+                            Debug.LogWarning("Invalid payload for 'spaceJumpPointReached' event");
+                            return;
+                        }
+                    }
+                    ProcessSpaceJumpPointReached((JObject)(object)payload);
+                    break;
                 case ReupEvent.error:
                     if (!(payload is string))
                     {
@@ -245,7 +256,7 @@ namespace ReupVirtualTwin.managers
                     _viewModeManager.ActivateFPV();
                     break;
                 case WebMessageType.slideToSpace:
-                    spacesRecord.GoToSpace(payload["spaceId"].ToString());
+                    spacesRecord.GoToSpace(payload["spaceId"].ToString(), payload["requestId"].ToString());
                     break;
             }
         }
@@ -599,6 +610,14 @@ namespace ReupVirtualTwin.managers
             {
                 type = WebMessageType.error,
                 payload = errorMessages,
+            });
+        }
+        void ProcessSpaceJumpPointReached(JObject spaceJumpPointPayload)
+        {
+            _webMessageSender.SendWebMessage(new WebMessage<JObject>
+            {
+                type = WebMessageType.slideToSpaceSuccess,
+                payload = spaceJumpPointPayload
             });
         }
 

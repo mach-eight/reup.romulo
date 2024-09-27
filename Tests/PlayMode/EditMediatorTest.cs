@@ -101,10 +101,12 @@ public class EditMediatorTest : MonoBehaviour
         public List<ISpaceJumpPoint> jumpPoints { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public List<string> calledSpaceJumpPointIds = new List<string>();
+        public List<string> calledRequestId = new List<string>();
 
-        public void GoToSpace(string spaceJumpPointId)
+        public void GoToSpace(string spaceJumpPointId, string requestId)
         {
             calledSpaceJumpPointIds.Add(spaceJumpPointId);
+            calledRequestId.Add(requestId);
         }
     }
 
@@ -1274,6 +1276,31 @@ public class EditMediatorTest : MonoBehaviour
         await editMediator.ReceiveWebMessage(serializedMessage);
         Assert.AreEqual(1, spacesRecord.calledSpaceJumpPointIds.Count);
         Assert.AreEqual(spaceId, spacesRecord.calledSpaceJumpPointIds[0]);
+        Assert.AreEqual(requestId, spacesRecord.calledRequestId[0]);
+    }
+
+    [Test]
+    public void ShouldSendSlideToSpaceSuccessMessage_when_receiveNotificationOfReachingSpace()
+    {
+        string spaceId = "space-id-1";
+        string requestId = "request-id-1";
+        editMediator.Notify(ReupEvent.spaceJumpPointReached, new JObject
+        {
+            { "spaceId", spaceId },
+            { "requestId", requestId }
+        });
+        Assert.AreEqual(1, mockWebMessageSender.sentMessages.Count);
+        WebMessage<JObject> sentMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[0];
+        WebMessage<JObject> expectedMessage = new WebMessage<JObject>
+        {
+            type = WebMessageType.slideToSpaceSuccess,
+            payload = new JObject
+            {
+                { "spaceId", spaceId },
+                { "requestId", requestId }
+            }
+        };
+        Assert.IsTrue(JObject.DeepEquals(expectedMessage.payload, sentMessage.payload));
     }
 
 }

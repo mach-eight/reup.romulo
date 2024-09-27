@@ -7,6 +7,9 @@ using ReupVirtualTwinTests.utils;
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.models;
 using UnityEditor;
+using ReupVirtualTwinTests.mocks;
+using ReupVirtualTwin.managerInterfaces;
+using Newtonsoft.Json.Linq;
 
 namespace ReupVirtualTwinTests.managers
 {
@@ -14,10 +17,11 @@ namespace ReupVirtualTwinTests.managers
     {
         GameObject platformPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Tests/TestAssets/Platform2.prefab");
         ReupSceneInstantiator.SceneObjects sceneObjects;
-        ISpacesRecord spacesRecord;
+        SpacesRecord spacesRecord;
         List<GameObject> spaceSelectors;
         Transform character;
         float lowPlatformHeight = -3;
+        MediatorSpy mediator;
 
         [UnitySetUp]
         public IEnumerator SetUp()
@@ -25,6 +29,8 @@ namespace ReupVirtualTwinTests.managers
             sceneObjects = ReupSceneInstantiator.InstantiateSceneWithBuildingFromPrefab(platformPrefab, SetLowPlatform);
             spacesRecord = sceneObjects.spacesRecord;
             character = sceneObjects.character;
+            mediator = new MediatorSpy();
+            spacesRecord.mediator = mediator;
             yield return null;
         }
         [UnityTearDown]
@@ -75,10 +81,35 @@ namespace ReupVirtualTwinTests.managers
                 })
             };
             yield return null;
-            spacesRecord.GoToSpace(spaceJumpPointId);
+            spacesRecord.GoToSpace(spaceJumpPointId, "request-1");
             yield return new WaitForSeconds(1);
             Vector3 desiredPositionAfterJump = new Vector3(spaceJumpPointPosition.x, characterYPosition, spaceJumpPointPosition.z);
             AssertUtils.AssertVectorsAreClose(desiredPositionAfterJump, character.position, 0.02);
         }
+
+        [UnityTest]
+        public IEnumerator ShouldNotifyMediatorWhenSpacePointIsReached()
+        {
+            string spaceJumpPointId = "space-jump-point-1";
+            string requestId = "request-1";
+            spaceSelectors = new List<GameObject>(){
+                SpaceSelectorFabric.Create(new SpaceSelectorFabric.SpaceSelectorConfig
+                {
+                    id = spaceJumpPointId,
+                })
+            };
+            yield return null;
+            spacesRecord.GoToSpace(spaceJumpPointId, requestId);
+            yield return null;
+            Assert.AreEqual(1, mediator.receivedEvents.Count);
+            Assert.AreEqual(ReupVirtualTwin.enums.ReupEvent.spaceJumpPointReached, mediator.receivedEvents[0]);
+            JObject expectedPayload = new JObject
+            {
+                { "spaceId", spaceJumpPointId },
+                { "requestId", requestId },
+            };
+            Assert.AreEqual(expectedPayload, mediator.receivedPayloads[0]);
+        }
+
     }
 }

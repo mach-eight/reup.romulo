@@ -74,5 +74,14 @@ namespace ReupVirtualTwin.dataSchemas
             },
             ""required"": [""objectId"", ""material"", ""color""]
         }");
+
+        public static readonly JSchema spaceJumpPointReachedEventPayload = JSchema.Parse(@"{
+            ""type"": ""object"",
+            ""properties"": {
+                ""spaceId"": { ""type"": ""string"" },
+                ""requestId"": { ""type"": ""string"" }
+            },
+            ""required"": [""spaceId"", ""requestId""]
+        }");
     }
 }

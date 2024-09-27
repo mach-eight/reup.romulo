@@ -6,15 +6,18 @@ using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.helpers;
 using UnityEngine.Events;
+using Newtonsoft.Json.Linq;
 
 namespace ReupVirtualTwin.models
 {
 
     public class SpacesRecord : MonoBehaviour, ISpacesRecord
     {
+        [SerializeField] LayerMask ignoreLayerMask;
         ICharacterPositionManager _characterPositionManager;
         ICharacterHeightReseter _characterHeightReseter;
         List<ISpaceJumpPoint> _jumpPoints;
+        public IMediator mediator { get; set; }
         public List<ISpaceJumpPoint> jumpPoints
         {
             get
@@ -32,6 +35,7 @@ namespace ReupVirtualTwin.models
         {
             _characterPositionManager = ObjectFinder.FindCharacter().GetComponent<ICharacterPositionManager>();
             _characterHeightReseter = ObjectFinder.FindHeighMediator().GetComponent<ICharacterHeightReseter>();
+            mediator = ObjectFinder.FindEditMediator();
         }
 
         public void UpdateSpaces()
@@ -61,18 +65,28 @@ namespace ReupVirtualTwin.models
             );
         }
 
-        public void GoToSpace(string SpaceJumpPointId)
+        public void GoToSpace(string spaceJumpPointId, string requestId)
         {
-            SpaceJumpPoint spaceSelector = jumpPoints.Find(space => space.id == SpaceJumpPointId) as SpaceJumpPoint;
+            SpaceJumpPoint spaceSelector = jumpPoints.Find(space => space.id == spaceJumpPointId) as SpaceJumpPoint;
             _characterPositionManager.MakeKinematic();
             var spaceSelectorPosition = spaceSelector.transform.position;
             _characterHeightReseter.ResetCharacterHeight();
             spaceSelectorPosition.y = GetDesiredHeight(spaceSelector);
             var endMovementEvent = new UnityEvent();
             endMovementEvent.AddListener(EndMovementHandler);
+            endMovementEvent.AddListener(() => mediator.Notify(ReupEvent.spaceJumpPointReached, CreateNotifyPayload(spaceJumpPointId, requestId)));
             _characterPositionManager.allowWalking = false;
             _characterPositionManager.allowSetHeight = false;
             _characterPositionManager.SlideToTarget(spaceSelectorPosition, endMovementEvent);
+        }
+
+        private JObject CreateNotifyPayload(string spaceJumpPointId, string requestId)
+        {
+            return new JObject
+            {
+                { "spaceId", spaceJumpPointId },
+                { "requestId", requestId },
+            };
         }
 
         private void EndMovementHandler()
@@ -96,7 +110,7 @@ namespace ReupVirtualTwin.models
         {
             RaycastHit hit;
             var ray = GetDownRayFromSpaceSelector(spaceSelector);
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, ~ignoreLayerMask))
             {
                 return hit;
             }
