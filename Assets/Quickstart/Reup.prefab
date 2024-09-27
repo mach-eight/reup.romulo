@@ -1976,6 +1976,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   setupBuilding: {fileID: 7508923528206428603}
+  spacesRecord: {fileID: 6737159227163874936}
 --- !u!1 &6737159227163874936
 GameObject:
   m_ObjectHideFlags: 0
@@ -2020,11 +2021,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3bd0277d170c40429218692622de40f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpPoints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
 --- !u!1 &6878658961563752214
 GameObject:
   m_ObjectHideFlags: 0

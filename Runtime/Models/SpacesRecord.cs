@@ -2,27 +2,44 @@ using System.Collections.Generic;
 using UnityEngine;
 using ReupVirtualTwin.enums;
 using System;
+using ReupVirtualTwin.modelInterfaces;
 
 namespace ReupVirtualTwin.models
 {
 
-    public class SpacesRecord : MonoBehaviour
+    public class SpacesRecord : MonoBehaviour, ISpacesRecord
     {
-        public List<SpaceJumpPoint> jumpPoints;
+
+        List<ISpaceJumpPoint> _jumpPoints;
+        public List<ISpaceJumpPoint> jumpPoints
+        {
+            get
+            {
+                if (_jumpPoints == null)
+                {
+                    UpdateSpaces();
+                }
+                return _jumpPoints;
+            }
+            set => _jumpPoints = value;
+        }
 
         public void UpdateSpaces()
         {
+            if (_jumpPoints == null)
+            {
+                _jumpPoints = new List<ISpaceJumpPoint>() { };
+            }
             if (!SpaceTagIsDefined())
             {
-                jumpPoints = new List<SpaceJumpPoint>() { };
                 return;
             }
             GameObject[] spaces = GameObject.FindGameObjectsWithTag(TagsEnum.spaceSelector);
-            jumpPoints.Clear();
+            _jumpPoints.Clear();
             foreach (GameObject room in spaces)
             {
                 SpaceJumpPoint roomSelector = room.GetComponent<SpaceJumpPoint>();
-                jumpPoints.Add(roomSelector);
+                _jumpPoints.Add(roomSelector);
             }
         }
         public bool SpaceTagIsDefined()

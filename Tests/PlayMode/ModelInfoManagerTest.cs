@@ -189,7 +189,7 @@ public class ModelInfoManagerTest : MonoBehaviour
         Assert.AreEqual(5, spaceSelectorsList.Count);
         for (int i = 0; i < 5; i++)
         {
-            Assert.AreEqual(spaceSelectors[i].GetComponent<SpaceJumpPoint>().name, spaceSelectorsList[i]["name"]);
+            Assert.AreEqual(spaceSelectors[i].GetComponent<SpaceJumpPoint>().name, spaceSelectorsList[i]["name"].ToString());
         }
         yield return null;
 

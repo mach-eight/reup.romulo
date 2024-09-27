@@ -9,6 +9,8 @@ using Newtonsoft.Json.Linq;
 using ReupVirtualTwin.romuloEnvironment;
 using ReupVirtualTwin.dataSchemas;
 using Newtonsoft.Json.Schema;
+using ReupVirtualTwin.modelInterfaces;
+using System.Linq;
 
 
 namespace ReupVirtualTwin.managers
@@ -21,6 +23,8 @@ namespace ReupVirtualTwin.managers
         string _buildVersion = "2024-09-24"; // format: YYYY-MM-DD
         public IOnBuildingSetup setupBuilding { get; set; }
         IObjectMapper _objectMapper;
+
+        public ISpacesRecord spacesRecord { get; set; }
 
         public JObject GetSceneState()
         {
@@ -76,10 +80,12 @@ namespace ReupVirtualTwin.managers
         private JObject ObtainModelInfoMessagePayload()
         {
             ObjectDTO buildingDTO = ObtainBuildingDTO();
+            JArray spaceSelectors = ObtainSpaceSelectorsList();
             JObject startupMessage = new()
             {
                 {"buildVersion", buildVersion},
                 {"building", JObject.FromObject(buildingDTO)},
+                {"spaceSelectors", spaceSelectors}
             };
             return startupMessage;
         }
@@ -94,6 +100,15 @@ namespace ReupVirtualTwin.managers
         private GameObject ObtainBuildingObject()
         {
             return ((IBuildingGetterSetter)setupBuilding).building;
+        }
+
+        JArray ObtainSpaceSelectorsList()
+        {
+            return new JArray(
+                spacesRecord.jumpPoints.Select(jumpPoint => new JObject{
+                    {"name", jumpPoint.spaceName}
+                })
+            );
         }
 
     }

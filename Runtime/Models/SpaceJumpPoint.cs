@@ -1,10 +1,12 @@
+using ReupVirtualTwin.modelInterfaces;
 using UnityEngine;
 
 namespace ReupVirtualTwin.models
 {
-    public class SpaceJumpPoint : MonoBehaviour
+    public class SpaceJumpPoint : MonoBehaviour, ISpaceJumpPoint
     {
-        public string spaceName = "Unnamed space";
+        public string _spaceName = "Unnamed space";
+        public string spaceName { get => _spaceName; set => _spaceName = value; }
 
         private void OnDrawGizmos()
         {
