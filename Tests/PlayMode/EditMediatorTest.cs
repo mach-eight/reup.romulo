@@ -801,8 +801,8 @@ public class EditMediatorTest : MonoBehaviour
         string serializedMessage = JsonConvert.SerializeObject(requesMessage);
         await editMediator.ReceiveWebMessage(serializedMessage);
 
-        WebMessage<string> sentMessage = (WebMessage<string>)mockWebMessageSender.sentMessages[0];
-        Assert.AreEqual(WebMessageType.error, sentMessage.type);
+        WebMessage<JObject> sentMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[0];
+        Assert.AreEqual(WebMessageType.changeObjectsMaterialFailure, sentMessage.type);
     }
 
     [UnityTest]

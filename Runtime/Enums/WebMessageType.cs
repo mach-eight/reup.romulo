@@ -32,6 +32,7 @@ namespace ReupVirtualTwin.enums
 
         public const string changeObjectsMaterial = "[Change Material] Change Object Material";
         public const string changeObjectsMaterialSuccess = "[Change Material] Change Object Material Success";
+        public const string changeObjectsMaterialFailure = "[Change Material] Change Object Material Failure";
 
         public const string error = "[Error] Engine Error";
 
