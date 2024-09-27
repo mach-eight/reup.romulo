@@ -11,6 +11,7 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using ReupVirtualTwinTests.utils;
 using ReupVirtualTwin.modelInterfaces;
+using ReupVirtualTwin.models;
 
 public class ModelInfoManagerTest : MonoBehaviour
 {
@@ -177,6 +178,21 @@ public class ModelInfoManagerTest : MonoBehaviour
         Assert.AreEqual(parentMetaData["appearance"]["color"], sceneState["appearance"]["color"]);
         Assert.AreEqual(childMetaData["appearance"]["color"], sceneState["children"][0]["appearance"]["color"]);
         yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldObtainListOfSpaceSelectors()
+    {
+        List<GameObject> spaceSelectors = SpaceSelectorFabric.CreateBulk(5);
+        WebMessage<JObject> message = modelInfoManager.ObtainModelInfoMessage();
+        JArray spaceSelectorsList = message.payload["spaceSelectors"].ToObject<JArray>();
+        Assert.AreEqual(5, spaceSelectorsList.Count);
+        for (int i = 0; i < 5; i++)
+        {
+            Assert.AreEqual(spaceSelectors[i].GetComponent<SpaceJumpPoint>().name, spaceSelectorsList[i]["name"]);
+        }
+        yield return null;
+
     }
 
 }
