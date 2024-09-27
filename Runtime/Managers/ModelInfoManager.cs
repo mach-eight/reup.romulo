@@ -84,8 +84,8 @@ namespace ReupVirtualTwin.managers
             JObject startupMessage = new()
             {
                 {"buildVersion", buildVersion},
+                {"spaceSelectors", spaceSelectors},
                 {"building", JObject.FromObject(buildingDTO)},
-                {"spaceSelectors", spaceSelectors}
             };
             return startupMessage;
         }

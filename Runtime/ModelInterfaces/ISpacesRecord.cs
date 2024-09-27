@@ -7,6 +7,7 @@ namespace ReupVirtualTwin.modelInterfaces
     public interface ISpacesRecord
     {
         public List<ISpaceJumpPoint> jumpPoints { get; set; }
+        public void GoToSpace(string spaceJumpPointId);
     }
 
 }

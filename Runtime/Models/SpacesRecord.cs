@@ -42,12 +42,18 @@ namespace ReupVirtualTwin.models
                 _jumpPoints.Add(roomSelector);
             }
         }
+
         public bool SpaceTagIsDefined()
         {
             return Array.Exists(
                 UnityEditorInternal.InternalEditorUtility.tags,
                 element => element == TagsEnum.spaceSelector
             );
+        }
+
+        public void GoToSpace(string SpaceJumpPointId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

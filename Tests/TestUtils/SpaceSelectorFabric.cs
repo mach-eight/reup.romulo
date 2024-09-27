@@ -16,7 +16,8 @@ namespace ReupVirtualTwinTests.utils
         public class SpaceSelectorConfig
         {
             public string name;
-            // public string id;
+            public string id;
+            public Vector3 position;
         }
 
         public static GameObject Create()
@@ -36,6 +37,11 @@ namespace ReupVirtualTwinTests.utils
             spaceSelector.name = config.name;
             SpaceJumpPoint jumpPointScript = spaceSelector.GetComponent<SpaceJumpPoint>();
             jumpPointScript.spaceName = config.name;
+            spaceSelector.transform.position = config.position;
+            if (config.id != null)
+            {
+                jumpPointScript.id = config.id;
+            }
             return spaceSelector;
         }
 
@@ -55,11 +61,22 @@ namespace ReupVirtualTwinTests.utils
             {
                 config.name = new Faker().Company.CompanyName();
             }
-            // if (config.id == null)
-            // {
-            //     config.id = new Faker().Random.Guid().ToString();
-            // }
+            if (config.position == null)
+            {
+                config.position = new Vector3(0, 0, 0);
+            }
             return config;
+        }
+        public static void DestroySpaceSelectors(List<GameObject> spaceSelectors)
+        {
+            if (spaceSelectors == null)
+            {
+                return;
+            }
+            foreach (GameObject spaceSelector in spaceSelectors)
+            {
+                GameObject.Destroy(spaceSelector);
+            }
         }
     }
 

@@ -36,6 +36,7 @@ namespace ReupVirtualTwinTests.utils
             public ObjectRegistry objectRegistry;
             public ObjectPool objectPool;
             public Camera mainCamera;
+            public SpacesRecord spacesRecord;
         }
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab)
         {
@@ -78,14 +79,14 @@ namespace ReupVirtualTwinTests.utils
                 .GetComponent<ChangeColorManager>();
 
             SelectSelectableObject selectSelectableObject = baseGlobalScriptGameObject.transform
-               .Find("EditMediator")
-               .Find("SelectedObjectsManager")
-               .GetComponent<SelectSelectableObject>();
+                .Find("EditMediator")
+                .Find("SelectedObjectsManager")
+                .GetComponent<SelectSelectableObject>();
 
             SelectedObjectsManager selectedObjectsManager = baseGlobalScriptGameObject.transform
-               .Find("EditMediator")
-               .Find("SelectedObjectsManager")
-               .GetComponent<SelectedObjectsManager>();
+                .Find("EditMediator")
+                .Find("SelectedObjectsManager")
+                .GetComponent<SelectedObjectsManager>();
 
             SensedObjectHighlighter selectableObjectHighlighter = baseGlobalScriptGameObject.transform
                 .Find("HoverOverSelectablesObjects").GetComponent<SensedObjectHighlighter>();
@@ -103,6 +104,8 @@ namespace ReupVirtualTwinTests.utils
 
             HeightMediator heightMediator = character.transform.Find("Behaviours")
                 .Find("HeightMediator").GetComponent<HeightMediator>();
+
+            SpacesRecord spacesRecord = baseGlobalScriptGameObject.transform.Find("SpacesRecord").GetComponent<SpacesRecord>();
 
             MoveDhvCamera moveDhvCamera = dollhouseViewWrapper.GetComponent<MoveDhvCamera>();
 
@@ -138,6 +141,7 @@ namespace ReupVirtualTwinTests.utils
                 objectRegistry = objectRegistry,
                 objectPool = objectPool,
                 mainCamera = mainCamera,
+                spacesRecord = spacesRecord,
             };
         }
 

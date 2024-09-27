@@ -35,21 +35,9 @@ public class ModelInfoManagerTest : MonoBehaviour
     public IEnumerator TearDown()
     {
         ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
-        DestroySpaceSelectors();
+        SpaceSelectorFabric.DestroySpaceSelectors(spaceSelectors);
+        spaceSelectors?.Clear();
         yield return null;
-    }
-
-    void DestroySpaceSelectors()
-    {
-        if (spaceSelectors == null)
-        {
-            return;
-        }
-        foreach (GameObject spaceSelector in spaceSelectors)
-        {
-            Destroy(spaceSelector);
-        }
-        spaceSelectors = null;
     }
 
     private int NumberOfObjectsInTree(ObjectDTO tree)
