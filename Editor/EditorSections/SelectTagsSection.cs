@@ -13,7 +13,6 @@ namespace ReupVirtualTwin.editor
     public class SelectTagsSection
     {
         public List<Tag> selectedTags;
-        public Action<List<Tag>> onTagsChange { set => _onTagsChange = value; }
         public Action<Tag> onTagDeletion { set => _onTagDeletion = value; }
         public Action<Tag> onTagAddition { set => _onTagAddition = value; }
         public Action onTagReset { set => _onTagReset = value; }
@@ -21,7 +20,6 @@ namespace ReupVirtualTwin.editor
 
         private ITagsApiManager tagsApiManager;
         private List<Tag> allTags = new List<Tag>();
-        private Action<List<Tag>> _onTagsChange;
         private Action<Tag> _onTagDeletion;
         private Action<Tag> _onTagAddition;
         private Action _onTagReset;
@@ -97,7 +95,6 @@ namespace ReupVirtualTwin.editor
             if (!IsTagAlreadyPresent(tag))
             {
                 selectedTags.Add(tag);
-                _onTagsChange?.Invoke(selectedTags);
                 _onTagAddition?.Invoke(tag);
             }
         }
