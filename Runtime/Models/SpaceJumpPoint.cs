@@ -1,3 +1,4 @@
+using System;
 using ReupVirtualTwin.modelInterfaces;
 using UnityEngine;
 
@@ -7,6 +8,16 @@ namespace ReupVirtualTwin.models
     {
         public string _spaceName = "Unnamed space";
         public string spaceName { get => _spaceName; set => _spaceName = value; }
+        public string _id = "";
+        public string id { get => _id; set => _id = value; }
+
+        private void Start()
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                id = Guid.NewGuid().ToString();
+            }
+        }
 
         private void OnDrawGizmos()
         {

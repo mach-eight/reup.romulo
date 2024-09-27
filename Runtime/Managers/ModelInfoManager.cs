@@ -106,7 +106,8 @@ namespace ReupVirtualTwin.managers
         {
             return new JArray(
                 spacesRecord.jumpPoints.Select(jumpPoint => new JObject{
-                    {"name", jumpPoint.spaceName}
+                    {"name", jumpPoint.spaceName},
+                    {"id", jumpPoint.id},
                 })
             );
         }

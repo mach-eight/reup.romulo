@@ -17,10 +17,10 @@ public class ModelInfoManagerTest : MonoBehaviour
 {
     ReupSceneInstantiator.SceneObjects sceneObjects;
     ObjectMapper objectMapper = new ObjectMapper(new TagsController(), new IdController());
-    GameObject setupBuildingGameObject;
     GameObject buildingGameObject;
     ModelInfoManager modelInfoManager;
     const int BUILDING_CHILDREN_DEPTH = 30;
+    List<GameObject> spaceSelectors;
 
 
     [UnitySetUp]
@@ -34,18 +34,24 @@ public class ModelInfoManagerTest : MonoBehaviour
     [UnityTearDown]
     public IEnumerator TearDown()
     {
-        Destroy(setupBuildingGameObject);
         ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
-        Destroy(buildingGameObject);
+        DestroySpaceSelectors();
         yield return null;
     }
-    private void CreateStubSetupBuilding()
+
+    void DestroySpaceSelectors()
     {
-        setupBuildingGameObject = StubOnSetupBuildingCreator.CreateImmediateOnSetupBuilding();
-        var fakeSetupBuilding = setupBuildingGameObject.GetComponent<StubOnSetupBuildingCreator.FakeSetupBuilding>();
-        buildingGameObject = StubObjectTreeCreator.CreateMockBuilding(BUILDING_CHILDREN_DEPTH);
-        fakeSetupBuilding.building = buildingGameObject;
+        if (spaceSelectors == null)
+        {
+            return;
+        }
+        foreach (GameObject spaceSelector in spaceSelectors)
+        {
+            Destroy(spaceSelector);
+        }
+        spaceSelectors = null;
     }
+
     private int NumberOfObjectsInTree(ObjectDTO tree)
     {
         int count = 1;
@@ -181,15 +187,47 @@ public class ModelInfoManagerTest : MonoBehaviour
     }
 
     [UnityTest]
-    public IEnumerator ShouldObtainListOfSpaceSelectors()
+    public IEnumerator ShouldContainNamesInSpaceSelectorsList()
     {
-        List<GameObject> spaceSelectors = SpaceSelectorFabric.CreateBulk(5);
+        spaceSelectors = SpaceSelectorFabric.CreateBulk(5);
+        yield return null;
         WebMessage<JObject> message = modelInfoManager.ObtainModelInfoMessage();
         JArray spaceSelectorsList = message.payload["spaceSelectors"].ToObject<JArray>();
         Assert.AreEqual(5, spaceSelectorsList.Count);
         for (int i = 0; i < 5; i++)
         {
             Assert.AreEqual(spaceSelectors[i].GetComponent<SpaceJumpPoint>().name, spaceSelectorsList[i]["name"].ToString());
+        }
+        yield return null;
+
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldContainIdsInSpaceSelectorsList()
+    {
+        spaceSelectors = SpaceSelectorFabric.CreateBulk(5);
+        yield return null;
+        WebMessage<JObject> message = modelInfoManager.ObtainModelInfoMessage();
+        JArray spaceSelectorsList = message.payload["spaceSelectors"].ToObject<JArray>();
+        Assert.AreEqual(5, spaceSelectorsList.Count);
+        for (int i = 0; i < 5; i++)
+        {
+            Assert.AreEqual(spaceSelectors[i].GetComponent<SpaceJumpPoint>().id, spaceSelectorsList[i]["id"].ToString());
+        }
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator SpaceSelectorsIdsShouldBeDifferentThanEmptyOrNull()
+    {
+        spaceSelectors = SpaceSelectorFabric.CreateBulk(5);
+        yield return null;
+        WebMessage<JObject> message = modelInfoManager.ObtainModelInfoMessage();
+        JArray spaceSelectorsList = message.payload["spaceSelectors"].ToObject<JArray>();
+        Assert.AreEqual(5, spaceSelectorsList.Count);
+        for (int i = 0; i < 5; i++)
+        {
+            Assert.IsFalse(string.IsNullOrEmpty(spaceSelectorsList[i]["id"].ToString()));
         }
         yield return null;
 

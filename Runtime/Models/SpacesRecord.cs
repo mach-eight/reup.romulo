@@ -45,9 +45,9 @@ namespace ReupVirtualTwin.models
         public bool SpaceTagIsDefined()
         {
             return Array.Exists(
-                   UnityEditorInternal.InternalEditorUtility.tags,
-                   element => element == TagsEnum.spaceSelector
-               );
+                UnityEditorInternal.InternalEditorUtility.tags,
+                element => element == TagsEnum.spaceSelector
+            );
         }
     }
 }
