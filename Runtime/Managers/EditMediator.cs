@@ -73,6 +73,7 @@ namespace ReupVirtualTwin.managers
 
         private IOriginalSceneController _originalSceneController;
         public IOriginalSceneController originalSceneController { get => _originalSceneController; set => _originalSceneController = value; }
+        public ISpacesRecord spacesRecord { get; set; }
 
         public void Notify(ReupEvent eventName)
         {
@@ -242,6 +243,9 @@ namespace ReupVirtualTwin.managers
                     break;
                 case WebMessageType.activateFPV:
                     _viewModeManager.ActivateFPV();
+                    break;
+                case WebMessageType.slideToSpace:
+                    spacesRecord.GoToSpace(payload["spaceId"].ToString());
                     break;
             }
         }

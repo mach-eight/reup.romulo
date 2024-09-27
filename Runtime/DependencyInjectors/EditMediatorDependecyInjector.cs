@@ -7,39 +7,30 @@ using ReupVirtualTwin.managers;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.webRequesters;
+using ReupVirtualTwin.models;
 
 namespace ReupVirtualTwin.dependencyInjectors
 {
     [RequireComponent(typeof(EditMediator))]
     public class EditMediatorDependecyInjector : MonoBehaviour
     {
-        [SerializeField]
-        GameObject insertPositionLocation;
         EditMediator editMediator;
-        [SerializeField]
-        GameObject editModeManager;
-        [SerializeField]
-        GameObject selectedObjectsManager;
-        [SerializeField]
-        GameObject transformObjectsManager;
-        [SerializeField]
-        GameObject deleteObjectsManager;
-        [SerializeField]
-        GameObject changeColorManager;
-        [SerializeField]
-        GameObject modelInfoManager;
-        [SerializeField]
-        GameObject character;
-        [SerializeField]
-        GameObject fpvCamera;
-        [SerializeField]
-        GameObject dhvCamera;
-        [SerializeField]
-        ViewModeManager viewModeManager;
+        [SerializeField] GameObject insertPositionLocation;
+        [SerializeField] GameObject editModeManager;
+        [SerializeField] GameObject selectedObjectsManager;
+        [SerializeField] GameObject transformObjectsManager;
+        [SerializeField] GameObject deleteObjectsManager;
+        [SerializeField] GameObject changeColorManager;
+        [SerializeField] GameObject modelInfoManager;
+        [SerializeField] GameObject character;
+        [SerializeField] GameObject fpvCamera;
+        [SerializeField] GameObject dhvCamera;
+        [SerializeField] ViewModeManager viewModeManager;
+        [SerializeField] SpacesRecord spacesRecord;
 
         private void Awake()
         {
-            if(!insertPositionLocation ||
+            if (!insertPositionLocation ||
                 !editModeManager ||
                 !selectedObjectsManager ||
                 !transformObjectsManager ||
@@ -48,6 +39,7 @@ namespace ReupVirtualTwin.dependencyInjectors
                 !modelInfoManager ||
                 !fpvCamera ||
                 !dhvCamera ||
+                !spacesRecord ||
                 !character)
             {
                 throw new System.Exception("Some dependencies are missing");
@@ -62,7 +54,7 @@ namespace ReupVirtualTwin.dependencyInjectors
             editMediator.changeColorManager = changeColorManager.GetComponent<IChangeColorManager>();
             editMediator.modelInfoManager = modelInfoManager.GetComponent<IModelInfoManager>();
             IWebMessagesSender webMessageSender = GetComponent<IWebMessagesSender>();
-            if (webMessageSender == null )
+            if (webMessageSender == null)
             {
                 throw new System.Exception("WebMessageSender not found to inject to edit mediator");
             }
@@ -82,6 +74,7 @@ namespace ReupVirtualTwin.dependencyInjectors
             );
             editMediator.originalSceneController = new OriginalSceneController(registry);
             editMediator.viewModeManager = viewModeManager;
+            editMediator.spacesRecord = spacesRecord;
         }
     }
 }

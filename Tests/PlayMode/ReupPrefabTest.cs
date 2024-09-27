@@ -86,7 +86,7 @@ public class ReupPrefabTest : MonoBehaviour
     [UnityTest]
     public IEnumerator SelectableObjectHighlighterObjectSensor_should_haveSelectableObjectSelector()
     {
-        ObjectSensor selectableObjectSensorHighligherObjectSensor = (ObjectSensor) sceneObjects.selectableObjectHighlighter.objectSensor;
+        ObjectSensor selectableObjectSensorHighligherObjectSensor = (ObjectSensor)sceneObjects.selectableObjectHighlighter.objectSensor;
         Assert.AreEqual(typeof(SelectableObjectSelector), selectableObjectSensorHighligherObjectSensor.objectSelector.GetType());
         yield return null;
     }
@@ -161,6 +161,13 @@ public class ReupPrefabTest : MonoBehaviour
     public IEnumerator DHVCameraMovementShouldHaveADHVCameraTransformHandler()
     {
         Assert.IsNotNull(sceneObjects.moveDHVCamera.dollhouseViewWrapperTransform);
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator EditMediatorHasASpacesRecord()
+    {
+        Assert.IsNotNull(sceneObjects.editMediator.spacesRecord);
         yield return null;
     }
 

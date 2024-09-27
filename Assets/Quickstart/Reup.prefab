@@ -309,6 +309,7 @@ MonoBehaviour:
   fpvCamera: {fileID: 8060287538316763243}
   dhvCamera: {fileID: 2401207048260687702}
   viewModeManager: {fileID: 3904143813462744938}
+  spacesRecord: {fileID: 6371165624866328778}
 --- !u!114 &6350977991642200349
 MonoBehaviour:
   m_ObjectHideFlags: 0
