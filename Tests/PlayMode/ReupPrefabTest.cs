@@ -164,18 +164,4 @@ public class ReupPrefabTest : MonoBehaviour
         yield return null;
     }
 
-    [UnityTest]
-    public IEnumerator EditMediatorHasASpacesRecord()
-    {
-        Assert.IsNotNull(sceneObjects.editMediator.spacesRecord);
-        yield return null;
-    }
-
-    [UnityTest]
-    public IEnumerator SpacesRecordHasAMediator()
-    {
-        Assert.IsNotNull(sceneObjects.spacesRecord.mediator);
-        yield return null;
-    }
-
 }

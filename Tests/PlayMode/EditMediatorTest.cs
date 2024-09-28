@@ -18,8 +18,6 @@ using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.dataSchemas;
 using Newtonsoft.Json.Schema;
 using ReupVirtualTwinTests.mocks;
-using ReupVirtualTwin.modelInterfaces;
-using UnityEngine.Android;
 
 public class EditMediatorTest : MonoBehaviour
 {
@@ -38,7 +36,6 @@ public class EditMediatorTest : MonoBehaviour
     JObject requestSceneLoadMessage;
     OriginalSceneControllerSpy originalSceneControllerSpy;
     ViewModeManagerSpy viewModeManagerSpy;
-    SpacesRecordSpy spacesRecord;
 
     [SetUp]
     public void SetUp()
@@ -77,8 +74,6 @@ public class EditMediatorTest : MonoBehaviour
         editMediator.originalSceneController = originalSceneControllerSpy;
         viewModeManagerSpy = new ViewModeManagerSpy();
         editMediator.viewModeManager = viewModeManagerSpy;
-        spacesRecord = new SpacesRecordSpy();
-        editMediator.spacesRecord = spacesRecord;
     }
 
     private class ViewModeManagerSpy : IViewModeManager
@@ -93,20 +88,6 @@ public class EditMediatorTest : MonoBehaviour
         public void ActivateFPV()
         {
             activateFPVCallsCount++;
-        }
-    }
-
-    private class SpacesRecordSpy : ISpacesRecord
-    {
-        public List<ISpaceJumpPoint> jumpPoints { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        public List<string> calledSpaceJumpPointIds = new List<string>();
-        public List<string> calledRequestId = new List<string>();
-
-        public void GoToSpace(string spaceJumpPointId, string requestId)
-        {
-            calledSpaceJumpPointIds.Add(spaceJumpPointId);
-            calledRequestId.Add(requestId);
         }
     }
 
@@ -1255,52 +1236,6 @@ public class EditMediatorTest : MonoBehaviour
         Assert.Zero(viewModeManagerSpy.activateFPVCallsCount);
         await editMediator.ReceiveWebMessage(serializedMessage);
         Assert.AreEqual(1, viewModeManagerSpy.activateFPVCallsCount);
-    }
-
-    [Test]
-    public async Task ShouldRequestToGoToSpaceJumpPointWhenReceiveRespectiveMessage()
-    {
-        string spaceId = "space-id-1";
-        string requestId = "space-id-1";
-        JObject goToSpacePointMessage = new JObject
-        {
-            { "type", WebMessageType.slideToSpace },
-            { "payload", new JObject
-                {
-                    { "spaceId", spaceId },
-                    { "requestId", requestId },
-                }
-            }
-        };
-        string serializedMessage = JsonConvert.SerializeObject(goToSpacePointMessage);
-        await editMediator.ReceiveWebMessage(serializedMessage);
-        Assert.AreEqual(1, spacesRecord.calledSpaceJumpPointIds.Count);
-        Assert.AreEqual(spaceId, spacesRecord.calledSpaceJumpPointIds[0]);
-        Assert.AreEqual(requestId, spacesRecord.calledRequestId[0]);
-    }
-
-    [Test]
-    public void ShouldSendSlideToSpaceSuccessMessage_when_receiveNotificationOfReachingSpace()
-    {
-        string spaceId = "space-id-1";
-        string requestId = "request-id-1";
-        editMediator.Notify(ReupEvent.spaceJumpPointReached, new JObject
-        {
-            { "spaceId", spaceId },
-            { "requestId", requestId }
-        });
-        Assert.AreEqual(1, mockWebMessageSender.sentMessages.Count);
-        WebMessage<JObject> sentMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[0];
-        WebMessage<JObject> expectedMessage = new WebMessage<JObject>
-        {
-            type = WebMessageType.slideToSpaceSuccess,
-            payload = new JObject
-            {
-                { "spaceId", spaceId },
-                { "requestId", requestId }
-            }
-        };
-        Assert.IsTrue(JObject.DeepEquals(expectedMessage.payload, sentMessage.payload));
     }
 
 }
