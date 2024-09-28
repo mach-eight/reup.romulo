@@ -6,6 +6,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using ReupVirtualTwin.models;
 using ReupVirtualTwin.helpers;
+using ReupVirtualTwin.behaviourInterfaces;
+using ReupVirtualTwinTests.mocks;
 
 namespace ReupVirtualTwinTests.utils
 {
@@ -37,6 +39,7 @@ namespace ReupVirtualTwinTests.utils
             public ObjectPool objectPool;
             public Camera mainCamera;
             public SpacesRecord spacesRecord;
+            public WebMessageSenderSpy webMessageSenderSpy;
         }
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab)
         {
@@ -117,6 +120,9 @@ namespace ReupVirtualTwinTests.utils
 
             Camera mainCamera = reupGameObject.transform.Find("Main_Camera").GetComponent<Camera>();
 
+            WebMessageSenderSpy webMessageSender = new WebMessageSenderSpy();
+            editMediator.webMessageSender = webMessageSender;
+
             return new SceneObjects
             {
                 reupObject = reupGameObject,
@@ -142,6 +148,7 @@ namespace ReupVirtualTwinTests.utils
                 objectPool = objectPool,
                 mainCamera = mainCamera,
                 spacesRecord = spacesRecord,
+                webMessageSenderSpy = webMessageSender,
             };
         }
 
