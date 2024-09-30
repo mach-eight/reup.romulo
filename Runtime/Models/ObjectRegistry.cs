@@ -7,8 +7,7 @@ namespace ReupVirtualTwin.models
 {
     public class ObjectRegistry : MonoBehaviour, IObjectRegistry
     {
-        [HideInInspector]
-        public Dictionary<string, GameObject> objects = new Dictionary<string, GameObject>();
+        [HideInInspector] public Dictionary<string, GameObject> objects = new Dictionary<string, GameObject>();
 
         public void AddObject(GameObject item)
         {
@@ -18,16 +17,25 @@ namespace ReupVirtualTwin.models
                 throw new System.Exception("Object must have a unique identifier");
             }
             string guid = uniqueIdentifier.getId();
+            if (objects.ContainsKey(guid))
+            {
+                throw new System.Exception($"An object with id '{guid}' already exists in registry, can't add object '{item.name}'");
+            }
             objects.Add(guid, item);
         }
-        public void RemoveObject(GameObject item)
+        public void RemoveObject(string id, GameObject item)
         {
-            objects.Remove(item.GetComponent<IUniqueIdentifier>().getId());
+            GameObject registeredItem = objects.GetValueOrDefault(id);
+            if (registeredItem != item && registeredItem != null)
+            {
+                throw new System.Exception($"Object with id '{id}' is not the same as the object being removed '{item.name}'");
+            }
+            objects.Remove(id);
         }
 
         public GameObject GetObjectWithGuid(string guid)
         {
-            return objects[guid];
+            return objects.GetValueOrDefault(guid);
         }
         public List<GameObject> GetObjectsWithGuids(string[] guids)
         {
