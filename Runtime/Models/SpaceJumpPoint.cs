@@ -13,7 +13,7 @@ namespace ReupVirtualTwin.models
 
         private void Start()
         {
-            if (string.IsNullOrEmpty(id))
+            if (string.IsNullOrEmpty(id.Trim()))
             {
                 id = Guid.NewGuid().ToString();
             }

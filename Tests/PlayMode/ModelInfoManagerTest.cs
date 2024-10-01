@@ -209,13 +209,15 @@ public class ModelInfoManagerTest : MonoBehaviour
     public IEnumerator SpaceSelectorsIdsShouldBeDifferentThanEmptyOrNull()
     {
         spaceSelectors = SpaceSelectorFabric.CreateBulk(5);
+        spaceSelectors[0].GetComponent<SpaceJumpPoint>().id = "    ";
         yield return null;
         WebMessage<JObject> message = modelInfoManager.ObtainModelInfoMessage();
         JArray spaceSelectorsList = message.payload["spaceSelectors"].ToObject<JArray>();
         Assert.AreEqual(5, spaceSelectorsList.Count);
         for (int i = 0; i < 5; i++)
         {
-            Assert.IsFalse(string.IsNullOrEmpty(spaceSelectorsList[i]["id"].ToString()));
+            string id = spaceSelectorsList[i]["id"].ToString().Trim();
+            Assert.IsFalse(string.IsNullOrEmpty(id));
         }
         yield return null;
 
