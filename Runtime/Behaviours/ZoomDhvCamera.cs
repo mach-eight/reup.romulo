@@ -1,21 +1,23 @@
 using UnityEngine;
 using ReupVirtualTwin.inputs;
 using Unity.Cinemachine;
-using ReupVirtualTwin.managers;
-using ReupVirtualTwin.helpers;
+using ReupVirtualTwin.managerInterfaces;
+using System;
 
 namespace ReupVirtualTwin.behaviours
 {
     public class ZoomDhvCamera : MonoBehaviour
     {
         [SerializeField] public CinemachineCamera dhvCamera;
-        [SerializeField] public float zoomSpeed = 0.1f;
+        [SerializeField] public GameObject gesturesManagerGameObject;
+        [SerializeField] public float scrollZoomSpeedMultiplier = 0.1f;
+        [SerializeField] public float scrollZoomScaleFactor = 0.975f;
         [SerializeField] public float maxFieldOfView = 60;
         [SerializeField] public float minFieldOfView = 1;
         [SerializeField] public float smoothTime = 0.2f;
 
         private InputProvider _inputProvider;
-        private GesturesManager gesturesManager;
+        private IGesturesManager gesturesManager;
         
         private float initialPinchDistance = 0;
         private float targetFieldOfView;
@@ -24,7 +26,7 @@ namespace ReupVirtualTwin.behaviours
         private void Awake()
         {
             _inputProvider = new InputProvider();
-            gesturesManager = ObjectFinder.FindGesturesManager().GetComponent<GesturesManager>();
+            gesturesManager = gesturesManagerGameObject.GetComponent<IGesturesManager>();
             targetFieldOfView = dhvCamera.Lens.FieldOfView;
         }
 
@@ -43,19 +45,18 @@ namespace ReupVirtualTwin.behaviours
                 return;
             }
 
-            Vector2 touch1 = _inputProvider.GestureTouch1Dhv();
-            Vector2 touch2 = _inputProvider.GestureTouch2Dhv();
+            Vector2 touch1 = _inputProvider.Touch1Position();
+            Vector2 touch2 = _inputProvider.Touch2Position();
             
             if (initialPinchDistance == 0)
             {
                 initialPinchDistance = Vector2.Distance(touch1, touch2);
             }
-            
+
             float currentDistance = Vector2.Distance(touch1, touch2);
             float zoomFactor = currentDistance / initialPinchDistance;
 
             targetFieldOfView = Mathf.Clamp(targetFieldOfView / zoomFactor, minFieldOfView, maxFieldOfView);
-            
             initialPinchDistance = currentDistance;
         }
 
@@ -66,8 +67,8 @@ namespace ReupVirtualTwin.behaviours
             {
                 return;
             }
-            float zoomAmount = scrollInput.y * zoomSpeed;
-            float exponentialZoom = targetFieldOfView * Mathf.Pow(0.975f, zoomAmount);
+            float zoomAmount = scrollInput.y * scrollZoomSpeedMultiplier;
+            float exponentialZoom = targetFieldOfView * Mathf.Pow(scrollZoomScaleFactor, zoomAmount);
             targetFieldOfView = Mathf.Clamp(exponentialZoom, minFieldOfView, maxFieldOfView);
         }
 

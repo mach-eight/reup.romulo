@@ -1,5 +1,6 @@
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.inputs;
+using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.managers;
 using UnityEngine;
 
@@ -8,6 +9,8 @@ namespace ReupVirtualTwin.behaviours
     public class MoveDhvCamera : MonoBehaviour
     {
         [SerializeField] public Transform dollhouseViewWrapperTransform;
+        [SerializeField] public GameObject dragManagerGameObject;
+        [SerializeField] public GameObject gesturesManagerGameObject;
         [SerializeField] public float limitDistanceFromBuildingInMeters = 35;
         [SerializeField] public float KeyboardMoveCameraSpeedMetersPerSecond = 40;
         [SerializeField] public float PointerMoveCameraDistanceInMetersSquareViewport = 40;
@@ -15,7 +18,7 @@ namespace ReupVirtualTwin.behaviours
         InputProvider _inputProvider;
         float distancePerPixel;
         DragManager dragManager;
-        GesturesManager gesturesManager;
+        IGesturesManager gesturesManager;
         GameObject building;
         private Vector3 buildingCenter;
         private float baseFieldOfView = 60;
@@ -25,8 +28,8 @@ namespace ReupVirtualTwin.behaviours
             _inputProvider = new InputProvider();
             int pixelsInSquareViewport = ViewportUtils.MinViewportDimension(Camera.main);
             distancePerPixel = PointerMoveCameraDistanceInMetersSquareViewport / pixelsInSquareViewport;
-            dragManager = ObjectFinder.FindDragManager().GetComponent<DragManager>();
-            gesturesManager = ObjectFinder.FindGesturesManager().GetComponent<GesturesManager>();
+            dragManager = dragManagerGameObject.GetComponent<DragManager>();
+            gesturesManager = gesturesManagerGameObject.GetComponent<IGesturesManager>();
             building = ObjectFinder.FindSetupBuilding().GetComponent<SetupBuilding>().building;
             buildingCenter = BoundariesUtils.CalculateCenter(building);
         }

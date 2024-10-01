@@ -1431,7 +1431,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dollhouseViewWrapperTransform: {fileID: 2471139282865268767}
+  dragManagerGameObject: {fileID: 4904105423061820482}
+  gesturesManagerGameObject: {fileID: 7681094513585484253}
   limitDistanceFromBuildingInMeters: 35
+  KeyboardMoveCameraSpeedMetersPerSecond: 40
+  PointerMoveCameraDistanceInMetersSquareViewport: 40
 --- !u!114 &5049356630348509960
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1445,7 +1449,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dhvCamera: {fileID: 1928192350222409744}
-  zoomSpeed: 0.1
+  gesturesManagerGameObject: {fileID: 7681094513585484253}
+  scrollZoomSpeedMultiplier: 0.1
+  scrollZoomScaleFactor: 0.975
   maxFieldOfView: 60
   minFieldOfView: 1
   smoothTime: 0.2
@@ -1642,8 +1648,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5684383910040997618}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.3, y: 1.53, z: -3.1}
+  m_LocalRotation: {x: 0.42261827, y: 0, z: 0, w: 0.9063079}
+  m_LocalPosition: {x: 0, y: 42.673183, z: -26.930277}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

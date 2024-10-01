@@ -1,11 +1,9 @@
 using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
 using ReupVirtualTwin.managers;
 using ReupVirtualTwinTests.utils;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.TestTools;
 
 public class GesturesManagerTest : MonoBehaviour

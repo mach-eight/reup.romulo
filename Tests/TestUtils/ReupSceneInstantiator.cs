@@ -27,7 +27,7 @@ namespace ReupVirtualTwinTests.utils
             public SelectedObjectsManager selectedObjectsManager;
             public EditMediator editMediator;
             public SensedObjectHighlighter selectableObjectHighlighter;
-            public MoveDhvCamera moveDHVCamera;
+            public MoveDhvCamera moveDhvCameraBehavior;
             public GameObject dhvCamera;
             public GameObject fpvCamera;
             public ViewModeManager viewModeManager;
@@ -39,7 +39,7 @@ namespace ReupVirtualTwinTests.utils
             public ObjectPool objectPool;
             public Camera mainCamera;
             public GesturesManager gesturesManager;
-            public ZoomDhvCamera zoomDhvCamera;
+            public ZoomDhvCamera zoomDhvCameraBehavior;
         }
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab)
         {
@@ -109,9 +109,9 @@ namespace ReupVirtualTwinTests.utils
             HeightMediator heightMediator = character.transform.Find("Behaviours")
                 .Find("HeightMediator").GetComponent<HeightMediator>();
 
-            MoveDhvCamera moveDhvCamera = dollhouseViewWrapper.GetComponent<MoveDhvCamera>();
+            MoveDhvCamera moveDhvCameraBehavior = dollhouseViewWrapper.GetComponent<MoveDhvCamera>();
 
-            ZoomDhvCamera zoomDhvCamera = dollhouseViewWrapper.GetComponent<ZoomDhvCamera>();
+            ZoomDhvCamera zoomDhvCameraBehavior = dollhouseViewWrapper.GetComponent<ZoomDhvCamera>();
 
             ModelInfoManager modelInfoManager = baseGlobalScriptGameObject.transform.Find("ModelInfo").GetComponent<ModelInfoManager>();
 
@@ -143,13 +143,13 @@ namespace ReupVirtualTwinTests.utils
                 input = input,
                 eventSystem = eventSystem,
                 heightMediator = heightMediator,
-                moveDHVCamera = moveDhvCamera,
+                moveDhvCameraBehavior = moveDhvCameraBehavior,
                 modelInfoManager = modelInfoManager,
                 objectRegistry = objectRegistry,
                 objectPool = objectPool,
                 mainCamera = mainCamera,
                 gesturesManager = gesturesManager,
-                zoomDhvCamera = zoomDhvCamera,
+                zoomDhvCameraBehavior = zoomDhvCameraBehavior,
             };
         }
 

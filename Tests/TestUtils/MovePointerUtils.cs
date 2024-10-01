@@ -101,21 +101,27 @@ namespace ReupVirtualTwinTests.utils
         ) {
             input.BeginTouch(0, startFinger1Position, true, touch);
             input.BeginTouch(1, startFinger2Position, true, touch);
+            yield return null;
 
-            for (int i = 0; i <= steps; i++)
+            for (int i = 1; i <= steps; i++)
             {
+                float prevT = (float)(i - 1) / steps;
                 float t = (float)i / steps;
+                Vector2 prevFinger1Position = Vector2.Lerp(startFinger1Position, endFinger1Position, prevT);
                 Vector2 currentFinger1Position = Vector2.Lerp(startFinger1Position, endFinger1Position, t);
+                Vector2 deltaFinger1 = currentFinger1Position - prevFinger1Position;
+
+                Vector2 prevFinger2Position = Vector2.Lerp(startFinger2Position, endFinger2Position, prevT);
                 Vector2 currentFinger2Position = Vector2.Lerp(startFinger2Position, endFinger2Position, t);
-                Vector2 deltaFinger1 = currentFinger1Position - startFinger1Position;
-                Vector2 deltaFinger2 = currentFinger2Position - startFinger2Position;
+                Vector2 deltaFinger2 = currentFinger2Position - prevFinger2Position;
+
                 input.MoveTouch(0, currentFinger1Position, deltaFinger1, true, touch);
                 input.MoveTouch(1, currentFinger2Position, deltaFinger2, true, touch);
                 yield return null;
             }
-
             input.EndTouch(0, endFinger1Position, Vector2.zero, true, touch);
             input.EndTouch(1, endFinger2Position, Vector2.zero, true, touch);
+            yield return null;
         }
     }
 }

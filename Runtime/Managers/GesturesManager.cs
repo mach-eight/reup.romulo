@@ -1,15 +1,15 @@
 using ReupVirtualTwin.inputs;
+using ReupVirtualTwin.managerInterfaces;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace ReupVirtualTwin.managers
 {
-    public class GesturesManager : MonoBehaviour
+    public class GesturesManager : MonoBehaviour, IGesturesManager
     {
+        [HideInInspector] public bool gestureInProgress { get; private set; } = false;
         InputProvider _inputProvider;
         private int activeTouchInputs = 0;
-
-        public bool gestureInProgress = false;
 
         private void Awake()
         {
@@ -18,18 +18,18 @@ namespace ReupVirtualTwin.managers
 
         private void OnEnable()
         {
-            _inputProvider.firstTouchStarted += TouchStarted;
-            _inputProvider.firstTouchCanceled += TouchStopped; 
-            _inputProvider.secondTouchStarted += TouchStarted;
-            _inputProvider.secondTouchCanceled += TouchStopped;          
+            _inputProvider.touch1HoldStarted += TouchStarted;
+            _inputProvider.touch1HoldSCanceled += TouchStopped; 
+            _inputProvider.touch2HoldStarted += TouchStarted;
+            _inputProvider.touch2HoldCanceled += TouchStopped;          
         }
 
         private void OnDisable()
         {
-            _inputProvider.firstTouchStarted -= TouchStarted;
-            _inputProvider.firstTouchCanceled -= TouchStopped; 
-            _inputProvider.secondTouchStarted -= TouchStarted;
-            _inputProvider.secondTouchCanceled -= TouchStopped;        
+            _inputProvider.touch1HoldStarted -= TouchStarted;
+            _inputProvider.touch1HoldSCanceled -= TouchStopped; 
+            _inputProvider.touch2HoldStarted -= TouchStarted;
+            _inputProvider.touch2HoldCanceled -= TouchStopped;        
         }
 
         private void TouchStarted(InputAction.CallbackContext ctx)

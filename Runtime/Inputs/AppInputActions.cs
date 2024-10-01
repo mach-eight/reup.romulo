@@ -478,24 +478,6 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
-                },
-                {
-                    ""name"": ""GestureTouch1 "",
-                    ""type"": ""Value"",
-                    ""id"": ""7d4984f7-0b63-4d71-b4d6-3fffec8772da"",
-                    ""expectedControlType"": ""Vector2"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                },
-                {
-                    ""name"": ""GestureTouch2"",
-                    ""type"": ""Value"",
-                    ""id"": ""9eeeea93-8ad0-4cca-9233-f3f8d1ea3cec"",
-                    ""expectedControlType"": ""Vector2"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -578,28 +560,6 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""c9abe30f-8a07-4475-b8f7-721a2632a1fa"",
-                    ""path"": ""<Touchscreen>/touch0/position"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Touchscreen"",
-                    ""action"": ""GestureTouch1 "",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""5b06c429-e95f-47b6-9595-71f10040c6c5"",
-                    ""path"": ""<Touchscreen>/touch1/position"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Touchscreen"",
-                    ""action"": ""GestureTouch2"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""ae8218fb-ca9e-488b-9905-7dcb0ff88676"",
                     ""path"": ""<Mouse>/scroll"",
                     ""interactions"": """",
@@ -616,7 +576,7 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
             ""id"": ""b0e97067-6625-41ce-bda2-5ee62f05679e"",
             ""actions"": [
                 {
-                    ""name"": ""PrimaryTouch"",
+                    ""name"": ""Touch1Hold"",
                     ""type"": ""Button"",
                     ""id"": ""106b9b19-699b-419d-8cec-b2a727f82e0a"",
                     ""expectedControlType"": ""Button"",
@@ -625,10 +585,28 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""SecondaryTouch"",
+                    ""name"": ""Touch2Hold"",
                     ""type"": ""Button"",
                     ""id"": ""e11880a2-c565-4107-b367-12be984842b0"",
                     ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Touch1Position"",
+                    ""type"": ""Value"",
+                    ""id"": ""d2788169-8c85-46fa-9e21-79dd05621c2c"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Touch2Position"",
+                    ""type"": ""Value"",
+                    ""id"": ""422b7f31-d6ca-49b5-8aa2-ccf9a823b3e5"",
+                    ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
@@ -642,7 +620,7 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Touchscreen"",
-                    ""action"": ""SecondaryTouch"",
+                    ""action"": ""Touch2Hold"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -653,7 +631,29 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Touchscreen"",
-                    ""action"": ""PrimaryTouch"",
+                    ""action"": ""Touch1Hold"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""25fcfbef-f338-47f3-b9f7-c892516da780"",
+                    ""path"": ""<Touchscreen>/touch0/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Touchscreen"",
+                    ""action"": ""Touch1Position"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d2ba7da2-f550-4a58-bfaf-c8e9fefc63cc"",
+                    ""path"": ""<Touchscreen>/touch1/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Touchscreen"",
+                    ""action"": ""Touch2Position"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -709,12 +709,12 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
         m_DollhouseView_KeyboardMoveCamera = m_DollhouseView.FindAction("KeyboardMoveCamera", throwIfNotFound: true);
         m_DollhouseView_PointerMoveCamera = m_DollhouseView.FindAction("PointerMoveCamera", throwIfNotFound: true);
         m_DollhouseView_ScrollWheelZoom = m_DollhouseView.FindAction("ScrollWheelZoom", throwIfNotFound: true);
-        m_DollhouseView_GestureTouch1 = m_DollhouseView.FindAction("GestureTouch1 ", throwIfNotFound: true);
-        m_DollhouseView_GestureTouch2 = m_DollhouseView.FindAction("GestureTouch2", throwIfNotFound: true);
         // MultiTouch
         m_MultiTouch = asset.FindActionMap("MultiTouch", throwIfNotFound: true);
-        m_MultiTouch_PrimaryTouch = m_MultiTouch.FindAction("PrimaryTouch", throwIfNotFound: true);
-        m_MultiTouch_SecondaryTouch = m_MultiTouch.FindAction("SecondaryTouch", throwIfNotFound: true);
+        m_MultiTouch_Touch1Hold = m_MultiTouch.FindAction("Touch1Hold", throwIfNotFound: true);
+        m_MultiTouch_Touch2Hold = m_MultiTouch.FindAction("Touch2Hold", throwIfNotFound: true);
+        m_MultiTouch_Touch1Position = m_MultiTouch.FindAction("Touch1Position", throwIfNotFound: true);
+        m_MultiTouch_Touch2Position = m_MultiTouch.FindAction("Touch2Position", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -935,8 +935,6 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_DollhouseView_KeyboardMoveCamera;
     private readonly InputAction m_DollhouseView_PointerMoveCamera;
     private readonly InputAction m_DollhouseView_ScrollWheelZoom;
-    private readonly InputAction m_DollhouseView_GestureTouch1;
-    private readonly InputAction m_DollhouseView_GestureTouch2;
     public struct DollhouseViewActions
     {
         private @AppInputActions m_Wrapper;
@@ -944,8 +942,6 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
         public InputAction @KeyboardMoveCamera => m_Wrapper.m_DollhouseView_KeyboardMoveCamera;
         public InputAction @PointerMoveCamera => m_Wrapper.m_DollhouseView_PointerMoveCamera;
         public InputAction @ScrollWheelZoom => m_Wrapper.m_DollhouseView_ScrollWheelZoom;
-        public InputAction @GestureTouch1 => m_Wrapper.m_DollhouseView_GestureTouch1;
-        public InputAction @GestureTouch2 => m_Wrapper.m_DollhouseView_GestureTouch2;
         public InputActionMap Get() { return m_Wrapper.m_DollhouseView; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -964,12 +960,6 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
             @ScrollWheelZoom.started += instance.OnScrollWheelZoom;
             @ScrollWheelZoom.performed += instance.OnScrollWheelZoom;
             @ScrollWheelZoom.canceled += instance.OnScrollWheelZoom;
-            @GestureTouch1.started += instance.OnGestureTouch1;
-            @GestureTouch1.performed += instance.OnGestureTouch1;
-            @GestureTouch1.canceled += instance.OnGestureTouch1;
-            @GestureTouch2.started += instance.OnGestureTouch2;
-            @GestureTouch2.performed += instance.OnGestureTouch2;
-            @GestureTouch2.canceled += instance.OnGestureTouch2;
         }
 
         private void UnregisterCallbacks(IDollhouseViewActions instance)
@@ -983,12 +973,6 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
             @ScrollWheelZoom.started -= instance.OnScrollWheelZoom;
             @ScrollWheelZoom.performed -= instance.OnScrollWheelZoom;
             @ScrollWheelZoom.canceled -= instance.OnScrollWheelZoom;
-            @GestureTouch1.started -= instance.OnGestureTouch1;
-            @GestureTouch1.performed -= instance.OnGestureTouch1;
-            @GestureTouch1.canceled -= instance.OnGestureTouch1;
-            @GestureTouch2.started -= instance.OnGestureTouch2;
-            @GestureTouch2.performed -= instance.OnGestureTouch2;
-            @GestureTouch2.canceled -= instance.OnGestureTouch2;
         }
 
         public void RemoveCallbacks(IDollhouseViewActions instance)
@@ -1010,14 +994,18 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
     // MultiTouch
     private readonly InputActionMap m_MultiTouch;
     private List<IMultiTouchActions> m_MultiTouchActionsCallbackInterfaces = new List<IMultiTouchActions>();
-    private readonly InputAction m_MultiTouch_PrimaryTouch;
-    private readonly InputAction m_MultiTouch_SecondaryTouch;
+    private readonly InputAction m_MultiTouch_Touch1Hold;
+    private readonly InputAction m_MultiTouch_Touch2Hold;
+    private readonly InputAction m_MultiTouch_Touch1Position;
+    private readonly InputAction m_MultiTouch_Touch2Position;
     public struct MultiTouchActions
     {
         private @AppInputActions m_Wrapper;
         public MultiTouchActions(@AppInputActions wrapper) { m_Wrapper = wrapper; }
-        public InputAction @PrimaryTouch => m_Wrapper.m_MultiTouch_PrimaryTouch;
-        public InputAction @SecondaryTouch => m_Wrapper.m_MultiTouch_SecondaryTouch;
+        public InputAction @Touch1Hold => m_Wrapper.m_MultiTouch_Touch1Hold;
+        public InputAction @Touch2Hold => m_Wrapper.m_MultiTouch_Touch2Hold;
+        public InputAction @Touch1Position => m_Wrapper.m_MultiTouch_Touch1Position;
+        public InputAction @Touch2Position => m_Wrapper.m_MultiTouch_Touch2Position;
         public InputActionMap Get() { return m_Wrapper.m_MultiTouch; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1027,22 +1015,34 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_MultiTouchActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_MultiTouchActionsCallbackInterfaces.Add(instance);
-            @PrimaryTouch.started += instance.OnPrimaryTouch;
-            @PrimaryTouch.performed += instance.OnPrimaryTouch;
-            @PrimaryTouch.canceled += instance.OnPrimaryTouch;
-            @SecondaryTouch.started += instance.OnSecondaryTouch;
-            @SecondaryTouch.performed += instance.OnSecondaryTouch;
-            @SecondaryTouch.canceled += instance.OnSecondaryTouch;
+            @Touch1Hold.started += instance.OnTouch1Hold;
+            @Touch1Hold.performed += instance.OnTouch1Hold;
+            @Touch1Hold.canceled += instance.OnTouch1Hold;
+            @Touch2Hold.started += instance.OnTouch2Hold;
+            @Touch2Hold.performed += instance.OnTouch2Hold;
+            @Touch2Hold.canceled += instance.OnTouch2Hold;
+            @Touch1Position.started += instance.OnTouch1Position;
+            @Touch1Position.performed += instance.OnTouch1Position;
+            @Touch1Position.canceled += instance.OnTouch1Position;
+            @Touch2Position.started += instance.OnTouch2Position;
+            @Touch2Position.performed += instance.OnTouch2Position;
+            @Touch2Position.canceled += instance.OnTouch2Position;
         }
 
         private void UnregisterCallbacks(IMultiTouchActions instance)
         {
-            @PrimaryTouch.started -= instance.OnPrimaryTouch;
-            @PrimaryTouch.performed -= instance.OnPrimaryTouch;
-            @PrimaryTouch.canceled -= instance.OnPrimaryTouch;
-            @SecondaryTouch.started -= instance.OnSecondaryTouch;
-            @SecondaryTouch.performed -= instance.OnSecondaryTouch;
-            @SecondaryTouch.canceled -= instance.OnSecondaryTouch;
+            @Touch1Hold.started -= instance.OnTouch1Hold;
+            @Touch1Hold.performed -= instance.OnTouch1Hold;
+            @Touch1Hold.canceled -= instance.OnTouch1Hold;
+            @Touch2Hold.started -= instance.OnTouch2Hold;
+            @Touch2Hold.performed -= instance.OnTouch2Hold;
+            @Touch2Hold.canceled -= instance.OnTouch2Hold;
+            @Touch1Position.started -= instance.OnTouch1Position;
+            @Touch1Position.performed -= instance.OnTouch1Position;
+            @Touch1Position.canceled -= instance.OnTouch1Position;
+            @Touch2Position.started -= instance.OnTouch2Position;
+            @Touch2Position.performed -= instance.OnTouch2Position;
+            @Touch2Position.canceled -= instance.OnTouch2Position;
         }
 
         public void RemoveCallbacks(IMultiTouchActions instance)
@@ -1099,12 +1099,12 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
         void OnKeyboardMoveCamera(InputAction.CallbackContext context);
         void OnPointerMoveCamera(InputAction.CallbackContext context);
         void OnScrollWheelZoom(InputAction.CallbackContext context);
-        void OnGestureTouch1(InputAction.CallbackContext context);
-        void OnGestureTouch2(InputAction.CallbackContext context);
     }
     public interface IMultiTouchActions
     {
-        void OnPrimaryTouch(InputAction.CallbackContext context);
-        void OnSecondaryTouch(InputAction.CallbackContext context);
+        void OnTouch1Hold(InputAction.CallbackContext context);
+        void OnTouch2Hold(InputAction.CallbackContext context);
+        void OnTouch1Position(InputAction.CallbackContext context);
+        void OnTouch2Position(InputAction.CallbackContext context);
     }
 }

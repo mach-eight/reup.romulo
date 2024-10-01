@@ -75,48 +75,48 @@ namespace ReupVirtualTwin.inputs
                 _input.Player.Hold.canceled -= value;
             }
         }
-        public event Action<InputAction.CallbackContext> firstTouchStarted
+        public event Action<InputAction.CallbackContext> touch1HoldStarted
         {
             add
             {
-                _input.MultiTouch.PrimaryTouch.started += value;
+                _input.MultiTouch.Touch1Hold.started += value;
             }
             remove
             {
-                _input.MultiTouch.PrimaryTouch.started -= value;
+                _input.MultiTouch.Touch1Hold.started -= value;
             }
         }
-        public event Action<InputAction.CallbackContext> firstTouchCanceled
+        public event Action<InputAction.CallbackContext> touch1HoldSCanceled
         {
             add
             {
-                _input.MultiTouch.PrimaryTouch.canceled += value;
+                _input.MultiTouch.Touch1Hold.canceled += value;
             }
             remove
             {
-                _input.MultiTouch.PrimaryTouch.canceled -= value;
+                _input.MultiTouch.Touch1Hold.canceled -= value;
             }
         }
-        public event Action<InputAction.CallbackContext> secondTouchStarted
+        public event Action<InputAction.CallbackContext> touch2HoldStarted
         {
             add
             {
-                _input.MultiTouch.SecondaryTouch.started += value;
+                _input.MultiTouch.Touch2Hold.started += value;
             }
             remove
             {
-                _input.MultiTouch.SecondaryTouch.started -= value;
+                _input.MultiTouch.Touch2Hold.started -= value;
             }
         }
-        public event Action<InputAction.CallbackContext> secondTouchCanceled
+        public event Action<InputAction.CallbackContext> touch2HoldCanceled
         {
             add
             {
-                _input.MultiTouch.SecondaryTouch.canceled += value;
+                _input.MultiTouch.Touch2Hold.canceled += value;
             }
             remove
             {
-                _input.MultiTouch.SecondaryTouch.canceled -= value;
+                _input.MultiTouch.Touch2Hold.canceled -= value;
             }
         }
         public void Enable()
@@ -163,17 +163,17 @@ namespace ReupVirtualTwin.inputs
         {
             return -1 * _input.DollhouseView.PointerMoveCamera.ReadValue<Vector2>();
         }
-        public Vector2 GestureTouch1Dhv()
-        {
-            return _input.DollhouseView.GestureTouch1.ReadValue<Vector2>(); 
-        }
-        public Vector2 GestureTouch2Dhv()
-        {
-            return _input.DollhouseView.GestureTouch2.ReadValue<Vector2>(); 
-        }
         public Vector2 ScrollWheelZoomDhvCamera()
         {
             return _input.DollhouseView.ScrollWheelZoom.ReadValue<Vector2>();
+        }
+        public Vector2 Touch1Position()
+        {
+            return _input.MultiTouch.Touch1Position.ReadValue<Vector2>(); 
+        }
+        public Vector2 Touch2Position()
+        {
+            return _input.MultiTouch.Touch2Position.ReadValue<Vector2>(); 
         }
     }
 }

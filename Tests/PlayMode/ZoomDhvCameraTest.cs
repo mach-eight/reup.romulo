@@ -1,13 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
+using ReupVirtualTwin.behaviours;
 using ReupVirtualTwinTests.utils;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.TestTools;
 
-namespace ReupVirtualTwin.behaviours
+namespace ReupVirtualTwinTests.behaviours
 {
     public class ZoomDhvCameraTest
     {
@@ -15,11 +16,14 @@ namespace ReupVirtualTwin.behaviours
         InputTestFixture input;
         Mouse mouse;
         Touchscreen touch;
-        ZoomDhvCamera zoomDhvCamera;
-        CinemachineCamera dhvCamera;
+        ZoomDhvCamera zoomDhvBehavior;
+        CinemachineCamera dhvCineMachineComponent;
         float initialFieldOfView;
         float minFieldOfView;
         float maxFieldOfView;
+        float scrollStep = 120;
+        float errorToleranceInDegrees = 0.1f;
+        int zoomSepts = 10;
 
         [UnitySetUp]
         public IEnumerator Setup()
@@ -28,11 +32,11 @@ namespace ReupVirtualTwin.behaviours
             input = sceneObjects.input;
             mouse = InputSystem.AddDevice<Mouse>();
             touch = InputSystem.AddDevice<Touchscreen>();
-            zoomDhvCamera = sceneObjects.zoomDhvCamera;
-            dhvCamera = sceneObjects.dhvCamera.GetComponent<CinemachineCamera>();
-            initialFieldOfView = dhvCamera.Lens.FieldOfView;
-            minFieldOfView = zoomDhvCamera.minFieldOfView;
-            maxFieldOfView = zoomDhvCamera.maxFieldOfView;
+            zoomDhvBehavior = sceneObjects.zoomDhvCameraBehavior;
+            dhvCineMachineComponent = sceneObjects.dhvCamera.GetComponent<CinemachineCamera>();
+            initialFieldOfView = dhvCineMachineComponent.Lens.FieldOfView;
+            minFieldOfView = zoomDhvBehavior.minFieldOfView;
+            maxFieldOfView = zoomDhvBehavior.maxFieldOfView;
             sceneObjects.viewModeManager.ActivateDHV();
             yield return null;
         }
@@ -45,92 +49,122 @@ namespace ReupVirtualTwin.behaviours
         }
 
         [Test]
-        public void ZoomSpeedIsDefined()
+        public void ScrollZoomSpeedIsDefined()
         {
-            Assert.AreEqual(0.1f, zoomDhvCamera.zoomSpeed);
+            Assert.AreEqual(0.1f, zoomDhvBehavior.scrollZoomSpeedMultiplier);
+        }
+
+        [Test]
+        public void ScrollZoomScaleFactorIsDefined()
+        {
+            Assert.AreEqual(0.975f, zoomDhvBehavior.scrollZoomScaleFactor);
         }
 
         [Test]
         public void MinAndMaxFovAreDefined()
         {
-            Assert.AreEqual(60, zoomDhvCamera.maxFieldOfView);
-            Assert.AreEqual(1, zoomDhvCamera.minFieldOfView);
+            Assert.AreEqual(60, zoomDhvBehavior.maxFieldOfView);
+            Assert.AreEqual(1, zoomDhvBehavior.minFieldOfView);
         }
 
         [UnityTest]
-        public IEnumerator ScrollWheelShouldZoomIn()
+        public IEnumerator ScrollWheelShouldZoomInAndOut()
         {
-            Assert.AreEqual(dhvCamera.Lens.FieldOfView, initialFieldOfView);
+            Assert.AreEqual(dhvCineMachineComponent.Lens.FieldOfView, initialFieldOfView);
 
-            input.Set(mouse.scroll, new Vector2(0, 5));
+            Vector2 zoomInScrollInput = new Vector2(0, scrollStep);
+            float expectedZoomInFov = CalculateNextScrollZoomFov(zoomInScrollInput);
+            input.Set(mouse.scroll, zoomInScrollInput);
+            yield return WaitForZoomToFinalize();
+            Assert.AreEqual(dhvCineMachineComponent.Lens.FieldOfView, expectedZoomInFov, errorToleranceInDegrees);
+
+            Vector2 zoomOutScrollInput = new Vector2(0, -scrollStep);
+            float expectedZoomOutFov = CalculateNextScrollZoomFov(zoomOutScrollInput);
+            input.Set(mouse.scroll, zoomOutScrollInput);
+            yield return WaitForZoomToFinalize();
+            Assert.AreEqual(dhvCineMachineComponent.Lens.FieldOfView, expectedZoomOutFov, errorToleranceInDegrees);
+
+            Assert.AreEqual(dhvCineMachineComponent.Lens.FieldOfView, initialFieldOfView, errorToleranceInDegrees);
+            Assert.Greater(expectedZoomOutFov, expectedZoomInFov);
             yield return null;
-
-            Assert.Less(dhvCamera.Lens.FieldOfView, initialFieldOfView);
         }
 
         [UnityTest]
-        public IEnumerator ScrollWheelShouldZoomOut()
+        public IEnumerator PinchInGestureShouldZoomInAndOut()
         {
-            float newCameraFov = 10f;
-            dhvCamera.Lens.FieldOfView = newCameraFov;
+            Assert.AreEqual(initialFieldOfView, dhvCineMachineComponent.Lens.FieldOfView);
+            Vector2 ZoomInStartFinger1 = new Vector2(200, 200);
+            Vector2 ZoomInStartFinger2 = new Vector2(400, 400);
+            Vector2 ZoomInEndFinger1 = new Vector2(100, 100);
+            Vector2 ZoomInEndFinger2 = new Vector2(500, 500);
 
-            input.Set(mouse.scroll, new Vector2(0, -5));
+            float expectedZoomInFov = calculateNextPinchZoomFov(ZoomInStartFinger1, ZoomInStartFinger2, ZoomInEndFinger1, ZoomInEndFinger2);  
+            yield return MovePointerUtils.TouchGesture(input, touch, ZoomInStartFinger1, ZoomInStartFinger2, ZoomInEndFinger1, ZoomInEndFinger2, zoomSepts);
+            yield return WaitForZoomToFinalize();
+            Assert.AreEqual(expectedZoomInFov, dhvCineMachineComponent.Lens.FieldOfView, errorToleranceInDegrees);
+
+            Vector2 ZoomOutStartFinger1 = new Vector2(100, 100);
+            Vector2 ZoomOutStartFinger2 = new Vector2(500, 500);
+            Vector2 ZoomOutEndFinger1 = new Vector2(200, 200);
+            Vector2 ZoomOutEndFinger2 = new Vector2(400, 400);
+
+            float expectedZoomOutFov = calculateNextPinchZoomFov(ZoomOutStartFinger1, ZoomOutStartFinger2, ZoomOutEndFinger1, ZoomOutEndFinger2);  
+            yield return MovePointerUtils.TouchGesture(input, touch, ZoomOutStartFinger1, ZoomOutStartFinger2, ZoomOutEndFinger1, ZoomOutEndFinger2, zoomSepts);
+            yield return WaitForZoomToFinalize();
+            Assert.AreEqual(expectedZoomOutFov, dhvCineMachineComponent.Lens.FieldOfView, errorToleranceInDegrees);
+
+            Assert.AreEqual(initialFieldOfView, dhvCineMachineComponent.Lens.FieldOfView, errorToleranceInDegrees);
+            Assert.Greater(expectedZoomOutFov, expectedZoomInFov);
             yield return null;
-
-            Assert.Greater(dhvCamera.Lens.FieldOfView, newCameraFov);
-        }
-
-        [UnityTest]
-        public IEnumerator PinchInGestureShouldZoomIn()
-        {
-            Assert.AreEqual(initialFieldOfView, dhvCamera.Lens.FieldOfView);
-
-            Vector2 startFinger1 = new Vector2(2000, 2000);
-            Vector2 startFinger2 = new Vector2(4000, 4000);
-            Vector2 endFinger1 = new Vector2(1000, 1000);
-            Vector2 endFinger2 = new Vector2(5000, 5000);
-
-            yield return MovePointerUtils.TouchGesture(input, touch, startFinger1, startFinger2, endFinger1, endFinger2, 10);
-
-            Assert.Less(dhvCamera.Lens.FieldOfView, initialFieldOfView);
-        }
-
-        [UnityTest]
-        public IEnumerator PinchOutGestureShouldZoomOut()
-        {
-            float newCameraFov = 10f;
-            dhvCamera.Lens.FieldOfView = newCameraFov;
-
-            Vector2 startFinger1 = new Vector2(1000, 1000);
-            Vector2 startFinger2 = new Vector2(5000, 5000);
-            Vector2 endFinger1 = new Vector2(2000, 2000);
-            Vector2 endFinger2 = new Vector2(4000, 4000);
-
-            yield return MovePointerUtils.TouchGesture(input, touch, startFinger1, startFinger2, endFinger1, endFinger2, 10);
-
-            Assert.Greater(dhvCamera.Lens.FieldOfView, newCameraFov);
         }
 
         [UnityTest]
         public IEnumerator ShouldNotExceedMinFov()
         {
-            dhvCamera.Lens.FieldOfView = minFieldOfView;
+            Assert.AreEqual(initialFieldOfView, dhvCineMachineComponent.Lens.FieldOfView);
 
-            input.Set(mouse.scroll, new Vector2(0, 10));
+            Vector2 scrollInput = new Vector2(0, scrollStep * 100);
+
+            input.Set(mouse.scroll, scrollInput);
+            yield return WaitForZoomToFinalize();
+
+            Assert.AreEqual(dhvCineMachineComponent.Lens.FieldOfView, minFieldOfView, errorToleranceInDegrees);
             yield return null;
-
-            Assert.GreaterOrEqual(dhvCamera.Lens.FieldOfView, minFieldOfView);
         }
 
         [UnityTest]
         public IEnumerator ShouldNotExceedMaxFov()
         {
-            dhvCamera.Lens.FieldOfView = maxFieldOfView;
+            Assert.AreEqual(initialFieldOfView, dhvCineMachineComponent.Lens.FieldOfView);
 
-            input.Set(mouse.scroll, new Vector2(0, -10));
+            Vector2 scrollInput = new Vector2(0, -scrollStep * 100);
+
+            input.Set(mouse.scroll, scrollInput);
+            yield return WaitForZoomToFinalize();
+
+            Assert.AreEqual(dhvCineMachineComponent.Lens.FieldOfView, maxFieldOfView, errorToleranceInDegrees);
             yield return null;
-
-            Assert.LessOrEqual(dhvCamera.Lens.FieldOfView, maxFieldOfView);
         }
+
+        private float CalculateNextScrollZoomFov(Vector2 scrollInput)
+        {
+            float zoomAmount = scrollInput.y * zoomDhvBehavior.scrollZoomSpeedMultiplier;
+            float exponentialZoom = dhvCineMachineComponent.Lens.FieldOfView * Mathf.Pow(zoomDhvBehavior.scrollZoomScaleFactor, zoomAmount);
+            return Mathf.Clamp(exponentialZoom, minFieldOfView, maxFieldOfView);
+        }
+
+        private float calculateNextPinchZoomFov(Vector2 startFinger1, Vector2 startFinger2, Vector2 endFinger1, Vector2 endFinger2)
+        {
+            float initialPinchDistance = Vector2.Distance(startFinger1, startFinger2);
+            float currentDistance = Vector2.Distance(endFinger1, endFinger2);
+            float zoomFactor = currentDistance / initialPinchDistance;
+            return Mathf.Clamp(dhvCineMachineComponent.Lens.FieldOfView / zoomFactor, minFieldOfView, maxFieldOfView);
+        }
+
+        private IEnumerator WaitForZoomToFinalize()
+        {
+            yield return new WaitForSeconds(zoomDhvBehavior.smoothTime * zoomSepts);
+        }
+
     }
 }
