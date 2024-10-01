@@ -2,19 +2,20 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.inputs;
+using ReupVirtualTwin.managerInterfaces;
 
 namespace ReupVirtualTwin.managers
 {
-    public class DragManager : MonoBehaviour
+    public class DragManager : MonoBehaviour, IDragManager
     {
         [HideInInspector]
-        public bool dragging = false;
+        public bool dragging { get; private set; } = false;
         [HideInInspector]
-        public bool prevDragging = false;
+        public bool prevDragging { get; private set; } = false;
         [HideInInspector]
-        public bool selectInputInUI = false;
+        public bool selectInputInUI { get; private set; } = false;
         [HideInInspector]
-        public bool prevSelectInputInUI = false;
+        public bool prevSelectInputInUI { get; private set; } = false;
 
         private bool _isHolding = false;
         private Vector2 _selectPosition;

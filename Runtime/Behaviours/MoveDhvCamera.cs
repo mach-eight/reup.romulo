@@ -17,7 +17,7 @@ namespace ReupVirtualTwin.behaviours
 
         InputProvider _inputProvider;
         float distancePerPixel;
-        DragManager dragManager;
+        IDragManager dragManager;
         IGesturesManager gesturesManager;
         GameObject building;
         private Vector3 buildingCenter;
@@ -28,7 +28,7 @@ namespace ReupVirtualTwin.behaviours
             _inputProvider = new InputProvider();
             int pixelsInSquareViewport = ViewportUtils.MinViewportDimension(Camera.main);
             distancePerPixel = PointerMoveCameraDistanceInMetersSquareViewport / pixelsInSquareViewport;
-            dragManager = dragManagerGameObject.GetComponent<DragManager>();
+            dragManager = dragManagerGameObject.GetComponent<IDragManager>();
             gesturesManager = gesturesManagerGameObject.GetComponent<IGesturesManager>();
             building = ObjectFinder.FindSetupBuilding().GetComponent<SetupBuilding>().building;
             buildingCenter = BoundariesUtils.CalculateCenter(building);
