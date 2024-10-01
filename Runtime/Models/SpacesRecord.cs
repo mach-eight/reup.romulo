@@ -44,25 +44,21 @@ namespace ReupVirtualTwin.models
             {
                 _jumpPoints = new List<ISpaceJumpPoint>() { };
             }
-            if (!SpaceTagIsDefined())
+            GameObject[] spaces;
+            try
             {
-                return;
+                spaces = GameObject.FindGameObjectsWithTag(TagsEnum.spaceSelector);
             }
-            GameObject[] spaces = GameObject.FindGameObjectsWithTag(TagsEnum.spaceSelector);
+            catch
+            {
+                spaces = new GameObject[] { };
+            }
             _jumpPoints.Clear();
             foreach (GameObject room in spaces)
             {
                 SpaceJumpPoint roomSelector = room.GetComponent<SpaceJumpPoint>();
                 _jumpPoints.Add(roomSelector);
             }
-        }
-
-        public bool SpaceTagIsDefined()
-        {
-            return Array.Exists(
-                UnityEditorInternal.InternalEditorUtility.tags,
-                element => element == TagsEnum.spaceSelector
-            );
         }
 
         public void GoToSpace(string spaceJumpPointId, string requestId)

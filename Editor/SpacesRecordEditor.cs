@@ -32,7 +32,7 @@ namespace ReupVirtualTwin.editor
         public override void OnInspectorGUI()
         {
             SpacesRecord spacesRecord = (SpacesRecord)target;
-            if (!spacesRecord.SpaceTagIsDefined())
+            if (!SpaceTagIsDefined())
             {
                 EditorGUILayout.HelpBox("No defined space selector tag yet", MessageType.Warning);
                 return;
@@ -48,6 +48,14 @@ namespace ReupVirtualTwin.editor
                 EditorGUILayout.LabelField($" - {spaceSelector.gameObject.name} ({spaceSelector.spaceName})");
             }
             DrawDefaultInspector();
+        }
+
+        bool SpaceTagIsDefined()
+        {
+            return Array.Exists(
+                UnityEditorInternal.InternalEditorUtility.tags,
+                element => element == TagsEnum.spaceSelector
+            );
         }
 
     }
