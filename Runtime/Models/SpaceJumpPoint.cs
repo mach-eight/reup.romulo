@@ -11,7 +11,7 @@ namespace ReupVirtualTwin.models
         public string _id = "";
         public string id { get => _id; set => _id = value; }
 
-        private void Start()
+        public void Awake()
         {
             if (string.IsNullOrEmpty(id.Trim()))
             {

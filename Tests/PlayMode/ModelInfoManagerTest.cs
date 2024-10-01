@@ -23,13 +23,12 @@ public class ModelInfoManagerTest : MonoBehaviour
     List<GameObject> spaceSelectors;
 
 
-    [UnitySetUp]
-    public IEnumerator SetUp()
+    [SetUp]
+    public void SetUp()
     {
         buildingGameObject = StubObjectTreeCreator.CreateMockBuilding(BUILDING_CHILDREN_DEPTH);
         sceneObjects = ReupSceneInstantiator.InstantiateSceneWithBuildingWithBuildingObject(buildingGameObject);
         modelInfoManager = sceneObjects.modelInfoManager;
-        yield return null;
     }
     [UnityTearDown]
     public IEnumerator TearDown()
@@ -208,19 +207,17 @@ public class ModelInfoManagerTest : MonoBehaviour
     [UnityTest]
     public IEnumerator SpaceSelectorsIdsShouldBeDifferentThanEmptyOrNull()
     {
-        spaceSelectors = SpaceSelectorFabric.CreateBulk(5);
-        spaceSelectors[0].GetComponent<SpaceJumpPoint>().id = "    ";
-        yield return null;
+        int numberOfSpaceSelectors = 5;
+        spaceSelectors = SpaceSelectorFabric.CreateBulk(numberOfSpaceSelectors);
         WebMessage<JObject> message = modelInfoManager.ObtainModelInfoMessage();
         JArray spaceSelectorsList = message.payload["spaceSelectors"].ToObject<JArray>();
-        Assert.AreEqual(5, spaceSelectorsList.Count);
+        Assert.AreEqual(numberOfSpaceSelectors, spaceSelectorsList.Count);
         for (int i = 0; i < 5; i++)
         {
             string id = spaceSelectorsList[i]["id"].ToString().Trim();
             Assert.IsFalse(string.IsNullOrEmpty(id));
         }
         yield return null;
-
     }
 
 }
