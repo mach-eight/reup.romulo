@@ -36,6 +36,8 @@ namespace ReupVirtualTwin.dependencyInjectors
         GameObject dhvCamera;
         [SerializeField]
         ViewModeManager viewModeManager;
+        [SerializeField]
+        GameObject setupBuilding;
 
         private void Awake()
         {
@@ -48,7 +50,9 @@ namespace ReupVirtualTwin.dependencyInjectors
                 !modelInfoManager ||
                 !fpvCamera ||
                 !dhvCamera ||
-                !character)
+                !character ||
+                !viewModeManager ||
+                !setupBuilding)
             {
                 throw new System.Exception("Some dependencies are missing");
             }
@@ -82,6 +86,10 @@ namespace ReupVirtualTwin.dependencyInjectors
             );
             editMediator.originalSceneController = new OriginalSceneController(registry);
             editMediator.viewModeManager = viewModeManager;
+            editMediator.buildingVisibilityController = new BuildingVisibilityController(
+                registry,
+                setupBuilding.GetComponent<IBuildingGetterSetter>().building
+            );
         }
     }
 }

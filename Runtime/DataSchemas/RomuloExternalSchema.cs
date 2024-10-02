@@ -31,5 +31,25 @@ namespace ReupVirtualTwin.dataSchemas
             },
             ""required"": [""requestTimestamp"", ""objects""]
         }");
+
+        public static readonly JSchema showOrHideObjectsPayloadSchema = JSchema.Parse(@"{
+            ""type"": ""object"",
+            ""properties"": {
+                ""objectIds"": {
+                    ""type"": ""array"",
+                    ""items"": { ""type"": ""string"" },
+                },
+                ""requestId"": { ""type"": ""string"" }
+            },
+            ""required"": [""objectIds"", ""requestId""]
+        }");
+
+        public static readonly JSchema showAllObjectsPayloadSchema = JSchema.Parse(@"{
+            ""type"": ""object"",
+            ""properties"": {
+                ""requestId"": { ""type"": ""string"" }
+            },
+            ""required"": [""requestId""]
+        }");
     }
 }

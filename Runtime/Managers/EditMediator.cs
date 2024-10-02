@@ -74,6 +74,9 @@ namespace ReupVirtualTwin.managers
         private IOriginalSceneController _originalSceneController;
         public IOriginalSceneController originalSceneController { get => _originalSceneController; set => _originalSceneController = value; }
 
+        private IBuildingVisibilityController _buildingVisibilityController;
+        public IBuildingVisibilityController buildingVisibilityController { get => _buildingVisibilityController; set => _buildingVisibilityController = value; }
+
         public void Notify(ReupEvent eventName)
         {
             switch (eventName)
@@ -243,7 +246,64 @@ namespace ReupVirtualTwin.managers
                 case WebMessageType.activateFPV:
                     _viewModeManager.ActivateFPV();
                     break;
+                case WebMessageType.showObjects:
+                    ToggleObjectsVisibility((JObject)payload, true);
+                    break;
+                case WebMessageType.hideObjects:
+                    ToggleObjectsVisibility((JObject)payload, false);
+                    break;
+                case WebMessageType.showAllObjects:
+                    ShowAllObjects((JObject)payload);
+                    break;
             }
+        }
+
+        private void ToggleObjectsVisibility(JObject payload, bool show)
+        {
+            string[] objectIds = payload["objectIds"].ToObject<string[]>();
+            TaskResult isSuccess = _buildingVisibilityController.SetObjectsVisibility(objectIds, show);
+            if (!isSuccess.isSuccess)
+            {
+                SendHideShowObjectsFailureMessage(payload, isSuccess.error);
+                return;
+            }
+            SendHideShowObjectsSuccessMessage(payload);
+        }
+
+        private void ShowAllObjects(JObject payload)
+        {
+            TaskResult isSuccess = _buildingVisibilityController.ShowAllObjects();
+            if (!isSuccess.isSuccess)
+            {
+                SendHideShowObjectsFailureMessage(payload, isSuccess.error);
+                return;
+            }
+            SendHideShowObjectsSuccessMessage(payload);
+        }
+
+        private void SendHideShowObjectsSuccessMessage(JObject payload)
+        {
+            WebMessage<JObject> message = new()
+            {
+                type = WebMessageType.showHideObjectsSuccess,
+                payload = new JObject(
+                    new JProperty("requestId", payload["requestId"])
+                )
+            };
+            _webMessageSender.SendWebMessage(message);
+        }
+
+        private void SendHideShowObjectsFailureMessage(JObject payload, string errorMessage)
+        {
+            WebMessage<JObject> message = new()
+            {
+                type = WebMessageType.showHideObjectsFailure,
+                payload = new JObject(
+                    new JProperty("errorMessage", errorMessage),
+                    new JProperty("requestId", payload["requestId"])
+                )
+            };
+            _webMessageSender.SendWebMessage(message);
         }
 
         private async Task LoadObjectsState(JObject requestPayload)

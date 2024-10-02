@@ -49,5 +49,11 @@ namespace ReupVirtualTwin.enums
         public const string activateDHV = "[View Mode] Activate Dollhouse View";
         public const string activateFPV = "[View Mode] Activate First-person View";
 
+        public const string showObjects = "[Visibility] Show Objects";
+        public const string hideObjects = "[Visibility] Hide Objects";
+        public const string showAllObjects = "[Visibility] Show All Objects";
+        public const string showHideObjectsSuccess = "[Visibility] Show/Hide Objects Success";
+        public const string showHideObjectsFailure = "[Visibility] Show/Hide Objects Failure";
+
     }
 }

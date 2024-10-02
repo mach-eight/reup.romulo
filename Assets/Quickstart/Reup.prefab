@@ -309,6 +309,7 @@ MonoBehaviour:
   fpvCamera: {fileID: 8060287538316763243}
   dhvCamera: {fileID: 2401207048260687702}
   viewModeManager: {fileID: 3904143813462744938}
+  setupBuilding: {fileID: 7508923528206428603}
 --- !u!114 &6350977991642200349
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2669,4 +2670,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7399657085a0e724ab7767499ee940d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objects: []
