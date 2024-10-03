@@ -23,14 +23,16 @@ namespace ReupVirtualTwinTests.controllers
         JObject messagePayload;
         SomeObjectWithMaterialRegistrySpy objectRegistry;
         MaterialScalerSpy materialScalerSpy;
+        TexturesManagerSpy texturesManagerSpy;
 
         [UnitySetUp]
         public IEnumerator SetUp()
         {
             textureDownloaderSpy = new TextureDownloaderSpy();
             textureCompresserSpy = new TextureCompresserSpy();
+            texturesManagerSpy = new TexturesManagerSpy();
             objectRegistry = new SomeObjectWithMaterialRegistrySpy();
-            controller = new ChangeMaterialController(textureDownloaderSpy, objectRegistry);
+            controller = new ChangeMaterialController(textureDownloaderSpy, objectRegistry, texturesManagerSpy);
             controller.textureCompresser = textureCompresserSpy;
             materialScalerSpy = new MaterialScalerSpy();
             controller.materialScaler = materialScalerSpy;
@@ -83,8 +85,8 @@ namespace ReupVirtualTwinTests.controllers
         private class TextureDownloaderSpy : ITextureDownloader
         {
             public string url;
-            public bool shouldFail= false;
-            public Texture2D texture = new Texture2D(1,1);
+            public bool shouldFail = false;
+            public Texture2D texture = new Texture2D(1, 1);
             public async Task<Texture2D> DownloadTextureFromUrl(string url)
             {
                 this.url = url;
@@ -95,6 +97,13 @@ namespace ReupVirtualTwinTests.controllers
                 }
                 return texture;
             }
+        }
+
+        private List<GameObject> FilterObjectsWithMeshRenderer(List<GameObject> objects)
+        {
+            return objects
+            .Where(obj => obj.GetComponent<MeshRenderer>() != null)
+            .ToList();
         }
 
         private List<Material> GetMaterialsFromObjects(List<GameObject> objects)
@@ -137,25 +146,23 @@ namespace ReupVirtualTwinTests.controllers
         [Test]
         public async Task ShouldChangeMaterialsOfObjects()
         {
-            List<Material> originalMaterials = GetMaterialsFromObjects(objectRegistry.objects);
+            List<GameObject> objects = FilterObjectsWithMeshRenderer(objectRegistry.objects);
             await controller.ChangeObjectMaterial(messagePayload);
-            List<Material> newMaterials = GetMaterialsFromObjects(objectRegistry.objects);
-            Assert.AreEqual(originalMaterials.Count, newMaterials.Count);
-            for (int i = 0; i < originalMaterials.Count; i++)
+            for (int i = 0; i < objects.Count; i++)
             {
-                Assert.AreNotEqual(originalMaterials[i], newMaterials[i]);
+                Assert.AreEqual(objects[i], texturesManagerSpy.calledObjectsToApplyMaterial[i]);
             }
         }
 
         [Test]
         public async Task ShouldAssignMaterialsWithDownloadedTexture()
         {
+            List<GameObject> objects = FilterObjectsWithMeshRenderer(objectRegistry.objects);
             await controller.ChangeObjectMaterial(messagePayload);
-            List<Material> newMaterials = GetMaterialsFromObjects(objectRegistry.objects);
             Assert.AreEqual(textureDownloaderSpy.texture, textureCompresserSpy.passedTexture);
-            for(int i = 0; i < newMaterials.Count; i++)
+            for (int i = 0; i < objects.Count; i++)
             {
-                Assert.AreEqual(textureCompresserSpy.returnedTexture, newMaterials[i].GetTexture("_BaseMap"));
+                Assert.AreEqual(textureCompresserSpy.returnedTexture, texturesManagerSpy.calledToApplyMaterials[i].mainTexture);
             }
         }
 

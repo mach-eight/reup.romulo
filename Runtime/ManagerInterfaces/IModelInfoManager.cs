@@ -7,7 +7,7 @@ namespace ReupVirtualTwin.managerInterfaces
     public interface IModelInfoManager
     {
         public WebMessage<JObject> ObtainModelInfoMessage();
-        public WebMessage<UpdateBuildingMessage> ObtainUpdateBuildingMessage();
+        public WebMessage<JObject> ObtainUpdateBuildingMessage();
         public void InsertObjectToBuilding(GameObject obj);
     }
 }

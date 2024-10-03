@@ -16,17 +16,21 @@ namespace ReupVirtualTwin.dependencyInjectors
     {
         EditMediator editMediator;
         [SerializeField] GameObject insertPositionLocation;
-        [SerializeField] GameObject editModeManager;
-        [SerializeField] GameObject selectedObjectsManager;
-        [SerializeField] GameObject transformObjectsManager;
-        [SerializeField] GameObject deleteObjectsManager;
-        [SerializeField] GameObject changeColorManager;
-        [SerializeField] GameObject modelInfoManager;
+        [SerializeField] EditModeManager editModeManager;
+        [SerializeField] SelectedObjectsManager selectedObjectsManager;
+        [SerializeField] TransformObjectsManager transformObjectsManager;
+        [SerializeField] DeleteObjectsManager deleteObjectsManager;
+        [SerializeField] ChangeColorManager changeColorManager;
+        [SerializeField] ModelInfoManager modelInfoManager;
         [SerializeField] GameObject character;
         [SerializeField] GameObject fpvCamera;
         [SerializeField] GameObject dhvCamera;
         [SerializeField] ViewModeManager viewModeManager;
         [SerializeField] SpacesRecord spacesRecord;
+        [SerializeField] TexturesManager texturesManager;
+        [SerializeField] CharacterRotationManager characterRotationManager;
+        [SerializeField] ObjectRegistry objectRegistry;
+        [SerializeField] GameObject setupBuilding;
 
         private void Awake()
         {
@@ -40,19 +44,21 @@ namespace ReupVirtualTwin.dependencyInjectors
                 !fpvCamera ||
                 !dhvCamera ||
                 !spacesRecord ||
-                !character)
+                !texturesManager ||
+                !character ||
+                !viewModeManager ||
+                !setupBuilding)
             {
                 throw new System.Exception("Some dependencies are missing");
             }
             editMediator = GetComponent<EditMediator>();
-            ICharacterRotationManager characterRotationManager = ObjectFinder.FindCharacter().GetComponent<ICharacterRotationManager>();
             editMediator.characterRotationManager = characterRotationManager;
-            editMediator.editModeManager = editModeManager.GetComponent<IEditModeManager>();
-            editMediator.selectedObjectsManager = selectedObjectsManager.GetComponent<ISelectedObjectsManager>();
-            editMediator.transformObjectsManager = transformObjectsManager.GetComponent<ITransformObjectsManager>();
-            editMediator.deleteObjectsManager = deleteObjectsManager.GetComponent<IDeleteObjectsManager>();
-            editMediator.changeColorManager = changeColorManager.GetComponent<IChangeColorManager>();
-            editMediator.modelInfoManager = modelInfoManager.GetComponent<IModelInfoManager>();
+            editMediator.editModeManager = editModeManager;
+            editMediator.selectedObjectsManager = selectedObjectsManager;
+            editMediator.transformObjectsManager = transformObjectsManager;
+            editMediator.deleteObjectsManager = deleteObjectsManager;
+            editMediator.changeColorManager = changeColorManager;
+            editMediator.modelInfoManager = modelInfoManager;
             IWebMessagesSender webMessageSender = GetComponent<IWebMessagesSender>();
             if (webMessageSender == null)
             {
@@ -60,8 +66,7 @@ namespace ReupVirtualTwin.dependencyInjectors
             }
             editMediator.webMessageSender = webMessageSender;
             editMediator.objectMapper = new ObjectMapper(new TagsController(), new IdController());
-            IObjectRegistry registry = ObjectFinder.FindObjectRegistry().GetComponent<IObjectRegistry>();
-            editMediator.registry = registry;
+            editMediator.registry = objectRegistry;
             editMediator.insertObjectsController = new InsertObjectController(
                 editMediator,
                 new MeshDownloader(),
@@ -70,11 +75,16 @@ namespace ReupVirtualTwin.dependencyInjectors
             );
             editMediator.changeMaterialController = new ChangeMaterialController(
                 new TextureDownloader(),
-                registry
+                objectRegistry,
+                texturesManager
             );
-            editMediator.originalSceneController = new OriginalSceneController(registry);
+            editMediator.originalSceneController = new OriginalSceneController(objectRegistry, texturesManager);
             editMediator.viewModeManager = viewModeManager;
             editMediator.spacesRecord = spacesRecord;
+            editMediator.buildingVisibilityController = new BuildingVisibilityController(
+                objectRegistry,
+                setupBuilding.GetComponent<IBuildingGetterSetter>().building
+            );
         }
     }
 }

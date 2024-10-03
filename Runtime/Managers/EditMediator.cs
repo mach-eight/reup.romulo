@@ -74,6 +74,7 @@ namespace ReupVirtualTwin.managers
         private IOriginalSceneController _originalSceneController;
         public IOriginalSceneController originalSceneController { get => _originalSceneController; set => _originalSceneController = value; }
         public ISpacesRecord spacesRecord { get; set; }
+        public IBuildingVisibilityController buildingVisibilityController { get; set; }
 
         public void Notify(ReupEvent eventName)
         {
@@ -229,7 +230,7 @@ namespace ReupVirtualTwin.managers
                     TaskResult result = await _changeMaterialController.ChangeObjectMaterial((JObject)payload);
                     if (!result.isSuccess)
                     {
-                        SendErrorMessage(result.error);
+                        SendObjectMaterialsChangeFailure(result.error);
                         return;
                     }
                     ProcessObjectMaterialsChange((JObject)payload);
@@ -258,7 +259,64 @@ namespace ReupVirtualTwin.managers
                 case WebMessageType.slideToSpace:
                     spacesRecord.GoToSpace(payload["spaceId"].ToString(), payload["requestId"].ToString());
                     break;
+                case WebMessageType.showObjects:
+                    SetObjectsVisibility((JObject)payload, true);
+                    break;
+                case WebMessageType.hideObjects:
+                    SetObjectsVisibility((JObject)payload, false);
+                    break;
+                case WebMessageType.showAllObjects:
+                    ShowAllObjects((JObject)payload);
+                    break;
             }
+        }
+
+        private void SetObjectsVisibility(JObject payload, bool show)
+        {
+            string[] objectIds = payload["objectIds"].ToObject<string[]>();
+            TaskResult isSuccess = buildingVisibilityController.SetObjectsVisibility(objectIds, show);
+            if (!isSuccess.isSuccess)
+            {
+                SendHideShowObjectsFailureMessage(payload, isSuccess.error);
+                return;
+            }
+            SendHideShowObjectsSuccessMessage(payload);
+        }
+
+        private void ShowAllObjects(JObject payload)
+        {
+            TaskResult isSuccess = buildingVisibilityController.ShowAllObjects();
+            if (!isSuccess.isSuccess)
+            {
+                SendHideShowObjectsFailureMessage(payload, isSuccess.error);
+                return;
+            }
+            SendHideShowObjectsSuccessMessage(payload);
+        }
+
+        private void SendHideShowObjectsSuccessMessage(JObject payload)
+        {
+            WebMessage<JObject> message = new()
+            {
+                type = WebMessageType.showHideObjectsSuccess,
+                payload = new JObject(
+                    new JProperty("requestId", payload["requestId"])
+                )
+            };
+            _webMessageSender.SendWebMessage(message);
+        }
+
+        private void SendHideShowObjectsFailureMessage(JObject payload, string errorMessage)
+        {
+            WebMessage<JObject> message = new()
+            {
+                type = WebMessageType.showHideObjectsFailure,
+                payload = new JObject(
+                    new JProperty("errorMessage", errorMessage),
+                    new JProperty("requestId", payload["requestId"])
+                )
+            };
+            _webMessageSender.SendWebMessage(message);
         }
 
         private async Task LoadObjectsState(JObject requestPayload)
@@ -508,7 +566,7 @@ namespace ReupVirtualTwin.managers
 
         private void SendUpdatedBuildingMessage()
         {
-            WebMessage<UpdateBuildingMessage> message = _modelInfoManager.ObtainUpdateBuildingMessage();
+            WebMessage<JObject> message = _modelInfoManager.ObtainUpdateBuildingMessage();
             _webMessageSender.SendWebMessage(message);
         }
 
@@ -592,6 +650,17 @@ namespace ReupVirtualTwin.managers
                 payload = materialsChangedInfo
             };
             _webMessageSender.SendWebMessage(message);
+        }
+
+        private void SendObjectMaterialsChangeFailure(string message)
+        {
+            _webMessageSender.SendWebMessage(new WebMessage<JObject>
+            {
+                type = WebMessageType.changeObjectsMaterialFailure,
+                payload = new JObject(
+                    new JProperty("errorMessage", message)
+                )
+            });
         }
 
         private void SendErrorMessage(string message)

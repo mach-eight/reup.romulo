@@ -50,10 +50,10 @@ namespace ReupVirtualTwin.managers
             return message;
         }
 
-        public WebMessage<UpdateBuildingMessage> ObtainUpdateBuildingMessage()
+        public WebMessage<JObject> ObtainUpdateBuildingMessage()
         {
-            UpdateBuildingMessage messagePayload = ObtainUpdateBuildingMessagePayload();
-            WebMessage<UpdateBuildingMessage> message = new()
+            JObject messagePayload = ObtainUpdateBuildingMessagePayload();
+            WebMessage<JObject> message = new()
             {
                 type = WebMessageType.updateBuilding,
                 payload = messagePayload,
@@ -67,12 +67,12 @@ namespace ReupVirtualTwin.managers
             obj.transform.SetParent(buildingObject.transform);
         }
 
-        private UpdateBuildingMessage ObtainUpdateBuildingMessagePayload()
+        private JObject ObtainUpdateBuildingMessagePayload()
         {
             ObjectDTO buildingDTO = ObtainBuildingDTO();
-            UpdateBuildingMessage updateBuildingMessage = new()
+            JObject updateBuildingMessage = new()
             {
-                building = buildingDTO,
+                {"building", JObject.FromObject(buildingDTO)},
             };
             return updateBuildingMessage;
         }

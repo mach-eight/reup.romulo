@@ -66,5 +66,10 @@ namespace ReupVirtualTwin.helpers
             return GameObject.FindGameObjectWithTag(TagsEnum.editMediator).GetComponent<IMediator>();
         }
 
+        public static GameObject FindGesturesManager()
+        {
+            return GameObject.FindGameObjectWithTag(TagsEnum.gesturesManager);
+        }
+
     }
 }

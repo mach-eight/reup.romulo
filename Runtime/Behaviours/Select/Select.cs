@@ -2,8 +2,8 @@ using UnityEngine;
 using ReupVirtualTwin.helpers;
 using UnityEngine.InputSystem;
 using ReupVirtualTwin.inputs;
-using ReupVirtualTwin.managers;
 using ReupVirtualTwin.helperInterfaces;
+using ReupVirtualTwin.managerInterfaces;
 
 namespace ReupVirtualTwin.behaviours
 {
@@ -12,7 +12,7 @@ namespace ReupVirtualTwin.behaviours
     {
         protected InputProvider _inputProvider;
         protected IRayProvider _rayProvider;
-        protected DragManager _dragManager;
+        protected IDragManager _dragManager;
 
         protected virtual void Awake()
         {
@@ -21,7 +21,7 @@ namespace ReupVirtualTwin.behaviours
         }
         protected virtual void Start()
         {
-            _dragManager = ObjectFinder.FindDragManager().GetComponent<DragManager>();
+            _dragManager = ObjectFinder.FindDragManager().GetComponent<IDragManager>();
         }
 
         private void OnEnable()

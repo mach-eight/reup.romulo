@@ -4,15 +4,18 @@ using UnityEngine;
 
 using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.modelInterfaces;
+using ReupVirtualTwin.managerInterfaces;
 
 namespace ReupVirtualTwin.controllers
 {
     public class OriginalSceneController : IOriginalSceneController
     {
         IObjectRegistry registry;
-        public OriginalSceneController(IObjectRegistry registry)
+        readonly ITexturesManager texturesManager;
+        public OriginalSceneController(IObjectRegistry registry, ITexturesManager texturesManager)
         {
             this.registry = registry;
+            this.texturesManager = texturesManager;
         }
         public void RestoreOriginalScene()
         {
@@ -24,7 +27,7 @@ namespace ReupVirtualTwin.controllers
                 MeshRenderer meshRenderer = obj.GetComponent<MeshRenderer>();
                 if (meshRenderer != null && objectInfo.materialWasChanged)
                 {
-                    meshRenderer.material = originalMaterial;
+                    texturesManager.ApplyProtectedMaterialToObject(obj, originalMaterial);
                     objectInfo.materialWasRestored = true;
                 }
             }

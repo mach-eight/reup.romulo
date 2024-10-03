@@ -32,6 +32,7 @@ namespace ReupVirtualTwin.enums
 
         public const string changeObjectsMaterial = "[Change Material] Change Object Material";
         public const string changeObjectsMaterialSuccess = "[Change Material] Change Object Material Success";
+        public const string changeObjectsMaterialFailure = "[Change Material] Change Object Material Failure";
 
         public const string error = "[Error] Engine Error";
 
@@ -51,6 +52,12 @@ namespace ReupVirtualTwin.enums
 
         public const string slideToSpace = "[Navigation] Slide To Space";
         public const string slideToSpaceSuccess = "[Navigation] Slide To Space Success";
+
+        public const string showObjects = "[Visibility] Show Objects";
+        public const string hideObjects = "[Visibility] Hide Objects";
+        public const string showAllObjects = "[Visibility] Show All Objects";
+        public const string showHideObjectsSuccess = "[Visibility] Show/Hide Objects Success";
+        public const string showHideObjectsFailure = "[Visibility] Show/Hide Objects Failure";
 
     }
 }

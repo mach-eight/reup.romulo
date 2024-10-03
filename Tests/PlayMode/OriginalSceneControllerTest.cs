@@ -8,6 +8,7 @@ using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.models;
 using ReupVirtualTwinTests.utils;
+using ReupVirtualTwinTests.mocks;
 
 namespace ReupVirtualTwinTests.controllers
 {
@@ -22,13 +23,15 @@ namespace ReupVirtualTwinTests.controllers
         GameObject object2;
         Material material2;
         GameObject objectWithNoMaterial;
+        TexturesManagerSpy texturesManagerSpy;
 
         [UnitySetUp]
         public IEnumerator SetUp()
         {
             sceneObjects = ReupSceneInstantiator.InstantiateScene();
             objectRegistry = sceneObjects.objectRegistry;
-            originalSceneController = new OriginalSceneController(objectRegistry);
+            texturesManagerSpy = new TexturesManagerSpy();
+            originalSceneController = new OriginalSceneController(objectRegistry, texturesManagerSpy);
             SetObjectsAndMaterials();
             yield return null;
         }
@@ -62,7 +65,7 @@ namespace ReupVirtualTwinTests.controllers
         }
 
         [UnityTest]
-        public IEnumerator ShouldRestoreOriginalMaterials()
+        public IEnumerator ShouldApplyOriginalMaterialsAsProtectedMaterialsInTextureManager()
         {
             Assert.AreEqual(material1.name, object1.GetComponent<MeshRenderer>().sharedMaterial.name);
             Assert.AreEqual(material2.name, object2.GetComponent<MeshRenderer>().sharedMaterial.name);
@@ -79,9 +82,12 @@ namespace ReupVirtualTwinTests.controllers
             Assert.IsNull(objectWithNoMaterial.GetComponent<MeshRenderer>());
             originalSceneController.RestoreOriginalScene();
             yield return null;
-            Assert.AreEqual(material1.name, object1.GetComponent<MeshRenderer>().sharedMaterial.name);
+            Assert.AreEqual(2, texturesManagerSpy.calledToApplyProtectedMaterials.Count);
+            Assert.AreEqual(material1, texturesManagerSpy.calledToApplyProtectedMaterials[0]);
+            Assert.AreEqual(material2, texturesManagerSpy.calledToApplyProtectedMaterials[1]);
+            Assert.AreEqual(object1, texturesManagerSpy.calledObjectsToApplyProtectedMaterial[0]);
+            Assert.AreEqual(object2, texturesManagerSpy.calledObjectsToApplyProtectedMaterial[1]);
             Assert.IsTrue(object1.GetComponent<IObjectInfo>().materialWasRestored);
-            Assert.AreEqual(material2.name, object2.GetComponent<MeshRenderer>().sharedMaterial.name);
             Assert.IsTrue(object2.GetComponent<IObjectInfo>().materialWasRestored);
             Assert.IsNull(objectWithNoMaterial.GetComponent<MeshRenderer>());
             Assert.IsFalse(objectWithNoMaterial.GetComponent<IObjectInfo>().materialWasRestored);

@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using ReupVirtualTwin.modelInterfaces;
+using System.Linq;
 
 namespace ReupVirtualTwin.models
 {
     public class ObjectRegistry : MonoBehaviour, IObjectRegistry
     {
-        [HideInInspector]
-        public List<GameObject> objects = new List<GameObject>();
+        [HideInInspector] public Dictionary<string, GameObject> objects = new Dictionary<string, GameObject>();
 
         public void AddObject(GameObject item)
         {
@@ -16,30 +16,31 @@ namespace ReupVirtualTwin.models
             {
                 throw new System.Exception("Object must have a unique identifier");
             }
-            objects.Add(item);
+            string guid = uniqueIdentifier.getId();
+            if (objects.ContainsKey(guid))
+            {
+                throw new System.Exception($"An object with id '{guid}' already exists in registry, can't add object '{item.name}'");
+            }
+            objects.Add(guid, item);
         }
-        public void RemoveObject(GameObject item)
+        public void RemoveObject(string id, GameObject item)
         {
-            objects.Remove(item);
+            GameObject registeredItem = objects.GetValueOrDefault(id);
+            if (registeredItem != item && registeredItem != null)
+            {
+                throw new System.Exception($"Object with id '{id}' is not the same as the object being removed '{item.name}'");
+            }
+            objects.Remove(id);
         }
 
         public GameObject GetObjectWithGuid(string guid)
         {
-            foreach (GameObject obj in objects)
-            {
-                if (obj == null) continue;
-                var uniqueIdentifier = obj.GetComponent<IUniqueIdentifier>();
-                if (uniqueIdentifier.isIdCorrect(guid))
-                {
-                    return obj;
-                }
-            }
-            return null;
+            return objects.GetValueOrDefault(guid);
         }
         public List<GameObject> GetObjectsWithGuids(string[] guids)
         {
             var foundObjects = new List<GameObject>();
-            foreach(string  guid in guids)
+            foreach (string guid in guids)
             {
                 foundObjects.Add(GetObjectWithGuid(guid));
             }
@@ -57,7 +58,7 @@ namespace ReupVirtualTwin.models
 
         public List<GameObject> GetObjects()
         {
-            return objects;
+            return objects.Values.ToList();
         }
     }
 }

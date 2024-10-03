@@ -3,9 +3,9 @@ using UnityEngine;
 using UnityEngine.TestTools;
 using NUnit.Framework;
 using ReupVirtualTwin.models;
-using UnityEditor;
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwinTests.utils;
+using System;
 
 namespace ReupVirtualTwinTests.Registry
 {
@@ -99,7 +99,7 @@ namespace ReupVirtualTwinTests.Registry
             Assert.AreEqual(originalObjectsCount + 1, objectRegistry.GetObjectsCount());
             yield return null;
 
-            objectRegistry.RemoveObject(testObj0);
+            objectRegistry.RemoveObject(id, testObj0);
             Assert.AreEqual(originalObjectsCount, objectRegistry.GetObjectsCount());
             Assert.IsNull(objectRegistry.GetObjectWithGuid(id));
             yield return null;
@@ -121,17 +121,39 @@ namespace ReupVirtualTwinTests.Registry
             Assert.AreEqual(0, objectRegistry.GetObjectsCount());
             yield return null;
         }
+
         [UnityTest]
-        public IEnumerator ShouldNotRaiseAnyExeptionIfAttemptToRemoveItemNotInRegistry()
+        public IEnumerator ShouldRaiseError_if_twoObjectsWithSameIdAreAttemptedToBeRegistered()
         {
+            string repeatedId = "repeated-id";
             testObj0 = new GameObject("testObj0");
-            testObj0.AddComponent<UniqueId>().GenerateId();
+            testObj0.AddComponent<UniqueId>().AssignId(repeatedId);
+
             testObj1 = new GameObject("testObj1");
+            testObj1.AddComponent<UniqueId>().AssignId(repeatedId);
+
             objectRegistry.AddObject(testObj0);
-            Assert.AreEqual(originalObjectsCount + 1, objectRegistry.GetObjectsCount());
+            Assert.That(() => objectRegistry.AddObject(testObj1),
+                Throws.TypeOf<Exception>()
+            );
+
             yield return null;
-            objectRegistry.RemoveObject(testObj1);
-            Assert.AreEqual(originalObjectsCount + 1, objectRegistry.GetObjectsCount());
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldRaiseError_if_provideIncorrectIdAndObjectToBeRemoved()
+        {
+            string id = "test-id";
+            testObj0 = new GameObject("testObj0");
+            testObj0.AddComponent<UniqueId>().AssignId(id);
+            yield return null;
+
+            objectRegistry.AddObject(testObj0);
+            testObj1 = new GameObject("testObj1");
+            Assert.That(() => objectRegistry.RemoveObject(id, testObj1),
+                Throws.TypeOf<Exception>()
+            );
+
             yield return null;
         }
 

@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using ReupVirtualTwin.models;
 using ReupVirtualTwin.helpers;
-using ReupVirtualTwin.behaviourInterfaces;
+using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwinTests.mocks;
 
 namespace ReupVirtualTwinTests.utils
@@ -28,7 +28,7 @@ namespace ReupVirtualTwinTests.utils
             public SelectedObjectsManager selectedObjectsManager;
             public EditMediator editMediator;
             public SensedObjectHighlighter selectableObjectHighlighter;
-            public MoveDhvCamera moveDHVCamera;
+            public MoveDhvCamera moveDhvCameraBehavior;
             public GameObject dhvCamera;
             public GameObject fpvCamera;
             public ViewModeManager viewModeManager;
@@ -40,6 +40,9 @@ namespace ReupVirtualTwinTests.utils
             public Camera mainCamera;
             public SpacesRecord spacesRecord;
             public WebMessageSenderSpy webMessageSenderSpy;
+            public ITexturesManager texturesManager;
+            public GesturesManager gesturesManager;
+            public ZoomDhvCamera zoomDhvCameraBehavior;
         }
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab)
         {
@@ -70,6 +73,7 @@ namespace ReupVirtualTwinTests.utils
             Transform dollhouseViewWrapper = reupGameObject.transform.Find("DollhouseViewWrapper");
 
             SetupBuilding setupBuilding = baseGlobalScriptGameObject.transform.Find("SetupBuilding").GetComponent<SetupBuilding>();
+
             setupBuilding.building = building;
             setupBuilding.AssignIdsAndObjectInfoToBuilding();
 
@@ -111,6 +115,9 @@ namespace ReupVirtualTwinTests.utils
             SpacesRecord spacesRecord = baseGlobalScriptGameObject.transform.Find("SpacesRecord").GetComponent<SpacesRecord>();
 
             MoveDhvCamera moveDhvCamera = dollhouseViewWrapper.GetComponent<MoveDhvCamera>();
+            MoveDhvCamera moveDhvCameraBehavior = dollhouseViewWrapper.GetComponent<MoveDhvCamera>();
+
+            ZoomDhvCamera zoomDhvCameraBehavior = dollhouseViewWrapper.GetComponent<ZoomDhvCamera>();
 
             ModelInfoManager modelInfoManager = baseGlobalScriptGameObject.transform.Find("ModelInfo").GetComponent<ModelInfoManager>();
 
@@ -122,6 +129,10 @@ namespace ReupVirtualTwinTests.utils
 
             WebMessageSenderSpy webMessageSender = new WebMessageSenderSpy();
             editMediator.webMessageSender = webMessageSender;
+
+            ITexturesManager texturesManager = baseGlobalScriptGameObject.transform.Find("TexturesManager").GetComponent<ITexturesManager>();
+
+            GesturesManager gesturesManager = baseGlobalScriptGameObject.transform.Find("GesturesManager").GetComponent<GesturesManager>();
 
             return new SceneObjects
             {
@@ -142,13 +153,16 @@ namespace ReupVirtualTwinTests.utils
                 viewModeManager = viewModeManager,
                 input = input,
                 heightMediator = heightMediator,
-                moveDHVCamera = moveDhvCamera,
+                moveDhvCameraBehavior = moveDhvCameraBehavior,
                 modelInfoManager = modelInfoManager,
                 objectRegistry = objectRegistry,
                 objectPool = objectPool,
                 mainCamera = mainCamera,
                 spacesRecord = spacesRecord,
                 webMessageSenderSpy = webMessageSender,
+                texturesManager = texturesManager,
+                gesturesManager = gesturesManager,
+                zoomDhvCameraBehavior = zoomDhvCameraBehavior,
             };
         }
 

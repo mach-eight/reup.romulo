@@ -1,20 +1,16 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.inputs;
+using ReupVirtualTwin.managerInterfaces;
 
 namespace ReupVirtualTwin.managers
 {
-    public class DragManager : MonoBehaviour
+    public class DragManager : MonoBehaviour, IDragManager
     {
         [HideInInspector]
-        public bool dragging = false;
+        public bool dragging { get; private set; } = false;
         [HideInInspector]
-        public bool prevDragging = false;
-        [HideInInspector]
-        public bool selectInputInUI = false;
-        [HideInInspector]
-        public bool prevSelectInputInUI = false;
+        public bool prevDragging { get; private set; } = false;
 
         private bool _isHolding = false;
         private Vector2 _selectPosition;
@@ -41,7 +37,6 @@ namespace ReupVirtualTwin.managers
         void Update()
         {
             prevDragging = dragging;
-            prevSelectInputInUI = selectInputInUI;
             if (_isHolding == true && dragging == false)
             {
                 var pointer = _inputProvider.PointerInput();
@@ -60,7 +55,6 @@ namespace ReupVirtualTwin.managers
         {
             _isHolding = false;
             dragging = false;
-            selectInputInUI = false;
         }
     }
 }
