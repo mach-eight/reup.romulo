@@ -1,13 +1,16 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using ReupVirtualTwin.inputs;
+using ReupVirtualTwin.managerInterfaces;
 
 namespace ReupVirtualTwin.managers
 {
-    public class DragManager : MonoBehaviour
+    public class DragManager : MonoBehaviour, IDragManager
     {
-        [HideInInspector] public bool dragging = false;
-        [HideInInspector] public bool prevDragging = false;
+        [HideInInspector]
+        public bool dragging { get; private set; } = false;
+        [HideInInspector]
+        public bool prevDragging { get; private set; } = false;
 
         private bool _isHolding = false;
         private Vector2 _selectPosition;

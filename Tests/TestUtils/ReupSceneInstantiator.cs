@@ -27,7 +27,7 @@ namespace ReupVirtualTwinTests.utils
             public SelectedObjectsManager selectedObjectsManager;
             public EditMediator editMediator;
             public SensedObjectHighlighter selectableObjectHighlighter;
-            public MoveDhvCamera moveDHVCamera;
+            public MoveDhvCamera moveDhvCameraBehavior;
             public GameObject dhvCamera;
             public GameObject fpvCamera;
             public ViewModeManager viewModeManager;
@@ -38,6 +38,8 @@ namespace ReupVirtualTwinTests.utils
             public ObjectPool objectPool;
             public Camera mainCamera;
             public ITexturesManager texturesManager;
+            public GesturesManager gesturesManager;
+            public ZoomDhvCamera zoomDhvCameraBehavior;
         }
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab)
         {
@@ -107,7 +109,9 @@ namespace ReupVirtualTwinTests.utils
             HeightMediator heightMediator = character.transform.Find("Behaviours")
                 .Find("HeightMediator").GetComponent<HeightMediator>();
 
-            MoveDhvCamera moveDhvCamera = dollhouseViewWrapper.GetComponent<MoveDhvCamera>();
+            MoveDhvCamera moveDhvCameraBehavior = dollhouseViewWrapper.GetComponent<MoveDhvCamera>();
+
+            ZoomDhvCamera zoomDhvCameraBehavior = dollhouseViewWrapper.GetComponent<ZoomDhvCamera>();
 
             ModelInfoManager modelInfoManager = baseGlobalScriptGameObject.transform.Find("ModelInfo").GetComponent<ModelInfoManager>();
 
@@ -119,6 +123,8 @@ namespace ReupVirtualTwinTests.utils
 
             ITexturesManager texturesManager = baseGlobalScriptGameObject.transform.Find("TexturesManager").GetComponent<ITexturesManager>();
 
+            GesturesManager gesturesManager = baseGlobalScriptGameObject.transform.Find("GesturesManager").GetComponent<GesturesManager>();
+            
             return new SceneObjects
             {
                 reupObject = reupGameObject,
@@ -138,12 +144,14 @@ namespace ReupVirtualTwinTests.utils
                 viewModeManager = viewModeManager,
                 input = input,
                 heightMediator = heightMediator,
-                moveDHVCamera = moveDhvCamera,
+                moveDhvCameraBehavior = moveDhvCameraBehavior,
                 modelInfoManager = modelInfoManager,
                 objectRegistry = objectRegistry,
                 objectPool = objectPool,
                 mainCamera = mainCamera,
                 texturesManager = texturesManager,
+                gesturesManager = gesturesManager,
+                zoomDhvCameraBehavior = zoomDhvCameraBehavior,
             };
         }
 
