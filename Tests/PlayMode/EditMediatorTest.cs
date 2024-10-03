@@ -223,14 +223,14 @@ public class EditMediatorTest : MonoBehaviour
             return message;
         }
 
-        public WebMessage<UpdateBuildingMessage> ObtainUpdateBuildingMessage()
+        public WebMessage<JObject> ObtainUpdateBuildingMessage()
         {
-            WebMessage<UpdateBuildingMessage> message = new()
+            WebMessage<JObject> message = new()
             {
                 type = WebMessageType.updateBuilding,
-                payload = new UpdateBuildingMessage()
+                payload = new JObject()
                 {
-                    building = building,
+                    {"building", JObject.FromObject(building)},
                 },
             };
             return message;
@@ -540,9 +540,9 @@ public class EditMediatorTest : MonoBehaviour
         WebMessage<ObjectDTO> sentMessage = (WebMessage<ObjectDTO>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.loadObjectSuccess, sentMessage.type);
         Assert.AreEqual(mockObjectMapper.objectDTOs[0], sentMessage.payload);
-        WebMessage<UpdateBuildingMessage> sentUpdateBuildingMessage = (WebMessage<UpdateBuildingMessage>)mockWebMessageSender.sentMessages[1];
+        WebMessage<JObject> sentUpdateBuildingMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[1];
         Assert.AreEqual(WebMessageType.updateBuilding, sentUpdateBuildingMessage.type);
-        Assert.AreEqual(mockModelInfoManager.building, sentUpdateBuildingMessage.payload.building);
+        Assert.IsTrue(JObject.DeepEquals(JObject.FromObject(mockModelInfoManager.building), sentUpdateBuildingMessage.payload["building"]));
     }
 
     [UnityTest]
@@ -844,9 +844,9 @@ public class EditMediatorTest : MonoBehaviour
         WebMessage<string> deletedSuccessMessage = (WebMessage<string>)mockWebMessageSender.sentMessages[0];
         yield return null;
         Assert.AreEqual(WebMessageType.deleteObjectsSuccess, deletedSuccessMessage.type);
-        WebMessage<UpdateBuildingMessage> sentUpdateBuildingMessage = (WebMessage<UpdateBuildingMessage>)mockWebMessageSender.sentMessages[1];
+        WebMessage<JObject> sentUpdateBuildingMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[1];
         Assert.AreEqual(WebMessageType.updateBuilding, sentUpdateBuildingMessage.type);
-        Assert.AreEqual(mockModelInfoManager.building, sentUpdateBuildingMessage.payload.building);
+        Assert.IsTrue(JObject.DeepEquals(JObject.FromObject(mockModelInfoManager.building), sentUpdateBuildingMessage.payload["building"]));
     }
 
     [UnityTest]

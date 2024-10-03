@@ -24,7 +24,7 @@ namespace ReupVirtualTwin.behaviours
 
         public override void OnSelect(InputAction.CallbackContext ctx)
         {
-            if (!_dragManager.prevDragging && !_dragManager.prevSelectInputInUI)
+            if (!_dragManager.prevDragging)
             {
                 Ray ray = _rayProvider.GetRay();
                 RaycastHit? hit = _hitSelector.GetHit(ray);

@@ -320,7 +320,7 @@ namespace ReupVirtualTwinTests.controllers
                 throw new System.NotImplementedException();
             }
 
-            public WebMessage<UpdateBuildingMessage> ObtainUpdateBuildingMessage()
+            public WebMessage<JObject> ObtainUpdateBuildingMessage()
             {
                 throw new System.NotImplementedException();
             }

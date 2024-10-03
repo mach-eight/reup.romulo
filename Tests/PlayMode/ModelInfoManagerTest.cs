@@ -100,7 +100,7 @@ public class ModelInfoManagerTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldObtainTheUpdateBuildingMessage()
     {
-        WebMessage<UpdateBuildingMessage> message = modelInfoManager.ObtainUpdateBuildingMessage();
+        WebMessage<JObject> message = modelInfoManager.ObtainUpdateBuildingMessage();
         Assert.IsNotNull(message);
         Assert.AreEqual(WebMessageType.updateBuilding, message.type);
         Assert.IsNotNull(message.payload);

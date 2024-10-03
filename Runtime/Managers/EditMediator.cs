@@ -493,7 +493,7 @@ namespace ReupVirtualTwin.managers
 
         private void SendUpdatedBuildingMessage()
         {
-            WebMessage<UpdateBuildingMessage> message = _modelInfoManager.ObtainUpdateBuildingMessage();
+            WebMessage<JObject> message = _modelInfoManager.ObtainUpdateBuildingMessage();
             _webMessageSender.SendWebMessage(message);
         }
 
