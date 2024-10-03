@@ -121,7 +121,6 @@ namespace ReupVirtualTwinTests.managers
         [UnityTest]
         public IEnumerator ShouldDestroyNonProtectedTextures_when_applyingProtectedTextures()
         {
-
             Texture2D nonProtectedTexture = new Texture2D(2, 2);
             Material nonProtectedMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));
             nonProtectedMaterial.SetTexture("_BaseMap", nonProtectedTexture);
