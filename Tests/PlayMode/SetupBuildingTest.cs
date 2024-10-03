@@ -3,6 +3,8 @@ using NUnit.Framework;
 using ReupVirtualTwin.models;
 using ReupVirtualTwinTests.utils;
 using ReupVirtualTwin.behaviours;
+using UnityEngine.TestTools;
+using System.Collections;
 
 namespace ReupVirtualTwinTests.behaviours
 {
@@ -23,19 +25,16 @@ namespace ReupVirtualTwinTests.behaviours
             child0 = building.transform.GetChild(0).gameObject;
             grandChild0 = child0.transform.GetChild(0).gameObject;
         }
-        [TearDown]
-        public void TearDown()
+        [UnityTearDown]
+        public IEnumerator TearDown()
         {
             ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
+            yield return null;
         }
 
         [Test]
         public void ShouldAssignIdsToAllObjectsInBuilding()
         {
-            Assert.IsNull(building.GetComponent<RegisteredIdentifier>());
-            Assert.IsNull(child0.GetComponent<RegisteredIdentifier>());
-            Assert.IsNull(grandChild0.GetComponent<RegisteredIdentifier>());
-            setupbuilding.AssignIdsAndObjectInfoToBuilding();
             Assert.IsNotNull(building.GetComponent<RegisteredIdentifier>());
             Assert.IsNotNull(child0.GetComponent<RegisteredIdentifier>());
             Assert.IsNotNull(grandChild0.GetComponent<RegisteredIdentifier>());
@@ -44,10 +43,6 @@ namespace ReupVirtualTwinTests.behaviours
         [Test]
         public void ShouldAssignObjectInfoComponentToAllObjectsInBuilding()
         {
-            Assert.IsNull(building.GetComponent<ObjectInfo>());
-            Assert.IsNull(child0.GetComponent<ObjectInfo>());
-            Assert.IsNull(grandChild0.GetComponent<ObjectInfo>());
-            setupbuilding.AssignIdsAndObjectInfoToBuilding();
             Assert.IsNotNull(building.GetComponent<ObjectInfo>());
             Assert.IsNotNull(child0.GetComponent<ObjectInfo>());
             Assert.IsNotNull(grandChild0.GetComponent<ObjectInfo>());

@@ -4,9 +4,9 @@ using ReupVirtualTwin.behaviours;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.EventSystems;
 using ReupVirtualTwin.models;
 using ReupVirtualTwin.helpers;
+using ReupVirtualTwin.managerInterfaces;
 
 namespace ReupVirtualTwinTests.utils
 {
@@ -32,35 +32,33 @@ namespace ReupVirtualTwinTests.utils
             public GameObject fpvCamera;
             public ViewModeManager viewModeManager;
             public InputTestFixture input;
-            public EventSystem eventSystem;
             public HeightMediator heightMediator;
             public ModelInfoManager modelInfoManager;
             public ObjectRegistry objectRegistry;
             public ObjectPool objectPool;
             public Camera mainCamera;
+            public ITexturesManager texturesManager;
         }
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab)
         {
             GameObject building = (GameObject)PrefabUtility.InstantiatePrefab(buildingPrefab);
-            return SceneObjectsWithBuilding(building);
+            return InstantiateSceneWithBuildingWithBuildingObject(building);
         }
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab, Action<GameObject> modifyBuilding)
         {
             GameObject building = (GameObject)PrefabUtility.InstantiatePrefab(buildingPrefab);
             modifyBuilding(building);
-            return SceneObjectsWithBuilding(building);
+            return InstantiateSceneWithBuildingWithBuildingObject(building);
         }
 
         public static SceneObjects InstantiateScene()
         {
             GameObject building = CreateDefaultBuilding();
-            return SceneObjectsWithBuilding(building);
+            return InstantiateSceneWithBuildingWithBuildingObject(building);
         }
 
-        private static SceneObjects SceneObjectsWithBuilding(GameObject building)
+        public static SceneObjects InstantiateSceneWithBuildingWithBuildingObject(GameObject building)
         {
-            GameObject eventSystemGameObject = new GameObject("EventSystem");
-            EventSystem eventSystem = eventSystemGameObject.AddComponent<EventSystem>();
             InputTestFixture input = new InputTestFixture();
             input.Setup();
             GameObject reupGameObject = (GameObject)PrefabUtility.InstantiatePrefab(reupPrefab);
@@ -70,7 +68,9 @@ namespace ReupVirtualTwinTests.utils
             Transform dollhouseViewWrapper = reupGameObject.transform.Find("DollhouseViewWrapper");
 
             SetupBuilding setupBuilding = baseGlobalScriptGameObject.transform.Find("SetupBuilding").GetComponent<SetupBuilding>();
+
             setupBuilding.building = building;
+            setupBuilding.AssignIdsAndObjectInfoToBuilding();
 
             EditMediator editMediator = baseGlobalScriptGameObject.transform
                 .Find("EditMediator").GetComponent<EditMediator>();
@@ -97,7 +97,7 @@ namespace ReupVirtualTwinTests.utils
                 .Find("DollhouseViewWrapper")
                 .Find("VerticalRotationWrapper")
                 .Find("DHVCinemachineCamera").gameObject;
-                
+
             GameObject fpvCamera = character.transform.Find("InnerCharacter").Find("FPVCinemachineCamera").gameObject;
 
             ViewModeManager viewModeManager = baseGlobalScriptGameObject.transform
@@ -114,8 +114,10 @@ namespace ReupVirtualTwinTests.utils
             ObjectRegistry objectRegistry = baseGlobalScriptGameObject.transform.Find("ObjectRegistry").GetComponent<ObjectRegistry>();
 
             ObjectPool objectPool = baseGlobalScriptGameObject.transform.Find("ObjectPool").GetComponent<ObjectPool>();
-            
+
             Camera mainCamera = reupGameObject.transform.Find("Main_Camera").GetComponent<Camera>();
+
+            ITexturesManager texturesManager = baseGlobalScriptGameObject.transform.Find("TexturesManager").GetComponent<ITexturesManager>();
 
             return new SceneObjects
             {
@@ -135,13 +137,13 @@ namespace ReupVirtualTwinTests.utils
                 fpvCamera = fpvCamera,
                 viewModeManager = viewModeManager,
                 input = input,
-                eventSystem = eventSystem,
                 heightMediator = heightMediator,
                 moveDHVCamera = moveDhvCamera,
                 modelInfoManager = modelInfoManager,
                 objectRegistry = objectRegistry,
                 objectPool = objectPool,
                 mainCamera = mainCamera,
+                texturesManager = texturesManager,
             };
         }
 
@@ -149,7 +151,6 @@ namespace ReupVirtualTwinTests.utils
         {
             GameObject.Destroy(sceneObjects.reupObject);
             GameObject.Destroy(sceneObjects.building);
-            GameObject.Destroy(sceneObjects.eventSystem.gameObject);
             sceneObjects.input.TearDown();
         }
 

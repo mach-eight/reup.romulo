@@ -35,7 +35,7 @@ namespace ReupVirtualTwin.managers
         public ITransformObjectsManager transformObjectsManager { set => _transformObjectsManager = value; }
         private IDeleteObjectsManager _deleteObjectsManager;
         public IDeleteObjectsManager deleteObjectsManager { set => _deleteObjectsManager = value; }
- 
+
         private IChangeColorManager _changeColorManager;
         public IChangeColorManager changeColorManager { set => _changeColorManager = value; }
 
@@ -216,7 +216,7 @@ namespace ReupVirtualTwin.managers
                     break;
                 case WebMessageType.changeObjectsMaterial:
                     TaskResult result = await _changeMaterialController.ChangeObjectMaterial((JObject)payload);
-                    if (!result.isSuccess) 
+                    if (!result.isSuccess)
                     {
                         SendErrorMessage(result.error);
                         return;
@@ -306,7 +306,7 @@ namespace ReupVirtualTwin.managers
 
         private async Task LoadObjectsState(JObject requestPayload)
         {
-            originalSceneController.RestoreOriginalScene();         
+            originalSceneController.RestoreOriginalScene();
             List<JObject> objectStates = requestPayload["objects"].ToObject<JArray>().Cast<JObject>().ToList();
 
             var objectStatesByColor = objectStates
@@ -315,7 +315,8 @@ namespace ReupVirtualTwin.managers
             TaskResult colorWasChanged = PaintSceneObjects(objectStatesByColor);
 
             var objectStatesByMaterial = objectStates
-                .Where(objectState => {
+                .Where(objectState =>
+                {
                     return TypeHelpers.NotNull(objectState["material"]) &&
                         TypeHelpers.NotNull(objectState["material"]["id"]) &&
                         TypeHelpers.NotNull(objectState["material"]["texture"]);
@@ -348,14 +349,14 @@ namespace ReupVirtualTwin.managers
 
         private void SendLoadSceneFailureMessage(JObject requestPayload, string errorMessage)
         {
-          
-             WebMessage<JObject> failureMessage = new()
+
+            WebMessage<JObject> failureMessage = new()
             {
                 type = WebMessageType.requestSceneLoadFailure,
                 payload = new JObject(
-                    new JProperty("requestTimestamp", requestPayload["requestTimestamp"]),
-                    new JProperty("errorMessage", errorMessage)
-                )
+                   new JProperty("requestTimestamp", requestPayload["requestTimestamp"]),
+                   new JProperty("errorMessage", errorMessage)
+               )
             };
 
             _webMessageSender.SendWebMessage(failureMessage);
@@ -364,7 +365,7 @@ namespace ReupVirtualTwin.managers
 
         private TaskResult PaintSceneObjects(IEnumerable<IGrouping<string, JObject>> objectStatesByColor)
         {
-            foreach(var objectsByColor in objectStatesByColor)
+            foreach (var objectsByColor in objectStatesByColor)
             {
                 Color? color = Utils.ParseColor(objectsByColor.Key);
                 if (color == null)
@@ -373,7 +374,7 @@ namespace ReupVirtualTwin.managers
                 }
                 string[] objectIds = objectsByColor.Select(objectState => objectState["objectId"].ToString()).ToArray();
                 List<GameObject> objectsToPaint = _registry.GetObjectsWithGuids(objectIds);
-                _changeColorManager.ChangeObjectsColor(objectsToPaint, (Color) color);
+                _changeColorManager.ChangeObjectsColor(objectsToPaint, (Color)color);
             }
             return TaskResult.Success();
         }
@@ -381,7 +382,7 @@ namespace ReupVirtualTwin.managers
         private async Task<TaskResult> ApplyMaterialsToSceneObjects(IEnumerable<IGrouping<int, JObject>> objectStatesByMaterial)
         {
 
-            foreach(var objectsByMaterial in objectStatesByMaterial)
+            foreach (var objectsByMaterial in objectStatesByMaterial)
             {
                 var objectIds = objectsByMaterial.Select(objectState => objectState["objectId"].ToString());
                 JObject materialChangeInfo = new()
@@ -415,7 +416,7 @@ namespace ReupVirtualTwin.managers
 
         public void SendModelInfoMessage()
         {
-            WebMessage<ModelInfoMessage> message = _modelInfoManager.ObtainModelInfoMessage();
+            WebMessage<JObject> message = _modelInfoManager.ObtainModelInfoMessage();
             _webMessageSender.SendWebMessage(message);
         }
 
@@ -444,7 +445,7 @@ namespace ReupVirtualTwin.managers
             List<GameObject> objectsToDelete = _deleteObjectsManager.GetDeletableObjects(stringIds);
             if (objectsToDelete.Count > 0)
             {
-                foreach( GameObject obj in objectsToDelete)
+                foreach (GameObject obj in objectsToDelete)
                 {
                     _selectedObjectsManager.ForceRemoveObjectFromSelection(obj);
                 }
@@ -550,7 +551,7 @@ namespace ReupVirtualTwin.managers
 
         private void SendUpdatedBuildingMessage()
         {
-            WebMessage<UpdateBuildingMessage> message = _modelInfoManager.ObtainUpdateBuildingMessage();
+            WebMessage<JObject> message = _modelInfoManager.ObtainUpdateBuildingMessage();
             _webMessageSender.SendWebMessage(message);
         }
 
@@ -582,7 +583,7 @@ namespace ReupVirtualTwin.managers
             SendInsertedObjectMessage(insertedObjectPayload.loadedObject);
             _selectedObjectsManager.ClearSelection();
             yield return null;
-            SendUpdatedBuildingMessage(); 
+            SendUpdatedBuildingMessage();
             if (insertedObjectPayload.selectObjectAfterInsertion)
             {
                 _selectedObjectsManager.AddObjectToSelection(insertedObjectPayload.loadedObject);
