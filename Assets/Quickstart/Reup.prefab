@@ -312,6 +312,7 @@ MonoBehaviour:
   texturesManager: {fileID: 7203003387684823839}
   characterRotationManager: {fileID: 9154797268538216174}
   objectRegistry: {fileID: 2043244847565700485}
+  setupBuilding: {fileID: 7508923528206428603}
 --- !u!114 &6350977991642200349
 MonoBehaviour:
   m_ObjectHideFlags: 0

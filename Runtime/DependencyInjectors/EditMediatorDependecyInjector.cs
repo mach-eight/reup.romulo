@@ -29,6 +29,7 @@ namespace ReupVirtualTwin.dependencyInjectors
         [SerializeField] TexturesManager texturesManager;
         [SerializeField] CharacterRotationManager characterRotationManager;
         [SerializeField] ObjectRegistry objectRegistry;
+        [SerializeField] GameObject setupBuilding;
 
         private void Awake()
         {
@@ -42,7 +43,9 @@ namespace ReupVirtualTwin.dependencyInjectors
                 !fpvCamera ||
                 !dhvCamera ||
                 !texturesManager ||
-                !character)
+                !character ||
+                !viewModeManager ||
+                !setupBuilding)
             {
                 throw new System.Exception("Some dependencies are missing");
             }
@@ -75,6 +78,10 @@ namespace ReupVirtualTwin.dependencyInjectors
             );
             editMediator.originalSceneController = new OriginalSceneController(objectRegistry, texturesManager);
             editMediator.viewModeManager = viewModeManager;
+            editMediator.buildingVisibilityController = new BuildingVisibilityController(
+                objectRegistry,
+                setupBuilding.GetComponent<IBuildingGetterSetter>().building
+            );
         }
     }
 }
