@@ -65,7 +65,7 @@ public class DeleteObjectsManagerTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldFailWhenTryingToDeleteNonDeletableObjects()
     {
-        List<GameObject> gameObjects = new List<GameObject>() { allObjects[0], allObjects[1], allObjects[2]};
+        List<GameObject> gameObjects = new List<GameObject>() { allObjects[0], allObjects[1], allObjects[2] };
         string stringIDs = ListToString(GetIDsList(gameObjects));
         Assert.IsEmpty(deleteObjectsManager.GetDeletableObjects(stringIDs));
         yield return null;
@@ -78,7 +78,8 @@ public class DeleteObjectsManagerTest : MonoBehaviour
 
         public void Notify(ReupEvent eventName)
         {
-            if (eventName == ReupEvent.objectsDeleted){
+            if (eventName == ReupEvent.objectsDeleted)
+            {
                 notified = true;
             }
         }
@@ -100,7 +101,7 @@ public class DeleteObjectsManagerTest : MonoBehaviour
             deletableObject1.AddComponent<ObjectTags>().AddTags(new Tag[2] { EditionTagsCreator.CreateSelectableTag(), EditionTagsCreator.CreateDeletableTag() });
             deletableObject1.AddComponent<UniqueId>().GenerateId();
             GameObject nonDeletableObject = new GameObject("nonDeletableObject");
-            nonDeletableObject.AddComponent<ObjectTags>().AddTags(new Tag[1] {EditionTagsCreator.CreateSelectableTag()});
+            nonDeletableObject.AddComponent<ObjectTags>().AddTags(new Tag[1] { EditionTagsCreator.CreateSelectableTag() });
             nonDeletableObject.AddComponent<UniqueId>().GenerateId();
             allObjects.Add(deletableObject0);
             allObjects.Add(deletableObject1);
@@ -138,7 +139,7 @@ public class DeleteObjectsManagerTest : MonoBehaviour
             throw new NotImplementedException();
         }
 
-        public void RemoveObject(GameObject item)
+        public void RemoveObject(string id, GameObject item)
         {
             throw new NotImplementedException();
         }

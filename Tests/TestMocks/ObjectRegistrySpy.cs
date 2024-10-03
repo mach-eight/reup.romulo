@@ -4,14 +4,16 @@ using UnityEngine;
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.models;
 using ReupVirtualTwin.controllers;
+using System.Linq;
 
 namespace ReupVirtualTwinTests.mocks
 {
     public class ObjectRegistrySpy : IObjectRegistry
     {
         public List<GameObject> objects = new List<GameObject>();
-        public string[] lastRequestedObjectIds;
-        public List<string[]> requestedObjectIds;
+        public string[] lastRequestedObjectIds = new string[] { };
+        public List<string[]> requestedObjectIds = new List<string[]>();
+        public bool returnDefaultObjects = false;
         private TagSystemController tagSystemController = new TagSystemController();
         public ObjectRegistrySpy()
         {
@@ -22,7 +24,17 @@ namespace ReupVirtualTwinTests.mocks
                 objects.Add(obj);
                 tagSystemController.AssignTagSystemToObject(obj);
             }
-            requestedObjectIds = new List<string[]>();
+            returnDefaultObjects = true;
+        }
+        public ObjectRegistrySpy(List<GameObject> objects)
+        {
+            for (int i = 0; i < objects.Count; i++)
+            {
+                GameObject obj = objects[i];
+                obj.AddComponent<UniqueId>().GenerateId();
+                this.objects.Add(obj);
+                tagSystemController.AssignTagSystemToObject(obj);
+            }
         }
         public void AddObject(GameObject item)
         {
@@ -48,7 +60,19 @@ namespace ReupVirtualTwinTests.mocks
         {
             lastRequestedObjectIds = guids;
             requestedObjectIds.Add(guids);
-            return objects;
+
+            if (returnDefaultObjects)
+            {
+                return objects;
+            }
+
+            List<GameObject> foundObjects = new List<GameObject>();
+            foreach (string guid in guids)
+            {
+                GameObject obj = objects.FirstOrDefault(obj => obj.GetComponent<IUniqueIdentifier>().getId() == guid);
+                foundObjects.Add(obj);
+            }
+            return foundObjects;
         }
 
         public GameObject GetObjectWithGuid(string guid)
@@ -56,9 +80,14 @@ namespace ReupVirtualTwinTests.mocks
             throw new System.NotImplementedException();
         }
 
-        public void RemoveObject(GameObject item)
+        public void RemoveObject(string id, GameObject item)
         {
             throw new System.NotImplementedException();
+        }
+
+        public string[] GetObjectListIds()
+        {
+            return objects.ConvertAll(obj => obj.GetComponent<IUniqueIdentifier>().getId()).ToArray();
         }
     }
 }

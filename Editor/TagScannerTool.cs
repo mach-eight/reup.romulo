@@ -34,7 +34,7 @@ namespace ReupVirtualTwin.editor
             CreateTagSection();
             SetSetupBuilding();
             sceneVisibilityManager = SceneVisibilityManager.instance;
-            OnTagsChange(selectedTags);
+            SetUpTagFilters(selectedTags);
         }
 
         private void OnGUI()
@@ -127,19 +127,28 @@ namespace ReupVirtualTwin.editor
                 EditorGUILayout.EndHorizontal();
             });
         }
-        private void OnTagsChange(List<Tag> tags)
+        private void SetUpTagFilters(List<Tag> tags)
         {
             tagFilters.Clear();
             tags.ForEach(tag =>
             {
-                ITagFilter tagFilter = new TagFilter(tag);
-                tagFilters.Add(tagFilter);
-                tagFilter.onRemoveFilter = () =>
-                {
-                    selectedTags.Remove(tag);
-                    tagFilters.Remove(tagFilter);
-                };
+                AddTagFilter(tag);
             });
+        }
+        private void OnTagAddition(Tag tag)
+        {
+            AddTagFilter(tag);
+        }
+
+        private void AddTagFilter(Tag tag)
+        {
+            ITagFilter tagFilter = new TagFilter(tag);
+            tagFilters.Add(tagFilter);
+            tagFilter.onRemoveFilter = () =>
+            {
+                selectedTags.Remove(tag);
+                tagFilters.Remove(tagFilter);
+            };
         }
         private void SetSetupBuilding()
         {
@@ -149,7 +158,7 @@ namespace ReupVirtualTwin.editor
         {
             ITagsApiManager tagsApiManager = TagsApiManagerEditorFinder.FindTagApiManager();
             selectTagsSection = await SelectTagsSection.Create(tagsApiManager, selectedTags);
-            selectTagsSection.onTagsChange = OnTagsChange;
+            selectTagsSection.onTagAddition = OnTagAddition;
         }
         private void ShowSubStringFilterAdder()
         {

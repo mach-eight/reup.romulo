@@ -36,6 +36,7 @@ public class EditMediatorTest : MonoBehaviour
     JObject requestSceneLoadMessage;
     OriginalSceneControllerSpy originalSceneControllerSpy;
     ViewModeManagerSpy viewModeManagerSpy;
+    BuildingVisibilityControllerSpy buildingVisibilityControllerSpy;
 
     [SetUp]
     public void SetUp()
@@ -74,6 +75,8 @@ public class EditMediatorTest : MonoBehaviour
         editMediator.originalSceneController = originalSceneControllerSpy;
         viewModeManagerSpy = new ViewModeManagerSpy();
         editMediator.viewModeManager = viewModeManagerSpy;
+        buildingVisibilityControllerSpy = new BuildingVisibilityControllerSpy();
+        editMediator.buildingVisibilityController = buildingVisibilityControllerSpy;
     }
 
     private class ViewModeManagerSpy : IViewModeManager
@@ -119,21 +122,22 @@ public class EditMediatorTest : MonoBehaviour
     {
         public JObject lastReceivedMessageRequest;
         public List<JObject> receivedMessageRequests = new List<JObject>();
-        public bool throwError = false;        
+        public bool throwError = false;
         public Task<TaskResult> ChangeObjectMaterial(JObject materialChangeInfo)
         {
-            if (throwError) {
-                return Task.FromResult(TaskResult.Failure("ERROR, Fail to change materials from spy")); 
+            if (throwError)
+            {
+                return Task.FromResult(TaskResult.Failure("ERROR, Fail to change materials from spy"));
             }
-       
+
             bool isValid = materialChangeInfo.IsValid(RomuloInternalSchema.materialChangeInfoSchema, out IList<string> errorMessages);
             if (!isValid)
             {
-               foreach (string errorMessage in errorMessages)
-               {
+                foreach (string errorMessage in errorMessages)
+                {
                     Debug.LogError(errorMessage);
-               }
-               throw new Exception("Invalid material change info object");
+                }
+                throw new Exception("Invalid material change info object");
             }
             receivedMessageRequests.Add(materialChangeInfo);
             lastReceivedMessageRequest = materialChangeInfo;
@@ -208,28 +212,28 @@ public class EditMediatorTest : MonoBehaviour
             };
         }
 
-        public WebMessage<ModelInfoMessage> ObtainModelInfoMessage()
+        public WebMessage<JObject> ObtainModelInfoMessage()
         {
-            WebMessage<ModelInfoMessage> message = new()
+            WebMessage<JObject> message = new()
             {
                 type = WebMessageType.requestModelInfoSuccess,
-                payload = new ModelInfoMessage()
+                payload = new JObject()
                 {
-                    buildVersion = "2024-04-05",
-                    building = building,
+                    {"buildVersion", "2024-04-05"},
+                    {"building", JObject.FromObject(building)},
                 },
             };
             return message;
         }
 
-        public WebMessage<UpdateBuildingMessage> ObtainUpdateBuildingMessage()
+        public WebMessage<JObject> ObtainUpdateBuildingMessage()
         {
-            WebMessage<UpdateBuildingMessage> message = new()
+            WebMessage<JObject> message = new()
             {
                 type = WebMessageType.updateBuilding,
-                payload = new UpdateBuildingMessage()
+                payload = new JObject()
                 {
-                    building = building,
+                    {"building", JObject.FromObject(building)},
                 },
             };
             return message;
@@ -344,6 +348,39 @@ public class EditMediatorTest : MonoBehaviour
         }
 
         public ObjectDTO MapObjectTree(GameObject obj)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
+    private class BuildingVisibilityControllerSpy : IBuildingVisibilityController
+    {
+        public List<string> lastRequestedObjectIds;
+        public bool lastRequestedVisibility;
+        public bool showAllObjectsCalled = false;
+        public bool error = false;
+        public TaskResult SetObjectsVisibility(string[] objectsIds, bool show)
+        {
+            if (error)
+            {
+                return TaskResult.Failure("Error, Fail to change visibility from spy");
+            }
+            lastRequestedObjectIds = new List<string>(objectsIds);
+            lastRequestedVisibility = show;
+            return TaskResult.Success();
+        }
+
+        public TaskResult ShowAllObjects()
+        {
+            if (error)
+            {
+                return TaskResult.Failure("Error, Fail to change visibility from spy");
+            }
+            showAllObjectsCalled = true;
+            return TaskResult.Success();
+        }
+
+        public TaskResult HideAllObjects()
         {
             throw new System.NotImplementedException();
         }
@@ -539,9 +576,9 @@ public class EditMediatorTest : MonoBehaviour
         WebMessage<ObjectDTO> sentMessage = (WebMessage<ObjectDTO>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.loadObjectSuccess, sentMessage.type);
         Assert.AreEqual(mockObjectMapper.objectDTOs[0], sentMessage.payload);
-        WebMessage<UpdateBuildingMessage> sentUpdateBuildingMessage = (WebMessage<UpdateBuildingMessage>)mockWebMessageSender.sentMessages[1];  
+        WebMessage<JObject> sentUpdateBuildingMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[1];
         Assert.AreEqual(WebMessageType.updateBuilding, sentUpdateBuildingMessage.type);
-        Assert.AreEqual(mockModelInfoManager.building, sentUpdateBuildingMessage.payload.building);
+        Assert.IsTrue(JObject.DeepEquals(JObject.FromObject(mockModelInfoManager.building), sentUpdateBuildingMessage.payload["building"]));
     }
 
     [UnityTest]
@@ -703,7 +740,7 @@ public class EditMediatorTest : MonoBehaviour
         ChangeColorObjectMessagePayload payload = new ChangeColorObjectMessagePayload
         {
             color = color,
-            objectIds = new string[] {"id-0", "id-1"},
+            objectIds = new string[] { "id-0", "id-1" },
         };
         string message = dummyJsonCreator.createWebMessage(WebMessageType.changeObjectColor, payload);
         editMediator.ReceiveWebMessage(message);
@@ -720,7 +757,7 @@ public class EditMediatorTest : MonoBehaviour
         ChangeColorObjectMessagePayload payload = new ChangeColorObjectMessagePayload
         {
             color = color,
-            objectIds = new string[] {"id-0", "id-1"},
+            objectIds = new string[] { "id-0", "id-1" },
         };
         string message = dummyJsonCreator.createWebMessage(WebMessageType.changeObjectColor, payload);
         editMediator.ReceiveWebMessage(message);
@@ -843,9 +880,9 @@ public class EditMediatorTest : MonoBehaviour
         WebMessage<string> deletedSuccessMessage = (WebMessage<string>)mockWebMessageSender.sentMessages[0];
         yield return null;
         Assert.AreEqual(WebMessageType.deleteObjectsSuccess, deletedSuccessMessage.type);
-        WebMessage<UpdateBuildingMessage> sentUpdateBuildingMessage = (WebMessage<UpdateBuildingMessage>)mockWebMessageSender.sentMessages[1];
+        WebMessage<JObject> sentUpdateBuildingMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[1];
         Assert.AreEqual(WebMessageType.updateBuilding, sentUpdateBuildingMessage.type);
-        Assert.AreEqual(mockModelInfoManager.building, sentUpdateBuildingMessage.payload.building);
+        Assert.IsTrue(JObject.DeepEquals(JObject.FromObject(mockModelInfoManager.building), sentUpdateBuildingMessage.payload["building"]));
     }
 
     [UnityTest]
@@ -1235,6 +1272,246 @@ public class EditMediatorTest : MonoBehaviour
         Assert.Zero(viewModeManagerSpy.activateFPVCallsCount);
         await editMediator.ReceiveWebMessage(serializedMessage);
         Assert.AreEqual(1, viewModeManagerSpy.activateFPVCallsCount);
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldSendErrorMessage_When_ShowObjectsMessageWithoutObjectIds()
+    {
+        JObject message = new JObject
+        {
+            { "type", WebMessageType.showObjects },
+            { "payload", new JObject() 
+                {
+                    { "requestId", "UUID" }
+                }
+            }
+        };
+        editMediator.ReceiveWebMessage(message.ToString());
+        yield return null;
+        WebMessage<string[]> sentMessage = (WebMessage<string[]>)mockWebMessageSender.sentMessages[0];
+        Assert.AreEqual(WebMessageType.error, sentMessage.type);
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldSendErrorMessage_When_ShowObjectsMessageWithoutRequestId()
+    {
+        JObject message = new JObject
+        {
+            { "type", WebMessageType.showObjects },
+            { "payload", new JObject() 
+                {
+                    { "objectIds", new JArray(new string[] { "id-0", "id-1" }) }
+                }
+            }
+        };
+        editMediator.ReceiveWebMessage(message.ToString());
+        yield return null;
+        WebMessage<string[]> sentMessage = (WebMessage<string[]>)mockWebMessageSender.sentMessages[0];
+        Assert.AreEqual(WebMessageType.error, sentMessage.type);
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldSendErrorMessage_When_HideObjectsMessageWithoutObjectIds()
+    {
+        JObject message = new JObject
+        {
+            { "type", WebMessageType.hideObjects },
+            { "payload", new JObject() 
+                {
+                    { "requestId", "UUID" }
+                }
+            }
+        };
+        editMediator.ReceiveWebMessage(message.ToString());
+        yield return null;
+        WebMessage<string[]> sentMessage = (WebMessage<string[]>)mockWebMessageSender.sentMessages[0];
+        Assert.AreEqual(WebMessageType.error, sentMessage.type);
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldSendErrorMessage_When_HideObjectsMessageWithoutRequestId()
+    {
+        JObject message = new JObject
+        {
+            { "type", WebMessageType.showObjects },
+            { "payload", new JObject() 
+                {
+                    { "objectIds", new JArray(new string[] { "id-0", "id-1" }) }
+                }
+            }
+        };
+        editMediator.ReceiveWebMessage(message.ToString());
+        yield return null;
+        WebMessage<string[]> sentMessage = (WebMessage<string[]>)mockWebMessageSender.sentMessages[0];
+        Assert.AreEqual(WebMessageType.error, sentMessage.type);
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldSendErrorMessage_When_ShowAllObjectsMessageWithoutRequestId()
+    {
+        JObject message = new JObject
+        {
+            { "type", WebMessageType.showAllObjects },
+            { "payload", new JObject() }
+        };
+        editMediator.ReceiveWebMessage(message.ToString());
+        yield return null;
+        WebMessage<string[]> sentMessage = (WebMessage<string[]>)mockWebMessageSender.sentMessages[0];
+        Assert.AreEqual(WebMessageType.error, sentMessage.type);
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldSendSuccessMessage_When_ValidShowObjectsMessage()
+    {
+        const string requestId = "UUID";
+        string[] objectIds = new string[] { "id-0", "id-1" };
+        JObject message = new JObject
+        {
+            { "type", WebMessageType.showObjects },
+            { "payload", new JObject() 
+                {
+                    { "objectIds", new JArray(objectIds) },
+                    { "requestId", requestId }
+                }
+            }
+        };
+
+        editMediator.ReceiveWebMessage(message.ToString());
+        yield return null;
+
+        WebMessage<JObject> sentMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[0];
+        Assert.AreEqual(WebMessageType.showHideObjectsSuccess, sentMessage.type);
+        Assert.AreEqual(buildingVisibilityControllerSpy.lastRequestedVisibility, true);
+        Assert.AreEqual(objectIds, buildingVisibilityControllerSpy.lastRequestedObjectIds);
+        Assert.AreEqual(requestId, sentMessage.payload.Value<string>("requestId"));
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldSendFailureMessage_When_ShowObjectsFails()
+    {
+        const string requestId = "UUID";
+        string[] objectIds = new string[] { "id-0", "id-1" };
+        const string errorMessage = "Error, Fail to change visibility from spy";
+        buildingVisibilityControllerSpy.error = true;
+        JObject message = new JObject
+        {
+            { "type", WebMessageType.showObjects },
+            { "payload", new JObject() 
+                {
+                    { "objectIds", new JArray(objectIds) },
+                    { "requestId", requestId }
+                }
+            }
+        };
+
+        editMediator.ReceiveWebMessage(message.ToString());
+        yield return null;
+
+        WebMessage<JObject> sentMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[0];
+        Assert.AreEqual(WebMessageType.showHideObjectsFailure, sentMessage.type);
+        Assert.AreEqual(requestId, sentMessage.payload.Value<string>("requestId"));
+        Assert.AreEqual(errorMessage, sentMessage.payload.Value<string>("errorMessage"));
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldSendSuccessMessage_When_ValidHideObjectsMessage()
+    {
+        const string requestId = "UUID";
+        string[] objectIds = new string[] { "id-0", "id-1" };
+        JObject message = new JObject
+        {
+            { "type", WebMessageType.hideObjects },
+            { "payload", new JObject() 
+                {
+                    { "objectIds", new JArray(objectIds) },
+                    { "requestId", requestId }
+                }
+            }
+        };
+
+        editMediator.ReceiveWebMessage(message.ToString());
+        yield return null;
+
+        WebMessage<JObject> sentMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[0];
+        Assert.AreEqual(WebMessageType.showHideObjectsSuccess, sentMessage.type);
+        Assert.AreEqual(buildingVisibilityControllerSpy.lastRequestedVisibility, false);
+        Assert.AreEqual(objectIds, buildingVisibilityControllerSpy.lastRequestedObjectIds);
+        Assert.AreEqual(requestId, sentMessage.payload.Value<string>("requestId"));
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldSendFailureMessage_When_HideObjectsFails()
+    {
+        const string requestId = "UUID";
+        string[] objectIds = new string[] { "id-0", "id-1" };
+        const string errorMessage = "Error, Fail to change visibility from spy";
+        buildingVisibilityControllerSpy.error = true;
+        JObject message = new JObject
+        {
+            { "type", WebMessageType.hideObjects },
+            { "payload", new JObject() 
+                {
+                    { "objectIds", new JArray(objectIds) },
+                    { "requestId", requestId }
+                }
+            }
+        };
+
+        editMediator.ReceiveWebMessage(message.ToString());
+        yield return null;
+
+        WebMessage<JObject> sentMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[0];
+        Assert.AreEqual(WebMessageType.showHideObjectsFailure, sentMessage.type);
+        Assert.AreEqual(requestId, sentMessage.payload.Value<string>("requestId"));
+        Assert.AreEqual(errorMessage, sentMessage.payload.Value<string>("errorMessage"));
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldSendSuccessMessage_When_ValidShowAllObjectsMessage()
+    {
+        const string requestId = "UUID";
+        JObject message = new JObject
+        {
+            { "type", WebMessageType.showAllObjects },
+            { "payload", new JObject() 
+                {
+                    { "requestId", requestId }
+                }
+            }
+        };
+
+        editMediator.ReceiveWebMessage(message.ToString());
+        yield return null;
+
+        WebMessage<JObject> sentMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[0];
+        Assert.AreEqual(WebMessageType.showHideObjectsSuccess, sentMessage.type);
+        Assert.AreEqual(null, buildingVisibilityControllerSpy.lastRequestedObjectIds);
+        Assert.AreEqual(requestId, sentMessage.payload.Value<string>("requestId"));
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldSendFailureMessage_When_ShowAllObjectsFails()
+    {
+        const string requestId = "UUID";
+        const string errorMessage = "Error, Fail to change visibility from spy";
+        buildingVisibilityControllerSpy.error = true;
+        JObject message = new JObject
+        {
+            { "type", WebMessageType.showAllObjects },
+            { "payload", new JObject() 
+                {
+                    { "requestId", requestId }
+                }
+            }
+        };
+
+        editMediator.ReceiveWebMessage(message.ToString());
+        yield return null;
+
+        WebMessage<JObject> sentMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[0];
+        Assert.AreEqual(WebMessageType.showHideObjectsFailure, sentMessage.type);
+        Assert.AreEqual(requestId, sentMessage.payload.Value<string>("requestId"));
+        Assert.AreEqual(errorMessage, sentMessage.payload.Value<string>("errorMessage"));
     }
 
 }
