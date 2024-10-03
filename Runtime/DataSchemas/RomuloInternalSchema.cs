@@ -83,5 +83,14 @@ namespace ReupVirtualTwin.dataSchemas
             },
             ""required"": [""spaceId"", ""requestId""]
         }");
+
+        public static readonly JSchema spaceJumpPointNotFoundEventPayload = JSchema.Parse(@"{
+            ""type"": ""object"",
+            ""properties"": {
+                ""message"": { ""type"": ""string"" },
+                ""requestId"": { ""type"": ""string"" }
+            },
+            ""required"": [""message"", ""requestId""]
+        }");
     }
 }

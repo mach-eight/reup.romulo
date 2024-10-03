@@ -64,25 +64,41 @@ namespace ReupVirtualTwin.models
         public void GoToSpace(string spaceJumpPointId, string requestId)
         {
             SpaceJumpPoint spaceSelector = jumpPoints.Find(space => space.id == spaceJumpPointId) as SpaceJumpPoint;
+            if (spaceSelector == null)
+            {
+                NotifyFailureDueToSpaceNotFound(spaceJumpPointId, requestId);
+                return;
+            }
             _characterPositionManager.MakeKinematic();
             var spaceSelectorPosition = spaceSelector.transform.position;
             _characterHeightReseter.ResetCharacterHeight();
             spaceSelectorPosition.y = GetDesiredHeight(spaceSelector);
             var endMovementEvent = new UnityEvent();
             endMovementEvent.AddListener(EndMovementHandler);
-            endMovementEvent.AddListener(() => mediator.Notify(ReupEvent.spaceJumpPointReached, CreateNotifyPayload(spaceJumpPointId, requestId)));
+            endMovementEvent.AddListener(() => NotifySuccess(spaceJumpPointId, requestId));
             _characterPositionManager.allowWalking = false;
             _characterPositionManager.allowSetHeight = false;
             _characterPositionManager.SlideToTarget(spaceSelectorPosition, endMovementEvent);
         }
 
-        private JObject CreateNotifyPayload(string spaceJumpPointId, string requestId)
+        void NotifyFailureDueToSpaceNotFound(string spaceJumpPointId, string requestId)
         {
-            return new JObject
+            JObject payload = new JObject
+            {
+                { "requestId", requestId },
+                { "message", $"Space jump point with id {spaceJumpPointId} not found" },
+            };
+            mediator.Notify(ReupEvent.spaceJumpPointNotFound, payload);
+        }
+
+        void NotifySuccess(string spaceJumpPointId, string requestId)
+        {
+            JObject payload = new JObject
             {
                 { "spaceId", spaceJumpPointId },
                 { "requestId", requestId },
             };
+            mediator.Notify(ReupEvent.spaceJumpPointReached, payload);
         }
 
         private void EndMovementHandler()

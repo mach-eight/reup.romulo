@@ -160,6 +160,17 @@ namespace ReupVirtualTwin.managers
                     }
                     ProcessSpaceJumpPointReached((JObject)(object)payload);
                     break;
+                case ReupEvent.spaceJumpPointNotFound:
+                    if (RomuloEnvironment.development)
+                    {
+                        if (!((JObject)(object)payload).IsValid(RomuloInternalSchema.spaceJumpPointNotFoundEventPayload))
+                        {
+                            Debug.LogWarning("Invalid payload for 'spaceJumpPointNotFound' event");
+                            return;
+                        }
+                    }
+                    ProcessSpaceJumpPointNotFound((JObject)(object)payload);
+                    break;
                 case ReupEvent.error:
                     if (!(payload is string))
                     {
@@ -189,7 +200,7 @@ namespace ReupVirtualTwin.managers
             JToken payload = message["payload"];
             try
             {
-                await ExcecuteWebMessage(type, payload);
+                await ExecuteWebMessage(type, payload);
             }
             catch (Exception e)
             {
@@ -198,7 +209,7 @@ namespace ReupVirtualTwin.managers
                 Debug.LogError(e);
             }
         }
-        public async Task ExcecuteWebMessage(string type, JToken payload)
+        public async Task ExecuteWebMessage(string type, JToken payload)
         {
             switch (type)
             {
@@ -687,6 +698,14 @@ namespace ReupVirtualTwin.managers
             {
                 type = WebMessageType.slideToSpaceSuccess,
                 payload = spaceJumpPointPayload
+            });
+        }
+        void ProcessSpaceJumpPointNotFound(JObject payload)
+        {
+            _webMessageSender.SendWebMessage(new WebMessage<JObject>
+            {
+                type = WebMessageType.slideToSpaceFailure,
+                payload = payload
             });
         }
 

@@ -42,7 +42,6 @@ namespace ReupVirtualTwinTests.managers
             editMediator = sceneObjects.editMediator;
             webMessageSenderSpy = sceneObjects.webMessageSenderSpy;
             yield return null;
-            DefineConstants();
         }
         [UnityTearDown]
         public IEnumerator TearDown()
@@ -86,6 +85,7 @@ namespace ReupVirtualTwinTests.managers
         [UnityTest]
         public IEnumerator SpacesListShouldContainAllSpaceJumpPointsInTheScene()
         {
+            DefineConstants();
             spaceSelectors = SpaceSelectorFabric.CreateBulk(5);
             yield return null;
             Assert.AreEqual(5, spacesRecord.jumpPoints.Count);
@@ -99,6 +99,7 @@ namespace ReupVirtualTwinTests.managers
         [UnityTest]
         public IEnumerator CharacterShouldMoveToSpaceJumpPoint()
         {
+            DefineConstants();
             Vector3 spaceJumpPointPosition = new Vector3(0.2f, 2, 0.3f);
             spaceSelectors = new List<GameObject>(){
                 SpaceSelectorFabric.Create(new SpaceSelectorFabric.SpaceSelectorConfig
@@ -117,6 +118,7 @@ namespace ReupVirtualTwinTests.managers
         [UnityTest]
         public IEnumerator ShouldSendSlideToSpaceSuccessMessage_when_jumpPointIsReachedByCharacter()
         {
+            DefineConstants();
             Vector3 spaceJumpPointPosition = new Vector3(0.2f, 2, 0.3f);
             spaceSelectors = new List<GameObject>(){
                 SpaceSelectorFabric.Create(new SpaceSelectorFabric.SpaceSelectorConfig
@@ -140,7 +142,36 @@ namespace ReupVirtualTwinTests.managers
             }
             };
             Assert.IsTrue(JObject.DeepEquals(expectedMessage.payload, sentMessage.payload));
+        }
 
+        [UnityTest]
+        public IEnumerator ShouldSendFailMessage_when_requestedToGoToNonExistentSpaceJumpPoint()
+        {
+            DefineConstants();
+            string nonExistentSpaceJumpPointId = "non-existent-space-jump-point";
+            JObject message = new JObject
+            {
+                { "type", WebMessageType.slideToSpace },
+                { "payload", new JObject
+                    {
+                        { "spaceId", nonExistentSpaceJumpPointId },
+                        { "requestId", requestId },
+                    }
+                }
+            };
+            yield return editMediator.ReceiveWebMessage(JsonConvert.SerializeObject(message));
+            Assert.AreEqual(1, webMessageSenderSpy.sentMessages.Count);
+            WebMessage<JObject> sentMessage = (WebMessage<JObject>)webMessageSenderSpy.sentMessages[0];
+            WebMessage<JObject> expectedMessage = new WebMessage<JObject>
+            {
+                type = WebMessageType.slideToSpaceFailure,
+                payload = new JObject
+                {
+                    { "requestId", requestId },
+                    { "message", $"Space jump point with id {nonExistentSpaceJumpPointId} not found" },
+                }
+            };
+            Assert.IsTrue(JObject.DeepEquals(expectedMessage.payload, sentMessage.payload));
         }
 
     }
