@@ -56,7 +56,7 @@ namespace ReupVirtualTwinTests.mocks
             throw new System.NotImplementedException();
         }
 
-        public void RemoveObject(GameObject item)
+        public void RemoveObject(string id, GameObject item)
         {
             throw new System.NotImplementedException();
         }

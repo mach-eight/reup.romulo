@@ -4,12 +4,12 @@ using ReupVirtualTwin.modelInterfaces;
 
 namespace ReupVirtualTwin.models
 {
-	public class UniqueIdentifierAttribute : PropertyAttribute { }
+    public class UniqueIdentifierAttribute : PropertyAttribute { }
 
-	public class UniqueId : MonoBehaviour, IUniqueIdentifier
-	{
-		[UniqueIdentifier]
-		public string uniqueId;
+    public class UniqueId : MonoBehaviour, IUniqueIdentifier
+    {
+        [UniqueIdentifier]
+        public string uniqueId;
 
         protected virtual void Start()
         {
@@ -36,7 +36,7 @@ namespace ReupVirtualTwin.models
             return uniqueId;
         }
 
-        public string getId()
+        public virtual string getId()
         {
             return uniqueId;
         }
