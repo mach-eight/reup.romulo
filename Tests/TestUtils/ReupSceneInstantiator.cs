@@ -4,7 +4,6 @@ using ReupVirtualTwin.behaviours;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.EventSystems;
 using ReupVirtualTwin.models;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.managerInterfaces;
@@ -33,7 +32,6 @@ namespace ReupVirtualTwinTests.utils
             public GameObject fpvCamera;
             public ViewModeManager viewModeManager;
             public InputTestFixture input;
-            public EventSystem eventSystem;
             public HeightMediator heightMediator;
             public ModelInfoManager modelInfoManager;
             public ObjectRegistry objectRegistry;
@@ -44,25 +42,23 @@ namespace ReupVirtualTwinTests.utils
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab)
         {
             GameObject building = (GameObject)PrefabUtility.InstantiatePrefab(buildingPrefab);
-            return SceneObjectsWithBuilding(building);
+            return InstantiateSceneWithBuildingWithBuildingObject(building);
         }
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab, Action<GameObject> modifyBuilding)
         {
             GameObject building = (GameObject)PrefabUtility.InstantiatePrefab(buildingPrefab);
             modifyBuilding(building);
-            return SceneObjectsWithBuilding(building);
+            return InstantiateSceneWithBuildingWithBuildingObject(building);
         }
 
         public static SceneObjects InstantiateScene()
         {
             GameObject building = CreateDefaultBuilding();
-            return SceneObjectsWithBuilding(building);
+            return InstantiateSceneWithBuildingWithBuildingObject(building);
         }
 
-        private static SceneObjects SceneObjectsWithBuilding(GameObject building)
+        public static SceneObjects InstantiateSceneWithBuildingWithBuildingObject(GameObject building)
         {
-            GameObject eventSystemGameObject = new GameObject("EventSystem");
-            EventSystem eventSystem = eventSystemGameObject.AddComponent<EventSystem>();
             InputTestFixture input = new InputTestFixture();
             input.Setup();
             GameObject reupGameObject = (GameObject)PrefabUtility.InstantiatePrefab(reupPrefab);
@@ -141,7 +137,6 @@ namespace ReupVirtualTwinTests.utils
                 fpvCamera = fpvCamera,
                 viewModeManager = viewModeManager,
                 input = input,
-                eventSystem = eventSystem,
                 heightMediator = heightMediator,
                 moveDHVCamera = moveDhvCamera,
                 modelInfoManager = modelInfoManager,
@@ -156,7 +151,6 @@ namespace ReupVirtualTwinTests.utils
         {
             GameObject.Destroy(sceneObjects.reupObject);
             GameObject.Destroy(sceneObjects.building);
-            GameObject.Destroy(sceneObjects.eventSystem.gameObject);
             sceneObjects.input.TearDown();
         }
 

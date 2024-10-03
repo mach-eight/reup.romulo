@@ -3,6 +3,8 @@ using NUnit.Framework;
 using ReupVirtualTwin.models;
 using ReupVirtualTwinTests.utils;
 using ReupVirtualTwin.behaviours;
+using UnityEngine.TestTools;
+using System.Collections;
 
 namespace ReupVirtualTwinTests.behaviours
 {
@@ -23,10 +25,11 @@ namespace ReupVirtualTwinTests.behaviours
             child0 = building.transform.GetChild(0).gameObject;
             grandChild0 = child0.transform.GetChild(0).gameObject;
         }
-        [TearDown]
-        public void TearDown()
+        [UnityTearDown]
+        public IEnumerator TearDown()
         {
             ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
+            yield return null;
         }
 
         [Test]

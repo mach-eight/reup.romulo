@@ -1,7 +1,5 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
 using ReupVirtualTwin.dataModels;
@@ -12,7 +10,7 @@ using ReupVirtualTwin.enums;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using ReupVirtualTwinTests.utils;
-using ReupVirtualTwinTests.mocks;
+using ReupVirtualTwin.modelInterfaces;
 
 public class ModelInfoManagerTest : MonoBehaviour
 {
@@ -27,8 +25,8 @@ public class ModelInfoManagerTest : MonoBehaviour
     [UnitySetUp]
     public IEnumerator SetUp()
     {
-        CreateStubSetupBuilding();
-        sceneObjects = ReupSceneInstantiator.InstantiateScene();
+        buildingGameObject = StubObjectTreeCreator.CreateMockBuilding(BUILDING_CHILDREN_DEPTH);
+        sceneObjects = ReupSceneInstantiator.InstantiateSceneWithBuildingWithBuildingObject(buildingGameObject);
         modelInfoManager = sceneObjects.modelInfoManager;
         yield return null;
     }
@@ -59,33 +57,9 @@ public class ModelInfoManagerTest : MonoBehaviour
 
     private bool CompareObjectDTOs(ObjectDTO expected, ObjectDTO obtained)
     {
-        if (expected.id != obtained.id)
-        {
-            return false;
-        }
-        if (expected.tags.Length != obtained.tags.Length)
-        {
-            return false;
-        }
-        for (int i = 0; i < expected.tags.Length; i++)
-        {
-            if (expected.tags[i] != obtained.tags[i])
-            {
-                return false;
-            }
-        }
-        if (expected.children.Length != obtained.children.Length)
-        {
-            return false;
-        }
-        for (int i = 0; i < expected.children.Length; i++)
-        {
-            if (!CompareObjectDTOs(expected.children[i], obtained.children[i]))
-            {
-                return false;
-            }
-        }
-        return true;
+        JObject expectedJson = JObject.FromObject(expected);
+        JObject obtainedJson = JObject.FromObject(obtained);
+        return JToken.DeepEquals(expectedJson, obtainedJson);
     }
 
     bool IdStructureAreEqual(JObject expected, JObject obtained)
@@ -115,18 +89,18 @@ public class ModelInfoManagerTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldObtainTheModelInfoMessage()
     {
-        WebMessage<ModelInfoMessage> message = modelInfoManager.ObtainModelInfoMessage();
+        WebMessage<JObject> message = modelInfoManager.ObtainModelInfoMessage();
         Assert.IsNotNull(message);
         Assert.AreEqual(WebMessageType.requestModelInfoSuccess, message.type);
         Assert.IsNotNull(message.payload);
-        Assert.AreEqual(modelInfoManager.buildVersion, message.payload.buildVersion);
+        Assert.AreEqual(modelInfoManager.buildVersion, message.payload["buildVersion"].ToString());
         yield return null;
     }
 
     [UnityTest]
     public IEnumerator ShouldObtainTheUpdateBuildingMessage()
     {
-        WebMessage<UpdateBuildingMessage> message = modelInfoManager.ObtainUpdateBuildingMessage();
+        WebMessage<JObject> message = modelInfoManager.ObtainUpdateBuildingMessage();
         Assert.IsNotNull(message);
         Assert.AreEqual(WebMessageType.updateBuilding, message.type);
         Assert.IsNotNull(message.payload);
@@ -137,8 +111,8 @@ public class ModelInfoManagerTest : MonoBehaviour
     public IEnumerator ShouldObtainBuildingTreeDataStructure()
     {
         ObjectDTO expectedBuildingTreeDataStructure = objectMapper.MapObjectTree(buildingGameObject);
-        WebMessage<ModelInfoMessage> message = modelInfoManager.ObtainModelInfoMessage();
-        ObjectDTO buildingTreeDataStructure = message.payload.building;
+        WebMessage<JObject> message = modelInfoManager.ObtainModelInfoMessage();
+        ObjectDTO buildingTreeDataStructure = message.payload["building"].ToObject<ObjectDTO>();
         Assert.IsTrue(CompareObjectDTOs(expectedBuildingTreeDataStructure, buildingTreeDataStructure));
         Assert.AreEqual(NumberOfObjectsInTree(expectedBuildingTreeDataStructure), NumberOfObjectsInTree(buildingTreeDataStructure));
         yield return null;
@@ -149,8 +123,8 @@ public class ModelInfoManagerTest : MonoBehaviour
     {
         int numberOfObjectsByDefaultInStubBuilding = 4;
         int numberOfObjectsInTotal = numberOfObjectsByDefaultInStubBuilding + BUILDING_CHILDREN_DEPTH;
-        WebMessage<ModelInfoMessage> message = modelInfoManager.ObtainModelInfoMessage();
-        ObjectDTO buildingTreeDataStructure = message.payload.building;
+        WebMessage<JObject> message = modelInfoManager.ObtainModelInfoMessage();
+        ObjectDTO buildingTreeDataStructure = message.payload["building"].ToObject<ObjectDTO>();
         Assert.AreEqual(numberOfObjectsInTotal, NumberOfObjectsInTree(buildingTreeDataStructure));
         yield return null;
     }
@@ -177,7 +151,7 @@ public class ModelInfoManagerTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldGetColorInfoInSceneStateMessage()
     {
-        MetaDataComponentMock metaDataComponent = buildingGameObject.AddComponent<MetaDataComponentMock>();
+        IObjectMetaDataGetterSetter metaDataComponent = buildingGameObject.GetComponent<IObjectMetaDataGetterSetter>();
         JObject parentMetaData = new JObject
         {
             { "appearance", new JObject
@@ -188,7 +162,7 @@ public class ModelInfoManagerTest : MonoBehaviour
         };
         metaDataComponent.objectMetaData = parentMetaData;
 
-        MetaDataComponentMock metaDataChildComponent = buildingGameObject.transform.GetChild(0).gameObject.AddComponent<MetaDataComponentMock>();
+        IObjectMetaDataGetterSetter metaDataChildComponent = buildingGameObject.transform.GetChild(0).gameObject.GetComponent<IObjectMetaDataGetterSetter>();
         JObject childMetaData = new JObject
         {
             { "appearance", new JObject
@@ -199,9 +173,9 @@ public class ModelInfoManagerTest : MonoBehaviour
         };
         metaDataChildComponent.objectMetaData = childMetaData;
 
-        JObject sceneSTate = modelInfoManager.GetSceneState();
-        Assert.AreEqual(parentMetaData["appearance"]["color"], sceneSTate["appearance"]["color"]);
-        Assert.AreEqual(childMetaData["appearance"]["color"], sceneSTate["children"][0]["appearance"]["color"]);
+        JObject sceneState = modelInfoManager.GetSceneState();
+        Assert.AreEqual(parentMetaData["appearance"]["color"], sceneState["appearance"]["color"]);
+        Assert.AreEqual(childMetaData["appearance"]["color"], sceneState["children"][0]["appearance"]["color"]);
         yield return null;
     }
 

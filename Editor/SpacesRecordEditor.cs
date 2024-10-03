@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEditor;
 using ReupVirtualTwin.enums;
 using ReupVirtualTwin.models;
+using System;
 
 
 namespace ReupVirtualTwin.editor
@@ -10,7 +11,6 @@ namespace ReupVirtualTwin.editor
     [CustomEditor(typeof(SpacesRecord))]
     public class SpacesRecordEditor : Editor
     {
-
         bool ListCheck<T>(List<T> list, int expectedLength)
         {
             if (list.Count != expectedLength)
@@ -27,6 +27,11 @@ namespace ReupVirtualTwin.editor
         public override void OnInspectorGUI()
         {
             SpacesRecord spacesRecord = (SpacesRecord)target;
+            if (!spacesRecord.SpaceTagIsDefined())
+            {
+                EditorGUILayout.HelpBox("No defined space selector tag yet", MessageType.Warning);
+                return;
+            }
             GameObject[] spaces = GameObject.FindGameObjectsWithTag(TagsEnum.spaceSelector);
             if (ListCheck<SpaceJumpPoint>(spacesRecord.jumpPoints, spaces.Length))
             {
@@ -39,5 +44,6 @@ namespace ReupVirtualTwin.editor
             }
             DrawDefaultInspector();
         }
+
     }
 }
