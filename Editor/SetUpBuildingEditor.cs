@@ -31,14 +31,17 @@ namespace ReupVirtualTwin.editor
                 if (GUILayout.Button("Add Ids to objects"))
                 {
                     setUpBuilding.AssignIdsAndObjectInfoToBuilding();
+                    Debug.Log("Ids and object info added to tree");
                 }
                 if (GUILayout.Button("Remove Ids from objects"))
                 {
                     setUpBuilding.RemoveIdsAndObjectInfoFromBuilding();
+                    Debug.Log("Ids and object info removed from tree");
                 }
                 if (GUILayout.Button("Reset Ids from objects"))
                 {
                     setUpBuilding.ResetIdsOfBuilding();
+                    Debug.Log("Ids and object info reseted from tree");
                 }
             }
             showTagsOptions = EditorGUILayout.Foldout(showTagsOptions, "Objects Tags");
@@ -51,6 +54,7 @@ namespace ReupVirtualTwin.editor
                 if (GUILayout.Button("Add tag system to objects"))
                 {
                     setUpBuilding.AddTagSystemToBuildingObjects();
+                    Debug.Log("tags script added to tree");
                 }
             }
         }

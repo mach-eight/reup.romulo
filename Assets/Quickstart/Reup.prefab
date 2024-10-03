@@ -113,6 +113,7 @@ Transform:
   - {fileID: 391374155542431438}
   - {fileID: 4921429640420800414}
   - {fileID: 8698737246674232654}
+  - {fileID: 408726682764161858}
   m_Father: {fileID: 1178337683573207492}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &780637907895890256
@@ -267,7 +268,6 @@ Transform:
   - {fileID: 321911388155495687}
   - {fileID: 1328519742650971401}
   - {fileID: 842751329097319180}
-  - {fileID: 2723610775828279206}
   - {fileID: 690887863738009567}
   - {fileID: 4437606995447908561}
   m_Father: {fileID: 680367125633172352}
@@ -299,16 +299,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   insertPositionLocation: {fileID: 6878658961563752214}
-  editModeManager: {fileID: 3162418224126025097}
-  selectedObjectsManager: {fileID: 3225898039182815318}
-  transformObjectsManager: {fileID: 1552584488162308612}
-  deleteObjectsManager: {fileID: 4137723397174542886}
-  changeColorManager: {fileID: 8846973471203599374}
-  modelInfoManager: {fileID: 6552919786407009463}
+  editModeManager: {fileID: 5733580648411075496}
+  selectedObjectsManager: {fileID: 9138131387677620797}
+  transformObjectsManager: {fileID: 7238550132328462757}
+  deleteObjectsManager: {fileID: 760658980525887724}
+  changeColorManager: {fileID: 2078422153407114265}
+  modelInfoManager: {fileID: 7334026899500025913}
   character: {fileID: 1798908995094544088}
   fpvCamera: {fileID: 8060287538316763243}
   dhvCamera: {fileID: 2401207048260687702}
   viewModeManager: {fileID: 3904143813462744938}
+  texturesManager: {fileID: 7203003387684823839}
+  characterRotationManager: {fileID: 9154797268538216174}
+  objectRegistry: {fileID: 2043244847565700485}
 --- !u!114 &6350977991642200349
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -319,6 +322,63 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c7445fe7907c9154198057fe7ebda33e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &1137888274583213051
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 408726682764161858}
+  - component: {fileID: 7203003387684823839}
+  - component: {fileID: 7954376064475650718}
+  m_Layer: 0
+  m_Name: TexturesManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &408726682764161858
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1137888274583213051}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 680367125633172352}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7203003387684823839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1137888274583213051}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1fda82499d515f42afbe8cea281b008, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7954376064475650718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1137888274583213051}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ee2102d1eb6ce6418a2cb62d0922fdc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1259473726147856764
@@ -1008,6 +1068,7 @@ Transform:
   - {fileID: 680367125633172352}
   - {fileID: 3377086067190760999}
   - {fileID: 2471139282865268767}
+  - {fileID: 2723610775828279206}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2920257305175609590
@@ -2049,12 +2110,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6878658961563752214}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4925350699689954789}
+  m_Father: {fileID: 1178337683573207492}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1557426382952898549
 MonoBehaviour:

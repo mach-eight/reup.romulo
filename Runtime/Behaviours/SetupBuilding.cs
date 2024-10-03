@@ -6,7 +6,7 @@ using ReupVirtualTwin.controllerInterfaces;
 
 namespace ReupVirtualTwin.behaviours
 {
-    public class SetupBuilding : MonoBehaviour , ISetUpBuilding, IOnBuildingSetup, IBuildingGetterSetter
+    public class SetupBuilding : MonoBehaviour, ISetUpBuilding, IOnBuildingSetup, IBuildingGetterSetter
     {
 
         [SerializeField]
@@ -58,25 +58,21 @@ namespace ReupVirtualTwin.behaviours
         {
             _idAssignerController.AssignIdsToTree(building);
             _objectInfoController.AssignObjectInfoToTree(building);
-            Debug.Log("Ids and object info added to tree");
         }
         public void RemoveIdsAndObjectInfoFromBuilding()
         {
             _idAssignerController.RemoveIdsFromTree(building);
             _objectInfoController.RemoveObjectInfoFromTree(building);
-            Debug.Log("Ids and object info removed from tree");
         }
         public void ResetIdsOfBuilding()
         {
             RemoveIdsAndObjectInfoFromBuilding();
             AssignIdsAndObjectInfoToBuilding();
-            Debug.Log("Ids and object info reseted from tree");
         }
 
         public void AddTagSystemToBuildingObjects()
         {
             _tagSystemController.AssignTagSystemToTree(building);
-            Debug.Log("tags script added to tree");
         }
     }
 }

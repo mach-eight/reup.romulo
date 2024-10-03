@@ -67,18 +67,19 @@ namespace ReupVirtualTwinTests.Registry
         [UnityTest]
         public IEnumerator ObjectRegistryIsUpdatedIfNewIdIsAssigned()
         {
+            int objectsInRegistryBefore = objectRegistry.GetObjectsCount();
             testObj0 = new GameObject("testObj");
             testObj0.AddComponent<RegisteredIdentifier>();
             yield return null;
             string currentId = testObj0.GetComponent<RegisteredIdentifier>().getId();
             Assert.AreEqual(testObj0, objectRegistry.GetObjectWithGuid(currentId));
-            Assert.AreEqual(1, objectRegistry.GetObjectsCount());
+            Assert.AreEqual(objectsInRegistryBefore + 1, objectRegistry.GetObjectsCount());
             string newId = "new-id";
             testObj0.GetComponent<RegisteredIdentifier>().AssignId(newId);
             yield return null;
             Assert.IsNull(objectRegistry.GetObjectWithGuid(currentId));
             Assert.AreEqual(testObj0, objectRegistry.GetObjectWithGuid(newId));
-            Assert.AreEqual(1, objectRegistry.GetObjectsCount());
+            Assert.AreEqual(objectsInRegistryBefore + 1, objectRegistry.GetObjectsCount());
             yield return null;
         }
         [UnityTest]

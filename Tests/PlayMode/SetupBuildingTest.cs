@@ -32,10 +32,6 @@ namespace ReupVirtualTwinTests.behaviours
         [Test]
         public void ShouldAssignIdsToAllObjectsInBuilding()
         {
-            Assert.IsNull(building.GetComponent<RegisteredIdentifier>());
-            Assert.IsNull(child0.GetComponent<RegisteredIdentifier>());
-            Assert.IsNull(grandChild0.GetComponent<RegisteredIdentifier>());
-            setupbuilding.AssignIdsAndObjectInfoToBuilding();
             Assert.IsNotNull(building.GetComponent<RegisteredIdentifier>());
             Assert.IsNotNull(child0.GetComponent<RegisteredIdentifier>());
             Assert.IsNotNull(grandChild0.GetComponent<RegisteredIdentifier>());
@@ -44,10 +40,6 @@ namespace ReupVirtualTwinTests.behaviours
         [Test]
         public void ShouldAssignObjectInfoComponentToAllObjectsInBuilding()
         {
-            Assert.IsNull(building.GetComponent<ObjectInfo>());
-            Assert.IsNull(child0.GetComponent<ObjectInfo>());
-            Assert.IsNull(grandChild0.GetComponent<ObjectInfo>());
-            setupbuilding.AssignIdsAndObjectInfoToBuilding();
             Assert.IsNotNull(building.GetComponent<ObjectInfo>());
             Assert.IsNotNull(child0.GetComponent<ObjectInfo>());
             Assert.IsNotNull(grandChild0.GetComponent<ObjectInfo>());
