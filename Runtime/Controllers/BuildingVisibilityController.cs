@@ -18,11 +18,6 @@ namespace ReupVirtualTwin.controllers
         }
         public TaskResult SetObjectsVisibility(string[] objectsIds, bool show)
         {
-            if (objectsIds.Length == 0)
-            {
-                return TaskResult.Failure($"Hide/Show objects failed: No object IDs provided");
-            }
-
             List<GameObject> objects = objectRegistry.GetObjectsWithGuids(objectsIds);
             string[] missingObjectsIds = objectsIds.Where((id, index) => objects[index] == null).ToArray();
 
@@ -42,11 +37,13 @@ namespace ReupVirtualTwin.controllers
 
         public TaskResult ShowAllObjects()
         {
-            if (buildingObject == null)
-            {
-                return TaskResult.Failure("Show all objects failed: Building object is null");
-            }
             SetActiveRecursively(buildingObject, true);
+            return TaskResult.Success();
+        }
+
+        public TaskResult HideAllObjects()
+        {
+            SetActiveRecursively(buildingObject, false);
             return TaskResult.Success();
         }
 

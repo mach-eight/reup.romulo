@@ -6,5 +6,6 @@ namespace ReupVirtualTwin.controllerInterfaces
     {
         public TaskResult SetObjectsVisibility(string[] objectsIds, bool show);
         public TaskResult ShowAllObjects();
+        public TaskResult HideAllObjects();
     }
 }

@@ -73,9 +73,7 @@ namespace ReupVirtualTwin.managers
 
         private IOriginalSceneController _originalSceneController;
         public IOriginalSceneController originalSceneController { get => _originalSceneController; set => _originalSceneController = value; }
-
-        private IBuildingVisibilityController _buildingVisibilityController;
-        public IBuildingVisibilityController buildingVisibilityController { get => _buildingVisibilityController; set => _buildingVisibilityController = value; }
+        public IBuildingVisibilityController buildingVisibilityController { get; set; }
 
         public void Notify(ReupEvent eventName)
         {
@@ -247,10 +245,10 @@ namespace ReupVirtualTwin.managers
                     _viewModeManager.ActivateFPV();
                     break;
                 case WebMessageType.showObjects:
-                    ToggleObjectsVisibility((JObject)payload, true);
+                    SetObjectsVisibility((JObject)payload, true);
                     break;
                 case WebMessageType.hideObjects:
-                    ToggleObjectsVisibility((JObject)payload, false);
+                    SetObjectsVisibility((JObject)payload, false);
                     break;
                 case WebMessageType.showAllObjects:
                     ShowAllObjects((JObject)payload);
@@ -258,10 +256,10 @@ namespace ReupVirtualTwin.managers
             }
         }
 
-        private void ToggleObjectsVisibility(JObject payload, bool show)
+        private void SetObjectsVisibility(JObject payload, bool show)
         {
             string[] objectIds = payload["objectIds"].ToObject<string[]>();
-            TaskResult isSuccess = _buildingVisibilityController.SetObjectsVisibility(objectIds, show);
+            TaskResult isSuccess = buildingVisibilityController.SetObjectsVisibility(objectIds, show);
             if (!isSuccess.isSuccess)
             {
                 SendHideShowObjectsFailureMessage(payload, isSuccess.error);
@@ -272,7 +270,7 @@ namespace ReupVirtualTwin.managers
 
         private void ShowAllObjects(JObject payload)
         {
-            TaskResult isSuccess = _buildingVisibilityController.ShowAllObjects();
+            TaskResult isSuccess = buildingVisibilityController.ShowAllObjects();
             if (!isSuccess.isSuccess)
             {
                 SendHideShowObjectsFailureMessage(payload, isSuccess.error);

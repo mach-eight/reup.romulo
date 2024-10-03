@@ -378,6 +378,11 @@ public class EditMediatorTest : MonoBehaviour
             showAllObjectsCalled = true;
             return TaskResult.Success();
         }
+
+        public TaskResult HideAllObjects()
+        {
+            throw new System.NotImplementedException();
+        }
     }
     private static class dummyJsonCreator
     {

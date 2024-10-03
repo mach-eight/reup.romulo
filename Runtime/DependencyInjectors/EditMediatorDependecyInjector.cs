@@ -13,31 +13,19 @@ namespace ReupVirtualTwin.dependencyInjectors
     [RequireComponent(typeof(EditMediator))]
     public class EditMediatorDependecyInjector : MonoBehaviour
     {
-        [SerializeField]
-        GameObject insertPositionLocation;
         EditMediator editMediator;
-        [SerializeField]
-        GameObject editModeManager;
-        [SerializeField]
-        GameObject selectedObjectsManager;
-        [SerializeField]
-        GameObject transformObjectsManager;
-        [SerializeField]
-        GameObject deleteObjectsManager;
-        [SerializeField]
-        GameObject changeColorManager;
-        [SerializeField]
-        GameObject modelInfoManager;
-        [SerializeField]
-        GameObject character;
-        [SerializeField]
-        GameObject fpvCamera;
-        [SerializeField]
-        GameObject dhvCamera;
-        [SerializeField]
-        ViewModeManager viewModeManager;
-        [SerializeField]
-        GameObject setupBuilding;
+        [SerializeField] GameObject insertPositionLocation;
+        [SerializeField] GameObject editModeManager;
+        [SerializeField] GameObject selectedObjectsManager;
+        [SerializeField] GameObject transformObjectsManager;
+        [SerializeField] GameObject deleteObjectsManager;
+        [SerializeField] GameObject changeColorManager;
+        [SerializeField] GameObject modelInfoManager;
+        [SerializeField] GameObject character;
+        [SerializeField] GameObject fpvCamera;
+        [SerializeField] GameObject dhvCamera;
+        [SerializeField] ViewModeManager viewModeManager;
+        [SerializeField] GameObject setupBuilding;
 
         private void Awake()
         {

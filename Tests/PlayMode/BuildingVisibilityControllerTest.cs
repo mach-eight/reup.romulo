@@ -7,6 +7,7 @@ using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.models;
+using ReupVirtualTwinTests.mocks;
 using UnityEngine;
 using UnityEngine.TestTools;
 
@@ -15,7 +16,7 @@ namespace ReupVirtualTwinTests.controllers
     public class BuildingVisibilityControllerTest
     {
         IBuildingVisibilityController buildingVisibilityController;
-        MockObjectRegistry objectRegistrySpy;
+        ObjectRegistrySpy objectRegistrySpy;
         GameObject mockBuildingObject;
         GameObject child0;
         GameObject child1;
@@ -26,8 +27,7 @@ namespace ReupVirtualTwinTests.controllers
         {
             CreteMockBuildingObject();
             List<GameObject> objects = new List<GameObject> { child0, child1, child2 };
-            objectRegistrySpy = new MockObjectRegistry(objects);
-            yield return null;
+            objectRegistrySpy = new ObjectRegistrySpy(objects);
             buildingVisibilityController = new BuildingVisibilityController(objectRegistrySpy, mockBuildingObject);
             yield return null;
         }
@@ -53,14 +53,13 @@ namespace ReupVirtualTwinTests.controllers
         }
 
         [UnityTest]
-        public IEnumerator SetObjectsVisibility_WhenNoObjectIdsProvided_ReturnsFailure()
+        public IEnumerator SetObjectsVisibility_WhenNoObjectIdsProvided_ReturnsSuccess()
         {
             string[] objectsIds = new string[] { };
 
             TaskResult result = buildingVisibilityController.SetObjectsVisibility(objectsIds, true);
 
-            Assert.AreEqual(result.isSuccess, false);
-            Assert.AreEqual(result.error, "Hide/Show objects failed: No object IDs provided");
+            Assert.AreEqual(result.isSuccess, true);
             yield return null;
         }
 
@@ -118,15 +117,14 @@ namespace ReupVirtualTwinTests.controllers
         }
 
         [UnityTest]
-        public IEnumerator ShowAllObjects_WhenBuildingIsNull_ReturnsFailure()
+        public IEnumerator HideAllObjects_WhenBuildingIsSet_ReturnsSuccess()
         {
-            Object.Destroy(mockBuildingObject);
-            yield return null;
+            TaskResult result = buildingVisibilityController.HideAllObjects();
 
-            TaskResult result = buildingVisibilityController.ShowAllObjects();
-
-            Assert.AreEqual(result.isSuccess, false);
-            Assert.AreEqual(result.error, "Show all objects failed: Building object is null");
+            Assert.AreEqual(result.isSuccess, true);
+            Assert.AreEqual(child0.activeSelf, false);
+            Assert.AreEqual(child1.activeSelf, false);
+            Assert.AreEqual(child2.activeSelf, false);
             yield return null;
         }
 
@@ -148,69 +146,5 @@ namespace ReupVirtualTwinTests.controllers
             child2.SetActive(false);
         }
 
-    }
-
-    class MockObjectRegistry: IObjectRegistry
-    {
-        public List<GameObject> objects = new List<GameObject>();
-        public string[] lastRequestedObjectIds;
-        public List<string[]> requestedObjectIds;
-        public MockObjectRegistry(List<GameObject> objects)
-        {
-            for (int i = 0; i < objects.Count; i++)
-            {
-                GameObject obj = objects[i];
-                obj.AddComponent<UniqueId>().GenerateId();
-                this.objects.Add(obj);
-            }
-            requestedObjectIds = new List<string[]>();
-        }
-        public void AddObject(GameObject item)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void ClearRegistry()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<GameObject> GetObjects()
-        {
-            return objects;
-        }
-
-        public int GetObjectsCount()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<GameObject> GetObjectsWithGuids(string[] guids)
-        {
-            var foundObjects = new List<GameObject>();
-
-            foreach (string guid in guids)
-            {
-                GameObject obj = objects.FirstOrDefault(obj => obj.GetComponent<IUniqueIdentifier>().getId() == guid);
-                foundObjects.Add(obj);
-            }
-
-            return foundObjects;
-        }
-
-        public string[] GetObjectListIds()
-        {
-            return objects.ConvertAll(obj => obj.GetComponent<IUniqueIdentifier>().getId()).ToArray();
-        }
-
-        public GameObject GetObjectWithGuid(string guid)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveObject(string id, GameObject item)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }
