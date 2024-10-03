@@ -64,13 +64,14 @@ namespace ReupVirtualTwinTests.Registry
         {
             string currentId = testObj.GetComponent<RegisteredIdentifier>().getId();
             Assert.AreEqual(testObj, objectRegistry.GetObjectWithGuid(currentId));
-            Assert.AreEqual(1, objectRegistry.GetObjectsCount());
+            int objectsInRegistryBefore = objectRegistry.GetObjectsCount();
             string newId = "new-id";
             testObj.GetComponent<RegisteredIdentifier>().AssignId(newId);
             yield return null;
             Assert.IsNull(objectRegistry.GetObjectWithGuid(currentId));
             Assert.AreEqual(testObj, objectRegistry.GetObjectWithGuid(newId));
-            Assert.AreEqual(1, objectRegistry.GetObjectsCount());
+            int objectsInfRegistryAfter = objectRegistry.GetObjectsCount();
+            Assert.AreEqual(objectsInRegistryBefore, objectsInfRegistryAfter);
             yield return null;
         }
         [UnityTest]

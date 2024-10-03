@@ -12,6 +12,7 @@ using ReupVirtualTwin.dataSchemas;
 using Newtonsoft.Json.Linq;
 using ReupVirtualTwin.helperInterfaces;
 using Newtonsoft.Json.Schema;
+using ReupVirtualTwin.managerInterfaces;
 
 namespace ReupVirtualTwin.controllers
 {
@@ -21,10 +22,12 @@ namespace ReupVirtualTwin.controllers
         public ITextureCompresser textureCompresser = new TextureCompresser();
         readonly ITextureDownloader textureDownloader;
         readonly IObjectRegistry objectRegistry;
-        public ChangeMaterialController(ITextureDownloader textureDownloader, IObjectRegistry objectRegistry)
+        readonly ITexturesManager texturesManager;
+        public ChangeMaterialController(ITextureDownloader textureDownloader, IObjectRegistry objectRegistry, ITexturesManager texturesManager)
         {
             this.textureDownloader = textureDownloader;
             this.objectRegistry = objectRegistry;
+            this.texturesManager = texturesManager;
         }
 
         public async Task<TaskResult> ChangeObjectMaterial(JObject materialChangeInfo)
@@ -58,7 +61,7 @@ namespace ReupVirtualTwin.controllers
             {
                 if (objects[i].GetComponent<Renderer>() != null)
                 {
-                    objects[i].GetComponent<Renderer>().material = newMaterial;
+                    texturesManager.ApplyMaterialToObject(objects[i], newMaterial);
                     objects[i].GetComponent<IObjectInfo>().materialWasChanged = true;
                     ObjectMetaDataUtils.AssignMaterialIdMetaDataToObject(objects[i], materialChangeInfo["material"]["id"].ToObject<int>());
                     materialScaler.AdjustUVScaleToDimensions(objects[i], materialDimensionsInMillimeters);
