@@ -218,7 +218,7 @@ namespace ReupVirtualTwin.managers
                     TaskResult result = await _changeMaterialController.ChangeObjectMaterial((JObject)payload);
                     if (!result.isSuccess)
                     {
-                        SendErrorMessage(result.error);
+                        SendObjectMaterialsChangeFailure(result.error);
                         return;
                     }
                     ProcessObjectMaterialsChange((JObject)payload);
@@ -635,6 +635,17 @@ namespace ReupVirtualTwin.managers
                 payload = materialsChangedInfo
             };
             _webMessageSender.SendWebMessage(message);
+        }
+
+        private void SendObjectMaterialsChangeFailure(string message)
+        {
+            _webMessageSender.SendWebMessage(new WebMessage<JObject>
+            {
+                type = WebMessageType.changeObjectsMaterialFailure,
+                payload = new JObject(
+                    new JProperty("errorMessage", message)
+                )
+            });
         }
 
         private void SendErrorMessage(string message)
