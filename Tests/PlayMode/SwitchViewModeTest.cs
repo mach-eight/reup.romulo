@@ -26,6 +26,8 @@ namespace ReupVirtualTwinTests.generalTests
         GameObject dhvCamera;
         GameObject fpvCamera;
         List<GameObject> cameras;
+        string activateDHVRequestId = "activateDHVRequestId";
+        string activateFPVRequestId = "activateFPVRequestId";
         JObject activateDHVMessage;
         JObject activateFPVMessage;
 
@@ -52,13 +54,20 @@ namespace ReupVirtualTwinTests.generalTests
 
         void DefineMessages()
         {
+
             activateDHVMessage = new JObject
             {
-                { "type", WebMessageType.activateDHV }
+                { "type", WebMessageType.activateDHV },
+                { "payload", new JObject{
+                    { "requestId", activateDHVRequestId }
+                }}
             };
             activateFPVMessage = new JObject
             {
-                { "type", WebMessageType.activateFPV }
+                { "type", WebMessageType.activateFPV },
+                { "payload", new JObject{
+                    { "requestId", activateFPVRequestId }
+                }}
             };
         }
 
@@ -134,6 +143,44 @@ namespace ReupVirtualTwinTests.generalTests
             yield return null;
             editMediator.ReceiveWebMessage(JsonConvert.SerializeObject(activateFPVMessage));
             Assert.IsTrue(character.gameObject.activeSelf);
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldSendDHVSuccessMessage()
+        {
+            DefineMessages();
+            editMediator.ReceiveWebMessage(JsonConvert.SerializeObject(activateDHVMessage));
+            Assert.AreEqual(1, webMessageSenderSpy.sentMessages.Count);
+            WebMessage<JObject> sentMessage = (WebMessage<JObject>)webMessageSenderSpy.sentMessages[0];
+            WebMessage<JObject> expectedMessage = new WebMessage<JObject>
+            {
+                type = WebMessageType.activateDHVSuccess,
+                payload = new JObject
+                {
+                    { "requestId", activateDHVRequestId }
+                }
+            };
+            Assert.IsTrue(JObject.DeepEquals(expectedMessage.payload, sentMessage.payload));
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldSendFPVSuccessMessage()
+        {
+            DefineMessages();
+            editMediator.ReceiveWebMessage(JsonConvert.SerializeObject(activateFPVMessage));
+            Assert.AreEqual(1, webMessageSenderSpy.sentMessages.Count);
+            WebMessage<JObject> sentMessage = (WebMessage<JObject>)webMessageSenderSpy.sentMessages[0];
+            WebMessage<JObject> expectedMessage = new WebMessage<JObject>
+            {
+                type = WebMessageType.activateFPVSuccess,
+                payload = new JObject
+                {
+                    { "requestId", activateFPVRequestId }
+                }
+            };
+            Assert.IsTrue(JObject.DeepEquals(expectedMessage.payload, sentMessage.payload));
+            yield return null;
         }
     }
 

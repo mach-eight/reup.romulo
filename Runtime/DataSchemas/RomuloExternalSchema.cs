@@ -53,7 +53,7 @@ namespace ReupVirtualTwin.dataSchemas
             ""required"": [""objectIds"", ""requestId""]
         }");
 
-        public static readonly JSchema showAllObjectsPayloadSchema = JSchema.Parse(@"{
+        public static readonly JSchema simpleRequestIdPayloadSchema = JSchema.Parse(@"{
             ""type"": ""object"",
             ""properties"": {
                 ""requestId"": { ""type"": ""string"" }
