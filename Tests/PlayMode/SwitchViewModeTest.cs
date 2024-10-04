@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.TestTools;
 using NUnit.Framework;
-using ReupVirtualTwin.models;
-using UnityEditor;
 using Newtonsoft.Json.Linq;
 using ReupVirtualTwin.managers;
 using ReupVirtualTwin.enums;
@@ -26,8 +24,8 @@ namespace ReupVirtualTwinTests.generalTests
         GameObject dhvCamera;
         GameObject fpvCamera;
         List<GameObject> cameras;
-        string activateDHVRequestId = "activateDHVRequestId";
-        string activateFPVRequestId = "activateFPVRequestId";
+        string activateDHVRequestId;
+        string activateFPVRequestId;
         JObject activateDHVMessage;
         JObject activateFPVMessage;
 
@@ -54,7 +52,8 @@ namespace ReupVirtualTwinTests.generalTests
 
         void DefineMessages()
         {
-
+            activateDHVRequestId = "activateDHVRequestId";
+            activateFPVRequestId = "activateFPVRequestId";
             activateDHVMessage = new JObject
             {
                 { "type", WebMessageType.activateDHV },
