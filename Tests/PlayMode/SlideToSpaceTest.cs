@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.TestTools;
 using NUnit.Framework;
-using ReupVirtualTwinTests.utils;
 using ReupVirtualTwin.models;
 using UnityEditor;
-using ReupVirtualTwinTests.mocks;
 using Newtonsoft.Json.Linq;
 using ReupVirtualTwin.managers;
 using ReupVirtualTwin.enums;
 using Newtonsoft.Json;
 using ReupVirtualTwin.dataModels;
+using ReupVirtualTwinTests.utils;
+using ReupVirtualTwinTests.mocks;
 
-namespace ReupVirtualTwinTests.managers
+namespace ReupVirtualTwinTests.generalTests
 {
     public class SlideToSpaceTest : MonoBehaviour
     {
