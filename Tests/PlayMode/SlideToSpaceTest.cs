@@ -166,7 +166,8 @@ namespace ReupVirtualTwinTests.managers
                 payload = new JObject
                 {
                     { "requestId", requestId },
-                    { "message", $"Space jump point with id {nonExistentSpaceJumpPointId} not found" },
+                    { "message", $"Space jump point with id '{nonExistentSpaceJumpPointId}' not found" },
+                    { "spaceId", nonExistentSpaceJumpPointId },
                 }
             };
             Assert.IsTrue(JObject.DeepEquals(expectedMessage.payload, sentMessage.payload));
@@ -193,13 +194,78 @@ namespace ReupVirtualTwinTests.managers
                 payload = new JObject
                 {
                     { "requestId", requestId },
-                    { "message", $"Space jump point with id {spaceJumpPointId} has no ground below to jump to" },
+                    { "message", $"Space jump point with id '{spaceJumpPointId}' has no ground below to jump to" },
+                    { "spaceId", spaceJumpPointId },
                 }
             };
             Assert.IsTrue(JObject.DeepEquals(expectedMessage.payload, sentMessage.payload));
             yield return null;
         }
 
+        [UnityTest]
+        public IEnumerator ShouldSendSlideToSpaceFailMessage_when_anotherSlideToSpaceRequestInterruptTheCurrentOne()
+        {
+            spaceSelectors = SpaceSelectorFabric.CreateBulk(2);
+            spaceSelectors[0].transform.position = new Vector3(1, 1, 1);
+            spaceSelectors[1].transform.position = new Vector3(-0.1f, -0.1f, -0.1f);
+            string id1 = "space-jump-point-1";
+            string id2 = "space-jump-point-2";
+            spaceSelectors[0].GetComponent<SpaceJumpPoint>().id = id1;
+            spaceSelectors[1].GetComponent<SpaceJumpPoint>().id = id2;
+            spacesRecord.UpdateSpaces();
+            yield return null;
+            string requestId1 = "request-id-1";
+            string requestId2 = "request-id-2";
+            JObject goToSpace1Message = new JObject
+            {
+                { "type", WebMessageType.slideToSpace },
+                { "payload", new JObject
+                    {
+                        { "spaceId", id1 },
+                        { "requestId", requestId1 },
+                    }
+                }
+            };
+            JObject goToSpace2Message = new JObject
+            {
+                { "type", WebMessageType.slideToSpace },
+                { "payload", new JObject
+                    {
+                        { "spaceId", id2 },
+                        { "requestId", requestId2 },
+                    }
+                }
+            };
+            editMediator.ReceiveWebMessage(JsonConvert.SerializeObject(goToSpace1Message));
+            yield return null;
+            editMediator.ReceiveWebMessage(JsonConvert.SerializeObject(goToSpace2Message));
+            Assert.AreEqual(1, webMessageSenderSpy.sentMessages.Count);
+            WebMessage<JObject> failSentMessage = (WebMessage<JObject>)webMessageSenderSpy.sentMessages[0];
+            WebMessage<JObject> failExpectedMessage = new WebMessage<JObject>
+            {
+                type = WebMessageType.slideToSpaceFailure,
+                payload = new JObject
+                {
+                    { "message", "Slide to space point was interrupted" },
+                    { "spaceId", id1 },
+                    { "requestId", requestId1 }
+                }
+            };
+            Assert.IsTrue(JObject.DeepEquals(failExpectedMessage.payload, failSentMessage.payload));
+            yield return new WaitForSeconds(0.3f);
+            Assert.AreEqual(2, webMessageSenderSpy.sentMessages.Count);
+            WebMessage<JObject> successSentMessage = (WebMessage<JObject>)webMessageSenderSpy.sentMessages[1];
+            WebMessage<JObject> successExpectedMessage = new WebMessage<JObject>
+            {
+                type = WebMessageType.slideToSpaceSuccess,
+                payload = new JObject
+            {
+                { "spaceId", id2 },
+                { "requestId", requestId2 }
+            }
+            };
+            Assert.IsTrue(JObject.DeepEquals(successExpectedMessage.payload, successSentMessage.payload));
+        }
 
     }
 }

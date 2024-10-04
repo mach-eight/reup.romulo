@@ -43,7 +43,7 @@ public class CharacterPositionManagerTest : MonoBehaviour
 
         posManager.SlideToTarget(targetPosition);
 
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(2);
 
         //check new character's position is REALLY close to target position
         Assert.LessOrEqual(Vector3.Distance(targetPosition, character.transform.position), MOVEMENT_CLOSENESS_THRESHOLD);
@@ -59,7 +59,7 @@ public class CharacterPositionManagerTest : MonoBehaviour
 
         posManager.WalkToTarget(targetPosition);
 
-        yield return new WaitForSeconds(6);
+        yield return new WaitForSeconds(2);
 
         var sameHeightTargetPosition = new Vector3(5, 0, 5);
 

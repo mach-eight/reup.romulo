@@ -30,6 +30,8 @@ namespace ReupVirtualTwin.models
             }
             set => _jumpPoints = value;
         }
+        string currentIdRequest = null;
+        string currentRequestSpaceId = null;
 
         private void Awake()
         {
@@ -61,40 +63,70 @@ namespace ReupVirtualTwin.models
             }
         }
 
-        public void GoToSpace(string spaceJumpPointId, string requestId)
+        public void GoToSpace(JObject jumpInfo)
         {
+            string requestId = jumpInfo["requestId"].ToString();
+            string spaceJumpPointId = jumpInfo["spaceId"].ToString();
+            CheckIfThereIsACurrentRequest(jumpInfo);
             SpaceJumpPoint spaceSelector = jumpPoints.Find(space => space.id == spaceJumpPointId) as SpaceJumpPoint;
             if (spaceSelector == null)
             {
-                NotifyFailure($"Space jump point with id {spaceJumpPointId} not found", requestId);
+                NotifyFailure(ReupEvent.spaceJumpPointNotFound, jumpInfo);
                 return;
             }
-            _characterPositionManager.MakeKinematic();
-            var spaceSelectorPosition = spaceSelector.transform.position;
-            _characterHeightReseter.ResetCharacterHeight();
             var groundHit = GetGroundHit(spaceSelector);
             if (groundHit == null)
             {
-                NotifyFailure($"Space jump point with id {spaceJumpPointId} has no ground below to jump to", requestId);
+                NotifyFailure(ReupEvent.spaceJumpPointWithNoGround, jumpInfo);
                 return;
             }
-            spaceSelectorPosition.y = ((RaycastHit)groundHit).point.y + _characterHeightReseter.CharacterHeight;
+            Vector3 positionToJumpTo = GetPositionToJumpTo(spaceSelector, groundHit.Value);
+            UnityEvent reachPointEvent = CreateEndMovementEvent(spaceJumpPointId, requestId);
+            SlideToSpacePoint(positionToJumpTo, reachPointEvent);
+        }
+
+        private void CheckIfThereIsACurrentRequest(JObject jumpInfo)
+        {
+            if (currentIdRequest != null)
+            {
+                JObject previousJumpInfo = new JObject
+                {
+                    { "spaceId", currentRequestSpaceId },
+                    { "requestId", currentIdRequest },
+                };
+                mediator.Notify(ReupEvent.slideToSpacePointRequestInterrupted, previousJumpInfo);
+            }
+            currentIdRequest = jumpInfo["requestId"].ToString();
+            currentRequestSpaceId = jumpInfo["spaceId"].ToString();
+        }
+
+        Vector3 GetPositionToJumpTo(SpaceJumpPoint spaceSelector, RaycastHit groundHit)
+        {
+            Vector3 spaceSelectorPosition = spaceSelector.transform.position;
+            float desiredHeight = groundHit.point.y + _characterHeightReseter.CharacterHeight;
+            return new Vector3(spaceSelectorPosition.x, desiredHeight, spaceSelectorPosition.z);
+        }
+
+        void SlideToSpacePoint(Vector3 targetPosition, UnityEvent endMovementEvent)
+        {
+            _characterHeightReseter.ResetCharacterHeight();
+            _characterPositionManager.MakeKinematic();
+            _characterPositionManager.allowWalking = false;
+            _characterPositionManager.allowSetHeight = false;
+            _characterPositionManager.SlideToTarget(targetPosition, endMovementEvent);
+        }
+
+        UnityEvent CreateEndMovementEvent(string spaceJumpPointId, string requestId)
+        {
             var endMovementEvent = new UnityEvent();
             endMovementEvent.AddListener(EndMovementHandler);
             endMovementEvent.AddListener(() => NotifySuccess(spaceJumpPointId, requestId));
-            _characterPositionManager.allowWalking = false;
-            _characterPositionManager.allowSetHeight = false;
-            _characterPositionManager.SlideToTarget(spaceSelectorPosition, endMovementEvent);
+            return endMovementEvent;
         }
 
-        void NotifyFailure(string errorMessage, string requestId)
+        void NotifyFailure(ReupEvent failureEvent, JObject jumpInfo)
         {
-            JObject payload = new JObject
-            {
-                { "requestId", requestId },
-                { "message", errorMessage },
-            };
-            mediator.Notify(ReupEvent.spaceJumpPointNotFound, payload);
+            mediator.Notify(failureEvent, jumpInfo);
         }
 
         void NotifySuccess(string spaceJumpPointId, string requestId)
@@ -105,6 +137,8 @@ namespace ReupVirtualTwin.models
                 { "requestId", requestId },
             };
             mediator.Notify(ReupEvent.spaceJumpPointReached, payload);
+            currentIdRequest = null;
+            currentRequestSpaceId = null;
         }
 
         private void EndMovementHandler()

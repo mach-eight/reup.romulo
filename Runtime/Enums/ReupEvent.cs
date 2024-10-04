@@ -19,5 +19,7 @@ namespace ReupVirtualTwin.enums
         error,
         spaceJumpPointReached,
         spaceJumpPointNotFound,
+        spaceJumpPointWithNoGround,
+        slideToSpacePointRequestInterrupted,
     }
 }
