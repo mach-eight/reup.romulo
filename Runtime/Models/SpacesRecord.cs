@@ -66,13 +66,19 @@ namespace ReupVirtualTwin.models
             SpaceJumpPoint spaceSelector = jumpPoints.Find(space => space.id == spaceJumpPointId) as SpaceJumpPoint;
             if (spaceSelector == null)
             {
-                NotifyFailureDueToSpaceNotFound(spaceJumpPointId, requestId);
+                NotifyFailure($"Space jump point with id {spaceJumpPointId} not found", requestId);
                 return;
             }
             _characterPositionManager.MakeKinematic();
             var spaceSelectorPosition = spaceSelector.transform.position;
             _characterHeightReseter.ResetCharacterHeight();
-            spaceSelectorPosition.y = GetDesiredHeight(spaceSelector);
+            var groundHit = GetGroundHit(spaceSelector);
+            if (groundHit == null)
+            {
+                NotifyFailure($"Space jump point with id {spaceJumpPointId} has no ground below to jump to", requestId);
+                return;
+            }
+            spaceSelectorPosition.y = ((RaycastHit)groundHit).point.y + _characterHeightReseter.CharacterHeight;
             var endMovementEvent = new UnityEvent();
             endMovementEvent.AddListener(EndMovementHandler);
             endMovementEvent.AddListener(() => NotifySuccess(spaceJumpPointId, requestId));
@@ -81,12 +87,12 @@ namespace ReupVirtualTwin.models
             _characterPositionManager.SlideToTarget(spaceSelectorPosition, endMovementEvent);
         }
 
-        void NotifyFailureDueToSpaceNotFound(string spaceJumpPointId, string requestId)
+        void NotifyFailure(string errorMessage, string requestId)
         {
             JObject payload = new JObject
             {
                 { "requestId", requestId },
-                { "message", $"Space jump point with id {spaceJumpPointId} not found" },
+                { "message", errorMessage },
             };
             mediator.Notify(ReupEvent.spaceJumpPointNotFound, payload);
         }
@@ -106,16 +112,6 @@ namespace ReupVirtualTwin.models
             _characterPositionManager.UndoKinematic();
             _characterPositionManager.allowWalking = true;
             _characterPositionManager.allowSetHeight = true;
-        }
-
-        private float GetDesiredHeight(SpaceJumpPoint spaceSelector)
-        {
-            var groundHit = GetGroundHit(spaceSelector);
-            if (groundHit == null)
-            {
-                throw new Exception("No Ground below Space selector");
-            }
-            return ((RaycastHit)groundHit).point.y + _characterHeightReseter.CharacterHeight;
         }
 
         private RaycastHit? GetGroundHit(SpaceJumpPoint spaceSelector)

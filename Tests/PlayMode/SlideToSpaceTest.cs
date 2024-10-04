@@ -4,11 +4,9 @@ using UnityEngine;
 using UnityEngine.TestTools;
 using NUnit.Framework;
 using ReupVirtualTwinTests.utils;
-using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.models;
 using UnityEditor;
 using ReupVirtualTwinTests.mocks;
-using ReupVirtualTwin.managerInterfaces;
 using Newtonsoft.Json.Linq;
 using ReupVirtualTwin.managers;
 using ReupVirtualTwin.enums;
@@ -173,6 +171,35 @@ namespace ReupVirtualTwinTests.managers
             };
             Assert.IsTrue(JObject.DeepEquals(expectedMessage.payload, sentMessage.payload));
         }
+
+        [UnityTest]
+        public IEnumerator ShouldSendFailMessage_when_requestedJumpPointHasNoGroundBelow()
+        {
+            DefineConstants();
+            spaceSelectors = new List<GameObject>(){
+                SpaceSelectorFabric.Create(new SpaceSelectorFabric.SpaceSelectorConfig
+                {
+                    id = spaceJumpPointId,
+                    position = new Vector3(100,100,100),
+                })
+            };
+            spaceSelectors[0].transform.position = new Vector3(100, 100, 100);
+            yield return editMediator.ReceiveWebMessage(serializedMessage);
+            Assert.AreEqual(1, webMessageSenderSpy.sentMessages.Count);
+            WebMessage<JObject> sentMessage = (WebMessage<JObject>)webMessageSenderSpy.sentMessages[0];
+            WebMessage<JObject> expectedMessage = new WebMessage<JObject>
+            {
+                type = WebMessageType.slideToSpaceFailure,
+                payload = new JObject
+                {
+                    { "requestId", requestId },
+                    { "message", $"Space jump point with id {spaceJumpPointId} has no ground below to jump to" },
+                }
+            };
+            Assert.IsTrue(JObject.DeepEquals(expectedMessage.payload, sentMessage.payload));
+            yield return null;
+        }
+
 
     }
 }
