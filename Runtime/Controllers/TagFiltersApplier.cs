@@ -11,7 +11,8 @@ namespace ReupVirtualTwin.controllers
         public static List<GameObject> ApplyFiltersToTree(GameObject obj, List<ITagFilter> filterList)
         {
             List<HashSet<GameObject>> filteredObjectsList = new List<HashSet<GameObject>>();
-            for (int i = 0; i < filterList.Count; i++)
+            List<ITagFilter> activeFilters = filterList.Where(filter => filter.filterIsActive).ToList();
+            for (int i = 0; i < activeFilters.Count; i++)
             {
                 filteredObjectsList.Add(filterList[i].ExecuteFilter(obj));
             }
@@ -20,7 +21,7 @@ namespace ReupVirtualTwin.controllers
                 new HashSet<GameObject>(filteredObjectsList.First()),
                 (objectsIntersection, nextObjects) =>
                 {
-                     objectsIntersection.IntersectWith(nextObjects); return objectsIntersection;
+                    objectsIntersection.IntersectWith(nextObjects); return objectsIntersection;
                 }
             ).ToList();
             return objectsThatPassedAllFilters;
