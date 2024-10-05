@@ -52,6 +52,7 @@ namespace ReupVirtualTwin.enums
 
         public const string slideToSpace = "[Navigation] Slide To Space";
         public const string slideToSpaceSuccess = "[Navigation] Slide To Space Success";
+        public const string slideToSpaceInterrupted = "[Navigation] Slide To Space Interrupted";
         public const string slideToSpaceFailure = "[Navigation] Slide To Space Failure";
 
         public const string showObjects = "[Visibility] Show Objects";

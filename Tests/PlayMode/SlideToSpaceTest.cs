@@ -243,7 +243,7 @@ namespace ReupVirtualTwinTests.managers
             WebMessage<JObject> failSentMessage = (WebMessage<JObject>)webMessageSenderSpy.sentMessages[0];
             WebMessage<JObject> failExpectedMessage = new WebMessage<JObject>
             {
-                type = WebMessageType.slideToSpaceFailure,
+                type = WebMessageType.slideToSpaceInterrupted,
                 payload = new JObject
                 {
                     { "message", "Slide to space point was interrupted" },
