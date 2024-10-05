@@ -8,6 +8,7 @@ using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.behaviourInterfaces;
 using System.Linq;
+using System;
 
 namespace ReupVirtualTwin.editor
 {
@@ -82,10 +83,13 @@ namespace ReupVirtualTwin.editor
             }
             EditorGUILayout.Space();
             EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Apply filters"))
+            if (GUILayout.Button("Apply exclusive filters"))
             {
-                objectsVisibilityStates.Add(ObjectVisibilityUtils.GetVisibilityStateOfAllObjects(building, new IdController()));
-                ApplyFilters(building);
+                ApplyFilters(building, TagFiltersApplier.ApplyExclusiveFiltersToTree);
+            }
+            if (GUILayout.Button("Apply inclusive filters"))
+            {
+                ApplyFilters(building, TagFiltersApplier.ApplyInclusiveFiltersToTree);
             }
             if (GUILayout.Button("Restore last objects visibility") && objectsVisibilityStates.Count > 0)
             {
@@ -100,15 +104,16 @@ namespace ReupVirtualTwin.editor
             ObjectVisibilityUtils.ApplyVisibilityState(building, lastVisibilityState, new IdController());
         }
 
-        private void ApplyFilters(GameObject building)
+        private void ApplyFilters(GameObject building, Func<GameObject, List<ITagFilter>, List<GameObject>> filterFunction)
         {
+            objectsVisibilityStates.Add(ObjectVisibilityUtils.GetVisibilityStateOfAllObjects(building, new IdController()));
             List<ITagFilter> filters = substringTagFilters.Concat(tagFilters).ToList();
             if (filters.Count == 0)
             {
                 Debug.LogWarning("No filters to apply");
                 return;
             }
-            List<GameObject> filteredObjects = TagFiltersApplier.ApplyFiltersToTree(building, filters);
+            List<GameObject> filteredObjects = filterFunction(building, filters);
             sceneVisibilityManager.Hide(building, true);
             for (int i = 0; i < filteredObjects.Count; i++)
             {
