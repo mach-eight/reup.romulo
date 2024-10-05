@@ -739,7 +739,7 @@ namespace ReupVirtualTwin.managers
         {
             _webMessageSender.SendWebMessage(new WebMessage<JObject>
             {
-                type = WebMessageType.slideToSpaceFailure,
+                type = WebMessageType.slideToSpaceInterrupted,
                 payload = new JObject
                 {
                     { "message", "Slide to space point was interrupted" },
