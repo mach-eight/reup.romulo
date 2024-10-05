@@ -32,15 +32,7 @@ namespace ReupVirtualTwin.dataSchemas
             ""required"": [""requestTimestamp"", ""objects""]
         }");
 
-        public static readonly JSchema slideToSpacePayloadSchema = JSchema.Parse(@"{
-            ""type"": ""object"",
-            ""properties"": {
-                ""requestId"": { ""type"": ""string"" },
-                ""spaceId"": { ""type"": ""string"" },
-            },
-            ""required"": [""requestId"", ""spaceId""]
-        }");
-
+        public static readonly JSchema slideToSpacePayloadSchema = RomuloInternalSchema.spaceJumpInfoEventPayload;
         public static readonly JSchema showOrHideObjectsPayloadSchema = JSchema.Parse(@"{
             ""type"": ""object"",
             ""properties"": {
