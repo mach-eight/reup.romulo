@@ -716,7 +716,7 @@ namespace ReupVirtualTwin.managers
                 type = WebMessageType.slideToSpaceFailure,
                 payload = new JObject
                 {
-                    { "message", $"Space jump point with id '{payload["spaceId"]}' not found" },
+                    { "errorMessage", $"Space jump point with id '{payload["spaceId"]}' not found" },
                     { "requestId", payload["requestId"] },
                     { "spaceId", payload["spaceId"] }
                 }
@@ -729,7 +729,7 @@ namespace ReupVirtualTwin.managers
                 type = WebMessageType.slideToSpaceFailure,
                 payload = new JObject
                 {
-                    { "message", $"Space jump point with id '{payload["spaceId"]}' has no ground below to jump to" },
+                    { "errorMessage", $"Space jump point with id '{payload["spaceId"]}' has no ground below to jump to" },
                     { "requestId", payload["requestId"] },
                     { "spaceId", payload["spaceId"] }
                 }

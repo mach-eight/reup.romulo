@@ -166,7 +166,7 @@ namespace ReupVirtualTwinTests.generalTests
                 payload = new JObject
                 {
                     { "requestId", requestId },
-                    { "message", $"Space jump point with id '{nonExistentSpaceJumpPointId}' not found" },
+                    { "errorMessage", $"Space jump point with id '{nonExistentSpaceJumpPointId}' not found" },
                     { "spaceId", nonExistentSpaceJumpPointId },
                 }
             };
@@ -194,7 +194,7 @@ namespace ReupVirtualTwinTests.generalTests
                 payload = new JObject
                 {
                     { "requestId", requestId },
-                    { "message", $"Space jump point with id '{spaceJumpPointId}' has no ground below to jump to" },
+                    { "errorMessage", $"Space jump point with id '{spaceJumpPointId}' has no ground below to jump to" },
                     { "spaceId", spaceJumpPointId },
                 }
             };
