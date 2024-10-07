@@ -74,13 +74,13 @@ namespace ReupVirtualTwinTests.behaviours
 
             Vector2 zoomInScrollInput = new Vector2(0, scrollStep);
             float expectedZoomInFov = CalculateNextScrollZoomFov(zoomInScrollInput);
-            input.Set(mouse.scroll, zoomInScrollInput);
+            yield return SimulateScrollInput(zoomInScrollInput, 1);
             yield return WaitForZoomToFinalize();
             Assert.AreEqual(dhvCineMachineComponent.Lens.FieldOfView, expectedZoomInFov, errorToleranceInDegrees);
 
             Vector2 zoomOutScrollInput = new Vector2(0, -scrollStep);
             float expectedZoomOutFov = CalculateNextScrollZoomFov(zoomOutScrollInput);
-            input.Set(mouse.scroll, zoomOutScrollInput);
+            yield return SimulateScrollInput(zoomOutScrollInput, 1);
             yield return WaitForZoomToFinalize();
             Assert.AreEqual(dhvCineMachineComponent.Lens.FieldOfView, expectedZoomOutFov, errorToleranceInDegrees);
 
@@ -123,9 +123,9 @@ namespace ReupVirtualTwinTests.behaviours
         {
             Assert.AreEqual(initialFieldOfView, dhvCineMachineComponent.Lens.FieldOfView);
 
-            Vector2 scrollInput = new Vector2(0, scrollStep * 100);
+            Vector2 scrollInput = new Vector2(0, scrollStep);
 
-            input.Set(mouse.scroll, scrollInput);
+            yield return SimulateScrollInput(scrollInput, 100);
             yield return WaitForZoomToFinalize();
 
             Assert.AreEqual(dhvCineMachineComponent.Lens.FieldOfView, minFieldOfView, errorToleranceInDegrees);
@@ -137,18 +137,35 @@ namespace ReupVirtualTwinTests.behaviours
         {
             Assert.AreEqual(initialFieldOfView, dhvCineMachineComponent.Lens.FieldOfView);
 
-            Vector2 scrollInput = new Vector2(0, -scrollStep * 100);
+            Vector2 scrollInput = new Vector2(0, -scrollStep );
 
-            input.Set(mouse.scroll, scrollInput);
+            yield return SimulateScrollInput(scrollInput, 100);
             yield return WaitForZoomToFinalize();
 
             Assert.AreEqual(dhvCineMachineComponent.Lens.FieldOfView, maxFieldOfView, errorToleranceInDegrees);
             yield return null;
         }
 
+        [UnityTest]
+        public IEnumerator ShouldClampZoomInput_WhenUsingGranularTrackpadInput()
+        {
+            Assert.AreEqual(initialFieldOfView, dhvCineMachineComponent.Lens.FieldOfView);
+
+            Vector2 scrollInput = new Vector2(0, 300);
+            Vector2 expectedClampedInput = new Vector2(0, scrollStep);
+            float expectedFov = CalculateNextScrollZoomFov(expectedClampedInput);
+
+            yield return SimulateScrollInput(scrollInput, 1);
+            yield return WaitForZoomToFinalize();
+
+            Assert.AreEqual(dhvCineMachineComponent.Lens.FieldOfView, expectedFov, errorToleranceInDegrees);
+            yield return null;
+        }
+
         private float CalculateNextScrollZoomFov(Vector2 scrollInput)
         {
-            float zoomAmount = scrollInput.y * zoomDhvBehavior.scrollZoomSpeedMultiplier;
+            float clapZoomInput = Mathf.Clamp(scrollInput.y, -scrollStep, scrollStep);
+            float zoomAmount = clapZoomInput * zoomDhvBehavior.scrollZoomSpeedMultiplier;
             float exponentialZoom = dhvCineMachineComponent.Lens.FieldOfView * Mathf.Pow(zoomDhvBehavior.scrollZoomScaleFactor, zoomAmount);
             return Mathf.Clamp(exponentialZoom, minFieldOfView, maxFieldOfView);
         }
@@ -164,6 +181,15 @@ namespace ReupVirtualTwinTests.behaviours
         private IEnumerator WaitForZoomToFinalize()
         {
             yield return new WaitForSeconds(zoomDhvBehavior.smoothTime * zoomSepts);
+        }
+
+        private IEnumerator SimulateScrollInput(Vector2 scrollInput, int scrollRepetitions)
+        {
+            for (int i = 0; i < scrollRepetitions; i++)
+            {
+                input.Set(mouse.scroll, scrollInput);
+                yield return null;
+            }
         }
 
     }
