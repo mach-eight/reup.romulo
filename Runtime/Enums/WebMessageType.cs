@@ -50,6 +50,11 @@ namespace ReupVirtualTwin.enums
         public const string activateDHV = "[View Mode] Activate Dollhouse View";
         public const string activateFPV = "[View Mode] Activate First-person View";
 
+        public const string slideToSpace = "[Navigation] Slide To Space";
+        public const string slideToSpaceSuccess = "[Navigation] Slide To Space Success";
+        public const string slideToSpaceInterrupted = "[Navigation] Slide To Space Interrupted";
+        public const string slideToSpaceFailure = "[Navigation] Slide To Space Failure";
+
         public const string showObjects = "[Visibility] Show Objects";
         public const string hideObjects = "[Visibility] Hide Objects";
         public const string showAllObjects = "[Visibility] Show All Objects";

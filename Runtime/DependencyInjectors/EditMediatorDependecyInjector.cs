@@ -26,6 +26,7 @@ namespace ReupVirtualTwin.dependencyInjectors
         [SerializeField] GameObject fpvCamera;
         [SerializeField] GameObject dhvCamera;
         [SerializeField] ViewModeManager viewModeManager;
+        [SerializeField] SpacesRecord spacesRecord;
         [SerializeField] TexturesManager texturesManager;
         [SerializeField] CharacterRotationManager characterRotationManager;
         [SerializeField] ObjectRegistry objectRegistry;
@@ -42,6 +43,7 @@ namespace ReupVirtualTwin.dependencyInjectors
                 !modelInfoManager ||
                 !fpvCamera ||
                 !dhvCamera ||
+                !spacesRecord ||
                 !texturesManager ||
                 !character ||
                 !viewModeManager ||
@@ -78,6 +80,7 @@ namespace ReupVirtualTwin.dependencyInjectors
             );
             editMediator.originalSceneController = new OriginalSceneController(objectRegistry, texturesManager);
             editMediator.viewModeManager = viewModeManager;
+            editMediator.spacesRecord = spacesRecord;
             editMediator.buildingVisibilityController = new BuildingVisibilityController(
                 objectRegistry,
                 setupBuilding.GetComponent<IBuildingGetterSetter>().building

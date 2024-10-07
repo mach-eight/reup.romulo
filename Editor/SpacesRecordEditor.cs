@@ -4,6 +4,7 @@ using UnityEditor;
 using ReupVirtualTwin.enums;
 using ReupVirtualTwin.models;
 using System;
+using ReupVirtualTwin.modelInterfaces;
 
 
 namespace ReupVirtualTwin.editor
@@ -11,8 +12,12 @@ namespace ReupVirtualTwin.editor
     [CustomEditor(typeof(SpacesRecord))]
     public class SpacesRecordEditor : Editor
     {
-        bool ListCheck<T>(List<T> list, int expectedLength)
+        bool CheckForStaleList<T>(List<T> list, int expectedLength)
         {
+            if (list == null)
+            {
+                return true;
+            }
             if (list.Count != expectedLength)
             {
                 return true;
@@ -27,13 +32,13 @@ namespace ReupVirtualTwin.editor
         public override void OnInspectorGUI()
         {
             SpacesRecord spacesRecord = (SpacesRecord)target;
-            if (!spacesRecord.SpaceTagIsDefined())
+            if (!SpaceTagIsDefined())
             {
                 EditorGUILayout.HelpBox("No defined space selector tag yet", MessageType.Warning);
                 return;
             }
             GameObject[] spaces = GameObject.FindGameObjectsWithTag(TagsEnum.spaceSelector);
-            if (ListCheck<SpaceJumpPoint>(spacesRecord.jumpPoints, spaces.Length))
+            if (CheckForStaleList<ISpaceJumpPoint>(spacesRecord.jumpPoints, spaces.Length))
             {
                 spacesRecord.UpdateSpaces();
             }
@@ -43,6 +48,14 @@ namespace ReupVirtualTwin.editor
                 EditorGUILayout.LabelField($" - {spaceSelector.gameObject.name} ({spaceSelector.spaceName})");
             }
             DrawDefaultInspector();
+        }
+
+        bool SpaceTagIsDefined()
+        {
+            return Array.Exists(
+                UnityEditorInternal.InternalEditorUtility.tags,
+                element => element == TagsEnum.spaceSelector
+            );
         }
 
     }

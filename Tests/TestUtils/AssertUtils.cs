@@ -47,10 +47,16 @@ namespace ReupVirtualTwinTests.utils
             }
         }
 
-        public static void AssertVector2sAreEqual(Vector2 expected, Vector2 real)
+        public static void AssertVectorsAreEqual(Vector3 expected, Vector3 real)
         {
-            float distance = Vector2.Distance(expected, real);
-            Assert.Less(distance, 1e-6);
+            AssertVectorsAreClose(expected, real, 1e-6);
+        }
+
+        public static void AssertVectorsAreClose(Vector3 expected, Vector3 real, double threshold)
+        {
+            float distance = Vector3.Distance(expected, real);
+            Assert.Less(distance, threshold);
+
         }
 
         public static void AssertVectorIsZero(Vector3 vector, float zeroThreshold)

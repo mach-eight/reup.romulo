@@ -86,7 +86,7 @@ public class ReupPrefabTest : MonoBehaviour
     [UnityTest]
     public IEnumerator SelectableObjectHighlighterObjectSensor_should_haveSelectableObjectSelector()
     {
-        ObjectSensor selectableObjectSensorHighligherObjectSensor = (ObjectSensor) sceneObjects.selectableObjectHighlighter.objectSensor;
+        ObjectSensor selectableObjectSensorHighligherObjectSensor = (ObjectSensor)sceneObjects.selectableObjectHighlighter.objectSensor;
         Assert.AreEqual(typeof(SelectableObjectSelector), selectableObjectSensorHighligherObjectSensor.objectSelector.GetType());
         yield return null;
     }

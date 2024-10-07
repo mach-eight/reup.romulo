@@ -309,6 +309,7 @@ MonoBehaviour:
   fpvCamera: {fileID: 8060287538316763243}
   dhvCamera: {fileID: 2401207048260687702}
   viewModeManager: {fileID: 3904143813462744938}
+  spacesRecord: {fileID: 6371165624866328778}
   texturesManager: {fileID: 7203003387684823839}
   characterRotationManager: {fileID: 9154797268538216174}
   objectRegistry: {fileID: 2043244847565700485}
@@ -1309,7 +1310,6 @@ MonoBehaviour:
   prefabsForPool:
   - {fileID: 795185681624372215, guid: 63f9ee5011f4745b6a4f85331988a00a, type: 3}
   - {fileID: 6089178694768482751, guid: 909bced0a4ff4405d9026f65b859cc6a, type: 3}
-  - {fileID: 4690271077178968154, guid: 5cb8894d81e593e49a0fc4f086bc8d99, type: 3}
 --- !u!1 &3162418224126025097
 GameObject:
   m_ObjectHideFlags: 0
@@ -2378,6 +2378,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   setupBuilding: {fileID: 7508923528206428603}
+  spacesRecord: {fileID: 6737159227163874936}
 --- !u!1 &6737159227163874936
 GameObject:
   m_ObjectHideFlags: 0
@@ -2422,11 +2423,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3bd0277d170c40429218692622de40f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpPoints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  ignoreLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!1 &6878658961563752214
 GameObject:
   m_ObjectHideFlags: 0

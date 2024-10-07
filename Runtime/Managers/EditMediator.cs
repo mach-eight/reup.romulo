@@ -73,6 +73,7 @@ namespace ReupVirtualTwin.managers
 
         private IOriginalSceneController _originalSceneController;
         public IOriginalSceneController originalSceneController { get => _originalSceneController; set => _originalSceneController = value; }
+        public ISpacesRecord spacesRecord { get; set; }
         public IBuildingVisibilityController buildingVisibilityController { get; set; }
 
         public void Notify(ReupEvent eventName)
@@ -148,6 +149,34 @@ namespace ReupVirtualTwin.managers
                     }
                     ProcessObjectMaterialsChange((JObject)(object)payload);
                     break;
+                case ReupEvent.spaceJumpPointReached:
+                    if (RomuloEnvironment.development && !((JObject)(object)payload).IsValid(RomuloInternalSchema.spaceJumpInfoEventPayload))
+                    {
+                        throw new ArgumentException($"Invalid payload for '{eventName}' event");
+                    }
+                    ProcessSpaceJumpPointReached((JObject)(object)payload);
+                    break;
+                case ReupEvent.spaceJumpPointWithNoGround:
+                    if (RomuloEnvironment.development && !((JObject)(object)payload).IsValid(RomuloInternalSchema.spaceJumpInfoEventPayload))
+                    {
+                        throw new ArgumentException($"Invalid payload for '{eventName}' event");
+                    }
+                    ProcessSpaceJumpPointWithNoGround((JObject)(object)payload);
+                    break;
+                case ReupEvent.spaceJumpPointNotFound:
+                    if (RomuloEnvironment.development && !((JObject)(object)payload).IsValid(RomuloInternalSchema.spaceJumpInfoEventPayload))
+                    {
+                        throw new ArgumentException($"Invalid payload for '{eventName}' event");
+                    }
+                    ProcessSpaceJumpPointNotFound((JObject)(object)payload);
+                    break;
+                case ReupEvent.slideToSpacePointRequestInterrupted:
+                    if (RomuloEnvironment.development && !((JObject)(object)payload).IsValid(RomuloInternalSchema.spaceJumpInfoEventPayload))
+                    {
+                        throw new ArgumentException($"Invalid payload for '{eventName}' event");
+                    }
+                    ProcessJumpToSpacePointInterrupted((JObject)(object)payload);
+                    break;
                 case ReupEvent.error:
                     if (!(payload is string))
                     {
@@ -177,7 +206,7 @@ namespace ReupVirtualTwin.managers
             JToken payload = message["payload"];
             try
             {
-                await ExcecuteWebMessage(type, payload);
+                await ExecuteWebMessage(type, payload);
             }
             catch (Exception e)
             {
@@ -186,7 +215,7 @@ namespace ReupVirtualTwin.managers
                 Debug.LogError(e);
             }
         }
-        public async Task ExcecuteWebMessage(string type, JToken payload)
+        public async Task ExecuteWebMessage(string type, JToken payload)
         {
             switch (type)
             {
@@ -243,6 +272,9 @@ namespace ReupVirtualTwin.managers
                     break;
                 case WebMessageType.activateFPV:
                     _viewModeManager.ActivateFPV();
+                    break;
+                case WebMessageType.slideToSpace:
+                    spacesRecord.GoToSpace((JObject)payload);
                     break;
                 case WebMessageType.showObjects:
                     SetObjectsVisibility((JObject)payload, true);
@@ -664,6 +696,54 @@ namespace ReupVirtualTwin.managers
             {
                 type = WebMessageType.error,
                 payload = errorMessages,
+            });
+        }
+        void ProcessSpaceJumpPointReached(JObject spaceJumpPointPayload)
+        {
+            _webMessageSender.SendWebMessage(new WebMessage<JObject>
+            {
+                type = WebMessageType.slideToSpaceSuccess,
+                payload = spaceJumpPointPayload
+            });
+        }
+
+        void ProcessSpaceJumpPointNotFound(JObject payload)
+        {
+            _webMessageSender.SendWebMessage(new WebMessage<JObject>
+            {
+                type = WebMessageType.slideToSpaceFailure,
+                payload = new JObject
+                {
+                    { "errorMessage", $"Space jump point with id '{payload["spaceId"]}' not found" },
+                    { "requestId", payload["requestId"] },
+                    { "spaceId", payload["spaceId"] }
+                }
+            });
+        }
+        void ProcessSpaceJumpPointWithNoGround(JObject payload)
+        {
+            _webMessageSender.SendWebMessage(new WebMessage<JObject>
+            {
+                type = WebMessageType.slideToSpaceFailure,
+                payload = new JObject
+                {
+                    { "errorMessage", $"Space jump point with id '{payload["spaceId"]}' has no ground below to jump to" },
+                    { "requestId", payload["requestId"] },
+                    { "spaceId", payload["spaceId"] }
+                }
+            });
+        }
+        void ProcessJumpToSpacePointInterrupted(JObject payload)
+        {
+            _webMessageSender.SendWebMessage(new WebMessage<JObject>
+            {
+                type = WebMessageType.slideToSpaceInterrupted,
+                payload = new JObject
+                {
+                    { "message", "Slide to space point was interrupted" },
+                    { "requestId", payload["requestId"] },
+                    { "spaceId", payload["spaceId"] }
+                }
             });
         }
 

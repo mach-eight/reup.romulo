@@ -11,40 +11,34 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using ReupVirtualTwinTests.utils;
 using ReupVirtualTwin.modelInterfaces;
+using ReupVirtualTwin.models;
 
 public class ModelInfoManagerTest : MonoBehaviour
 {
     ReupSceneInstantiator.SceneObjects sceneObjects;
     ObjectMapper objectMapper = new ObjectMapper(new TagsController(), new IdController());
-    GameObject setupBuildingGameObject;
     GameObject buildingGameObject;
     ModelInfoManager modelInfoManager;
     const int BUILDING_CHILDREN_DEPTH = 30;
+    List<GameObject> spaceSelectors;
 
 
-    [UnitySetUp]
-    public IEnumerator SetUp()
+    [SetUp]
+    public void SetUp()
     {
         buildingGameObject = StubObjectTreeCreator.CreateMockBuilding(BUILDING_CHILDREN_DEPTH);
         sceneObjects = ReupSceneInstantiator.InstantiateSceneWithBuildingWithBuildingObject(buildingGameObject);
         modelInfoManager = sceneObjects.modelInfoManager;
-        yield return null;
     }
     [UnityTearDown]
     public IEnumerator TearDown()
     {
-        Destroy(setupBuildingGameObject);
         ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
-        Destroy(buildingGameObject);
+        SpaceSelectorFabric.DestroySpaceSelectors(spaceSelectors);
+        spaceSelectors?.Clear();
         yield return null;
     }
-    private void CreateStubSetupBuilding()
-    {
-        setupBuildingGameObject = StubOnSetupBuildingCreator.CreateImmediateOnSetupBuilding();
-        var fakeSetupBuilding = setupBuildingGameObject.GetComponent<StubOnSetupBuildingCreator.FakeSetupBuilding>();
-        buildingGameObject = StubObjectTreeCreator.CreateMockBuilding(BUILDING_CHILDREN_DEPTH);
-        fakeSetupBuilding.building = buildingGameObject;
-    }
+
     private int NumberOfObjectsInTree(ObjectDTO tree)
     {
         int count = 1;
@@ -176,6 +170,53 @@ public class ModelInfoManagerTest : MonoBehaviour
         JObject sceneState = modelInfoManager.GetSceneState();
         Assert.AreEqual(parentMetaData["appearance"]["color"], sceneState["appearance"]["color"]);
         Assert.AreEqual(childMetaData["appearance"]["color"], sceneState["children"][0]["appearance"]["color"]);
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldContainNamesInSpaceSelectorsList()
+    {
+        spaceSelectors = SpaceSelectorFabric.CreateBulk(5);
+        yield return null;
+        WebMessage<JObject> message = modelInfoManager.ObtainModelInfoMessage();
+        JArray spaceSelectorsList = message.payload["spaceSelectors"].ToObject<JArray>();
+        Assert.AreEqual(5, spaceSelectorsList.Count);
+        for (int i = 0; i < 5; i++)
+        {
+            Assert.AreEqual(spaceSelectors[i].GetComponent<SpaceJumpPoint>().name, spaceSelectorsList[i]["name"].ToString());
+        }
+        yield return null;
+
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldContainIdsInSpaceSelectorsList()
+    {
+        spaceSelectors = SpaceSelectorFabric.CreateBulk(5);
+        yield return null;
+        WebMessage<JObject> message = modelInfoManager.ObtainModelInfoMessage();
+        JArray spaceSelectorsList = message.payload["spaceSelectors"].ToObject<JArray>();
+        Assert.AreEqual(5, spaceSelectorsList.Count);
+        for (int i = 0; i < 5; i++)
+        {
+            Assert.AreEqual(spaceSelectors[i].GetComponent<SpaceJumpPoint>().id, spaceSelectorsList[i]["id"].ToString());
+        }
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator SpaceSelectorsIdsShouldBeDifferentThanEmptyOrNull()
+    {
+        int numberOfSpaceSelectors = 5;
+        spaceSelectors = SpaceSelectorFabric.CreateBulk(numberOfSpaceSelectors);
+        WebMessage<JObject> message = modelInfoManager.ObtainModelInfoMessage();
+        JArray spaceSelectorsList = message.payload["spaceSelectors"].ToObject<JArray>();
+        Assert.AreEqual(numberOfSpaceSelectors, spaceSelectorsList.Count);
+        for (int i = 0; i < 5; i++)
+        {
+            string id = spaceSelectorsList[i]["id"].ToString().Trim();
+            Assert.IsFalse(string.IsNullOrEmpty(id));
+        }
         yield return null;
     }
 
