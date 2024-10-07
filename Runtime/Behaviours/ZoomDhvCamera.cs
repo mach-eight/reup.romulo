@@ -23,6 +23,8 @@ namespace ReupVirtualTwin.behaviours
         private float targetFieldOfView;
         private float currentVelocity;
 
+        private float SCROLL_STEP = 120;
+
         private void Awake()
         {
             _inputProvider = new InputProvider();
@@ -67,7 +69,8 @@ namespace ReupVirtualTwin.behaviours
             {
                 return;
             }
-            float zoomAmount = scrollInput.y * scrollZoomSpeedMultiplier;
+            float clampedScrollInput = Mathf.Clamp(scrollInput.y, -SCROLL_STEP, SCROLL_STEP);
+            float zoomAmount = clampedScrollInput * scrollZoomSpeedMultiplier;
             float exponentialZoom = targetFieldOfView * Mathf.Pow(scrollZoomScaleFactor, zoomAmount);
             targetFieldOfView = Mathf.Clamp(exponentialZoom, minFieldOfView, maxFieldOfView);
         }
