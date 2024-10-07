@@ -24,12 +24,12 @@ namespace ReupVirtualTwin.helpers
             { WebMessageType.changeObjectsMaterial, RomuloExternalSchema.changeObjectMaterialPayloadSchema },
             { WebMessageType.requestSceneState, RomuloExternalSchema.requestSceneStatePayloadSchema },
             { WebMessageType.requestSceneLoad, RomuloExternalSchema.requestLoadScenePayloadSchema },
-            { WebMessageType.activateDHV, null },
-            { WebMessageType.activateFPV, null },
+            { WebMessageType.activateDHV, RomuloExternalSchema.simpleRequestIdPayloadSchema },
+            { WebMessageType.activateFPV, RomuloExternalSchema.simpleRequestIdPayloadSchema },
             { WebMessageType.slideToSpace, RomuloExternalSchema.slideToSpacePayloadSchema },
             { WebMessageType.showObjects, RomuloExternalSchema.showOrHideObjectsPayloadSchema },
             { WebMessageType.hideObjects, RomuloExternalSchema.showOrHideObjectsPayloadSchema },
-            { WebMessageType.showAllObjects, RomuloExternalSchema.showAllObjectsPayloadSchema },
+            { WebMessageType.showAllObjects, RomuloExternalSchema.simpleRequestIdPayloadSchema },
         };
 
         public bool ValidateMessage(JObject incomingMessage, out IList<string> errorMessages)

@@ -269,9 +269,11 @@ namespace ReupVirtualTwin.managers
                     break;
                 case WebMessageType.activateDHV:
                     _viewModeManager.ActivateDHV();
+                    SendSuccessViewModeSwitchMessage(ViewMode.DHV, (JObject)payload);
                     break;
                 case WebMessageType.activateFPV:
                     _viewModeManager.ActivateFPV();
+                    SendSuccessViewModeSwitchMessage(ViewMode.FPV, (JObject)payload);
                     break;
                 case WebMessageType.slideToSpace:
                     spacesRecord.GoToSpace((JObject)payload);
@@ -744,6 +746,15 @@ namespace ReupVirtualTwin.managers
                     { "requestId", payload["requestId"] },
                     { "spaceId", payload["spaceId"] }
                 }
+            });
+        }
+
+        void SendSuccessViewModeSwitchMessage(ViewMode viewMode, JObject payload)
+        {
+            _webMessageSender.SendWebMessage(new WebMessage<JObject>
+            {
+                type = viewMode == ViewMode.DHV ? WebMessageType.activateDHVSuccess : WebMessageType.activateFPVSuccess,
+                payload = payload,
             });
         }
 

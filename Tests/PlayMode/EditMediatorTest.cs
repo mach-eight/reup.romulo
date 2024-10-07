@@ -35,7 +35,6 @@ public class EditMediatorTest : MonoBehaviour
     MockModelInfoManager mockModelInfoManager;
     JObject requestSceneLoadMessage;
     OriginalSceneControllerSpy originalSceneControllerSpy;
-    ViewModeManagerSpy viewModeManagerSpy;
     BuildingVisibilityControllerSpy buildingVisibilityControllerSpy;
 
     [SetUp]
@@ -73,25 +72,8 @@ public class EditMediatorTest : MonoBehaviour
         );
         originalSceneControllerSpy = new OriginalSceneControllerSpy();
         editMediator.originalSceneController = originalSceneControllerSpy;
-        viewModeManagerSpy = new ViewModeManagerSpy();
-        editMediator.viewModeManager = viewModeManagerSpy;
         buildingVisibilityControllerSpy = new BuildingVisibilityControllerSpy();
         editMediator.buildingVisibilityController = buildingVisibilityControllerSpy;
-    }
-
-    private class ViewModeManagerSpy : IViewModeManager
-    {
-        public int activateDHVCallsCount = 0;
-        public int activateFPVCallsCount = 0;
-        public void ActivateDHV()
-        {
-            activateDHVCallsCount++;
-        }
-
-        public void ActivateFPV()
-        {
-            activateFPVCallsCount++;
-        }
     }
 
     private class OriginalSceneControllerSpy : IOriginalSceneController
@@ -1248,39 +1230,13 @@ public class EditMediatorTest : MonoBehaviour
         Assert.AreEqual(1, originalSceneControllerSpy.restoreOriginalSceneCallsCount);
     }
 
-    [Test]
-    public async Task ShouldRequestActivationgOfDHV_When_Receive_ActivateDHVMessage()
-    {
-        JObject activateDHVMessage = new JObject
-        {
-            { "type", WebMessageType.activateDHV }
-        };
-        string serializedMessage = JsonConvert.SerializeObject(activateDHVMessage);
-        Assert.Zero(viewModeManagerSpy.activateDHVCallsCount);
-        await editMediator.ReceiveWebMessage(serializedMessage);
-        Assert.AreEqual(1, viewModeManagerSpy.activateDHVCallsCount);
-    }
-
-    [Test]
-    public async Task ShouldRequestActivationgOfFPV_When_Receive_ActivateFPVMessage()
-    {
-        JObject activateDHVMessage = new JObject
-        {
-            { "type", WebMessageType.activateFPV }
-        };
-        string serializedMessage = JsonConvert.SerializeObject(activateDHVMessage);
-        Assert.Zero(viewModeManagerSpy.activateFPVCallsCount);
-        await editMediator.ReceiveWebMessage(serializedMessage);
-        Assert.AreEqual(1, viewModeManagerSpy.activateFPVCallsCount);
-    }
-
     [UnityTest]
     public IEnumerator ShouldSendErrorMessage_When_ShowObjectsMessageWithoutObjectIds()
     {
         JObject message = new JObject
         {
             { "type", WebMessageType.showObjects },
-            { "payload", new JObject() 
+            { "payload", new JObject()
                 {
                     { "requestId", "UUID" }
                 }
@@ -1298,7 +1254,7 @@ public class EditMediatorTest : MonoBehaviour
         JObject message = new JObject
         {
             { "type", WebMessageType.showObjects },
-            { "payload", new JObject() 
+            { "payload", new JObject()
                 {
                     { "objectIds", new JArray(new string[] { "id-0", "id-1" }) }
                 }
@@ -1316,7 +1272,7 @@ public class EditMediatorTest : MonoBehaviour
         JObject message = new JObject
         {
             { "type", WebMessageType.hideObjects },
-            { "payload", new JObject() 
+            { "payload", new JObject()
                 {
                     { "requestId", "UUID" }
                 }
@@ -1334,7 +1290,7 @@ public class EditMediatorTest : MonoBehaviour
         JObject message = new JObject
         {
             { "type", WebMessageType.showObjects },
-            { "payload", new JObject() 
+            { "payload", new JObject()
                 {
                     { "objectIds", new JArray(new string[] { "id-0", "id-1" }) }
                 }
@@ -1368,7 +1324,7 @@ public class EditMediatorTest : MonoBehaviour
         JObject message = new JObject
         {
             { "type", WebMessageType.showObjects },
-            { "payload", new JObject() 
+            { "payload", new JObject()
                 {
                     { "objectIds", new JArray(objectIds) },
                     { "requestId", requestId }
@@ -1396,7 +1352,7 @@ public class EditMediatorTest : MonoBehaviour
         JObject message = new JObject
         {
             { "type", WebMessageType.showObjects },
-            { "payload", new JObject() 
+            { "payload", new JObject()
                 {
                     { "objectIds", new JArray(objectIds) },
                     { "requestId", requestId }
@@ -1421,7 +1377,7 @@ public class EditMediatorTest : MonoBehaviour
         JObject message = new JObject
         {
             { "type", WebMessageType.hideObjects },
-            { "payload", new JObject() 
+            { "payload", new JObject()
                 {
                     { "objectIds", new JArray(objectIds) },
                     { "requestId", requestId }
@@ -1449,7 +1405,7 @@ public class EditMediatorTest : MonoBehaviour
         JObject message = new JObject
         {
             { "type", WebMessageType.hideObjects },
-            { "payload", new JObject() 
+            { "payload", new JObject()
                 {
                     { "objectIds", new JArray(objectIds) },
                     { "requestId", requestId }
@@ -1473,7 +1429,7 @@ public class EditMediatorTest : MonoBehaviour
         JObject message = new JObject
         {
             { "type", WebMessageType.showAllObjects },
-            { "payload", new JObject() 
+            { "payload", new JObject()
                 {
                     { "requestId", requestId }
                 }
@@ -1498,7 +1454,7 @@ public class EditMediatorTest : MonoBehaviour
         JObject message = new JObject
         {
             { "type", WebMessageType.showAllObjects },
-            { "payload", new JObject() 
+            { "payload", new JObject()
                 {
                     { "requestId", requestId }
                 }
