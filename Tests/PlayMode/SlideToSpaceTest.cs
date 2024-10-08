@@ -246,7 +246,6 @@ namespace ReupVirtualTwinTests.generalTests
                 type = WebMessageType.slideToSpaceInterrupted,
                 payload = new JObject
                 {
-                    { "message", "Slide to space point was interrupted" },
                     { "spaceId", id1 },
                     { "requestId", requestId1 }
                 }

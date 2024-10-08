@@ -290,11 +290,11 @@ namespace ReupVirtualTwin.managers
             try
             {
                 string viewMode = payload["viewMode"].ToString();
-                if (viewMode == ViewMode.DHV.ToString())
+                if (viewMode == ViewMode.dollHouse.ToString())
                 {
                     _viewModeManager.ActivateDHV();
                 }
-                else if (viewMode == ViewMode.FPV.ToString())
+                else if (viewMode == ViewMode.firstPerson.ToString())
                 {
                     _viewModeManager.ActivateFPV();
                 }
@@ -758,7 +758,6 @@ namespace ReupVirtualTwin.managers
                 type = WebMessageType.slideToSpaceInterrupted,
                 payload = new JObject
                 {
-                    { "message", "Slide to space point was interrupted" },
                     { "requestId", payload["requestId"] },
                     { "spaceId", payload["spaceId"] }
                 }

@@ -56,7 +56,7 @@ namespace ReupVirtualTwin.dataSchemas
         public static readonly JSchema activateViewModeSchema = JSchema.Parse(@"{
             ""type"": ""object"",
             ""properties"": {
-                ""viewMode"": { ""enum"": [""FPV"", ""DHV""] },
+                ""viewMode"": { ""enum"": [""firstPerson"", ""dollHouse""] },
                 ""requestId"": { ""type"": ""string"" }
             },
             ""required"": [""requestId"", ""viewMode""]

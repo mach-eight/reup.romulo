@@ -36,6 +36,7 @@ public class EditMediatorTest : MonoBehaviour
     JObject requestSceneLoadMessage;
     OriginalSceneControllerSpy originalSceneControllerSpy;
     BuildingVisibilityControllerSpy buildingVisibilityControllerSpy;
+    ViewModeManagerSpy viewModeManagerSpy;
 
     [SetUp]
     public void SetUp()
@@ -74,6 +75,32 @@ public class EditMediatorTest : MonoBehaviour
         editMediator.originalSceneController = originalSceneControllerSpy;
         buildingVisibilityControllerSpy = new BuildingVisibilityControllerSpy();
         editMediator.buildingVisibilityController = buildingVisibilityControllerSpy;
+        viewModeManagerSpy = new ViewModeManagerSpy();
+        editMediator.viewModeManager = viewModeManagerSpy;
+    }
+
+    private class ViewModeManagerSpy : IViewModeManager
+    {
+        public ViewMode lastRequestedViewMode;
+        public bool throwError = false;
+        public string errorMessage = "Error, Fail to change view mode from spy";
+        public void ActivateDHV()
+        {
+            if (throwError)
+            {
+                throw new Exception(errorMessage);
+            }
+            lastRequestedViewMode = ViewMode.dollHouse;
+        }
+
+        public void ActivateFPV()
+        {
+            if (throwError)
+            {
+                throw new Exception(errorMessage);
+            }
+            lastRequestedViewMode = ViewMode.firstPerson;
+        }
     }
 
     private class OriginalSceneControllerSpy : IOriginalSceneController
@@ -1468,6 +1495,30 @@ public class EditMediatorTest : MonoBehaviour
         Assert.AreEqual(WebMessageType.showHideObjectsFailure, sentMessage.type);
         Assert.AreEqual(requestId, sentMessage.payload.Value<string>("requestId"));
         Assert.AreEqual(errorMessage, sentMessage.payload.Value<string>("errorMessage"));
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldSendErrorMessage_when_ActivateViewModeFailure()
+    {
+        const string requestId = "UUID";
+        const ViewMode viewMode = ViewMode.dollHouse;
+        viewModeManagerSpy.throwError = true;
+        JObject message = new JObject
+        {
+            { "type", WebMessageType.activateViewMode },
+            { "payload", new JObject()
+                {
+                    { "requestId", requestId },
+                    { "viewMode", viewMode.ToString() }
+                }
+            }
+        };
+        editMediator.ReceiveWebMessage(message.ToString());
+        yield return null;
+        WebMessage<JObject> sentMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[0];
+        Assert.AreEqual(WebMessageType.activateViewModeFailure, sentMessage.type);
+        Assert.AreEqual(requestId, sentMessage.payload.Value<string>("requestId"));
+        Assert.AreEqual(viewModeManagerSpy.errorMessage, sentMessage.payload.Value<string>("errorMessage"));
     }
 
 }
