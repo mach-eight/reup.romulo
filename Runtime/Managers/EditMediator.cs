@@ -267,13 +267,8 @@ namespace ReupVirtualTwin.managers
                 case WebMessageType.disableSelection:
                     _selectedObjectsManager.allowEditSelection = false;
                     break;
-                case WebMessageType.activateDHV:
-                    _viewModeManager.ActivateDHV();
-                    SendSuccessViewModeSwitchMessage(ViewMode.DHV, (JObject)payload);
-                    break;
-                case WebMessageType.activateFPV:
-                    _viewModeManager.ActivateFPV();
-                    SendSuccessViewModeSwitchMessage(ViewMode.FPV, (JObject)payload);
+                case WebMessageType.activateViewMode:
+                    ActivateViewMode((JObject)payload);
                     break;
                 case WebMessageType.slideToSpace:
                     spacesRecord.GoToSpace((JObject)payload);
@@ -287,6 +282,27 @@ namespace ReupVirtualTwin.managers
                 case WebMessageType.showAllObjects:
                     ShowAllObjects((JObject)payload);
                     break;
+            }
+        }
+
+        void ActivateViewMode(JObject payload)
+        {
+            try
+            {
+                string viewMode = payload["viewMode"].ToString();
+                if (viewMode == ViewMode.dollHouse.ToString())
+                {
+                    _viewModeManager.ActivateDHV();
+                }
+                else if (viewMode == ViewMode.firstPerson.ToString())
+                {
+                    _viewModeManager.ActivateFPV();
+                }
+                SendActivateViewModeSuccessMessage(payload);
+            }
+            catch (Exception e)
+            {
+                SendActivateViewModeErrorMessage(payload, e.Message);
             }
         }
 
@@ -742,19 +758,29 @@ namespace ReupVirtualTwin.managers
                 type = WebMessageType.slideToSpaceInterrupted,
                 payload = new JObject
                 {
-                    { "message", "Slide to space point was interrupted" },
                     { "requestId", payload["requestId"] },
                     { "spaceId", payload["spaceId"] }
                 }
             });
         }
 
-        void SendSuccessViewModeSwitchMessage(ViewMode viewMode, JObject payload)
+        void SendActivateViewModeSuccessMessage(JObject payload)
         {
             _webMessageSender.SendWebMessage(new WebMessage<JObject>
             {
-                type = viewMode == ViewMode.DHV ? WebMessageType.activateDHVSuccess : WebMessageType.activateFPVSuccess,
+                type = WebMessageType.activateViewModeSuccess,
                 payload = payload,
+            });
+        }
+
+        void SendActivateViewModeErrorMessage(JObject payload, string errorMessage)
+        {
+            JObject errorMessagePayload = JObject.FromObject(payload);
+            errorMessagePayload.Add("errorMessage", errorMessage);
+            _webMessageSender.SendWebMessage(new WebMessage<JObject>
+            {
+                type = WebMessageType.activateViewModeFailure,
+                payload = errorMessagePayload,
             });
         }
 

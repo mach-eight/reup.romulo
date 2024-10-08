@@ -42,7 +42,13 @@ namespace ReupVirtualTwin.editor
             {
                 string message = JsonConvert.SerializeObject(new JObject
                 {
-                    { "type", WebMessageType.activateDHV },
+                    { "type", WebMessageType.activateViewMode },
+                    { "payload", new JObject
+                        {
+                            { "viewMode", ViewMode.dollHouse.ToString() },
+                            { "requestId", "UUID1" },
+                        }
+                    }
                 });
                 webMessageReceiver.ReceiveWebMessage(message);
             }
@@ -50,7 +56,13 @@ namespace ReupVirtualTwin.editor
             {
                 string message = JsonConvert.SerializeObject(new JObject
                 {
-                    { "type", WebMessageType.activateFPV },
+                    { "type", WebMessageType.activateViewMode },
+                    { "payload", new JObject
+                        {
+                            { "viewMode", ViewMode.firstPerson.ToString() },
+                            { "requestId", "UUID2" },
+                        }
+                    }
                 });
                 webMessageReceiver.ReceiveWebMessage(message);
             }

@@ -56,15 +56,17 @@ namespace ReupVirtualTwinTests.generalTests
             activateFPVRequestId = "activateFPVRequestId";
             activateDHVMessage = new JObject
             {
-                { "type", WebMessageType.activateDHV },
+                { "type", WebMessageType.activateViewMode },
                 { "payload", new JObject{
+                    { "viewMode", ViewMode.dollHouse.ToString() },
                     { "requestId", activateDHVRequestId }
                 }}
             };
             activateFPVMessage = new JObject
             {
-                { "type", WebMessageType.activateFPV },
+                { "type", WebMessageType.activateViewMode },
                 { "payload", new JObject{
+                    { "viewMode", ViewMode.firstPerson.ToString() },
                     { "requestId", activateFPVRequestId }
                 }}
             };
@@ -83,7 +85,7 @@ namespace ReupVirtualTwinTests.generalTests
         [Test]
         public void ShouldHaveFPVActivatedByDefault()
         {
-            Assert.AreEqual(viewModelManager.viewMode, ViewMode.FPV);
+            Assert.AreEqual(viewModelManager.viewMode, ViewMode.firstPerson);
         }
 
         [Test]
@@ -98,7 +100,7 @@ namespace ReupVirtualTwinTests.generalTests
         {
             DefineMessages();
             editMediator.ReceiveWebMessage(JsonConvert.SerializeObject(activateDHVMessage));
-            Assert.AreEqual(viewModelManager.viewMode, ViewMode.DHV);
+            Assert.AreEqual(viewModelManager.viewMode, ViewMode.dollHouse);
             yield return null;
         }
 
@@ -116,10 +118,10 @@ namespace ReupVirtualTwinTests.generalTests
         {
             DefineMessages();
             editMediator.ReceiveWebMessage(JsonConvert.SerializeObject(activateDHVMessage));
-            Assert.AreEqual(viewModelManager.viewMode, ViewMode.DHV);
+            Assert.AreEqual(viewModelManager.viewMode, ViewMode.dollHouse);
             yield return null;
             editMediator.ReceiveWebMessage(JsonConvert.SerializeObject(activateFPVMessage));
-            Assert.AreEqual(viewModelManager.viewMode, ViewMode.FPV);
+            Assert.AreEqual(viewModelManager.viewMode, ViewMode.firstPerson);
         }
 
         [UnityTest]
@@ -153,9 +155,10 @@ namespace ReupVirtualTwinTests.generalTests
             WebMessage<JObject> sentMessage = (WebMessage<JObject>)webMessageSenderSpy.sentMessages[0];
             WebMessage<JObject> expectedMessage = new WebMessage<JObject>
             {
-                type = WebMessageType.activateDHVSuccess,
+                type = WebMessageType.activateViewModeSuccess,
                 payload = new JObject
                 {
+                    { "viewMode", ViewMode.dollHouse.ToString() },
                     { "requestId", activateDHVRequestId }
                 }
             };
@@ -172,14 +175,70 @@ namespace ReupVirtualTwinTests.generalTests
             WebMessage<JObject> sentMessage = (WebMessage<JObject>)webMessageSenderSpy.sentMessages[0];
             WebMessage<JObject> expectedMessage = new WebMessage<JObject>
             {
-                type = WebMessageType.activateFPVSuccess,
+                type = WebMessageType.activateViewModeSuccess,
                 payload = new JObject
                 {
+                    { "viewMode", ViewMode.firstPerson.ToString() },
                     { "requestId", activateFPVRequestId }
                 }
             };
             Assert.IsTrue(JObject.DeepEquals(expectedMessage.payload, sentMessage.payload));
             yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldSendErrorMessage_when_ReceiveActivateViewModeMessageWithoutRequestId()
+        {
+            JObject message = new JObject
+            {
+                { "type", WebMessageType.activateViewMode },
+                { "payload", new JObject()
+                    {
+                        { "viewMode", ViewMode.dollHouse.ToString() }
+                    }
+                }
+            };
+            editMediator.ReceiveWebMessage(message.ToString());
+            yield return null;
+            WebMessage<string[]> sentMessage = (WebMessage<string[]>)webMessageSenderSpy.sentMessages[0];
+            Assert.AreEqual(WebMessageType.error, sentMessage.type);
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldSendErrorMessage_when_ReceiveActivateViewModeMessageWithoutViewMode()
+        {
+            JObject message = new JObject
+            {
+                { "type", WebMessageType.activateViewMode },
+                { "payload", new JObject()
+                    {
+                        { "requestId", "UUID" }
+                    }
+                }
+            };
+            editMediator.ReceiveWebMessage(message.ToString());
+            yield return null;
+            WebMessage<string[]> sentMessage = (WebMessage<string[]>)webMessageSenderSpy.sentMessages[0];
+            Assert.AreEqual(WebMessageType.error, sentMessage.type);
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldSendErrorMessage_When_ReceiveActivateViewModeMessageWithInvalidViewMode()
+        {
+            JObject message = new JObject
+            {
+                { "type", WebMessageType.activateViewMode },
+                { "payload", new JObject()
+                    {
+                        { "requestId", "UUID" },
+                        { "viewMode", "invalid-view-mode" }
+                    }
+                }
+            };
+            editMediator.ReceiveWebMessage(message.ToString());
+            yield return null;
+            WebMessage<string[]> sentMessage = (WebMessage<string[]>)webMessageSenderSpy.sentMessages[0];
+            Assert.AreEqual(WebMessageType.error, sentMessage.type);
         }
     }
 
