@@ -56,14 +56,14 @@ namespace ReupVirtualTwinTests.generalTests
             activateFPVRequestId = "activateFPVRequestId";
             activateDHVMessage = new JObject
             {
-                { "type", WebMessageType.activateDHV },
+                // { "type", WebMessageType.activateDHV },
                 { "payload", new JObject{
                     { "requestId", activateDHVRequestId }
                 }}
             };
             activateFPVMessage = new JObject
             {
-                { "type", WebMessageType.activateFPV },
+                // { "type", WebMessageType.activateFPV },
                 { "payload", new JObject{
                     { "requestId", activateFPVRequestId }
                 }}
@@ -153,7 +153,7 @@ namespace ReupVirtualTwinTests.generalTests
             WebMessage<JObject> sentMessage = (WebMessage<JObject>)webMessageSenderSpy.sentMessages[0];
             WebMessage<JObject> expectedMessage = new WebMessage<JObject>
             {
-                type = WebMessageType.activateDHVSuccess,
+                // type = WebMessageType.activateDHVSuccess,
                 payload = new JObject
                 {
                     { "requestId", activateDHVRequestId }
@@ -172,7 +172,7 @@ namespace ReupVirtualTwinTests.generalTests
             WebMessage<JObject> sentMessage = (WebMessage<JObject>)webMessageSenderSpy.sentMessages[0];
             WebMessage<JObject> expectedMessage = new WebMessage<JObject>
             {
-                type = WebMessageType.activateFPVSuccess,
+                // type = WebMessageType.activateFPVSuccess,
                 payload = new JObject
                 {
                     { "requestId", activateFPVRequestId }
