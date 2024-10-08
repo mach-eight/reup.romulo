@@ -56,15 +56,17 @@ namespace ReupVirtualTwinTests.generalTests
             activateFPVRequestId = "activateFPVRequestId";
             activateDHVMessage = new JObject
             {
-                // { "type", WebMessageType.activateDHV },
+                { "type", WebMessageType.activateViewMode },
                 { "payload", new JObject{
+                    { "viewMode", ViewMode.DHV.ToString() },
                     { "requestId", activateDHVRequestId }
                 }}
             };
             activateFPVMessage = new JObject
             {
-                // { "type", WebMessageType.activateFPV },
+                { "type", WebMessageType.activateViewMode },
                 { "payload", new JObject{
+                    { "viewMode", ViewMode.FPV.ToString() },
                     { "requestId", activateFPVRequestId }
                 }}
             };
@@ -153,9 +155,10 @@ namespace ReupVirtualTwinTests.generalTests
             WebMessage<JObject> sentMessage = (WebMessage<JObject>)webMessageSenderSpy.sentMessages[0];
             WebMessage<JObject> expectedMessage = new WebMessage<JObject>
             {
-                // type = WebMessageType.activateDHVSuccess,
+                type = WebMessageType.activateViewModeSuccess,
                 payload = new JObject
                 {
+                    { "viewMode", ViewMode.DHV.ToString() },
                     { "requestId", activateDHVRequestId }
                 }
             };
@@ -172,9 +175,10 @@ namespace ReupVirtualTwinTests.generalTests
             WebMessage<JObject> sentMessage = (WebMessage<JObject>)webMessageSenderSpy.sentMessages[0];
             WebMessage<JObject> expectedMessage = new WebMessage<JObject>
             {
-                // type = WebMessageType.activateFPVSuccess,
+                type = WebMessageType.activateViewModeSuccess,
                 payload = new JObject
                 {
+                    { "viewMode", ViewMode.FPV.ToString() },
                     { "requestId", activateFPVRequestId }
                 }
             };
