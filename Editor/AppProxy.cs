@@ -45,7 +45,7 @@ namespace ReupVirtualTwin.editor
                     { "type", WebMessageType.activateViewMode },
                     { "payload", new JObject
                         {
-                            { "viewMode", ViewMode.DHV.ToString() },
+                            { "viewMode", ViewMode.dollHouse.ToString() },
                             { "requestId", "UUID1" },
                         }
                     }
@@ -59,7 +59,7 @@ namespace ReupVirtualTwin.editor
                     { "type", WebMessageType.activateViewMode },
                     { "payload", new JObject
                         {
-                            { "viewMode", ViewMode.FPV.ToString() },
+                            { "viewMode", ViewMode.firstPerson.ToString() },
                             { "requestId", "UUID2" },
                         }
                     }
