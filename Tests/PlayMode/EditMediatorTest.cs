@@ -90,7 +90,7 @@ public class EditMediatorTest : MonoBehaviour
             {
                 throw new Exception(errorMessage);
             }
-            lastRequestedViewMode = ViewMode.dollHouse;
+            lastRequestedViewMode = ViewMode.dollhouse;
         }
 
         public void ActivateFPV()
@@ -1501,7 +1501,7 @@ public class EditMediatorTest : MonoBehaviour
     public IEnumerator ShouldSendErrorMessage_when_ActivateViewModeFailure()
     {
         const string requestId = "UUID";
-        const ViewMode viewMode = ViewMode.dollHouse;
+        const ViewMode viewMode = ViewMode.dollhouse;
         viewModeManagerSpy.throwError = true;
         JObject message = new JObject
         {

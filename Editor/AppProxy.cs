@@ -45,7 +45,7 @@ namespace ReupVirtualTwin.editor
                     { "type", WebMessageType.activateViewMode },
                     { "payload", new JObject
                         {
-                            { "viewMode", ViewMode.dollHouse.ToString() },
+                            { "viewMode", ViewMode.dollhouse.ToString() },
                             { "requestId", "UUID1" },
                         }
                     }

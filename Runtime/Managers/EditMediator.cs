@@ -290,7 +290,7 @@ namespace ReupVirtualTwin.managers
             try
             {
                 string viewMode = payload["viewMode"].ToString();
-                if (viewMode == ViewMode.dollHouse.ToString())
+                if (viewMode == ViewMode.dollhouse.ToString())
                 {
                     _viewModeManager.ActivateDHV();
                 }
