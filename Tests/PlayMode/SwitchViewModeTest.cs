@@ -185,6 +185,61 @@ namespace ReupVirtualTwinTests.generalTests
             Assert.IsTrue(JObject.DeepEquals(expectedMessage.payload, sentMessage.payload));
             yield return null;
         }
+
+        [UnityTest]
+        public IEnumerator ShouldSendErrorMessage_when_ReceiveActivateViewModeMessageWithoutRequestId()
+        {
+            JObject message = new JObject
+            {
+                { "type", WebMessageType.activateViewMode },
+                { "payload", new JObject()
+                    {
+                        { "viewMode", ViewMode.dollHouse.ToString() }
+                    }
+                }
+            };
+            editMediator.ReceiveWebMessage(message.ToString());
+            yield return null;
+            WebMessage<string[]> sentMessage = (WebMessage<string[]>)webMessageSenderSpy.sentMessages[0];
+            Assert.AreEqual(WebMessageType.error, sentMessage.type);
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldSendErrorMessage_when_ReceiveActivateViewModeMessageWithoutViewMode()
+        {
+            JObject message = new JObject
+            {
+                { "type", WebMessageType.activateViewMode },
+                { "payload", new JObject()
+                    {
+                        { "requestId", "UUID" }
+                    }
+                }
+            };
+            editMediator.ReceiveWebMessage(message.ToString());
+            yield return null;
+            WebMessage<string[]> sentMessage = (WebMessage<string[]>)webMessageSenderSpy.sentMessages[0];
+            Assert.AreEqual(WebMessageType.error, sentMessage.type);
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldSendErrorMessage_When_ReceiveActivateViewModeMessageWithInvalidViewMode()
+        {
+            JObject message = new JObject
+            {
+                { "type", WebMessageType.activateViewMode },
+                { "payload", new JObject()
+                    {
+                        { "requestId", "UUID" },
+                        { "viewMode", "invalid-view-mode" }
+                    }
+                }
+            };
+            editMediator.ReceiveWebMessage(message.ToString());
+            yield return null;
+            WebMessage<string[]> sentMessage = (WebMessage<string[]>)webMessageSenderSpy.sentMessages[0];
+            Assert.AreEqual(WebMessageType.error, sentMessage.type);
+        }
     }
 
 }
