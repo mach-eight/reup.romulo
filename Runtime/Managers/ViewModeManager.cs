@@ -18,7 +18,7 @@ namespace ReupVirtualTwin.managers
 
         public void ActivateDHV()
         {
-            viewMode = ViewMode.dollHouse;
+            viewMode = ViewMode.dollhouse;
             ActivateDHVCamera();
         }
 

@@ -58,7 +58,7 @@ namespace ReupVirtualTwinTests.generalTests
             {
                 { "type", WebMessageType.activateViewMode },
                 { "payload", new JObject{
-                    { "viewMode", ViewMode.dollHouse.ToString() },
+                    { "viewMode", ViewMode.dollhouse.ToString() },
                     { "requestId", activateDHVRequestId }
                 }}
             };
@@ -100,7 +100,7 @@ namespace ReupVirtualTwinTests.generalTests
         {
             DefineMessages();
             editMediator.ReceiveWebMessage(JsonConvert.SerializeObject(activateDHVMessage));
-            Assert.AreEqual(viewModelManager.viewMode, ViewMode.dollHouse);
+            Assert.AreEqual(viewModelManager.viewMode, ViewMode.dollhouse);
             yield return null;
         }
 
@@ -118,7 +118,7 @@ namespace ReupVirtualTwinTests.generalTests
         {
             DefineMessages();
             editMediator.ReceiveWebMessage(JsonConvert.SerializeObject(activateDHVMessage));
-            Assert.AreEqual(viewModelManager.viewMode, ViewMode.dollHouse);
+            Assert.AreEqual(viewModelManager.viewMode, ViewMode.dollhouse);
             yield return null;
             editMediator.ReceiveWebMessage(JsonConvert.SerializeObject(activateFPVMessage));
             Assert.AreEqual(viewModelManager.viewMode, ViewMode.firstPerson);
@@ -158,7 +158,7 @@ namespace ReupVirtualTwinTests.generalTests
                 type = WebMessageType.activateViewModeSuccess,
                 payload = new JObject
                 {
-                    { "viewMode", ViewMode.dollHouse.ToString() },
+                    { "viewMode", ViewMode.dollhouse.ToString() },
                     { "requestId", activateDHVRequestId }
                 }
             };
@@ -194,7 +194,7 @@ namespace ReupVirtualTwinTests.generalTests
                 { "type", WebMessageType.activateViewMode },
                 { "payload", new JObject()
                     {
-                        { "viewMode", ViewMode.dollHouse.ToString() }
+                        { "viewMode", ViewMode.dollhouse.ToString() }
                     }
                 }
             };
