@@ -48,14 +48,14 @@ namespace ReupVirtualTwinTests.mocks
             throw new System.NotImplementedException();
         }
 
-        public void RemoveObject(GameObject item)
+        public void RemoveObject(string id, GameObject item)
         {
             throw new System.NotImplementedException();
         }
 
         public void DestroyAllObjects()
         {
-            for(int i = 0; i < objects.Count; i++)
+            for (int i = 0; i < objects.Count; i++)
             {
                 Object.Destroy(objects[i]);
             }

@@ -35,7 +35,7 @@ namespace ReupVirtualTwin.managers
         public ITransformObjectsManager transformObjectsManager { set => _transformObjectsManager = value; }
         private IDeleteObjectsManager _deleteObjectsManager;
         public IDeleteObjectsManager deleteObjectsManager { set => _deleteObjectsManager = value; }
- 
+
         private IChangeColorManager _changeColorManager;
         public IChangeColorManager changeColorManager { set => _changeColorManager = value; }
 
@@ -73,6 +73,8 @@ namespace ReupVirtualTwin.managers
 
         private IOriginalSceneController _originalSceneController;
         public IOriginalSceneController originalSceneController { get => _originalSceneController; set => _originalSceneController = value; }
+        public ISpacesRecord spacesRecord { get; set; }
+        public IBuildingVisibilityController buildingVisibilityController { get; set; }
 
         public void Notify(ReupEvent eventName)
         {
@@ -147,6 +149,34 @@ namespace ReupVirtualTwin.managers
                     }
                     ProcessObjectMaterialsChange((JObject)(object)payload);
                     break;
+                case ReupEvent.spaceJumpPointReached:
+                    if (RomuloEnvironment.development && !((JObject)(object)payload).IsValid(RomuloInternalSchema.spaceJumpInfoEventPayload))
+                    {
+                        throw new ArgumentException($"Invalid payload for '{eventName}' event");
+                    }
+                    ProcessSpaceJumpPointReached((JObject)(object)payload);
+                    break;
+                case ReupEvent.spaceJumpPointWithNoGround:
+                    if (RomuloEnvironment.development && !((JObject)(object)payload).IsValid(RomuloInternalSchema.spaceJumpInfoEventPayload))
+                    {
+                        throw new ArgumentException($"Invalid payload for '{eventName}' event");
+                    }
+                    ProcessSpaceJumpPointWithNoGround((JObject)(object)payload);
+                    break;
+                case ReupEvent.spaceJumpPointNotFound:
+                    if (RomuloEnvironment.development && !((JObject)(object)payload).IsValid(RomuloInternalSchema.spaceJumpInfoEventPayload))
+                    {
+                        throw new ArgumentException($"Invalid payload for '{eventName}' event");
+                    }
+                    ProcessSpaceJumpPointNotFound((JObject)(object)payload);
+                    break;
+                case ReupEvent.slideToSpacePointRequestInterrupted:
+                    if (RomuloEnvironment.development && !((JObject)(object)payload).IsValid(RomuloInternalSchema.spaceJumpInfoEventPayload))
+                    {
+                        throw new ArgumentException($"Invalid payload for '{eventName}' event");
+                    }
+                    ProcessJumpToSpacePointInterrupted((JObject)(object)payload);
+                    break;
                 case ReupEvent.error:
                     if (!(payload is string))
                     {
@@ -176,7 +206,7 @@ namespace ReupVirtualTwin.managers
             JToken payload = message["payload"];
             try
             {
-                await ExcecuteWebMessage(type, payload);
+                await ExecuteWebMessage(type, payload);
             }
             catch (Exception e)
             {
@@ -185,7 +215,7 @@ namespace ReupVirtualTwin.managers
                 Debug.LogError(e);
             }
         }
-        public async Task ExcecuteWebMessage(string type, JToken payload)
+        public async Task ExecuteWebMessage(string type, JToken payload)
         {
             switch (type)
             {
@@ -215,9 +245,9 @@ namespace ReupVirtualTwin.managers
                     break;
                 case WebMessageType.changeObjectsMaterial:
                     TaskResult result = await _changeMaterialController.ChangeObjectMaterial((JObject)payload);
-                    if (!result.isSuccess) 
+                    if (!result.isSuccess)
                     {
-                        SendErrorMessage(result.error);
+                        SendObjectMaterialsChangeFailure(result.error);
                         return;
                     }
                     ProcessObjectMaterialsChange((JObject)payload);
@@ -237,18 +267,96 @@ namespace ReupVirtualTwin.managers
                 case WebMessageType.disableSelection:
                     _selectedObjectsManager.allowEditSelection = false;
                     break;
-                case WebMessageType.activateDHV:
-                    _viewModeManager.ActivateDHV();
+                case WebMessageType.activateViewMode:
+                    ActivateViewMode((JObject)payload);
                     break;
-                case WebMessageType.activateFPV:
-                    _viewModeManager.ActivateFPV();
+                case WebMessageType.slideToSpace:
+                    spacesRecord.GoToSpace((JObject)payload);
+                    break;
+                case WebMessageType.showObjects:
+                    SetObjectsVisibility((JObject)payload, true);
+                    break;
+                case WebMessageType.hideObjects:
+                    SetObjectsVisibility((JObject)payload, false);
+                    break;
+                case WebMessageType.showAllObjects:
+                    ShowAllObjects((JObject)payload);
                     break;
             }
         }
 
+        void ActivateViewMode(JObject payload)
+        {
+            try
+            {
+                string viewMode = payload["viewMode"].ToString();
+                if (viewMode == ViewMode.dollhouse.ToString())
+                {
+                    _viewModeManager.ActivateDHV();
+                }
+                else if (viewMode == ViewMode.firstPerson.ToString())
+                {
+                    _viewModeManager.ActivateFPV();
+                }
+                SendActivateViewModeSuccessMessage(payload);
+            }
+            catch (Exception e)
+            {
+                SendActivateViewModeErrorMessage(payload, e.Message);
+            }
+        }
+
+        private void SetObjectsVisibility(JObject payload, bool show)
+        {
+            string[] objectIds = payload["objectIds"].ToObject<string[]>();
+            TaskResult isSuccess = buildingVisibilityController.SetObjectsVisibility(objectIds, show);
+            if (!isSuccess.isSuccess)
+            {
+                SendHideShowObjectsFailureMessage(payload, isSuccess.error);
+                return;
+            }
+            SendHideShowObjectsSuccessMessage(payload);
+        }
+
+        private void ShowAllObjects(JObject payload)
+        {
+            TaskResult isSuccess = buildingVisibilityController.ShowAllObjects();
+            if (!isSuccess.isSuccess)
+            {
+                SendHideShowObjectsFailureMessage(payload, isSuccess.error);
+                return;
+            }
+            SendHideShowObjectsSuccessMessage(payload);
+        }
+
+        private void SendHideShowObjectsSuccessMessage(JObject payload)
+        {
+            WebMessage<JObject> message = new()
+            {
+                type = WebMessageType.showHideObjectsSuccess,
+                payload = new JObject(
+                    new JProperty("requestId", payload["requestId"])
+                )
+            };
+            _webMessageSender.SendWebMessage(message);
+        }
+
+        private void SendHideShowObjectsFailureMessage(JObject payload, string errorMessage)
+        {
+            WebMessage<JObject> message = new()
+            {
+                type = WebMessageType.showHideObjectsFailure,
+                payload = new JObject(
+                    new JProperty("errorMessage", errorMessage),
+                    new JProperty("requestId", payload["requestId"])
+                )
+            };
+            _webMessageSender.SendWebMessage(message);
+        }
+
         private async Task LoadObjectsState(JObject requestPayload)
         {
-            originalSceneController.RestoreOriginalScene();         
+            originalSceneController.RestoreOriginalScene();
             List<JObject> objectStates = requestPayload["objects"].ToObject<JArray>().Cast<JObject>().ToList();
 
             var objectStatesByColor = objectStates
@@ -257,7 +365,8 @@ namespace ReupVirtualTwin.managers
             TaskResult colorWasChanged = PaintSceneObjects(objectStatesByColor);
 
             var objectStatesByMaterial = objectStates
-                .Where(objectState => {
+                .Where(objectState =>
+                {
                     return TypeHelpers.NotNull(objectState["material"]) &&
                         TypeHelpers.NotNull(objectState["material"]["id"]) &&
                         TypeHelpers.NotNull(objectState["material"]["texture"]);
@@ -290,14 +399,14 @@ namespace ReupVirtualTwin.managers
 
         private void SendLoadSceneFailureMessage(JObject requestPayload, string errorMessage)
         {
-          
-             WebMessage<JObject> failureMessage = new()
+
+            WebMessage<JObject> failureMessage = new()
             {
                 type = WebMessageType.requestSceneLoadFailure,
                 payload = new JObject(
-                    new JProperty("requestTimestamp", requestPayload["requestTimestamp"]),
-                    new JProperty("errorMessage", errorMessage)
-                )
+                   new JProperty("requestTimestamp", requestPayload["requestTimestamp"]),
+                   new JProperty("errorMessage", errorMessage)
+               )
             };
 
             _webMessageSender.SendWebMessage(failureMessage);
@@ -306,7 +415,7 @@ namespace ReupVirtualTwin.managers
 
         private TaskResult PaintSceneObjects(IEnumerable<IGrouping<string, JObject>> objectStatesByColor)
         {
-            foreach(var objectsByColor in objectStatesByColor)
+            foreach (var objectsByColor in objectStatesByColor)
             {
                 Color? color = Utils.ParseColor(objectsByColor.Key);
                 if (color == null)
@@ -315,7 +424,7 @@ namespace ReupVirtualTwin.managers
                 }
                 string[] objectIds = objectsByColor.Select(objectState => objectState["objectId"].ToString()).ToArray();
                 List<GameObject> objectsToPaint = _registry.GetObjectsWithGuids(objectIds);
-                _changeColorManager.ChangeObjectsColor(objectsToPaint, (Color) color);
+                _changeColorManager.ChangeObjectsColor(objectsToPaint, (Color)color);
             }
             return TaskResult.Success();
         }
@@ -323,7 +432,7 @@ namespace ReupVirtualTwin.managers
         private async Task<TaskResult> ApplyMaterialsToSceneObjects(IEnumerable<IGrouping<int, JObject>> objectStatesByMaterial)
         {
 
-            foreach(var objectsByMaterial in objectStatesByMaterial)
+            foreach (var objectsByMaterial in objectStatesByMaterial)
             {
                 var objectIds = objectsByMaterial.Select(objectState => objectState["objectId"].ToString());
                 JObject materialChangeInfo = new()
@@ -357,7 +466,7 @@ namespace ReupVirtualTwin.managers
 
         public void SendModelInfoMessage()
         {
-            WebMessage<ModelInfoMessage> message = _modelInfoManager.ObtainModelInfoMessage();
+            WebMessage<JObject> message = _modelInfoManager.ObtainModelInfoMessage();
             _webMessageSender.SendWebMessage(message);
         }
 
@@ -386,7 +495,7 @@ namespace ReupVirtualTwin.managers
             List<GameObject> objectsToDelete = _deleteObjectsManager.GetDeletableObjects(stringIds);
             if (objectsToDelete.Count > 0)
             {
-                foreach( GameObject obj in objectsToDelete)
+                foreach (GameObject obj in objectsToDelete)
                 {
                     _selectedObjectsManager.ForceRemoveObjectFromSelection(obj);
                 }
@@ -492,7 +601,7 @@ namespace ReupVirtualTwin.managers
 
         private void SendUpdatedBuildingMessage()
         {
-            WebMessage<UpdateBuildingMessage> message = _modelInfoManager.ObtainUpdateBuildingMessage();
+            WebMessage<JObject> message = _modelInfoManager.ObtainUpdateBuildingMessage();
             _webMessageSender.SendWebMessage(message);
         }
 
@@ -524,7 +633,7 @@ namespace ReupVirtualTwin.managers
             SendInsertedObjectMessage(insertedObjectPayload.loadedObject);
             _selectedObjectsManager.ClearSelection();
             yield return null;
-            SendUpdatedBuildingMessage(); 
+            SendUpdatedBuildingMessage();
             if (insertedObjectPayload.selectObjectAfterInsertion)
             {
                 _selectedObjectsManager.AddObjectToSelection(insertedObjectPayload.loadedObject);
@@ -578,6 +687,17 @@ namespace ReupVirtualTwin.managers
             _webMessageSender.SendWebMessage(message);
         }
 
+        private void SendObjectMaterialsChangeFailure(string message)
+        {
+            _webMessageSender.SendWebMessage(new WebMessage<JObject>
+            {
+                type = WebMessageType.changeObjectsMaterialFailure,
+                payload = new JObject(
+                    new JProperty("errorMessage", message)
+                )
+            });
+        }
+
         private void SendErrorMessage(string message)
         {
             _webMessageSender.SendWebMessage(new WebMessage<string>
@@ -594,6 +714,73 @@ namespace ReupVirtualTwin.managers
             {
                 type = WebMessageType.error,
                 payload = errorMessages,
+            });
+        }
+        void ProcessSpaceJumpPointReached(JObject spaceJumpPointPayload)
+        {
+            _webMessageSender.SendWebMessage(new WebMessage<JObject>
+            {
+                type = WebMessageType.slideToSpaceSuccess,
+                payload = spaceJumpPointPayload
+            });
+        }
+
+        void ProcessSpaceJumpPointNotFound(JObject payload)
+        {
+            _webMessageSender.SendWebMessage(new WebMessage<JObject>
+            {
+                type = WebMessageType.slideToSpaceFailure,
+                payload = new JObject
+                {
+                    { "errorMessage", $"Space jump point with id '{payload["spaceId"]}' not found" },
+                    { "requestId", payload["requestId"] },
+                    { "spaceId", payload["spaceId"] }
+                }
+            });
+        }
+        void ProcessSpaceJumpPointWithNoGround(JObject payload)
+        {
+            _webMessageSender.SendWebMessage(new WebMessage<JObject>
+            {
+                type = WebMessageType.slideToSpaceFailure,
+                payload = new JObject
+                {
+                    { "errorMessage", $"Space jump point with id '{payload["spaceId"]}' has no ground below to jump to" },
+                    { "requestId", payload["requestId"] },
+                    { "spaceId", payload["spaceId"] }
+                }
+            });
+        }
+        void ProcessJumpToSpacePointInterrupted(JObject payload)
+        {
+            _webMessageSender.SendWebMessage(new WebMessage<JObject>
+            {
+                type = WebMessageType.slideToSpaceInterrupted,
+                payload = new JObject
+                {
+                    { "requestId", payload["requestId"] },
+                    { "spaceId", payload["spaceId"] }
+                }
+            });
+        }
+
+        void SendActivateViewModeSuccessMessage(JObject payload)
+        {
+            _webMessageSender.SendWebMessage(new WebMessage<JObject>
+            {
+                type = WebMessageType.activateViewModeSuccess,
+                payload = payload,
+            });
+        }
+
+        void SendActivateViewModeErrorMessage(JObject payload, string errorMessage)
+        {
+            JObject errorMessagePayload = JObject.FromObject(payload);
+            errorMessagePayload.Add("errorMessage", errorMessage);
+            _webMessageSender.SendWebMessage(new WebMessage<JObject>
+            {
+                type = WebMessageType.activateViewModeFailure,
+                payload = errorMessagePayload,
             });
         }
 

@@ -9,28 +9,23 @@ using Newtonsoft.Json.Linq;
 using ReupVirtualTwin.romuloEnvironment;
 using ReupVirtualTwin.dataSchemas;
 using Newtonsoft.Json.Schema;
+using ReupVirtualTwin.modelInterfaces;
+using System.Linq;
 
 
 namespace ReupVirtualTwin.managers
 {
-    public class ModelInfoManager: MonoBehaviour, IModelInfoManager, ISceneStateManager
+    public class ModelInfoManager : MonoBehaviour, IModelInfoManager, ISceneStateManager
     {
         public string buildVersion { get => _buildVersion; }
         public IObjectMapper objectMapper { set => _objectMapper = value; }
 
-        string _buildVersion = "2024-09-24"; // format: YYYY-MM-DD
-        IOnBuildingSetup setupBuilding;
+        string _buildVersion = "2024-10-09"; // format: YYYY-MM-DD
+        public IOnBuildingSetup setupBuilding { get; set; }
         IObjectMapper _objectMapper;
 
-        private void Awake()
-        {
-            LookForDependencySingletons();
-        }
+        public ISpacesRecord spacesRecord { get; set; }
 
-        private void LookForDependencySingletons()
-        {
-            setupBuilding = ObjectFinder.FindSetupBuilding()?.GetComponent<IOnBuildingSetup>();
-        }
         public JObject GetSceneState()
         {
             GameObject buildingObject = ObtainBuildingObject();
@@ -44,10 +39,10 @@ namespace ReupVirtualTwin.managers
             return sceneState;
         }
 
-        public WebMessage<ModelInfoMessage> ObtainModelInfoMessage()
+        public WebMessage<JObject> ObtainModelInfoMessage()
         {
-            ModelInfoMessage messagePayload = ObtainModelInfoMessagePayload();
-            WebMessage<ModelInfoMessage> message = new()
+            JObject messagePayload = ObtainModelInfoMessagePayload();
+            WebMessage<JObject> message = new()
             {
                 type = WebMessageType.requestModelInfoSuccess,
                 payload = messagePayload,
@@ -55,10 +50,10 @@ namespace ReupVirtualTwin.managers
             return message;
         }
 
-        public WebMessage<UpdateBuildingMessage> ObtainUpdateBuildingMessage()
+        public WebMessage<JObject> ObtainUpdateBuildingMessage()
         {
-            UpdateBuildingMessage messagePayload = ObtainUpdateBuildingMessagePayload();
-            WebMessage<UpdateBuildingMessage> message = new()
+            JObject messagePayload = ObtainUpdateBuildingMessagePayload();
+            WebMessage<JObject> message = new()
             {
                 type = WebMessageType.updateBuilding,
                 payload = messagePayload,
@@ -72,23 +67,25 @@ namespace ReupVirtualTwin.managers
             obj.transform.SetParent(buildingObject.transform);
         }
 
-        private UpdateBuildingMessage ObtainUpdateBuildingMessagePayload()
+        private JObject ObtainUpdateBuildingMessagePayload()
         {
             ObjectDTO buildingDTO = ObtainBuildingDTO();
-            UpdateBuildingMessage updateBuildingMessage = new()
+            JObject updateBuildingMessage = new()
             {
-                building = buildingDTO,
+                {"building", JObject.FromObject(buildingDTO)},
             };
             return updateBuildingMessage;
         }
 
-        private ModelInfoMessage ObtainModelInfoMessagePayload()
+        private JObject ObtainModelInfoMessagePayload()
         {
             ObjectDTO buildingDTO = ObtainBuildingDTO();
-            ModelInfoMessage startupMessage = new()
+            JArray spaceSelectors = ObtainSpaceSelectorsList();
+            JObject startupMessage = new()
             {
-                buildVersion = buildVersion,
-                building = buildingDTO,
+                {"buildVersion", buildVersion},
+                {"spaceSelectors", spaceSelectors},
+                {"building", JObject.FromObject(buildingDTO)},
             };
             return startupMessage;
         }
@@ -103,6 +100,16 @@ namespace ReupVirtualTwin.managers
         private GameObject ObtainBuildingObject()
         {
             return ((IBuildingGetterSetter)setupBuilding).building;
+        }
+
+        JArray ObtainSpaceSelectorsList()
+        {
+            return new JArray(
+                spacesRecord.jumpPoints.Select(jumpPoint => new JObject{
+                    {"name", jumpPoint.spaceName},
+                    {"id", jumpPoint.id},
+                })
+            );
         }
 
     }

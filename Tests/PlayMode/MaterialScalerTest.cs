@@ -26,7 +26,7 @@ namespace ReupVirtualTwinTests.helpers
             float xScale = 5;
             float yScale = 10;
             desiredTextureDimensionsInM = new Vector2(originalTextureDimensionsInMillimeters.x * xScale, originalTextureDimensionsInMillimeters.y * yScale);
-            expectedMaterialScale = new Vector2(1/xScale, 1/yScale);
+            expectedMaterialScale = new Vector2(1 / xScale, 1 / yScale);
             materialScaler = new MaterialScaler();
         }
         [TearDown]
@@ -41,7 +41,7 @@ namespace ReupVirtualTwinTests.helpers
         {
             materialScaler.AdjustUVScaleToDimensions(wallInstanceInCm, desiredTextureDimensionsInM);
             Material material = wallInstanceInCm.GetComponent<Renderer>().material;
-            AssertUtils.AssertVector2sAreEqual(expectedMaterialScale, material.mainTextureScale);
+            AssertUtils.AssertVectorsAreEqual(expectedMaterialScale, material.mainTextureScale);
         }
 
         [Test]
@@ -49,7 +49,7 @@ namespace ReupVirtualTwinTests.helpers
         {
             materialScaler.AdjustUVScaleToDimensions(wallInstanceInM, desiredTextureDimensionsInM);
             Material material = wallInstanceInM.GetComponent<Renderer>().material;
-            AssertUtils.AssertVector2sAreEqual(expectedMaterialScale, material.mainTextureScale);
+            AssertUtils.AssertVectorsAreEqual(expectedMaterialScale, material.mainTextureScale);
         }
 
         [Test]
@@ -57,7 +57,7 @@ namespace ReupVirtualTwinTests.helpers
         {
             GameObject wall = new GameObject();
             MeshRenderer meshRenderer = wall.AddComponent<MeshRenderer>();
-            meshRenderer.sharedMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));;
+            meshRenderer.sharedMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit")); ;
             MeshFilter meshFilter = wall.AddComponent<MeshFilter>();
             Mesh mesh = new Mesh();
             mesh.vertices = new Vector3[] {
@@ -77,7 +77,7 @@ namespace ReupVirtualTwinTests.helpers
             meshFilter.sharedMesh = mesh;
             materialScaler.AdjustUVScaleToDimensions(wall, new Vector2(2000, 2000));
             Material material = wall.GetComponent<Renderer>().material;
-            AssertUtils.AssertVector2sAreEqual(new Vector2(0.5f, 0.5f), material.mainTextureScale);
+            AssertUtils.AssertVectorsAreEqual(new Vector2(0.5f, 0.5f), material.mainTextureScale);
         }
 
         [Test]
@@ -85,7 +85,7 @@ namespace ReupVirtualTwinTests.helpers
         {
             GameObject wall = new GameObject();
             MeshRenderer meshRenderer = wall.AddComponent<MeshRenderer>();
-            meshRenderer.sharedMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));;
+            meshRenderer.sharedMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit")); ;
             MeshFilter meshFilter = wall.AddComponent<MeshFilter>();
             Mesh mesh = new Mesh();
             mesh.vertices = new Vector3[] {
@@ -104,7 +104,7 @@ namespace ReupVirtualTwinTests.helpers
             meshFilter.sharedMesh = mesh;
             materialScaler.AdjustUVScaleToDimensions(wall, new Vector2(2000, 2000));
             Material material = wall.GetComponent<Renderer>().material;
-            AssertUtils.AssertVector2sAreEqual(new Vector2(0.5f, 0.5f), material.mainTextureScale);
+            AssertUtils.AssertVectorsAreEqual(new Vector2(0.5f, 0.5f), material.mainTextureScale);
         }
 
         [Test]
@@ -112,7 +112,7 @@ namespace ReupVirtualTwinTests.helpers
         {
             GameObject obj = new GameObject();
             MeshRenderer meshRenderer = obj.AddComponent<MeshRenderer>();
-            meshRenderer.sharedMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));;
+            meshRenderer.sharedMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit")); ;
             MeshFilter meshFilter = obj.AddComponent<MeshFilter>();
             Mesh mesh = new Mesh();
             mesh.vertices = new Vector3[] {
@@ -131,7 +131,7 @@ namespace ReupVirtualTwinTests.helpers
             meshFilter.sharedMesh = mesh;
             materialScaler.AdjustUVScaleToDimensions(obj, new Vector2(2000, 2000));
             Material material = obj.GetComponent<Renderer>().material;
-            AssertUtils.AssertVector2sAreEqual(new Vector2(1.196138f, 6.66403f), material.mainTextureScale);
+            AssertUtils.AssertVectorsAreEqual(new Vector2(1.196138f, 6.66403f), material.mainTextureScale);
         }
 
         [Test]
@@ -139,7 +139,7 @@ namespace ReupVirtualTwinTests.helpers
         {
             GameObject wall = new GameObject();
             MeshRenderer meshRenderer = wall.AddComponent<MeshRenderer>();
-            meshRenderer.sharedMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));;
+            meshRenderer.sharedMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit")); ;
             MeshFilter meshFilter = wall.AddComponent<MeshFilter>();
             Mesh mesh = new Mesh();
             mesh.vertices = new Vector3[] {
@@ -161,7 +161,7 @@ namespace ReupVirtualTwinTests.helpers
             meshFilter.sharedMesh = mesh;
             materialScaler.AdjustUVScaleToDimensions(wall, new Vector2(2000, 2000));
             Material material = wall.GetComponent<Renderer>().material;
-            AssertUtils.AssertVector2sAreEqual(new Vector2(0.5f, 0.5f), material.mainTextureScale);
+            AssertUtils.AssertVectorsAreEqual(new Vector2(0.5f, 0.5f), material.mainTextureScale);
         }
 
     }

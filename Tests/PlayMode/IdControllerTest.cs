@@ -3,12 +3,9 @@ using UnityEngine;
 using UnityEngine.TestTools;
 using NUnit.Framework;
 using ReupVirtualTwin.models;
-using UnityEditor;
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwinTests.utils;
-
-
 
 namespace ReupVirtualTwinTests.Registry
 {
@@ -38,7 +35,7 @@ namespace ReupVirtualTwinTests.Registry
             grandchild00.transform.parent = child0.transform;
             yield return null;
         }
-        
+
         [UnityTearDown]
         public IEnumerator TearDownCoroutine()
         {
@@ -46,6 +43,7 @@ namespace ReupVirtualTwinTests.Registry
             Destroy(child0);
             Destroy(child1);
             Destroy(grandchild00);
+            objectRegistry.ClearRegistry();
             ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
             yield return null;
         }
@@ -165,17 +163,16 @@ namespace ReupVirtualTwinTests.Registry
             yield return null;
         }
 
-        [UnityTest]
-        public IEnumerator ShouldFindRepeatedIds()
+        [Test]
+        public void ShouldFindRepeatedIds()
         {
             idController.AssignIdsToTree(parent);
-            IUniqueIdentifier identifierParent = parent.GetComponent<IUniqueIdentifier>();
-            IUniqueIdentifier identifierChild0 = child0.GetComponent<IUniqueIdentifier>();
+            RegisteredIdentifier identifierParent = parent.GetComponent<RegisteredIdentifier>();
+            RegisteredIdentifier identifierChild0 = child0.GetComponent<RegisteredIdentifier>();
             string repeatedId = identifierParent.getId();
-            identifierChild0.AssignId(repeatedId);
-            bool hasRepeteaded = idController.HasRepeatedIds(parent);
-            Assert.IsTrue(hasRepeteaded);
-            yield return null;
+            identifierChild0.manualId = repeatedId;
+            bool hasRepeated = idController.HasRepeatedIds(parent);
+            Assert.IsTrue(hasRepeated);
         }
         [UnityTest]
         public IEnumerator ShouldThrow_if_objectDoesNotHaveId()

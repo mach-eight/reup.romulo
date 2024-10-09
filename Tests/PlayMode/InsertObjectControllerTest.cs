@@ -16,6 +16,7 @@ using System.Collections;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwinTests.utils;
 using ReupVirtualTwin.models;
+using Newtonsoft.Json.Linq;
 
 namespace ReupVirtualTwinTests.controllers
 {
@@ -314,12 +315,12 @@ namespace ReupVirtualTwinTests.controllers
                 objectsAddedToBuilding = 0;
             }
 
-            public WebMessage<ModelInfoMessage> ObtainModelInfoMessage()
+            public WebMessage<JObject> ObtainModelInfoMessage()
             {
                 throw new System.NotImplementedException();
             }
 
-            public WebMessage<UpdateBuildingMessage> ObtainUpdateBuildingMessage()
+            public WebMessage<JObject> ObtainUpdateBuildingMessage()
             {
                 throw new System.NotImplementedException();
             }

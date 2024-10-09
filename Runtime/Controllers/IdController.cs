@@ -70,7 +70,7 @@ namespace ReupVirtualTwin.controllers
             IUniqueIdentifier uniqueIdentifier = obj.GetComponent<IUniqueIdentifier>();
             if (uniqueIdentifier == null)
             {
-                throw new System.Exception($"Object {obj.name} does not have an id");
+                throw new System.Exception($"Object '{obj.name}' does not have an id");
             }
             return uniqueIdentifier.getId();
         }

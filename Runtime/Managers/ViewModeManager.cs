@@ -12,19 +12,19 @@ namespace ReupVirtualTwin.managers
 
         private void Awake()
         {
-            viewMode = ViewMode.FPV;
+            viewMode = ViewMode.firstPerson;
             dollhouseViewWrapper.SetActive(false);
         }
 
         public void ActivateDHV()
         {
-            viewMode = ViewMode.DHV;
+            viewMode = ViewMode.dollhouse;
             ActivateDHVCamera();
         }
 
         public void ActivateFPV()
         {
-            viewMode = ViewMode.FPV;
+            viewMode = ViewMode.firstPerson;
             ActivateFPVCamera();
         }
 

@@ -17,5 +17,9 @@ namespace ReupVirtualTwin.enums
         objectColorChanged,
         objectMaterialChanged,
         error,
+        spaceJumpPointReached,
+        spaceJumpPointNotFound,
+        spaceJumpPointWithNoGround,
+        slideToSpacePointRequestInterrupted,
     }
 }
