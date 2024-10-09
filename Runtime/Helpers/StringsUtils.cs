@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using UnityEngine;
 
 namespace ReupVirtualTwin.helpers
 {
@@ -13,7 +10,14 @@ namespace ReupVirtualTwin.helpers
         }
         public static bool MatchRegex(string tagName, string regex)
         {
-            return Regex.IsMatch(tagName, regex);
+            try
+            {
+                return Regex.IsMatch(tagName, regex);
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }
