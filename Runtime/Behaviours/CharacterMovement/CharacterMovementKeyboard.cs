@@ -13,7 +13,7 @@ namespace ReupVirtualTwin.behaviours
         private ICharacterPositionManager _characterPositionManager;
         public ICharacterPositionManager characterPositionManager { set => _characterPositionManager = value; }
 
-        static public float WALK_SPEED_M_PER_SECOND = 3.5f;
+        static public float WALK_SPEED_M_PER_SECOND = 2.5f;
 
 
         private void Awake()
