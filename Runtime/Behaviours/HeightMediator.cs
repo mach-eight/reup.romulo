@@ -12,7 +12,6 @@ namespace ReupVirtualTwin.behaviours
 {
     public class HeightMediator : MonoBehaviour, IMediator, ICharacterHeightReseter
     {
-        private ICharacterColliderController _colliderController;
         private IMaintainHeight _maintainHeight;
         private IInitialSpawn _initialSpawn;
         private LayerMask _buildingLayerMask;
@@ -26,7 +25,6 @@ namespace ReupVirtualTwin.behaviours
         [Range(0.15f, 3f)]
         public float initialCharacterHeight = 1.75f;
 
-        public ICharacterColliderController colliderController { set { _colliderController = value; } }
         public IMaintainHeight maintainHeight { set { _maintainHeight = value; } }
         public IInitialSpawn initialSpawn { set { _initialSpawn = value; } }
         public LayerMask buildingLayerMask { set =>  _buildingLayerMask = value; }
@@ -74,7 +72,6 @@ namespace ReupVirtualTwin.behaviours
         }
         private void updateHeight()
         {
-            _colliderController.UpdateCollider(_characterHeight);
             _maintainHeight.characterHeight = _characterHeight;
         }
         private bool IsTouchingCeil()
@@ -95,7 +92,6 @@ namespace ReupVirtualTwin.behaviours
                 Debug.LogWarning("character can not increase any further it's height because of ceil collision");
                 return;
             }
-            _colliderController.DestroyCollider();
             _characterHeight += heightDelta;
             _maintainHeight.characterHeight = _characterHeight;
         }

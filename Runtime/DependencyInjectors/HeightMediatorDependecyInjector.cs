@@ -22,7 +22,6 @@ namespace ReupVirtualTwin.dependencyInjectors
         {
             heightMediator = GetComponent<HeightMediator>();
             heightMediator.maintainHeight = maintainheightContainer.GetComponent<IMaintainHeight>();
-            heightMediator.colliderController = new CharacterColliderBoxController(character);
             heightMediator.initialSpawn = initialSpawnContainer.GetComponent<IInitialSpawn>();
             heightMediator.buildingLayerMask = buildingLayerMask;
         }
