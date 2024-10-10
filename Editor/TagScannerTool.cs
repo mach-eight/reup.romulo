@@ -91,9 +91,15 @@ namespace ReupVirtualTwin.editor
             {
                 ApplyFilters(building, TagFiltersApplier.ApplyInclusiveFiltersToTree);
             }
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Restore last objects visibility") && objectsVisibilityStates.Count > 0)
             {
                 UndoLastFilters(building);
+            }
+            if (GUILayout.Button("Display whole building") && objectsVisibilityStates.Count > 0)
+            {
+                DisplayWholeBuilding(building);
             }
             EditorGUILayout.EndHorizontal();
         }
@@ -102,6 +108,10 @@ namespace ReupVirtualTwin.editor
         {
             Dictionary<string, bool> lastVisibilityState = objectsVisibilityStates.PopLast();
             ObjectVisibilityUtils.ApplyVisibilityState(building, lastVisibilityState, new IdController());
+        }
+
+        private void DisplayWholeBuilding(GameObject building){
+            ObjectVisibilityUtils.ShowWholeObject(building);
         }
 
         private void ApplyFilters(GameObject building, Func<GameObject, List<ITagFilter>, List<GameObject>> filterFunction)
