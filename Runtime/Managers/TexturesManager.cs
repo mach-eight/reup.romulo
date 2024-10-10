@@ -20,20 +20,31 @@ namespace ReupVirtualTwin.managers
 
         public void ApplyMaterialToObject(GameObject obj, Material material)
         {
-            ApplyMaterial(obj, material);
+            if (!ApplyMaterial(obj, material))
+            {
+                return;
+            }
             UpdateRecords(obj);
         }
 
         public void ApplyProtectedMaterialToObject(GameObject obj, Material material)
         {
-            ApplyMaterial(obj, material);
+            if (!ApplyMaterial(obj, material))
+            {
+                return;
+            }
             CleanAllObjectRecords(obj);
         }
 
-        void ApplyMaterial(GameObject obj, Material material)
+        bool ApplyMaterial(GameObject obj, Material material)
         {
             Renderer renderer = obj.GetComponent<Renderer>();
+            if (renderer.material.GetTexture("_BaseMap") == material.GetTexture("_BaseMap"))
+            {
+                return false;
+            }
             renderer.material = material;
+            return true;
         }
 
         void UpdateRecords(GameObject obj)
