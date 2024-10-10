@@ -7,22 +7,22 @@ namespace ReupVirtualTwin.models
     public class RegisteredIdentifier : UniqueId
     {
         public string manualId = "";
-        private IObjectRegistry _objectRegistry;
+        public IObjectRegistry objectRegistry;
 
-        override protected void Start()
+        public void Awake()
         {
             if (manualId != uniqueId && !string.IsNullOrEmpty(manualId))
             {
                 uniqueId = manualId;
             }
             FindObjectRegistry();
-            base.Start();
+            GenerateId();
         }
 
         override public string GenerateId()
         {
 
-            if (_objectRegistry == null)
+            if (objectRegistry == null)
             {
                 FindObjectRegistry();
             }
@@ -34,7 +34,7 @@ namespace ReupVirtualTwin.models
 
         public override string AssignId(string id)
         {
-            if (_objectRegistry == null)
+            if (objectRegistry == null)
             {
                 FindObjectRegistry();
             }
@@ -45,7 +45,7 @@ namespace ReupVirtualTwin.models
         }
         private void RegisterObject()
         {
-            _objectRegistry.AddObject(gameObject);
+            objectRegistry.AddObject(gameObject);
         }
 
         private void UnRegisterObject()
@@ -55,16 +55,20 @@ namespace ReupVirtualTwin.models
             {
                 return;
             }
-            GameObject registeredItem = _objectRegistry.GetObjectWithGuid(id);
+            GameObject registeredItem = objectRegistry.GetObjectWithGuid(id);
             if (registeredItem == gameObject)
             {
-                _objectRegistry.RemoveObject(id, gameObject);
+                objectRegistry.RemoveObject(id, gameObject);
             }
         }
 
         private void FindObjectRegistry()
         {
-            _objectRegistry = ObjectFinder.FindObjectRegistry().GetComponent<IObjectRegistry>();
+            if (objectRegistry != null)
+            {
+                return;
+            }
+            objectRegistry = ObjectFinder.FindObjectRegistry().GetComponent<IObjectRegistry>();
         }
 
         public override string getId()
