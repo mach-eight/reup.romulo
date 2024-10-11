@@ -1019,7 +1019,7 @@ Transform:
   m_GameObject: {fileID: 2401207048260687702}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 6.8, z: -50}
+  m_LocalPosition: {x: 0, y: 0, z: -15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1218,14 +1218,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2690710132244472958}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.42261827, y: 0, z: 0, w: 0.9063079}
+  m_LocalRotation: {x: 0.2588191, y: 0, z: 0, w: 0.9659258}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7427910766118765163}
   m_Father: {fileID: 2471139282865268767}
-  m_LocalEulerAnglesHint: {x: 50, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 30, y: 0, z: 0}
 --- !u!1 &2800249913291930678
 GameObject:
   m_ObjectHideFlags: 0
@@ -2022,8 +2022,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5684383910040997618}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.42261827, y: 0, z: 0, w: 0.9063079}
-  m_LocalPosition: {x: 0, y: 42.673183, z: -26.930277}
+  m_LocalRotation: {x: 0.2588191, y: 0, z: 0, w: 0.9659258}
+  m_LocalPosition: {x: 0, y: 7.5000014, z: -12.990379}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2619,6 +2619,7 @@ MonoBehaviour:
   viewMode: 0
   dollhouseViewWrapper: {fileID: 4327920938282454304}
   character: {fileID: 1798908995094544088}
+  houseContainer: {fileID: 9080286424202503012}
 --- !u!1 &7508923528206428603
 GameObject:
   m_ObjectHideFlags: 0
@@ -3137,8 +3138,8 @@ Transform:
   m_GameObject: {fileID: 9080286424202503012}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.5250885, y: 1.2842597, z: -4.8111944}
-  m_LocalScale: {x: 3.338463, y: 2.1156368, z: 2.7503557}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 3.0438, y: 1, z: 3.0313}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6135596558982339394}
