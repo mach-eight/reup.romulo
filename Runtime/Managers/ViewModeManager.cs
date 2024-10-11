@@ -9,6 +9,7 @@ namespace ReupVirtualTwin.managers
         public ViewMode viewMode;
         public GameObject dollhouseViewWrapper;
         public GameObject character;
+        public GameObject houseContainer;
 
         private void Awake()
         {
@@ -20,12 +21,14 @@ namespace ReupVirtualTwin.managers
         {
             viewMode = ViewMode.dollhouse;
             ActivateDHVCamera();
+            houseContainer.SetActive(false);
         }
 
         public void ActivateFPV()
         {
             viewMode = ViewMode.firstPerson;
             ActivateFPVCamera();
+            houseContainer.SetActive(true);
         }
 
         private void ActivateDHVCamera()
