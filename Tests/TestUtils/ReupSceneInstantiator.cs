@@ -47,22 +47,22 @@ namespace ReupVirtualTwinTests.utils
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab)
         {
             GameObject building = (GameObject)PrefabUtility.InstantiatePrefab(buildingPrefab);
-            return InstantiateSceneWithBuildingWithBuildingObject(building);
+            return InstantiateSceneWithBuildingObject(building);
         }
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab, Action<GameObject> modifyBuilding)
         {
             GameObject building = (GameObject)PrefabUtility.InstantiatePrefab(buildingPrefab);
             modifyBuilding(building);
-            return InstantiateSceneWithBuildingWithBuildingObject(building);
+            return InstantiateSceneWithBuildingObject(building);
         }
 
         public static SceneObjects InstantiateScene()
         {
             GameObject building = CreateDefaultBuilding();
-            return InstantiateSceneWithBuildingWithBuildingObject(building);
+            return InstantiateSceneWithBuildingObject(building);
         }
 
-        public static SceneObjects InstantiateSceneWithBuildingWithBuildingObject(GameObject building)
+        public static SceneObjects InstantiateSceneWithBuildingObject(GameObject building)
         {
             InputTestFixture input = new InputTestFixture();
             input.Setup();
