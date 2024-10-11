@@ -39,7 +39,7 @@ namespace ReupVirtualTwin.controllers
         private bool FilterFunction(GameObject gameObject)
         {
             string[] tagNames = tagsController.GetTagNamesFromObject(gameObject);
-            return tagNames.Any(tagName => tagName.Contains(substring));
+            return tagNames.Any(tagName => tagName.Contains(substring) || StringsUtils.MatchRegex(tagName, substring));
         }
     }
 }

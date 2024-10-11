@@ -33,7 +33,7 @@ namespace ReupVirtualTwinTests.behaviours
             touch = InputSystem.AddDevice<Touchscreen>();
             limitFromBuildingInMeters = sceneObjects.moveDhvCameraBehavior.limitDistanceFromBuildingInMeters;
             dollhouseViewWrapper = sceneObjects.dollhouseViewWrapper;
-            moveSpeedMetresPerSecond = sceneObjects.moveDhvCameraBehavior.KeyboardMoveCameraSpeedMetersPerSecond;
+            moveSpeedMetresPerSecond = sceneObjects.moveDhvCameraBehavior.GetKeyboardMoveCameraRelativeSpeed();
             sceneObjects.viewModeManager.ActivateDHV();
             yield return null;
         }
@@ -42,12 +42,6 @@ namespace ReupVirtualTwinTests.behaviours
         {
             ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
             yield return null;
-        }
-
-        [Test]
-        public void MoveDhvCameraSpeedIsDefined()
-        {
-            Assert.AreEqual(40, moveSpeedMetresPerSecond);
         }
 
         [UnityTest]
@@ -119,7 +113,9 @@ namespace ReupVirtualTwinTests.behaviours
             Vector2 initialPosition = new Vector2(0.5f, 0.5f);
             Vector2 finalPosition = new Vector2(0.5f + relativeMovement, 0.5f);
             yield return MovePointerUtils.DragMouseLeftButton(input, mouse, initialPosition, finalPosition, pointerSteps);
-            float expectedMovement = -1 * relativeMovement * sceneObjects.moveDhvCameraBehavior.PointerMoveCameraDistanceInMetersSquareViewport;
+            // todo: redo these test when redoing the speed velocity of the dhv camera movement by mouse or touch
+            // we had to edit them because the initial angle of the dhv camera was changed from 60 to 40 degrees
+            float expectedMovement = -1 * relativeMovement * sceneObjects.moveDhvCameraBehavior.PointerMoveCameraDistanceInMetersSquareViewport * sceneObjects.moveDhvCameraBehavior.GetFieldOfViewMultiplier();
             Assert.LessOrEqual(dollhouseViewWrapper.position.x, expectedMovement + errorToleranceInMeters);
             Assert.Zero(dollhouseViewWrapper.position.z);
             Assert.Zero(dollhouseViewWrapper.position.y);
@@ -134,7 +130,7 @@ namespace ReupVirtualTwinTests.behaviours
             Vector2 initialPosition = new Vector2(0.5f, 0.5f);
             Vector2 finalPosition = new Vector2(0.5f, 0.5f - relativeMovement);
             yield return MovePointerUtils.DragMouseLeftButton(input, mouse, initialPosition, finalPosition, pointerSteps);
-            float expectedMovement = relativeMovement * sceneObjects.moveDhvCameraBehavior.PointerMoveCameraDistanceInMetersSquareViewport;
+            float expectedMovement = relativeMovement * sceneObjects.moveDhvCameraBehavior.PointerMoveCameraDistanceInMetersSquareViewport * sceneObjects.moveDhvCameraBehavior.GetFieldOfViewMultiplier();
             Assert.Zero(dollhouseViewWrapper.position.x);
             Assert.Zero(dollhouseViewWrapper.position.y);
             Assert.GreaterOrEqual(dollhouseViewWrapper.position.z, expectedMovement - errorToleranceInMeters);
@@ -150,7 +146,7 @@ namespace ReupVirtualTwinTests.behaviours
             Vector2 finalPosition = new Vector2(0.5f + relativeMovement, 0.5f);
             int touchId = 0;
             yield return MovePointerUtils.MoveFinger(input, touch, touchId, initialPosition, finalPosition, pointerSteps);
-            float expectedMovement = -1 * relativeMovement * sceneObjects.moveDhvCameraBehavior.PointerMoveCameraDistanceInMetersSquareViewport;
+            float expectedMovement = -1 * relativeMovement * sceneObjects.moveDhvCameraBehavior.PointerMoveCameraDistanceInMetersSquareViewport * sceneObjects.moveDhvCameraBehavior.GetFieldOfViewMultiplier();
             Assert.LessOrEqual(dollhouseViewWrapper.position.x, expectedMovement + errorToleranceInMeters);
             Assert.Zero(dollhouseViewWrapper.position.z);
             Assert.Zero(dollhouseViewWrapper.position.y);
