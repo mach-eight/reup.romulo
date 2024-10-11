@@ -1,7 +1,6 @@
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.inputs;
 using ReupVirtualTwin.managerInterfaces;
-using ReupVirtualTwin.managers;
 using UnityEngine;
 
 namespace ReupVirtualTwin.behaviours
@@ -48,14 +47,12 @@ namespace ReupVirtualTwin.behaviours
                 return;
             }
 
-            float fovMultiplier = GetFieldOfViewMultiplier();
-
             Vector3 cameraForward = Vector3.ProjectOnPlane(dollhouseViewWrapperTransform.forward, Vector3.up).normalized;
             Vector3 cameraRight = Vector3.Cross(Vector3.up, cameraForward).normalized;
             Vector3 finalMovement = cameraRight * inputValue.x + cameraForward * inputValue.y;
             Vector3 normalizedDirection = Vector3.Normalize(finalMovement);
 
-            float movementDistance = KeyboardMoveCameraSpeedMetersPerSecond * fovMultiplier * Time.deltaTime;
+            float movementDistance = GetKeyboardMoveCameraRelativeSpeed()  * Time.deltaTime;
             Vector3 nextPosition = dollhouseViewWrapperTransform.position + (normalizedDirection * movementDistance);
 
             PerformMovement(nextPosition);
@@ -105,7 +102,11 @@ namespace ReupVirtualTwin.behaviours
             return withinXBounds && withinZBounds;
         }
 
-        private float GetFieldOfViewMultiplier()
+        public float GetKeyboardMoveCameraRelativeSpeed() {
+            return KeyboardMoveCameraSpeedMetersPerSecond * GetFieldOfViewMultiplier();
+        }
+
+        public float GetFieldOfViewMultiplier()
         {
             return Camera.main.fieldOfView / baseFieldOfView;
         }
