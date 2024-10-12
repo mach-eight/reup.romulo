@@ -2,6 +2,7 @@ using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.inputs;
 using ReupVirtualTwin.managerInterfaces;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace ReupVirtualTwin.behaviours
 {
@@ -14,6 +15,10 @@ namespace ReupVirtualTwin.behaviours
         [SerializeField] public float KeyboardMoveCameraSpeedMetersPerSecond = 40;
         [SerializeField] public float PointerMoveCameraDistanceInMetersSquareViewport = 40;
 
+        public Vector3 hitPoint;
+        public Vector3 originalCameraPosition;
+        public Vector3 originalWrapperPosition;
+
         InputProvider _inputProvider;
         float distancePerPixel;
         IDragManager dragManager;
@@ -22,6 +27,22 @@ namespace ReupVirtualTwin.behaviours
         private Vector3 buildingCenter;
         private float baseFieldOfView = 60;
 
+        private void OnEnable()
+        {
+            _inputProvider.holdStarted += OnHoldStarted;
+        }
+        private void OnDisable()
+        {
+            _inputProvider.holdStarted -= OnHoldStarted;
+        }
+
+        void OnHoldStarted(InputAction.CallbackContext ctx){
+            Ray hitRay = Camera.main.ScreenPointToRay(_inputProvider.PointerInput());
+            hitPoint = RayUtils.GetHitPoint(hitRay);
+            originalCameraPosition = hitRay.origin;
+            originalWrapperPosition = dollhouseViewWrapperTransform.position;
+        }
+
         void Awake()
         {
             _inputProvider = new InputProvider();
@@ -29,6 +50,8 @@ namespace ReupVirtualTwin.behaviours
             distancePerPixel = PointerMoveCameraDistanceInMetersSquareViewport / pixelsInSquareViewport;
             dragManager = dragManagerGameObject.GetComponent<IDragManager>();
             gesturesManager = gesturesManagerGameObject.GetComponent<IGesturesManager>();
+        }
+        void Start(){
             building = ObjectFinder.FindSetupBuilding().GetComponent<SetupBuilding>().building;
             buildingCenter = BoundariesUtils.CalculateCenter(building);
         }
@@ -62,25 +85,13 @@ namespace ReupVirtualTwin.behaviours
         {
             if (!dragManager.dragging || gesturesManager.gestureInProgress)
             {
-               return;
-            }
-
-            Vector2 inputValue = _inputProvider.PointerMoveDhvCamera();
-            if (inputValue == Vector2.zero)
-            {
                 return;
             }
-
-            float fovMultiplier = GetFieldOfViewMultiplier();
-
-            Vector3 cameraForward = Vector3.ProjectOnPlane(dollhouseViewWrapperTransform.forward, Vector3.up).normalized;
-            Vector3 cameraRight = Vector3.Cross(Vector3.up, cameraForward).normalized;
-            float sideMovement = inputValue.x * distancePerPixel * fovMultiplier;
-            float forwardMovement = inputValue.y * distancePerPixel * fovMultiplier;
-            Vector3 movement = cameraRight * sideMovement + cameraForward * forwardMovement;
-            Vector3 nextPosition = dollhouseViewWrapperTransform.position + movement;
-
-            PerformMovement(nextPosition);
+            Ray cameraRay = Camera.main.ScreenPointToRay(_inputProvider.PointerInput());
+            Ray invertedRay = new Ray(hitPoint, -cameraRay.direction);
+            Vector3 newCameraPosition = RayUtils.ProjectRayToHeight(invertedRay, originalCameraPosition.y);
+            Vector3 newWrapperPosition =  originalWrapperPosition + (newCameraPosition - originalCameraPosition);
+            PerformMovement(newWrapperPosition);
         }
 
         private void PerformMovement(Vector3 nextPosition)
