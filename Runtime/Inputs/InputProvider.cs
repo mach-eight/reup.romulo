@@ -159,10 +159,6 @@ namespace ReupVirtualTwin.inputs
         {
             return _input.DollhouseView.KeyboardMoveCamera.ReadValue<Vector2>();
         }
-        public Vector2 PointerMoveDhvCamera()
-        {
-            return -1 * _input.DollhouseView.PointerMoveCamera.ReadValue<Vector2>();
-        }
         public Vector2 ScrollWheelZoomDhvCamera()
         {
             return _input.DollhouseView.ScrollWheelZoom.ReadValue<Vector2>();
