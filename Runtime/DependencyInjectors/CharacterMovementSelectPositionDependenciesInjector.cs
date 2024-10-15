@@ -15,10 +15,10 @@ namespace ReupVirtualTwin.dependencyInjectors
 
             IEditModeManager editModeManager = ObjectFinder.FindEditModeManager().GetComponent<IEditModeManager>();
             // todo: Implemement an interface for the CharacterPositionManager
-            ICharacterPositionManager positionManager = ObjectFinder.FindCharacter().GetComponent<ICharacterPositionManager>();
+            // ICharacterPositionManager positionManager = ObjectFinder.FindCharacter().GetComponent<ICharacterPositionManager>();
 
             characterMovementSelectPosition.editModeManager = editModeManager;
-            characterMovementSelectPosition.characterPositionManager = positionManager;
+            // characterMovementSelectPosition.characterPositionManager = positionManager;
         }
     }
 }

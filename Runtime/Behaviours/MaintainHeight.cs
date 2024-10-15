@@ -3,31 +3,38 @@ using UnityEngine;
 using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.behaviourInterfaces;
+using Zenject;
 
 namespace ReupVirtualTwin.behaviours
 {
     public class MaintainHeight : MonoBehaviour, IMaintainHeight
     {
-        ICharacterPositionManager _characterPositionManager;
-        public ICharacterPositionManager characterPositionManager { set => _characterPositionManager = value; }
+        ICharacterPositionManager characterPositionManager;
+        // public ICharacterPositionManager characterPositionManager { set => _characterPositionManager = value; }
         private float _maxStepHeight;
         public float maxStepHeight { set => _maxStepHeight = value; }
 
         private static float CHARACTER_HEIGHT;
-        public float characterHeight { set =>  CHARACTER_HEIGHT = value; }
+        public float characterHeight { set => CHARACTER_HEIGHT = value; }
 
         private IPointSensor _sensor;
-        public IPointSensor sensor {  set =>  _sensor = value; }
+        public IPointSensor sensor { set => _sensor = value; }
+
+        [Inject]
+        public void Init(ICharacterPositionManager characterPositionManager)
+        {
+            this.characterPositionManager = characterPositionManager;
+        }
 
         private void Start()
         {
-            _characterPositionManager.maxStepHeight = _maxStepHeight;
+            characterPositionManager.maxStepHeight = _maxStepHeight;
         }
 
         void Update()
         {
             var hit = _sensor.Sense();
-            if (hit != null )
+            if (hit != null)
             {
                 KeepCharacterHeightFromGround((RaycastHit)hit);
             }
@@ -37,7 +44,7 @@ namespace ReupVirtualTwin.behaviours
         {
             this.groundHit = groundHit.point;
             float newHeight = GetDesiredHeightInGround(groundHit.point.y);
-            _characterPositionManager.KeepHeight(newHeight);
+            characterPositionManager.KeepHeight(newHeight);
         }
 
         Vector3 groundHit = Vector3.zero;

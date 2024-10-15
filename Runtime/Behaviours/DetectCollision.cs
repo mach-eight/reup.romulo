@@ -1,24 +1,26 @@
 using UnityEngine;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.managerInterfaces;
+using Zenject;
 
 namespace ReupVirtualTwin.behaviours
 {
     public class DetectCollision : MonoBehaviour
     {
-        ICharacterPositionManager _positionManager;
+        ICharacterPositionManager positionManager;
         float SMALL_JUMP_FORCE_AT_COLLISION = 0.01f;
 
-        private void Start()
+        [Inject]
+        public void Init(ICharacterPositionManager characterPositionManager)
         {
-            _positionManager = ObjectFinder.FindCharacter().GetComponent<ICharacterPositionManager>();
+            this.positionManager = characterPositionManager;
         }
 
         private void OnCollisionEnter()
         {
-            _positionManager.allowSetHeight = false;
-            _positionManager.allowWalking = false;
-            _positionManager.StopRigidBody();
+            positionManager.allowSetHeight = false;
+            positionManager.allowWalking = false;
+            positionManager.StopRigidBody();
         }
         private void OnCollisionStay(Collision collision)
         {
@@ -29,14 +31,14 @@ namespace ReupVirtualTwin.behaviours
             }
 
             bounceDirection.y = SMALL_JUMP_FORCE_AT_COLLISION;
-            _positionManager.MoveDistanceInDirection(0.02f, bounceDirection);
-            _positionManager.ApplyForceInDirection(bounceDirection);
+            positionManager.MoveDistanceInDirection(0.02f, bounceDirection);
+            positionManager.ApplyForceInDirection(bounceDirection);
         }
 
         private void OnCollisionExit()
         {
-            _positionManager.allowSetHeight = true;
-            _positionManager.allowWalking = true;
+            positionManager.allowSetHeight = true;
+            positionManager.allowWalking = true;
         }
     }
 }

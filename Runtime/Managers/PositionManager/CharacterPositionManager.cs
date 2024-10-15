@@ -2,11 +2,13 @@ using UnityEngine;
 using ReupVirtualTwin.helpers;
 using UnityEngine.Events;
 using ReupVirtualTwin.managerInterfaces;
+using Zenject;
 
 namespace ReupVirtualTwin.managers
 {
-    public class CharacterPositionManager : MonoBehaviour, ICharacterPositionManager
+    public class CharacterPositionManager : ICharacterPositionManager
     {
+        Transform transform;
         bool _allowSetHeight = true;
         bool _allowWalking = true;
         bool _allowMovingUp = true;
@@ -46,7 +48,8 @@ namespace ReupVirtualTwin.managers
                 {
                     walkSlider.StopMovement();
                 }
-                _allowWalking=value;
+                _allowWalking = value;
+                Debug.Log($"52: _allowWalking >>>\n{_allowWalking}");
             }
         }
         public bool allowSetHeight
@@ -58,7 +61,7 @@ namespace ReupVirtualTwin.managers
                 {
                     heightSlider.StopMovement();
                 }
-                _allowSetHeight=value;
+                _allowSetHeight = value;
             }
         }
 
@@ -74,9 +77,10 @@ namespace ReupVirtualTwin.managers
             }
         }
 
-        void Awake()
+        public CharacterPositionManager([Inject(Id = "character")] GameObject character)
         {
-            rb = GetComponent<Rigidbody>();
+            transform = character.transform;
+            rb = character.GetComponent<Rigidbody>();
             rb.freezeRotation = true;
             rb.drag = bodyDrag;
             rb.mass = bodyMass;
@@ -113,6 +117,8 @@ namespace ReupVirtualTwin.managers
 
         public void MoveInDirection(Vector3 direction, float speedInMetersPerSecond = 1f)
         {
+            Debug.Log($"119: direction >>>\n{direction}");
+            Debug.Log($"120: speedInMetersPerSecond >>>\n{speedInMetersPerSecond}");
             var normalizedDirection = Vector3.Normalize(direction);
             characterPosition = characterPosition + normalizedDirection * speedInMetersPerSecond * Time.deltaTime;
         }
