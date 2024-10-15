@@ -17,7 +17,6 @@ namespace ReupVirtualTwin.behaviours
         public void Init(ICharacterPositionManager characterPositionManager)
         {
             this.characterPositionManager = characterPositionManager;
-            Debug.Log($"20: this.characterPositionManager >>>\n{this.characterPositionManager}");
         }
 
         static public float WALK_SPEED_M_PER_SECOND = 3.5f;
@@ -36,14 +35,12 @@ namespace ReupVirtualTwin.behaviours
         private void UpdatePosition()
         {
             Vector2 inputValue = _inputProvider.MovementInput().normalized;
-            Debug.Log($"39: inputValue >>>\n{inputValue}");
             PerformMovement(inputValue);
         }
 
         private void PerformMovement(Vector2 direction)
         {
             Vector3 movementDirection = direction.y * GetCharacterForward() + direction.x * GetCharacterRight();
-            Debug.Log($"46: characterPositionManager.allowWalking >>>\n{characterPositionManager.allowWalking}");
             if (movementDirection != Vector3.zero && characterPositionManager.allowWalking)
             {
                 Debug.Log("calling the movements methods");

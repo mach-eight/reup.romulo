@@ -5,6 +5,7 @@ using UnityEngine.TestTools;
 
 using ReupVirtualTwin.managers;
 using ReupVirtualTwinTests.utils;
+using ReupVirtualTwin.managerInterfaces;
 
 public class CharacterPositionManagerTest : MonoBehaviour
 {
@@ -22,7 +23,8 @@ public class CharacterPositionManagerTest : MonoBehaviour
     {
         sceneObjects = ReupSceneInstantiator.InstantiateScene();
         character = sceneObjects.character;
-        posManager = character.GetComponent<CharacterPositionManager>();
+        // posManager = character.GetComponent<CharacterPositionManager>();
+        posManager = sceneObjects.diContainer.Resolve<ICharacterPositionManager>() as CharacterPositionManager;
         yield return null;
     }
 
@@ -73,6 +75,7 @@ public class CharacterPositionManagerTest : MonoBehaviour
         //check original character's position
         Assert.AreEqual(character.transform.position, Vector3.zero);
 
+        yield return null;
         posManager.KeepHeight(-1f);
 
         yield return new WaitForSeconds(1);

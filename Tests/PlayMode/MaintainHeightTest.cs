@@ -23,7 +23,7 @@ public class MaintainHeightTest : MonoBehaviour
     {
         sceneObjects = ReupSceneInstantiator.InstantiateScene();
         character = sceneObjects.character;
-        var posManager = character.GetComponent<ICharacterPositionManager>();
+        var posManager = sceneObjects.diContainer.Resolve<ICharacterPositionManager>();
         posManager.maxStepHeight = 0.25f;
         widePlatform = (GameObject)PrefabUtility.InstantiatePrefab(platformPrefab);
         SetPlatform();

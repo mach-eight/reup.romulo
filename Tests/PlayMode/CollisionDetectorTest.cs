@@ -6,6 +6,7 @@ using System.Collections;
 
 using ReupVirtualTwin.managers;
 using ReupVirtualTwinTests.utils;
+using ReupVirtualTwin.managerInterfaces;
 
 public class CollisionDetectorTest : MonoBehaviour
 {
@@ -22,7 +23,7 @@ public class CollisionDetectorTest : MonoBehaviour
     {
         sceneObjects = ReupSceneInstantiator.InstantiateScene();
         character = sceneObjects.character;
-        posManager = character.GetComponent<CharacterPositionManager>();
+        posManager = sceneObjects.diContainer.Resolve<ICharacterPositionManager>() as CharacterPositionManager;
         widePlatform = (GameObject)PrefabUtility.InstantiatePrefab(cubePrefab);
         SetPlatform();
     }

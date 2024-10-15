@@ -24,7 +24,8 @@
         "reup.romulo.tests.mocks",
         "Unity.InputSystem",
         "Unity.InputSystem.TestFramework",
-        "Unity.Cinemachine"
+        "Unity.Cinemachine",
+        "Zenject"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
