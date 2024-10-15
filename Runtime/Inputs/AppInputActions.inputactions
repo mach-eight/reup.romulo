@@ -337,96 +337,6 @@
             ]
         },
         {
-            "name": "UI",
-            "id": "46924f64-9f3c-4047-a1d6-f2e7333bec2b",
-            "actions": [
-                {
-                    "name": "Click",
-                    "type": "PassThrough",
-                    "id": "1e014d1d-4b11-4d67-8ccb-85b7fe674e58",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
-                    "name": "Point",
-                    "type": "PassThrough",
-                    "id": "4cc946b1-913e-4068-a066-39ff6bfb0d5c",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
-                    "name": "ScrollWheel",
-                    "type": "PassThrough",
-                    "id": "2069370a-ad9f-40f0-9532-ed5cd514c3e9",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                }
-            ],
-            "bindings": [
-                {
-                    "name": "",
-                    "id": "1807b97b-5646-46c9-97f3-a3370dc8bd8e",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "KeyboardAndMouse",
-                    "action": "Click",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "517be2f2-2058-40df-86a5-e44031b1408f",
-                    "path": "<Touchscreen>/touch*/Press",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Touchscreen",
-                    "action": "Click",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "350dfaf7-3f3b-48b6-ba45-0aa30ac69a42",
-                    "path": "<Mouse>/position",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "KeyboardAndMouse",
-                    "action": "Point",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "e97212b1-f87f-4629-a099-11476cc80039",
-                    "path": "<Touchscreen>/touch0/position",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Point",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "1ff699dd-17fb-4a46-a125-723c8900a03b",
-                    "path": "<Mouse>/scroll",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "KeyboardAndMouse",
-                    "action": "ScrollWheel",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                }
-            ]
-        },
-        {
             "name": "DollhouseView",
             "id": "7eff1063-e733-49a9-86c8-cd345c4d3b41",
             "actions": [
@@ -434,15 +344,6 @@
                     "name": "KeyboardMoveCamera",
                     "type": "Button",
                     "id": "0911c579-a2b7-4be7-876f-94d6d150bee6",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "PointerMoveCamera",
-                    "type": "Button",
-                    "id": "2f9e69ec-705e-478f-a061-1fca0a84cfaa",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -513,28 +414,6 @@
                     "action": "KeyboardMoveCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
-                },
-                {
-                    "name": "",
-                    "id": "f959a891-e13e-4b67-91ee-e9954d158207",
-                    "path": "<Mouse>/delta",
-                    "interactions": "",
-                    "processors": "InvertVector2(invertX=false,invertY=false)",
-                    "groups": "KeyboardAndMouse",
-                    "action": "PointerMoveCamera",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "32dcf154-1c93-403d-8e48-3bad44b476c9",
-                    "path": "<Touchscreen>/primaryTouch/delta",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Touchscreen",
-                    "action": "PointerMoveCamera",
-                    "isComposite": false,
-                    "isPartOfComposite": false
                 },
                 {
                     "name": "",

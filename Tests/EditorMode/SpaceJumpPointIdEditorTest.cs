@@ -6,7 +6,7 @@ using ReupVirtualTwin.models;
 namespace ReupVirtualTwinTests.editor
 {
 
-    public class SpaceJumpPointIdTest
+    public class SpaceJumpPointIdEditorTest
     {
         static GameObject spaceSelectorPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Assets/Quickstart/SpaceSelectors/SpaceSelector.prefab");
         GameObject spaceSelector;
