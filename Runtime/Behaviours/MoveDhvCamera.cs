@@ -36,7 +36,8 @@ namespace ReupVirtualTwin.behaviours
             _inputProvider.holdStarted -= OnHoldStarted;
         }
 
-        void OnHoldStarted(InputAction.CallbackContext ctx){
+        void OnHoldStarted(InputAction.CallbackContext ctx)
+        {
             Ray hitRay = Camera.main.ScreenPointToRay(_inputProvider.PointerInput());
             hitPoint = RayUtils.GetHitPoint(hitRay);
             originalCameraPosition = hitRay.origin;
@@ -51,7 +52,8 @@ namespace ReupVirtualTwin.behaviours
             dragManager = dragManagerGameObject.GetComponent<IDragManager>();
             gesturesManager = gesturesManagerGameObject.GetComponent<IGesturesManager>();
         }
-        void Start(){
+        void Start()
+        {
             building = ObjectFinder.FindSetupBuilding().GetComponent<SetupBuilding>().building;
             buildingCenter = BoundariesUtils.CalculateCenter(building);
         }
@@ -75,7 +77,7 @@ namespace ReupVirtualTwin.behaviours
             Vector3 finalMovement = cameraRight * inputValue.x + cameraForward * inputValue.y;
             Vector3 normalizedDirection = Vector3.Normalize(finalMovement);
 
-            float movementDistance = GetKeyboardMoveCameraRelativeSpeed()  * Time.deltaTime;
+            float movementDistance = GetKeyboardMoveCameraRelativeSpeed() * Time.deltaTime;
             Vector3 nextPosition = dollhouseViewWrapperTransform.position + (normalizedDirection * movementDistance);
 
             PerformMovement(nextPosition);
@@ -87,10 +89,10 @@ namespace ReupVirtualTwin.behaviours
             {
                 return;
             }
-            Ray cameraRay = Camera.main.ScreenPointToRay(_inputProvider.PointerInput());
+            Ray cameraRay = RayUtils.GetRayFromCameraToScreenPoint(Camera.main, _inputProvider.PointerInput());
             Ray invertedRay = new Ray(hitPoint, -cameraRay.direction);
             Vector3 newCameraPosition = RayUtils.ProjectRayToHeight(invertedRay, originalCameraPosition.y);
-            Vector3 newWrapperPosition =  originalWrapperPosition + (newCameraPosition - originalCameraPosition);
+            Vector3 newWrapperPosition = originalWrapperPosition + (newCameraPosition - originalCameraPosition);
             PerformMovement(newWrapperPosition);
         }
 
@@ -103,7 +105,7 @@ namespace ReupVirtualTwin.behaviours
             dollhouseViewWrapperTransform.position = nextPosition;
         }
 
-        private bool isNextPositionInsideBoundaries(Vector3 positionToCheck) 
+        private bool isNextPositionInsideBoundaries(Vector3 positionToCheck)
         {
             Vector3 offsetFromCenter = positionToCheck - buildingCenter;
 
@@ -113,7 +115,8 @@ namespace ReupVirtualTwin.behaviours
             return withinXBounds && withinZBounds;
         }
 
-        public float GetKeyboardMoveCameraRelativeSpeed() {
+        public float GetKeyboardMoveCameraRelativeSpeed()
+        {
             return KeyboardMoveCameraSpeedMetersPerSecond * GetFieldOfViewMultiplier();
         }
 

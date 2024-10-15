@@ -4,6 +4,11 @@ namespace ReupVirtualTwin.helpers
 {
     public static class RayUtils
     {
+        public static Ray GetRayFromCameraToScreenPoint(Camera camera, Vector3 screenPoint)
+        {
+            return camera.ScreenPointToRay(screenPoint);
+        }
+
         public static Vector3 GetHitPoint(Ray ray)
         {
             RaycastHit hit;
