@@ -49,7 +49,6 @@ namespace ReupVirtualTwin.managers
                     walkSlider.StopMovement();
                 }
                 _allowWalking = value;
-                Debug.Log($"52: _allowWalking >>>\n{_allowWalking}");
             }
         }
         public bool allowSetHeight
@@ -126,8 +125,6 @@ namespace ReupVirtualTwin.managers
 
         public void MoveInDirection(Vector3 direction, float speedInMetersPerSecond = 1f)
         {
-            Debug.Log($"119: direction >>>\n{direction}");
-            Debug.Log($"120: speedInMetersPerSecond >>>\n{speedInMetersPerSecond}");
             var normalizedDirection = Vector3.Normalize(direction);
             characterPosition = characterPosition + normalizedDirection * speedInMetersPerSecond * Time.deltaTime;
         }

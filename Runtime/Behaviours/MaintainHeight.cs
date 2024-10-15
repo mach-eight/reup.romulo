@@ -10,7 +10,6 @@ namespace ReupVirtualTwin.behaviours
     public class MaintainHeight : MonoBehaviour, IMaintainHeight
     {
         ICharacterPositionManager characterPositionManager;
-        // public ICharacterPositionManager characterPositionManager { set => _characterPositionManager = value; }
         private float _maxStepHeight;
         public float maxStepHeight { set => _maxStepHeight = value; }
 
