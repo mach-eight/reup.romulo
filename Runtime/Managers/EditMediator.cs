@@ -282,7 +282,15 @@ namespace ReupVirtualTwin.managers
                 case WebMessageType.showAllObjects:
                     ShowAllObjects((JObject)payload);
                     break;
+                case WebMessageType.requestObjectTagsUnderCharacter:
+
+                    break;
             }
+        }
+
+        void ProcessObjectTagsUnderCharacterRequest(JObject payload)
+        {
+
         }
 
         void ActivateViewMode(JObject payload)

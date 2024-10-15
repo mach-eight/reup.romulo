@@ -44,15 +44,15 @@ namespace ReupVirtualTwinTests.utils
             public GesturesManager gesturesManager;
             public ZoomDhvCamera zoomDhvCameraBehavior;
         }
+        public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab, Action<GameObject> modifyBuilding)
+        {
+            SceneObjects sceneObjects = InstantiateSceneWithBuildingFromPrefab(buildingPrefab);
+            modifyBuilding(sceneObjects.building);
+            return sceneObjects;
+        }
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab)
         {
             GameObject building = (GameObject)PrefabUtility.InstantiatePrefab(buildingPrefab);
-            return InstantiateSceneWithBuildingWithBuildingObject(building);
-        }
-        public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab, Action<GameObject> modifyBuilding)
-        {
-            GameObject building = (GameObject)PrefabUtility.InstantiatePrefab(buildingPrefab);
-            modifyBuilding(building);
             return InstantiateSceneWithBuildingWithBuildingObject(building);
         }
 
@@ -76,6 +76,7 @@ namespace ReupVirtualTwinTests.utils
 
             setupBuilding.building = building;
             setupBuilding.AssignIdsAndObjectInfoToBuilding();
+            setupBuilding.AddTagSystemToBuildingObjects();
 
             EditMediator editMediator = baseGlobalScriptGameObject.transform
                 .Find("EditMediator").GetComponent<EditMediator>();

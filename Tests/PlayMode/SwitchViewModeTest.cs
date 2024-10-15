@@ -12,7 +12,7 @@ using ReupVirtualTwinTests.utils;
 using ReupVirtualTwinTests.mocks;
 using System.Linq;
 
-namespace ReupVirtualTwinTests.generalTests
+namespace ReupVirtualTwinTests.IOTests
 {
     public class SwitchViewModeTest
     {
