@@ -45,7 +45,7 @@ namespace ReupVirtualTwinTests.utils
             public ITexturesManager texturesManager;
             public GesturesManager gesturesManager;
             public ZoomDhvCamera zoomDhvCameraBehavior;
-            public DiContainer diContainer;
+            public ICharacterPositionManager characterPositionManager;
         }
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab)
         {
@@ -139,6 +139,8 @@ namespace ReupVirtualTwinTests.utils
 
             DiContainer diContainer = reupGameObject.transform.Find("SceneContext").GetComponent<ReupDependenciesInstaller>().container;
 
+            ICharacterPositionManager characterPositionManager = diContainer.Resolve<ICharacterPositionManager>();
+
             return new SceneObjects
             {
                 reupObject = reupGameObject,
@@ -168,7 +170,7 @@ namespace ReupVirtualTwinTests.utils
                 texturesManager = texturesManager,
                 gesturesManager = gesturesManager,
                 zoomDhvCameraBehavior = zoomDhvCameraBehavior,
-                diContainer = diContainer,
+                characterPositionManager = characterPositionManager,
             };
         }
 

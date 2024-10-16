@@ -23,8 +23,7 @@ public class CharacterPositionManagerTest : MonoBehaviour
     {
         sceneObjects = ReupSceneInstantiator.InstantiateScene();
         character = sceneObjects.character;
-        // posManager = character.GetComponent<CharacterPositionManager>();
-        posManager = sceneObjects.diContainer.Resolve<ICharacterPositionManager>() as CharacterPositionManager;
+        posManager = sceneObjects.characterPositionManager as CharacterPositionManager;
         yield return null;
     }
 
