@@ -55,7 +55,6 @@ namespace ReupVirtualTwin.editor
 
         private void DefineDimensions()
         {
-
             totalWidth = EditorGUIUtility.currentViewWidth;
             filterNameWidth = totalWidth * 0.55f;
             removeFilterButtonWidth = totalWidth * 0.15f;
