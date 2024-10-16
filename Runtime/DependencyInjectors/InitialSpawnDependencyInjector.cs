@@ -11,14 +11,11 @@ namespace ReupVirtualTwin.dependencyInjectors
     {
         [SerializeField]
         GameObject sensor;
-        [SerializeField]
-        // GameObject characterPositionManager;
 
         void Awake()
         {
             InitialSpawn initialSpawn = GetComponent<InitialSpawn>();
             IOnBuildingSetup setUpBuilding = ObjectFinder.FindSetupBuilding()?.GetComponent<IOnBuildingSetup>();
-            // initialSpawn.characterPositionManager = characterPositionManager.GetComponent<ICharacterPositionManager>();
             if (setUpBuilding != null)
             {
                 initialSpawn.setUpBuilding = setUpBuilding;

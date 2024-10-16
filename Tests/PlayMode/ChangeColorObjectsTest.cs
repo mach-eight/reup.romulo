@@ -28,14 +28,15 @@ public class ChangeColorObjectsTest : MonoBehaviour
         changeColorManager = sceneObjects.changeColorManager;
         CreateObjects();
     }
-    [TearDown]
-    public void TearDown()
+    [UnityTearDown]
+    public IEnumerator TearDown()
     {
         ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
         Destroy(meshedParent);
         Destroy(unmeshedParent);
         Destroy(meshedChild);
         Destroy(unmeshedChild);
+        yield return null;
     }
     private void CreateObjects()
     {
@@ -83,7 +84,7 @@ public class ChangeColorObjectsTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldChangeColorObjects()
     {
-        List<GameObject> gameObjects = new() { meshedParent, meshedChild, unmeshedParent, unmeshedChild};
+        List<GameObject> gameObjects = new() { meshedParent, meshedChild, unmeshedParent, unmeshedChild };
         changeColorManager.ChangeObjectsColor(gameObjects, Color.blue);
 
         yield return null;
@@ -97,7 +98,7 @@ public class ChangeColorObjectsTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldAddColorMetaDataToObjects()
     {
-        List<GameObject> gameObjects = new() { meshedParent, meshedChild, unmeshedParent, unmeshedChild};
+        List<GameObject> gameObjects = new() { meshedParent, meshedChild, unmeshedParent, unmeshedChild };
         changeColorManager.ChangeObjectsColor(gameObjects, Color.blue);
         yield return null;
 
@@ -131,7 +132,7 @@ public class ChangeColorObjectsTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldDeleteMaterialIdMetaData_when_applyingColorMetaData()
     {
-        List<GameObject> gameObjects = new() { meshedParent, meshedChild, unmeshedParent, unmeshedChild};
+        List<GameObject> gameObjects = new() { meshedParent, meshedChild, unmeshedParent, unmeshedChild };
         int fakeMaterialId = 746;
         AssignFakeMaterialIdMetaDataToObjects(gameObjects, fakeMaterialId);
         AssertUtils.AssertAllObjectsWithMeshRendererHaveMetaDataValue<int>(gameObjects, "appearance.materialId", fakeMaterialId);
@@ -154,7 +155,7 @@ public class ChangeColorObjectsTest : MonoBehaviour
         Assert.IsFalse(unmeshedParent.GetComponent<IObjectInfo>().materialWasChanged);
         Assert.IsFalse(meshedChild.GetComponent<IObjectInfo>().materialWasChanged);
         Assert.IsFalse(unmeshedChild.GetComponent<IObjectInfo>().materialWasChanged);
-        List<GameObject> gameObjects = new() { meshedParent, meshedChild, unmeshedParent, unmeshedChild};
+        List<GameObject> gameObjects = new() { meshedParent, meshedChild, unmeshedParent, unmeshedChild };
         changeColorManager.ChangeObjectsColor(gameObjects, Color.blue);
         yield return null;
 

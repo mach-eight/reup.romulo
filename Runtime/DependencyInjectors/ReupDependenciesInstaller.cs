@@ -9,21 +9,12 @@ namespace ReupVirtualTwin.dependencyInjectors
     public class ReupDependenciesInstaller : MonoInstaller
     {
         public GameObject character;
+        public DiContainer container;
         public override void InstallBindings()
         {
-            Container.Bind<string>().FromInstance("Hello World!");
-            Container.Bind<Greeter>().AsSingle().NonLazy();
-
+            container = Container;
             Container.Bind<GameObject>().WithId("character").FromInstance(character);
             Container.Bind<ICharacterPositionManager>().To<CharacterPositionManager>().AsSingle();
-        }
-    }
-
-    public class Greeter
-    {
-        public Greeter(string message)
-        {
-            Debug.Log(message);
         }
     }
 }

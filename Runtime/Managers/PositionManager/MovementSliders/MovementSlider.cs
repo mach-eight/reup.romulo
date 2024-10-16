@@ -14,15 +14,17 @@ namespace ReupVirtualTwin.managers
         public MovementHaltDecitionMaker<T> movementDecitionMaker;
         public Interpolator<T> interpolator;
 
-        UnityEvent endMovementEvent; 
+        UnityEvent endMovementEvent;
         T currentTarget;
 
-        ICharacterPositionManager _positionManager;
+        ICharacterPositionManager positionManager;
 
-        void Awake()
+        public MovementSlider<T> SetPositionManager(ICharacterPositionManager positionManager)
         {
-            _positionManager = GetComponent<ICharacterPositionManager>();
+            this.positionManager = positionManager;
+            return this;
         }
+
         public MovementSlider<T> SetHaltDecitionMaker(MovementHaltDecitionMaker<T> mhdm)
         {
             movementDecitionMaker = mhdm;
@@ -42,7 +44,7 @@ namespace ReupVirtualTwin.managers
         {
             if (sliding)
             {
-                if(currentTarget.Equals(target))
+                if (currentTarget.Equals(target))
                 {
                     return;
                 }
@@ -57,11 +59,12 @@ namespace ReupVirtualTwin.managers
         private IEnumerator SlideToTargetCoroutine(T target)
         {
             sliding = true;
-            interpolator.DefineOriginAndTarget(_positionManager.characterPosition, target);
+            Debug.Log($"63: positionManager >>>\n{positionManager}");
+            interpolator.DefineOriginAndTarget(positionManager.characterPosition, target);
             while (movementDecitionMaker.ShouldKeepMoving(target))
             {
-                var nextPos = interpolator.Interpolate(_positionManager.characterPosition);
-                _positionManager.characterPosition = nextPos;
+                var nextPos = interpolator.Interpolate(positionManager.characterPosition);
+                positionManager.characterPosition = nextPos;
                 yield return null;
             }
             StopMovement();

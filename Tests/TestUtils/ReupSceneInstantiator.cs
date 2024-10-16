@@ -8,6 +8,8 @@ using ReupVirtualTwin.models;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwinTests.mocks;
+using Zenject;
+using ReupVirtualTwin.dependencyInjectors;
 
 namespace ReupVirtualTwinTests.utils
 {
@@ -43,6 +45,7 @@ namespace ReupVirtualTwinTests.utils
             public ITexturesManager texturesManager;
             public GesturesManager gesturesManager;
             public ZoomDhvCamera zoomDhvCameraBehavior;
+            public ICharacterPositionManager characterPositionManager;
             public GameObject houseContainer;
         }
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab, Action<GameObject> modifyBuilding)
@@ -136,6 +139,9 @@ namespace ReupVirtualTwinTests.utils
             GesturesManager gesturesManager = baseGlobalScriptGameObject.transform.Find("GesturesManager").GetComponent<GesturesManager>();
 
             GameObject houseContainer = reupGameObject.transform.Find("HouseContainer").gameObject;
+            DiContainer diContainer = reupGameObject.transform.Find("SceneContext").GetComponent<ReupDependenciesInstaller>().container;
+
+            ICharacterPositionManager characterPositionManager = diContainer.Resolve<ICharacterPositionManager>();
 
             return new SceneObjects
             {
@@ -167,6 +173,7 @@ namespace ReupVirtualTwinTests.utils
                 gesturesManager = gesturesManager,
                 zoomDhvCameraBehavior = zoomDhvCameraBehavior,
                 houseContainer = houseContainer,
+                characterPositionManager = characterPositionManager,
             };
         }
 
