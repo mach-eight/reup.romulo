@@ -4,6 +4,7 @@ using ReupVirtualTwin.behaviourInterfaces;
 using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwin.controllerInterfaces;
 using Zenject;
+using ReupVirtualTwin.helpers;
 
 namespace ReupVirtualTwin.behaviours
 {
@@ -55,7 +56,7 @@ namespace ReupVirtualTwin.behaviours
             if (building != null)
             {
                 _colliderAdder.AddCollidersToTree(building);
-                building.layer = buildingLayerId;
+                GameObjectUtils.ApplyLayerToObjectTree(building, buildingLayerId);
             }
             else
             {

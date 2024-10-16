@@ -18,7 +18,7 @@ namespace ReupVirtualTwinTests.IOTests
 {
     public class ModelInfoRequestTest
     {
-        GameObject platformPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Tests/TestAssets/PlatformNoCollider.prefab");
+        GameObject platformPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Tests/TestAssets/MockBuilding1.prefab");
         ReupSceneInstantiator.SceneObjects sceneObjects;
         EditMediator editMediator;
         Transform character;
@@ -64,10 +64,8 @@ namespace ReupVirtualTwinTests.IOTests
             platformTags = TagFactory.CreateBulk(3);
             foreach (Tag tag in platformTags)
             {
-                tagsController.AddTagToObject(platform, tag);
+                tagsController.AddTagToObject(platform.transform.GetChild(0).gameObject, tag);
             }
-            var a = tagsController.GetTagsFromObject(platform);
-            var b = JArray.FromObject(a);
         }
         void SetCharacterOverPlatform()
         {
