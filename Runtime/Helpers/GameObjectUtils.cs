@@ -28,5 +28,13 @@ namespace ReupVirtualTwin.helpers
             }
             return false;
         }
+        public static void ApplyLayerToObjectTree(GameObject obj, int layer)
+        {
+            obj.layer = layer;
+            foreach (Transform child in obj.transform)
+            {
+                ApplyLayerToObjectTree(child.gameObject, layer);
+            }
+        }
     }
 }

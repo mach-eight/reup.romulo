@@ -6,7 +6,7 @@ using InSys = UnityEngine.InputSystem;
 
 namespace ReupVirtualTwinTests.utils
 {
-    public static class MovePointerUtils
+    public static class PointerUtils
     {
         public static IEnumerator MoveMouse(
             InputTestFixture input,
@@ -122,6 +122,12 @@ namespace ReupVirtualTwinTests.utils
             input.EndTouch(0, endFinger1Position, Vector2.zero, true, touch);
             input.EndTouch(1, endFinger2Position, Vector2.zero, true, touch);
             yield return null;
+        }
+
+        public static void Tap(InputTestFixture input, Touchscreen touch, Vector2 tapPosition, int touchId = 0){
+            InSys.TouchPhase phase = InSys.TouchPhase.Began;
+            input.SetTouch(touchId, phase, tapPosition, 1.0f, Vector2.zero, true, touch);
+            input.EndTouch(touchId, tapPosition);
         }
     }
 }
