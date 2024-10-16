@@ -85,5 +85,11 @@ namespace ReupVirtualTwinTests.IOTests
             Assert.IsTrue(JObject.DeepEquals(expectedMessage.payload, sentMessage.payload));
             yield return null;
         }
+
+        [UnityTest]
+        public IEnumerator ShouldReturnErrorMessageIfNoObjectUnderCharacter()
+        {
+            yield return null;
+        }
     }
 }

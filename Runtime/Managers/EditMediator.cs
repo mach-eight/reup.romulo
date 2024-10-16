@@ -78,11 +78,15 @@ namespace ReupVirtualTwin.managers
         public IBuildingVisibilityController buildingVisibilityController { get; set; }
 
         ICharacterPositionManager characterPositionManager;
+        ITagsController tagsController;
 
         [Inject]
-        public void Init(ICharacterPositionManager characterPositionManager)
+        public void Init(
+            ICharacterPositionManager characterPositionManager,
+            ITagsController tagsController)
         {
             this.characterPositionManager = characterPositionManager;
+            this.tagsController = tagsController;
         }
 
         public void Notify(ReupEvent eventName)
@@ -292,16 +296,37 @@ namespace ReupVirtualTwin.managers
                     ShowAllObjects((JObject)payload);
                     break;
                 case WebMessageType.requestObjectTagsUnderCharacter:
-                    ProcessObjectTagsUnderCharacterRequest((JObject)payload);
+                    ProcessObjectTagsUnderCharacterRequest(((JObject)payload["requestId"]).ToString());
                     break;
             }
         }
 
-        void ProcessObjectTagsUnderCharacterRequest(JObject payload)
+        void ProcessObjectTagsUnderCharacterRequest(string requestId)
         {
-            Debug.Log($"302: characterPositionManager >>>\n{characterPositionManager}");
             Vector3 characterPosition = characterPositionManager.characterPosition;
             Ray characterDownRay = new Ray(characterPosition, Vector3.down);
+            RaycastHit hit;
+            if (Physics.Raycast(characterDownRay, out hit))
+            {
+                GameObject hitObject = hit.collider.gameObject;
+                SendObjectTagsUnderCharacterResponse(requestId, hitObject);
+                return;
+            }
+
+        }
+
+        void SendObjectTagsUnderCharacterResponse(string requestId, GameObject obj)
+        {
+            List<Tag> tags = tagsController.GetTagsFromObject(obj);
+            WebMessage<JObject> message = new()
+            {
+                type = WebMessageType.requestObjectTagsUnderCharacterSuccess,
+                payload = new JObject(
+                    new JProperty("requestId", requestId),
+                    new JProperty("tags", new JArray(tags))
+                )
+            };
+            _webMessageSender.SendWebMessage(message);
         }
 
         void ActivateViewMode(JObject payload)
