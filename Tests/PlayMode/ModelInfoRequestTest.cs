@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.TestTools;
 using NUnit.Framework;
-using ReupVirtualTwin.models;
 using UnityEditor;
 using Newtonsoft.Json.Linq;
 using ReupVirtualTwin.managers;
@@ -26,6 +25,8 @@ namespace ReupVirtualTwinTests.IOTests
         WebMessageSenderSpy webMessageSenderSpy;
         GameObject platform;
         List<Tag> platformTags;
+        string requestId;
+        JObject requestMessage;
 
         [UnitySetUp]
         public IEnumerator SetUp()
@@ -35,8 +36,8 @@ namespace ReupVirtualTwinTests.IOTests
             editMediator = sceneObjects.editMediator;
             webMessageSenderSpy = sceneObjects.webMessageSenderSpy;
             platform = sceneObjects.building;
-            SetCharacterOverPlatform();
             SetPlatformTags();
+            DefineConstants();
             yield return null;
         }
 
@@ -46,6 +47,17 @@ namespace ReupVirtualTwinTests.IOTests
             ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
             yield return null;
         }
+
+        void DefineConstants()
+        {
+            requestId = "test-request-id";
+            requestMessage = new JObject(
+                new JProperty("type", WebMessageType.requestObjectTagsUnderCharacter),
+                new JProperty("payload", new JObject(
+                    new JProperty("requestId", requestId)
+                ))
+            );
+        }
         void SetPlatformTags()
         {
             ITagsController tagsController = new TagsController();
@@ -54,32 +66,33 @@ namespace ReupVirtualTwinTests.IOTests
             {
                 tagsController.AddTagToObject(platform, tag);
             }
+            var a = tagsController.GetTagsFromObject(platform);
+            var b = JArray.FromObject(a);
         }
         void SetCharacterOverPlatform()
         {
-            character.position = platform.transform.position + 10 * Vector3.up;
+            character.position = platform.transform.position + 100 * Vector3.up;
+        }
+        void SetCharacterOutOfPlatform()
+        {
+            character.position = platform.transform.position + 100 * Vector3.up + 20 * Vector3.forward;
         }
 
         [UnityTest]
         public IEnumerator ShouldReturnListOfObjectsTags()
         {
-            string requestId = "test-request-id";
-            JObject requestMessage = new JObject(
-                new JProperty("type", WebMessageType.requestObjectTagsUnderCharacter),
-                new JProperty("payload", new JObject(
-                    new JProperty("requestId", requestId)
-                ))
-            );
+            SetCharacterOverPlatform();
             editMediator.ReceiveWebMessage(JsonConvert.SerializeObject(requestMessage));
             Assert.AreEqual(1, webMessageSenderSpy.sentMessages.Count);
             WebMessage<JObject> sentMessage = (WebMessage<JObject>)webMessageSenderSpy.sentMessages[0];
+            var ar = JArray.FromObject(platformTags);
             WebMessage<JObject> expectedMessage = new WebMessage<JObject>
             {
                 type = WebMessageType.requestObjectTagsUnderCharacterSuccess,
                 payload = new JObject
                 {
                     { "requestId", requestId },
-                    { "tags", new JArray(platformTags)}
+                    { "tags", JArray.FromObject(platformTags)}
                 }
             };
             Assert.IsTrue(JObject.DeepEquals(expectedMessage.payload, sentMessage.payload));
@@ -89,7 +102,22 @@ namespace ReupVirtualTwinTests.IOTests
         [UnityTest]
         public IEnumerator ShouldReturnErrorMessageIfNoObjectUnderCharacter()
         {
+            SetCharacterOutOfPlatform();
+            editMediator.ReceiveWebMessage(JsonConvert.SerializeObject(requestMessage));
+            Assert.AreEqual(1, webMessageSenderSpy.sentMessages.Count);
+            WebMessage<JObject> sentMessage = (WebMessage<JObject>)webMessageSenderSpy.sentMessages[0];
+            WebMessage<JObject> expectedMessage = new WebMessage<JObject>
+            {
+                type = WebMessageType.requestObjectTagsUnderCharacterFailure,
+                payload = new JObject
+                {
+                    { "requestId", requestId },
+                    { "errorMessage", "No object under character" }
+                }
+            };
+            Assert.IsTrue(JObject.DeepEquals(expectedMessage.payload, sentMessage.payload));
             yield return null;
+
         }
     }
 }

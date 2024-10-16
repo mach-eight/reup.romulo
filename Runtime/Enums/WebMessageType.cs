@@ -64,6 +64,7 @@ namespace ReupVirtualTwin.enums
 
         public const string requestObjectTagsUnderCharacter = "[Model Info] Request Object Tags Under Character";
         public const string requestObjectTagsUnderCharacterSuccess = "[Model Info] Request Object Tags Under Character Success";
+        public const string requestObjectTagsUnderCharacterFailure = "[Model Info] Request Object Tags Under Character Failure";
 
     }
 }

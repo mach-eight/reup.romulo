@@ -3,6 +3,7 @@ using System;
 using ReupVirtualTwin.behaviourInterfaces;
 using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwin.controllerInterfaces;
+using Zenject;
 
 namespace ReupVirtualTwin.behaviours
 {
@@ -39,12 +40,22 @@ namespace ReupVirtualTwin.behaviours
         public IColliderAdder colliderAdder { set => _colliderAdder = value; }
         private IIdAssignerController _idAssignerController;
         public IIdAssignerController idAssignerController { get => _idAssignerController; set => _idAssignerController = value; }
+        int buildingLayerId;
+
+        [Inject]
+        public void Init(
+            [Inject(Id = "buildingLayerId")] int buildingLayerId
+        )
+        {
+            this.buildingLayerId = buildingLayerId;
+        }
 
         void Start()
         {
             if (building != null)
             {
                 _colliderAdder.AddCollidersToTree(building);
+                building.layer = buildingLayerId;
             }
             else
             {
