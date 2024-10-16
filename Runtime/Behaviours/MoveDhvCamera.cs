@@ -2,6 +2,7 @@ using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.inputs;
 using ReupVirtualTwin.managerInterfaces;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace ReupVirtualTwin.behaviours
 {
@@ -12,23 +13,43 @@ namespace ReupVirtualTwin.behaviours
         [SerializeField] public GameObject gesturesManagerGameObject;
         [SerializeField] public float limitDistanceFromBuildingInMeters = 35;
         [SerializeField] public float KeyboardMoveCameraSpeedMetersPerSecond = 40;
-        [SerializeField] public float PointerMoveCameraDistanceInMetersSquareViewport = 40;
+
+        public Vector3 hitPoint;
+        public Vector3 originalCameraPosition;
+        public Vector3 originalWrapperPosition;
 
         InputProvider _inputProvider;
-        float distancePerPixel;
         IDragManager dragManager;
         IGesturesManager gesturesManager;
         GameObject building;
         private Vector3 buildingCenter;
         private float baseFieldOfView = 60;
 
+        private void OnEnable()
+        {
+            _inputProvider.holdStarted += OnHoldStarted;
+        }
+        private void OnDisable()
+        {
+            _inputProvider.holdStarted -= OnHoldStarted;
+        }
+
+        void OnHoldStarted(InputAction.CallbackContext ctx)
+        {
+            Ray hitRay = Camera.main.ScreenPointToRay(_inputProvider.PointerInput());
+            hitPoint = RayUtils.GetHitPoint(hitRay);
+            originalCameraPosition = hitRay.origin;
+            originalWrapperPosition = dollhouseViewWrapperTransform.position;
+        }
+
         void Awake()
         {
             _inputProvider = new InputProvider();
-            int pixelsInSquareViewport = ViewportUtils.MinViewportDimension(Camera.main);
-            distancePerPixel = PointerMoveCameraDistanceInMetersSquareViewport / pixelsInSquareViewport;
             dragManager = dragManagerGameObject.GetComponent<IDragManager>();
             gesturesManager = gesturesManagerGameObject.GetComponent<IGesturesManager>();
+        }
+        void Start()
+        {
             building = ObjectFinder.FindSetupBuilding().GetComponent<SetupBuilding>().building;
             buildingCenter = BoundariesUtils.CalculateCenter(building);
         }
@@ -52,7 +73,7 @@ namespace ReupVirtualTwin.behaviours
             Vector3 finalMovement = cameraRight * inputValue.x + cameraForward * inputValue.y;
             Vector3 normalizedDirection = Vector3.Normalize(finalMovement);
 
-            float movementDistance = GetKeyboardMoveCameraRelativeSpeed()  * Time.deltaTime;
+            float movementDistance = GetKeyboardMoveCameraRelativeSpeed() * Time.deltaTime;
             Vector3 nextPosition = dollhouseViewWrapperTransform.position + (normalizedDirection * movementDistance);
 
             PerformMovement(nextPosition);
@@ -62,25 +83,13 @@ namespace ReupVirtualTwin.behaviours
         {
             if (!dragManager.dragging || gesturesManager.gestureInProgress)
             {
-               return;
-            }
-
-            Vector2 inputValue = _inputProvider.PointerMoveDhvCamera();
-            if (inputValue == Vector2.zero)
-            {
                 return;
             }
-
-            float fovMultiplier = GetFieldOfViewMultiplier();
-
-            Vector3 cameraForward = Vector3.ProjectOnPlane(dollhouseViewWrapperTransform.forward, Vector3.up).normalized;
-            Vector3 cameraRight = Vector3.Cross(Vector3.up, cameraForward).normalized;
-            float sideMovement = inputValue.x * distancePerPixel * fovMultiplier;
-            float forwardMovement = inputValue.y * distancePerPixel * fovMultiplier;
-            Vector3 movement = cameraRight * sideMovement + cameraForward * forwardMovement;
-            Vector3 nextPosition = dollhouseViewWrapperTransform.position + movement;
-
-            PerformMovement(nextPosition);
+            Ray cameraRay = RayUtils.GetRayFromCameraToScreenPoint(Camera.main, _inputProvider.PointerInput());
+            Ray invertedRay = new Ray(hitPoint, -cameraRay.direction);
+            Vector3 newCameraPosition = RayUtils.ProjectRayToHeight(invertedRay, originalCameraPosition.y);
+            Vector3 newWrapperPosition = originalWrapperPosition + (newCameraPosition - originalCameraPosition);
+            PerformMovement(newWrapperPosition);
         }
 
         private void PerformMovement(Vector3 nextPosition)
@@ -92,7 +101,7 @@ namespace ReupVirtualTwin.behaviours
             dollhouseViewWrapperTransform.position = nextPosition;
         }
 
-        private bool isNextPositionInsideBoundaries(Vector3 positionToCheck) 
+        private bool isNextPositionInsideBoundaries(Vector3 positionToCheck)
         {
             Vector3 offsetFromCenter = positionToCheck - buildingCenter;
 
@@ -102,7 +111,8 @@ namespace ReupVirtualTwin.behaviours
             return withinXBounds && withinZBounds;
         }
 
-        public float GetKeyboardMoveCameraRelativeSpeed() {
+        public float GetKeyboardMoveCameraRelativeSpeed()
+        {
             return KeyboardMoveCameraSpeedMetersPerSecond * GetFieldOfViewMultiplier();
         }
 
