@@ -24,7 +24,7 @@ public class FollowCharacterTest
         character.transform.position = originalCharacterPosition;
         rb = character.AddComponent<Rigidbody>();
         rb.useGravity = false;
-        posManager = character.AddComponent<CharacterPositionManager>();
+        // posManager = character.AddComponent<CharacterPositionManager>();
 
         materialPicker = new GameObject();
         materialPicker.AddComponent<FollowCharacter>();

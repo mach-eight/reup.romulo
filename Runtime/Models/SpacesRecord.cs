@@ -7,6 +7,7 @@ using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.helpers;
 using UnityEngine.Events;
 using Newtonsoft.Json.Linq;
+using Zenject;
 
 namespace ReupVirtualTwin.models
 {
@@ -14,7 +15,7 @@ namespace ReupVirtualTwin.models
     public class SpacesRecord : MonoBehaviour, ISpacesRecord
     {
         [SerializeField] LayerMask ignoreLayerMask;
-        ICharacterPositionManager _characterPositionManager;
+        ICharacterPositionManager characterPositionManager;
         ICharacterHeightReseter _characterHeightReseter;
         List<ISpaceJumpPoint> _jumpPoints;
         public IMediator mediator { get; set; }
@@ -35,9 +36,14 @@ namespace ReupVirtualTwin.models
 
         private void Awake()
         {
-            _characterPositionManager = ObjectFinder.FindCharacter().GetComponent<ICharacterPositionManager>();
             _characterHeightReseter = ObjectFinder.FindHeighMediator().GetComponent<ICharacterHeightReseter>();
             mediator = ObjectFinder.FindEditMediator();
+        }
+
+        [Inject]
+        public void Init(ICharacterPositionManager characterPositionManager)
+        {
+            this.characterPositionManager = characterPositionManager;
         }
 
         public void UpdateSpaces()
@@ -110,10 +116,10 @@ namespace ReupVirtualTwin.models
         void SlideToSpacePoint(Vector3 targetPosition, UnityEvent endMovementEvent)
         {
             _characterHeightReseter.ResetCharacterHeight();
-            _characterPositionManager.MakeKinematic();
-            _characterPositionManager.allowWalking = false;
-            _characterPositionManager.allowSetHeight = false;
-            _characterPositionManager.SlideToTarget(targetPosition, endMovementEvent);
+            characterPositionManager.MakeKinematic();
+            characterPositionManager.allowWalking = false;
+            characterPositionManager.allowSetHeight = false;
+            characterPositionManager.SlideToTarget(targetPosition, endMovementEvent);
         }
 
         UnityEvent CreateEndMovementEvent(string spaceJumpPointId, string requestId)
@@ -143,9 +149,9 @@ namespace ReupVirtualTwin.models
 
         private void EndMovementHandler()
         {
-            _characterPositionManager.UndoKinematic();
-            _characterPositionManager.allowWalking = true;
-            _characterPositionManager.allowSetHeight = true;
+            characterPositionManager.UndoKinematic();
+            characterPositionManager.allowWalking = true;
+            characterPositionManager.allowSetHeight = true;
         }
 
         private RaycastHit? GetGroundHit(SpaceJumpPoint spaceSelector)
