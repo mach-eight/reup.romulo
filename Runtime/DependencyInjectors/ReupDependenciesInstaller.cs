@@ -1,8 +1,8 @@
 using Zenject;
 using UnityEngine;
-using System.Collections;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.managers;
+using ReupVirtualTwin.inputs;
 
 namespace ReupVirtualTwin.dependencyInjectors
 {
@@ -15,6 +15,8 @@ namespace ReupVirtualTwin.dependencyInjectors
             container = Container;
             Container.Bind<GameObject>().WithId("character").FromInstance(character);
             Container.Bind<ICharacterPositionManager>().To<CharacterPositionManager>().AsSingle();
+            Container.BindInterfacesAndSelfTo<InputProvider>().AsSingle();
+            Container.BindInterfacesAndSelfTo<DragManager>().AsSingle();
         }
     }
 }

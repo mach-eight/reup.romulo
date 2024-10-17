@@ -3,13 +3,13 @@ using ReupVirtualTwin.inputs;
 using ReupVirtualTwin.managerInterfaces;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Zenject;
 
 namespace ReupVirtualTwin.behaviours
 {
     public class MoveDhvCamera : MonoBehaviour
     {
         [SerializeField] public Transform dollhouseViewWrapperTransform;
-        [SerializeField] public GameObject dragManagerGameObject;
         [SerializeField] public GameObject gesturesManagerGameObject;
         [SerializeField] public float limitDistanceFromBuildingInMeters = 35;
         [SerializeField] public float KeyboardMoveCameraSpeedMetersPerSecond = 40;
@@ -42,10 +42,15 @@ namespace ReupVirtualTwin.behaviours
             originalWrapperPosition = dollhouseViewWrapperTransform.position;
         }
 
+        [Inject]
+        public void Init(IDragManager dragManager, InputProvider inputProvider)
+        {
+            _inputProvider = inputProvider;
+            this.dragManager = dragManager;
+        }
+
         void Awake()
         {
-            _inputProvider = new InputProvider();
-            dragManager = dragManagerGameObject.GetComponent<IDragManager>();
             gesturesManager = gesturesManagerGameObject.GetComponent<IGesturesManager>();
         }
         void Start()

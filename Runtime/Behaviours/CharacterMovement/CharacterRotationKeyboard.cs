@@ -1,6 +1,7 @@
 using UnityEngine;
 using ReupVirtualTwin.inputs;
 using ReupVirtualTwin.managers;
+using Zenject;
 
 namespace ReupVirtualTwin.behaviours
 {
@@ -11,13 +12,14 @@ namespace ReupVirtualTwin.behaviours
         [SerializeField]
         private CharacterRotationManager _characterRotationManager;
 
-        private InputProvider _inputProvider;
+        private InputProvider inputProvider;
 
         private float ROTATION_SPEED_DEG_PER_SECOND = 180f;
 
-        private void Awake()
+        [Inject]
+        public void Init(InputProvider inputProvider)
         {
-            _inputProvider = new InputProvider();
+            this.inputProvider = inputProvider;
         }
 
         private void Update()
@@ -26,7 +28,7 @@ namespace ReupVirtualTwin.behaviours
         }
         private void UpdateRotation()
         {
-            Vector2 look = _inputProvider.RotateViewKeyboardInput();
+            Vector2 look = inputProvider.RotateViewKeyboardInput();
             if (look == Vector2.zero)
             {
                 return;
