@@ -6,13 +6,14 @@ using System.Collections;
 
 using ReupVirtualTwin.managers;
 using ReupVirtualTwinTests.utils;
+using ReupVirtualTwin.managerInterfaces;
 
 public class CollisionDetectorTest : MonoBehaviour
 {
     ReupSceneInstantiator.SceneObjects sceneObjects;
     Transform character;
 
-    CharacterPositionManager posManager;
+    ICharacterPositionManager posManager;
     GameObject cubePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Tests/TestAssets/Cube.prefab");
     GameObject widePlatform;
     GameObject wall;
@@ -22,7 +23,7 @@ public class CollisionDetectorTest : MonoBehaviour
     {
         sceneObjects = ReupSceneInstantiator.InstantiateScene();
         character = sceneObjects.character;
-        posManager = character.GetComponent<CharacterPositionManager>();
+        posManager = sceneObjects.characterPositionManager;
         widePlatform = (GameObject)PrefabUtility.InstantiatePrefab(cubePrefab);
         SetPlatform();
     }
