@@ -6,7 +6,6 @@ using UnityEngine.InputSystem;
 using UnityEngine.TestTools;
 using UnityEditor;
 using ReupVirtualTwin.helpers;
-using ReupVirtualTwin.behaviours;
 
 
 namespace ReupVirtualTwinTests.behaviours
@@ -26,7 +25,6 @@ namespace ReupVirtualTwinTests.behaviours
         float errorToleranceInMeters = 0.1f;
         int pointerSteps = 10;
         Camera mainCamera;
-        MoveDhvCamera moveDhvCameraBehavior;
         GameObject cube;
 
         [UnitySetUp]
@@ -35,7 +33,6 @@ namespace ReupVirtualTwinTests.behaviours
             sceneObjects = ReupSceneInstantiator.InstantiateSceneWithBuildingFromPrefab(cubePrefab);
             cube = sceneObjects.building;
             input = sceneObjects.input;
-            moveDhvCameraBehavior = sceneObjects.moveDhvCameraBehavior;
             mainCamera = sceneObjects.mainCamera;
             keyboard = InputSystem.AddDevice<Keyboard>();
             mouse = InputSystem.AddDevice<Mouse>();
@@ -109,12 +106,13 @@ namespace ReupVirtualTwinTests.behaviours
         public IEnumerator ShouldNotMoveSidewaysWithMouseWhenNoDragging()
         {
             Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
-            yield return PointerUtils.MoveMouse(input, mouse, Vector2.zero, new Vector2(1,1), pointerSteps);
+            yield return PointerUtils.MoveMouse(input, mouse, Vector2.zero, new Vector2(1, 1), pointerSteps);
             Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
             yield return null;
         }
 
-        Vector3 GetHitPointWhenSelectingCubePrefabFromDHVCamera(Vector3 DHVCameraPosition){
+        Vector3 GetHitPointWhenSelectingCubePrefabFromDHVCamera(Vector3 DHVCameraPosition)
+        {
             // This is a simplified estimation assuming the cube is located at (0,0,0) and it has a scale of (1,1,1)
             Assert.AreEqual(Vector3.zero, cube.transform.position);
             Assert.AreEqual(Vector3.one, cube.transform.localScale);
@@ -129,26 +127,24 @@ namespace ReupVirtualTwinTests.behaviours
             return new Vector3(0, hitPointHeight, -cubeHalfSize);
         }
 
-        float GetTravelAngleFromViewPortCenterInRad(float relativeToViewPortPointerMovement, float fovDeg){
-            return Mathf.Atan(2*relativeToViewPortPointerMovement * Mathf.Tan(fovDeg * Mathf.Deg2Rad / 2));
-        }
-
-        Vector3 GetExpectedCameraPositionAfterSidewayMovement(float relativeViewPortMovementFromCenter){
+        Vector3 GetExpectedCameraPositionAfterSidewayMovement(float relativeViewPortMovementFromCenter)
+        {
             float horizontalFov = CameraUtils.GetHorizontalFov(mainCamera);
             Vector3 cameraPosition = mainCamera.transform.position;
             Vector3 expectedCubeHitRayPosition = GetHitPointWhenSelectingCubePrefabFromDHVCamera(cameraPosition);
             float distanceFromCameraToHitPoint = Vector3.Distance(cameraPosition, expectedCubeHitRayPosition);
-            float travelAngleRad = GetTravelAngleFromViewPortCenterInRad(relativeViewPortMovementFromCenter, horizontalFov);
+            float travelAngleRad = CameraUtils.GetTravelAngleFromViewPortCenterInRad(relativeViewPortMovementFromCenter, horizontalFov);
             float expectedCameraDistanceMovement = distanceFromCameraToHitPoint * Mathf.Tan(travelAngleRad);
             Vector3 expectedCameraPosition = mainCamera.transform.position - new Vector3(expectedCameraDistanceMovement, 0, 0);
             return expectedCameraPosition;
         }
 
-        Vector3 GetExpectedCameraPositionAfterForwardMovement(float relativeViewPortMovementFromCenter){
+        Vector3 GetExpectedCameraPositionAfterForwardMovement(float relativeViewPortMovementFromCenter)
+        {
             Vector3 cameraPosition = mainCamera.transform.position;
             Vector3 expectedCubeHitRayPosition = GetHitPointWhenSelectingCubePrefabFromDHVCamera(cameraPosition);
             float verticalFov = CameraUtils.GetVerticalFov(mainCamera);
-            float travelAngleRad = GetTravelAngleFromViewPortCenterInRad(relativeViewPortMovementFromCenter, verticalFov);
+            float travelAngleRad = CameraUtils.GetTravelAngleFromViewPortCenterInRad(relativeViewPortMovementFromCenter, verticalFov);
             Vector3 cameraPositionRelativeToHitPoint = cameraPosition - expectedCubeHitRayPosition;
             float cameraHeight = cameraPositionRelativeToHitPoint.y;
             float distanceFromCameraToHitPoint = Vector3.Distance(cameraPosition, expectedCubeHitRayPosition);
@@ -221,7 +217,7 @@ namespace ReupVirtualTwinTests.behaviours
             float extraDistanceInMeters = 5;
             float movementDistanceBeyondBoundaries = limitFromBuildingInMeters + extraDistanceInMeters;
             float timeToMoveBeyondBoundaries = movementDistanceBeyondBoundaries / moveSpeedMetresPerSecond;
-            
+
             input.Press(keyboard.wKey);
             yield return new WaitForSeconds(timeToMoveBeyondBoundaries);
             input.Release(keyboard.wKey);
