@@ -45,31 +45,33 @@ namespace ReupVirtualTwinTests.utils
             public ITexturesManager texturesManager;
             public GesturesManager gesturesManager;
             public ZoomDhvCamera zoomDhvCameraBehavior;
+            public GameObject houseContainer;
             public ICharacterPositionManager characterPositionManager;
         }
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab)
         {
             GameObject building = (GameObject)PrefabUtility.InstantiatePrefab(buildingPrefab);
-            return InstantiateSceneWithBuildingWithBuildingObject(building);
+            return InstantiateSceneWithBuildingObject(building);
         }
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab, Action<GameObject> modifyBuilding)
         {
             GameObject building = (GameObject)PrefabUtility.InstantiatePrefab(buildingPrefab);
             modifyBuilding(building);
-            return InstantiateSceneWithBuildingWithBuildingObject(building);
+            return InstantiateSceneWithBuildingObject(building);
         }
 
         public static SceneObjects InstantiateScene()
         {
             GameObject building = CreateDefaultBuilding();
-            return InstantiateSceneWithBuildingWithBuildingObject(building);
+            return InstantiateSceneWithBuildingObject(building);
         }
 
-        public static SceneObjects InstantiateSceneWithBuildingWithBuildingObject(GameObject building)
+        public static SceneObjects InstantiateSceneWithBuildingObject(GameObject building)
         {
             InputTestFixture input = new InputTestFixture();
             input.Setup();
             GameObject reupGameObject = (GameObject)PrefabUtility.InstantiatePrefab(reupPrefab);
+            DiContainer diContainer = reupGameObject.transform.Find("SceneContext").GetComponent<ReupDependenciesInstaller>().container;
             GameObject baseGlobalScriptGameObject = reupGameObject.transform.Find("BaseGlobalScripts").gameObject;
             Transform character = reupGameObject.transform.Find("Character");
             Transform innerCharacter = reupGameObject.transform.Find("Character").Find("InnerCharacter");
@@ -135,9 +137,9 @@ namespace ReupVirtualTwinTests.utils
 
             ITexturesManager texturesManager = baseGlobalScriptGameObject.transform.Find("TexturesManager").GetComponent<ITexturesManager>();
 
-            GesturesManager gesturesManager = baseGlobalScriptGameObject.transform.Find("GesturesManager").GetComponent<GesturesManager>();
+            GesturesManager gesturesManager = diContainer.Resolve<GesturesManager>();
 
-            DiContainer diContainer = reupGameObject.transform.Find("SceneContext").GetComponent<ReupDependenciesInstaller>().container;
+            GameObject houseContainer = reupGameObject.transform.Find("HouseContainer").gameObject;
 
             ICharacterPositionManager characterPositionManager = diContainer.Resolve<ICharacterPositionManager>();
 
@@ -170,6 +172,7 @@ namespace ReupVirtualTwinTests.utils
                 texturesManager = texturesManager,
                 gesturesManager = gesturesManager,
                 zoomDhvCameraBehavior = zoomDhvCameraBehavior,
+                houseContainer = houseContainer,
                 characterPositionManager = characterPositionManager,
             };
         }

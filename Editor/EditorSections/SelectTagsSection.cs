@@ -45,8 +45,8 @@ namespace ReupVirtualTwin.editor
         public async void ShowTagsToAdd()
         {
             EditorGUILayout.BeginHorizontal();
-                searchTagText = EditorGUILayout.TextField("Search for tag to add:", searchTagText);
-                ShowRefetchTagsButton();
+            searchTagText = EditorGUILayout.TextField("Search for tag to add:", searchTagText);
+            ShowRefetchTagsButton();
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.Space();
             int scrollHeight = MAX_BUTTONS_IN_SCROLL_VIEW * (TAG_BUTTON_HEIGHT + UNITY_BUTTON_MARGIN);
@@ -78,7 +78,7 @@ namespace ReupVirtualTwin.editor
         {
             selectedTags.Clear();
             _onTagReset?.Invoke();
-        }   
+        }
 
         private async void ShowRefetchTagsButton()
         {
@@ -113,7 +113,13 @@ namespace ReupVirtualTwin.editor
 
         private IEnumerable<Tag> FilterUnselectedTagsByNameAndId()
         {
-            return allTags.Where(tag => !IsTagAlreadyPresent(tag) && StringsUtils.TextContainsSubtext($"{tag.id} {tag.name}", searchTagText));
+            return allTags.Where(tag =>
+            {
+                return !IsTagAlreadyPresent(tag) && (
+                    StringsUtils.TextContainsSubtext(tag.str, searchTagText)
+                    || StringsUtils.MatchRegex(tag.str, searchTagText)
+                );
+            });
         }
 
         private async Task GetTags()
