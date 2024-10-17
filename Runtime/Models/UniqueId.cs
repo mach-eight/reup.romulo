@@ -11,11 +11,6 @@ namespace ReupVirtualTwin.models
         [UniqueIdentifier]
         public string uniqueId;
 
-        protected virtual void Start()
-        {
-            GenerateId();
-        }
-
         virtual public string GenerateId()
         {
             if (uniqueId == null || uniqueId == "")

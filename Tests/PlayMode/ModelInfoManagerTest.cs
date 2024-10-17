@@ -27,7 +27,7 @@ public class ModelInfoManagerTest : MonoBehaviour
     public void SetUp()
     {
         buildingGameObject = StubObjectTreeCreator.CreateMockBuilding(BUILDING_CHILDREN_DEPTH);
-        sceneObjects = ReupSceneInstantiator.InstantiateSceneWithBuildingWithBuildingObject(buildingGameObject);
+        sceneObjects = ReupSceneInstantiator.InstantiateSceneWithBuildingObject(buildingGameObject);
         modelInfoManager = sceneObjects.modelInfoManager;
     }
     [UnityTearDown]

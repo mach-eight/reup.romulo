@@ -8,6 +8,7 @@ using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.behaviourInterfaces;
 using System.Linq;
+using System;
 
 namespace ReupVirtualTwin.editor
 {
@@ -21,6 +22,9 @@ namespace ReupVirtualTwin.editor
         private List<Tag> selectedTags = new List<Tag>();
         private string subStringFilterText = "";
         private float totalWidth;
+        private float filterNameWidth;
+        private float removeFilterButtonWidth;
+        private float toggleFilterPropertyWidth;
         private List<Dictionary<string, bool>> objectsVisibilityStates = new List<Dictionary<string, bool>>();
 
         [MenuItem("Reup Romulo/Tag Scanner")]
@@ -39,7 +43,7 @@ namespace ReupVirtualTwin.editor
 
         private void OnGUI()
         {
-            totalWidth = EditorGUIUtility.currentViewWidth;
+            DefineDimensions();
             ShowApplyButtons();
             EditorGUILayout.Space();
             ShowFilters();
@@ -47,6 +51,14 @@ namespace ReupVirtualTwin.editor
             ShowTagsToAdd();
             EditorGUILayout.Space();
             ShowSubStringFilterAdder();
+        }
+
+        private void DefineDimensions()
+        {
+            totalWidth = EditorGUIUtility.currentViewWidth;
+            filterNameWidth = totalWidth * 0.55f;
+            removeFilterButtonWidth = totalWidth * 0.15f;
+            toggleFilterPropertyWidth = totalWidth * 0.15f;
         }
         private void ShowTagsToAdd()
         {
@@ -70,15 +82,18 @@ namespace ReupVirtualTwin.editor
             }
             EditorGUILayout.Space();
             EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("Apply filters"))
-                {
-                    objectsVisibilityStates.Add(ObjectVisibilityUtils.GetVisibilityStateOfAllObjects(building, new IdController()));
-                    ApplyFilters(building);
-                }
-                if (GUILayout.Button("Restore last objects visibility") && objectsVisibilityStates.Count > 0)
-                {
-                    UndoLastFilters(building);
-                }
+            if (GUILayout.Button("Apply exclusive filters"))
+            {
+                ApplyFilters(building, TagFiltersApplier.ApplyExclusiveFiltersToTree);
+            }
+            if (GUILayout.Button("Apply inclusive filters"))
+            {
+                ApplyFilters(building, TagFiltersApplier.ApplyInclusiveFiltersToTree);
+            }
+            if (GUILayout.Button("Restore last objects visibility") && objectsVisibilityStates.Count > 0)
+            {
+                UndoLastFilters(building);
+            }
             EditorGUILayout.EndHorizontal();
         }
 
@@ -88,15 +103,16 @@ namespace ReupVirtualTwin.editor
             ObjectVisibilityUtils.ApplyVisibilityState(building, lastVisibilityState, new IdController());
         }
 
-        private void ApplyFilters(GameObject building)
+        private void ApplyFilters(GameObject building, Func<GameObject, List<ITagFilter>, List<GameObject>> filterFunction)
         {
+            objectsVisibilityStates.Add(ObjectVisibilityUtils.GetVisibilityStateOfAllObjects(building, new IdController()));
             List<ITagFilter> filters = substringTagFilters.Concat(tagFilters).ToList();
             if (filters.Count == 0)
             {
                 Debug.LogWarning("No filters to apply");
                 return;
             }
-            List<GameObject> filteredObjects = TagFiltersApplier.ApplyFiltersToTree(building, filters);
+            List<GameObject> filteredObjects = filterFunction(building, filters);
             sceneVisibilityManager.Hide(building, true);
             for (int i = 0; i < filteredObjects.Count; i++)
             {
@@ -106,26 +122,32 @@ namespace ReupVirtualTwin.editor
 
         private void ShowFilters()
         {
-            float filterNameWidth = totalWidth * 0.6f;
-            float removeFilterButtonWidth = totalWidth * 0.2f;
-            float invertFilterToggleWidth = totalWidth * 0.2f;
             List<ITagFilter> tempFilters = substringTagFilters.Concat(tagFilters).ToList();
             EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField("Current filters", GUILayout.Width(filterNameWidth));
-                EditorGUILayout.LabelField("Remove filter", GUILayout.Width(removeFilterButtonWidth));
-                EditorGUILayout.LabelField("Invert filter", GUILayout.Width(invertFilterToggleWidth));
+            EditorGUILayout.LabelField("activated", GUILayout.Width(toggleFilterPropertyWidth));
+            EditorGUILayout.LabelField("Filter look for", GUILayout.Width(filterNameWidth));
+            EditorGUILayout.LabelField("Remove filter", GUILayout.Width(removeFilterButtonWidth));
+            EditorGUILayout.LabelField("Invert filter", GUILayout.Width(toggleFilterPropertyWidth));
             EditorGUILayout.EndHorizontal();
-            tempFilters.ForEach(filter =>
+            tempFilters.ForEach(filter => ShowFilterRow(filter));
+        }
+
+        private void ShowFilterRow(ITagFilter filter)
+        {
+            EditorGUILayout.BeginHorizontal();
+            filter.filterIsActive = EditorGUILayout.Toggle(filter.filterIsActive, GUILayout.Width(toggleFilterPropertyWidth));
+            GUIStyle dimmedLabelStyle = new GUIStyle(GUI.skin.label);
+            if (!filter.filterIsActive)
             {
-                EditorGUILayout.BeginHorizontal();
-                    EditorGUILayout.LabelField(filter.displayText, GUILayout.Width(filterNameWidth));
-                    if (GUILayout.Button("Remove filter", GUILayout.Width(removeFilterButtonWidth)))
-                    {
-                        filter.RemoveFilter();
-                    }
-                    filter.invertFilter = EditorGUILayout.Toggle(filter.invertFilter, GUILayout.Width(invertFilterToggleWidth));
-                EditorGUILayout.EndHorizontal();
-            });
+                dimmedLabelStyle.normal.textColor = Color.gray;
+            }
+            EditorGUILayout.LabelField(filter.displayText, dimmedLabelStyle, GUILayout.Width(filterNameWidth));
+            if (GUILayout.Button("Remove filter", GUILayout.Width(removeFilterButtonWidth)))
+            {
+                filter.RemoveFilter();
+            }
+            filter.invertFilter = EditorGUILayout.Toggle(filter.invertFilter, GUILayout.Width(toggleFilterPropertyWidth));
+            EditorGUILayout.EndHorizontal();
         }
         private void SetUpTagFilters(List<Tag> tags)
         {
