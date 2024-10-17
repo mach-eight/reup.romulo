@@ -27,14 +27,14 @@ namespace ReupVirtualTwin.behaviours
         private float SCROLL_STEP = 120;
 
         [Inject]
-        public void Init(InputProvider inputProvider)
+        public void Init(InputProvider inputProvider, IGesturesManager gesturesManager)
         {
             this.inputProvider = inputProvider;
+            this.gesturesManager = gesturesManager;
         }
 
-        private void Awake()
+        private void Start()
         {
-            gesturesManager = gesturesManagerGameObject.GetComponent<IGesturesManager>();
             targetFieldOfView = dhvCamera.Lens.FieldOfView;
         }
 

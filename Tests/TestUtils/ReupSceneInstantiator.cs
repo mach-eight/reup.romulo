@@ -71,6 +71,7 @@ namespace ReupVirtualTwinTests.utils
             InputTestFixture input = new InputTestFixture();
             input.Setup();
             GameObject reupGameObject = (GameObject)PrefabUtility.InstantiatePrefab(reupPrefab);
+            DiContainer diContainer = reupGameObject.transform.Find("SceneContext").GetComponent<ReupDependenciesInstaller>().container;
             GameObject baseGlobalScriptGameObject = reupGameObject.transform.Find("BaseGlobalScripts").gameObject;
             Transform character = reupGameObject.transform.Find("Character");
             Transform innerCharacter = reupGameObject.transform.Find("Character").Find("InnerCharacter");
@@ -136,10 +137,9 @@ namespace ReupVirtualTwinTests.utils
 
             ITexturesManager texturesManager = baseGlobalScriptGameObject.transform.Find("TexturesManager").GetComponent<ITexturesManager>();
 
-            GesturesManager gesturesManager = baseGlobalScriptGameObject.transform.Find("GesturesManager").GetComponent<GesturesManager>();
+            GesturesManager gesturesManager = diContainer.Resolve<GesturesManager>();
 
             GameObject houseContainer = reupGameObject.transform.Find("HouseContainer").gameObject;
-            DiContainer diContainer = reupGameObject.transform.Find("SceneContext").GetComponent<ReupDependenciesInstaller>().container;
 
             ICharacterPositionManager characterPositionManager = diContainer.Resolve<ICharacterPositionManager>();
 

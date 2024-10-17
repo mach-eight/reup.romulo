@@ -43,16 +43,16 @@ namespace ReupVirtualTwin.behaviours
         }
 
         [Inject]
-        public void Init(IDragManager dragManager, InputProvider inputProvider)
+        public void Init(
+            IDragManager dragManager,
+            InputProvider inputProvider,
+            IGesturesManager gesturesManager)
         {
             _inputProvider = inputProvider;
             this.dragManager = dragManager;
+            this.gesturesManager = gesturesManager;
         }
 
-        void Awake()
-        {
-            gesturesManager = gesturesManagerGameObject.GetComponent<IGesturesManager>();
-        }
         void Start()
         {
             building = ObjectFinder.FindSetupBuilding().GetComponent<SetupBuilding>().building;

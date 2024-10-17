@@ -17,6 +17,7 @@ namespace ReupVirtualTwin.dependencyInjectors
             Container.Bind<ICharacterPositionManager>().To<CharacterPositionManager>().AsSingle();
             Container.BindInterfacesAndSelfTo<InputProvider>().AsSingle();
             Container.BindInterfacesAndSelfTo<DragManager>().AsSingle();
+            Container.BindInterfacesAndSelfTo<GesturesManager>().AsSingle();
         }
     }
 }
