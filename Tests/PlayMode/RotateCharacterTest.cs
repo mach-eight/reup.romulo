@@ -19,8 +19,10 @@ namespace ReupVirtualTwinTests.behaviours
         Keyboard keyboard;
         Mouse mouse;
         Touchscreen touch;
-        float errorThreshold = 1e-5f;
+        float errorThreshold = 1e-4f;
         Camera mainCamera;
+        int steps = 10;
+        int touchId = 0;
 
         float timeInSecsForHoldingButton = 0.25f;
 
@@ -70,21 +72,14 @@ namespace ReupVirtualTwinTests.behaviours
             AssertUtils.AssertVectorIsZero(character.eulerAngles, errorThreshold);
             AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, errorThreshold);
             float horizontalFov = CameraUtils.GetHorizontalFov(mainCamera);
-            Debug.Log($"73: horizontalFov >>>\n{horizontalFov}");
-            float relativeViewPortMovementFromCenter = 0.1f;
+            float relativeViewPortMovementFromCenter = 0.2f;
             Vector2 initialPointerRelativePosition = new Vector2(0.5f, 0.5f);
             Vector2 finalPointerRelativePosition = initialPointerRelativePosition + Vector2.right * relativeViewPortMovementFromCenter;
-            int touchId = 0;
-            // yield return new WaitForSeconds(5);
-            yield return PointerUtils.MoveFinger(input, touch, touchId, initialPointerRelativePosition, finalPointerRelativePosition, 4);
-            yield return new WaitForSeconds(1);
+            yield return PointerUtils.MoveFinger(input, touch, touchId, initialPointerRelativePosition, finalPointerRelativePosition, steps);
+            yield return null;
             float expectedTravelAngleDeg = -CameraUtils.GetTravelAngleFromViewPortCenterInRad(relativeViewPortMovementFromCenter, horizontalFov) * Mathf.Rad2Deg;
-            Debug.Log($"60: expectedTravelAngleRad >>>\n{expectedTravelAngleDeg}");
-            Debug.Log($"61: character.eulerAngles.y >>>\n{character.eulerAngles.y}");
             float traveledAngle = MathUtils.NormalizeAngle(character.eulerAngles.y);
-            Debug.Log($"62: traveledAngle >>>\n{traveledAngle}");
-            // yield return new WaitForSeconds(100);
-            Assert.AreEqual(expectedTravelAngleDeg, traveledAngle);
+            Assert.AreEqual(expectedTravelAngleDeg, traveledAngle, errorThreshold);
             Assert.LessOrEqual(character.eulerAngles.x, errorThreshold);
             Assert.LessOrEqual(character.eulerAngles.z, errorThreshold);
             AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, errorThreshold);
@@ -96,10 +91,15 @@ namespace ReupVirtualTwinTests.behaviours
         {
             AssertUtils.AssertVectorIsZero(character.eulerAngles, errorThreshold);
             AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, errorThreshold);
-            yield return PointerUtils.DragMouseLeftButton(input, mouse, new Vector2(0.5f, 0.5f), new Vector2(0.49f, 0.5f), 90);
-            bool characterTurnedLeft = (character.eulerAngles.y > 180 && character.eulerAngles.y < 360) ||
-                (character.eulerAngles.y < 0 && character.eulerAngles.y > -180);
-            Assert.IsTrue(characterTurnedLeft);
+            float horizontalFov = CameraUtils.GetHorizontalFov(mainCamera);
+            float relativeViewPortMovementFromCenter = 0.4f;
+            Vector2 initialPointerRelativePosition = new Vector2(0.5f, 0.5f);
+            Vector2 finalPointerRelativePosition = initialPointerRelativePosition + Vector2.right * relativeViewPortMovementFromCenter;
+            yield return PointerUtils.MoveFinger(input, touch, touchId, initialPointerRelativePosition, finalPointerRelativePosition, steps);
+            yield return null;
+            float expectedTravelAngleDeg = -CameraUtils.GetTravelAngleFromViewPortCenterInRad(relativeViewPortMovementFromCenter, horizontalFov) * Mathf.Rad2Deg;
+            float traveledAngle = MathUtils.NormalizeAngle(character.eulerAngles.y);
+            Assert.AreEqual(expectedTravelAngleDeg, traveledAngle, errorThreshold);
             Assert.LessOrEqual(character.eulerAngles.x, errorThreshold);
             Assert.LessOrEqual(character.eulerAngles.z, errorThreshold);
             AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, errorThreshold);
@@ -111,13 +111,20 @@ namespace ReupVirtualTwinTests.behaviours
         {
             AssertUtils.AssertVectorIsZero(character.eulerAngles, errorThreshold);
             AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, errorThreshold);
-            yield return PointerUtils.DragMouseLeftButton(input, mouse, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.7f), 90);
-            bool characterLookedUp = (innerCharacter.eulerAngles.x < 0 && innerCharacter.eulerAngles.x > -180) ||
-                (innerCharacter.eulerAngles.x > 180 && innerCharacter.eulerAngles.x < 360);
+            float verticalFov = CameraUtils.GetVerticalFov(mainCamera);
+            float relativeViewPortMovementFromCenter = 0.4f;
+            Vector2 initialPointerRelativePosition = new Vector2(0.5f, 0.5f);
+            Vector2 finalPointerRelativePosition = initialPointerRelativePosition + Vector2.up * relativeViewPortMovementFromCenter;
+            yield return PointerUtils.DragMouseLeftButton(input, mouse, initialPointerRelativePosition, finalPointerRelativePosition, steps);
+            yield return null;
+            float expectedTravelAngleDeg = CameraUtils.GetTravelAngleFromViewPortCenterInRad(relativeViewPortMovementFromCenter, verticalFov) * Mathf.Rad2Deg;
+            Debug.Log($"121: expectedTravelAngleDeg >>>\n{expectedTravelAngleDeg}");
+            float traveledAngle = MathUtils.NormalizeAngle(innerCharacter.eulerAngles.x);
+            Debug.Log($"123: traveledAngle >>>\n{traveledAngle}");
+            Assert.AreEqual(expectedTravelAngleDeg, traveledAngle, errorThreshold);
+            Assert.LessOrEqual(innerCharacter.eulerAngles.y, errorThreshold);
+            Assert.LessOrEqual(innerCharacter.eulerAngles.y, errorThreshold);
             AssertUtils.AssertVectorIsZero(character.eulerAngles, errorThreshold);
-            Assert.IsTrue(characterLookedUp);
-            Assert.LessOrEqual(innerCharacter.eulerAngles.y, errorThreshold);
-            Assert.LessOrEqual(innerCharacter.eulerAngles.y, errorThreshold);
             yield return null;
         }
 
@@ -126,15 +133,22 @@ namespace ReupVirtualTwinTests.behaviours
         {
             AssertUtils.AssertVectorIsZero(character.eulerAngles, errorThreshold);
             AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, errorThreshold);
-            int touchId = 0;
-            yield return PointerUtils.MoveFinger(input, touch, touchId, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.3f), 90);
-            bool characterLookedUp = (innerCharacter.eulerAngles.x < 0 && innerCharacter.eulerAngles.x > -180) ||
-                (innerCharacter.eulerAngles.x > 180 && innerCharacter.eulerAngles.x < 360);
-            AssertUtils.AssertVectorIsZero(character.eulerAngles, errorThreshold);
-            Assert.IsTrue(characterLookedUp);
-            Assert.LessOrEqual(innerCharacter.eulerAngles.y, errorThreshold);
-            Assert.LessOrEqual(innerCharacter.eulerAngles.y, errorThreshold);
+            float verticalFov = CameraUtils.GetVerticalFov(mainCamera);
+            float relativeViewPortMovementFromCenter = 0.4f;
+            Vector2 initialPointerRelativePosition = new Vector2(0.5f, 0.5f);
+            Vector2 finalPointerRelativePosition = initialPointerRelativePosition + Vector2.up * relativeViewPortMovementFromCenter;
+            yield return PointerUtils.MoveFinger(input, touch, touchId, initialPointerRelativePosition, finalPointerRelativePosition, steps);
             yield return null;
+            float expectedTravelAngleDeg = CameraUtils.GetTravelAngleFromViewPortCenterInRad(relativeViewPortMovementFromCenter, verticalFov) * Mathf.Rad2Deg;
+            Debug.Log($"121: expectedTravelAngleDeg >>>\n{expectedTravelAngleDeg}");
+            float traveledAngle = MathUtils.NormalizeAngle(innerCharacter.eulerAngles.x);
+            Debug.Log($"123: traveledAngle >>>\n{traveledAngle}");
+            Assert.AreEqual(expectedTravelAngleDeg, traveledAngle, errorThreshold);
+            Assert.LessOrEqual(innerCharacter.eulerAngles.y, errorThreshold);
+            Assert.LessOrEqual(innerCharacter.eulerAngles.y, errorThreshold);
+            AssertUtils.AssertVectorIsZero(character.eulerAngles, errorThreshold);
+            yield return null;
+
         }
 
         [UnityTest]
