@@ -21,6 +21,12 @@ public class EditModeManagerTest : MonoBehaviour
         editModeManager.mediator = mockMediator;
     }
 
+    [TearDown]
+    public void TearDown()
+    {
+        GameObject.DestroyImmediate(containerGameObject);
+    }
+
     [UnityTest]
     public IEnumerator EditModeManagerShouldNotifyMediatorWhenSettingEditMode()
     {

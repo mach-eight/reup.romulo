@@ -40,5 +40,13 @@ namespace ReupVirtualTwinTests.mocks
             HighlightObject(obj);
             return true;
         }
+
+        public void DestroyTestObjects()
+        {
+            if (highlightedObject != null)
+            {
+                GameObject.DestroyImmediate(highlightedObject);
+            }
+        }
     }
 }

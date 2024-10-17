@@ -29,9 +29,14 @@ public class ObjectPoolTest
     [TearDown]
     public void TearDown()
     {
-        UnityEngine.Object.Destroy(obj);
-        UnityEngine.Object.Destroy(parentObject);
-        UnityEngine.Object.Destroy(prefab);
+        GameObject.DestroyImmediate(obj);
+        GameObject.DestroyImmediate(pool.gameObject);
+        GameObject.DestroyImmediate(parentObject);
+        GameObject.DestroyImmediate(prefab);
+        foreach (var obj in pool.prefabsForPool)
+        {
+            GameObject.DestroyImmediate(obj);
+        }
     }
 
     [UnityTest]
@@ -59,9 +64,8 @@ public class ObjectPoolTest
     [UnityTest]
     public IEnumerator Unpool_pool_newObject_should_success()
     {
-
         //create prefabInstance
-        var prefabInstance = pool.GetObjectFromPool(prefab.name, parentObject.transform);
+        GameObject prefabInstance = pool.GetObjectFromPool(prefab.name, parentObject.transform);
 
         //check prefabInstance's parent
         Assert.AreEqual(parentObject, prefabInstance.transform.parent.gameObject);
@@ -79,7 +83,7 @@ public class ObjectPoolTest
         Assert.IsFalse(prefabInstance.activeSelf);
 
         //unpool object again
-        var prefabInstance2 = pool.GetObjectFromPool(prefab.name);
+        GameObject prefabInstance2 = pool.GetObjectFromPool(prefab.name);
 
         //check prefabInstance is active
         Assert.IsTrue(prefabInstance.activeSelf);
@@ -87,11 +91,10 @@ public class ObjectPoolTest
         Assert.AreEqual(prefabInstance, prefabInstance2);
 
         //create another prefabInstance
-        var prefabInstance3 = pool.GetObjectFromPool(prefab.name, parentObject.transform);
+        GameObject prefabInstance3 = pool.GetObjectFromPool(prefab.name, parentObject.transform);
 
         //check prefabInstance3 is indeed a new gameobject
         Assert.AreNotEqual(prefabInstance, prefabInstance3);
-            
         yield return null;
     }
 }

@@ -13,25 +13,28 @@ public class CollisionDetectorTest : MonoBehaviour
     Transform character;
 
     CharacterPositionManager posManager;
-    GameObject cubePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Tests/TestAssets/Cube.prefab");
+    GameObject cubePrefab;
     GameObject widePlatform;
     GameObject wall;
 
     [SetUp]
     public void SetUp()
     {
+        cubePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Tests/TestAssets/Cube.prefab");
         sceneObjects = ReupSceneInstantiator.InstantiateScene();
         character = sceneObjects.character;
         posManager = character.GetComponent<CharacterPositionManager>();
+        wall = (GameObject)PrefabUtility.InstantiatePrefab(cubePrefab);
         widePlatform = (GameObject)PrefabUtility.InstantiatePrefab(cubePrefab);
         SetPlatform();
+        SetWallAt2MetersInZAxis();
     }
 
     [UnityTearDown]
     public IEnumerator TearDown()
     {
-        Destroy(widePlatform);
-        Destroy(wall);
+        GameObject.DestroyImmediate(widePlatform);
+        GameObject.DestroyImmediate(wall);
         ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
         yield return null;
     }
@@ -39,9 +42,6 @@ public class CollisionDetectorTest : MonoBehaviour
     [UnityTest]
     public IEnumerator CharacterShouldNotCrossWall()
     {
-        wall = (GameObject)PrefabUtility.InstantiatePrefab(cubePrefab);
-        SetWallAt2MetersInZAxis();
-
         character.transform.position = new Vector3(0, 1.5f, 0);
         yield return new WaitForSeconds(0.2f);
 
@@ -50,8 +50,6 @@ public class CollisionDetectorTest : MonoBehaviour
         yield return new WaitForSeconds(2f);
 
         Assert.LessOrEqual(character.transform.position.z, 2);
-
-        Destroy(wall);
     }
     private void SetPlatform()
     {

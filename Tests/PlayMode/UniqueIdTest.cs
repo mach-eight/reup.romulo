@@ -21,7 +21,7 @@ public class UniqueIdTest : MonoBehaviour
     [TearDown]
     public void TearDown()
     {
-        Destroy(testObj);
+        GameObject.DestroyImmediate(testObj);
     }
 
     [UnityTest]

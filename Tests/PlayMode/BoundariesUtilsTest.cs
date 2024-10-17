@@ -7,12 +7,30 @@ using NUnit.Framework;
 
 public class BoundariesUtilsTest
 {
+    GameObject parent;
+    GameObject child1;
+    GameObject child2;
+
+    [SetUp]
+    public void Setup()
+    {
+        parent = new GameObject();
+        child1 = new GameObject();
+        child2 = new GameObject();
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        GameObject.DestroyImmediate(parent);
+        GameObject.DestroyImmediate(child1);
+        GameObject.DestroyImmediate(child2);
+    }
+
     [Test]
     public void CalculateCenter_ReturnsZero_WhenNoRenderers()
     {
-        GameObject emptyObj = new GameObject();
-
-        Vector3 center = BoundariesUtils.CalculateCenter(emptyObj);
+        Vector3 center = BoundariesUtils.CalculateCenter(parent);
 
         Assert.AreEqual(Vector3.zero, center);
     }
@@ -20,11 +38,9 @@ public class BoundariesUtilsTest
     [Test]
     public void CalculateCenter_ReturnsCenter_ForSingleRenderer()
     {
-        GameObject obj = new GameObject();
-        Renderer renderer = obj.AddComponent<MeshRenderer>();
-        renderer.bounds = new Bounds(Vector3.one * 5, Vector3.one * 10);
+        parent.AddComponent<MeshRenderer>().bounds = new Bounds(Vector3.one * 5, Vector3.one * 10);
         
-        Vector3 center = BoundariesUtils.CalculateCenter(obj);
+        Vector3 center = BoundariesUtils.CalculateCenter(parent);
 
         Assert.AreEqual(Vector3.one * 5, center);
     }
@@ -32,19 +48,13 @@ public class BoundariesUtilsTest
     [Test]
     public void CalculateCenter_ReturnsCombinedCenter_ForMultipleRenderers()
     {
-        GameObject obj = new GameObject();
-        
-        GameObject child1 = new GameObject();
-        child1.transform.parent = obj.transform;
-        Renderer renderer1 = child1.AddComponent<MeshRenderer>();
-        renderer1.bounds = new Bounds(Vector3.zero, Vector3.one * 10); // Center (0,0,0), Size (10,10,10)
+        parent.AddComponent<MeshRenderer>();
+        child1.transform.parent = parent.transform;
+        child1.AddComponent<MeshRenderer>().bounds = new Bounds(Vector3.zero, Vector3.one * 10); // Center (0,0,0), Size (10,10,10)
+        child2.transform.parent = parent.transform;
+        child2.AddComponent<MeshRenderer>().bounds = new Bounds(Vector3.one * 10, Vector3.one * 10); // Center (10,10,10), Size (10,10,10)
 
-        GameObject child2 = new GameObject();
-        child2.transform.parent = obj.transform;
-        Renderer renderer2 = child2.AddComponent<MeshRenderer>();
-        renderer2.bounds = new Bounds(Vector3.one * 10, Vector3.one * 10); // Center (10,10,10), Size (10,10,10)
-
-        Vector3 center = BoundariesUtils.CalculateCenter(obj);
+        Vector3 center = BoundariesUtils.CalculateCenter(parent);
 
         Vector3 expectedCenter = new Vector3(5, 5, 5);
         Assert.AreEqual(expectedCenter, center);

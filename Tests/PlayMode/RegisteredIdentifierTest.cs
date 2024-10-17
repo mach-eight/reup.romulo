@@ -28,7 +28,8 @@ namespace ReupVirtualTwinTests.Registry
         [UnityTearDown]
         public IEnumerator TearDownCoroutine()
         {
-            Destroy(testObj0);
+            GameObject.DestroyImmediate(testObj0);
+            GameObject.DestroyImmediate(testObj1);
             objectRegistry.ClearRegistry();
             ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
             yield return null;
@@ -85,22 +86,22 @@ namespace ReupVirtualTwinTests.Registry
         [UnityTest]
         public IEnumerator ShoulBeAbleToGenerateIdRightAfterCreatingTheUniqueIdComponent()
         {
-            GameObject gameObject = new GameObject("new-game-obj");
-            RegisteredIdentifier registeredIdentifier = gameObject.AddComponent<RegisteredIdentifier>();
+            testObj0 = new GameObject("new-game-obj");
+            RegisteredIdentifier registeredIdentifier = testObj0.AddComponent<RegisteredIdentifier>();
             yield return null;
             Assert.IsNotNull(registeredIdentifier.getId());
-            Assert.AreEqual(gameObject, objectRegistry.GetObjectWithGuid(registeredIdentifier.getId()));
+            Assert.AreEqual(testObj0, objectRegistry.GetObjectWithGuid(registeredIdentifier.getId()));
             yield return null;
         }
         [UnityTest]
         public IEnumerator ShoulBeAbleToAssignIdRightAfterCreatingTheUniqueIdComponent()
         {
-            GameObject gameObject = new GameObject("new-game-obj");
-            RegisteredIdentifier registeredIdentifier = gameObject.AddComponent<RegisteredIdentifier>();
+            testObj0 = new GameObject("new-game-obj");
+            RegisteredIdentifier registeredIdentifier = testObj0.AddComponent<RegisteredIdentifier>();
             string assignedId = "assigned-id";
             registeredIdentifier.AssignId(assignedId);
             Assert.IsNotNull(registeredIdentifier.getId());
-            Assert.AreEqual(gameObject, objectRegistry.GetObjectWithGuid(assignedId));
+            Assert.AreEqual(testObj0, objectRegistry.GetObjectWithGuid(assignedId));
             yield return null;
         }
 

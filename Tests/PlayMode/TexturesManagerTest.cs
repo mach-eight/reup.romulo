@@ -31,6 +31,8 @@ namespace ReupVirtualTwinTests.managers
         public IEnumerator TearDown()
         {
             ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
+            GameObject.DestroyImmediate(cube0);
+            GameObject.DestroyImmediate(cube1);
             yield return null;
         }
 

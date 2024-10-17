@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class ColliderAdderTest
 {
-    [Test]
-    public void AddCollidersToObjectsWithNoColliders()
+    GameObject parentObject;
+
+    [SetUp]
+    public void SetUp()
     {
-        //Create objects
-        var parentObject = new GameObject();
+        parentObject = new GameObject();
         MeshFilter parentMeshFilter = parentObject.AddComponent<MeshFilter>();
         parentMeshFilter.sharedMesh = new Mesh();
         for (int i = 0; i < 10; i++)
@@ -18,7 +19,17 @@ public class ColliderAdderTest
             MeshFilter childMeshFilter = childObject.AddComponent<MeshFilter>();
             childMeshFilter.sharedMesh = new Mesh();
         }
+    }
 
+    [TearDown]
+    public void TearDown()
+    {
+        GameObject.DestroyImmediate(parentObject);
+    }
+
+    [Test]
+    public void AddCollidersToObjectsWithNoColliders()
+    {
         //Check colliders are not there
         Assert.IsNull(parentObject.GetComponent<Collider>());
         foreach (Transform childTransform in parentObject.transform)

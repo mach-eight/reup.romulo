@@ -83,6 +83,7 @@ namespace ReupVirtualTwinTests.controllers
         public IEnumerator TearDown()
         {
             ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
+            meshDownloaderSpy.DestroyLoadedObject();
             yield return null;
         }
 
@@ -305,6 +306,14 @@ namespace ReupVirtualTwinTests.controllers
             private class AssetLoaderContextStub
             {
                 public GameObject RootGameObject;
+            }
+
+            public void DestroyLoadedObject()
+            {
+                foreach(GameObject loadObj in loadedObjects)
+                {
+                    GameObject.DestroyImmediate(loadObj);
+                }
             }
         }
         private class MockModelInfoManager : IModelInfoManager

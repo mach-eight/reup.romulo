@@ -33,6 +33,12 @@ public class DeleteObjectsManagerTest : MonoBehaviour
         deleteObjectsManager.registry = mockRegistry;
         allObjects = mockRegistry.allObjects;
     }
+    [TearDown]
+    public void TearDown()
+    {
+        GameObject.DestroyImmediate(containerGameObject);
+        mockRegistry.DestroyTestObjects();
+    }
     public string ListToString(List<string> idsList)
     {
         string idsString = string.Join(",", idsList);
@@ -157,6 +163,13 @@ public class DeleteObjectsManagerTest : MonoBehaviour
         public List<GameObject> GetObjects()
         {
             throw new NotImplementedException();
+        }
+        public void DestroyTestObjects()
+        {
+            foreach (GameObject obj in allObjects)
+            {
+                GameObject.DestroyImmediate(obj);
+            }
         }
     }
 

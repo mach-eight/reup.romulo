@@ -36,6 +36,7 @@ public class ModelInfoManagerTest : MonoBehaviour
         ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
         SpaceSelectorFabric.DestroySpaceSelectors(spaceSelectors);
         spaceSelectors?.Clear();
+        GameObject.DestroyImmediate(buildingGameObject);
         yield return null;
     }
 

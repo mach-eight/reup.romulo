@@ -23,7 +23,7 @@ public class ObjectTagsTest : MonoBehaviour
     [TearDown]
     public void TearDown()
     {
-        Destroy(containerGameObject);
+        GameObject.DestroyImmediate(containerGameObject);
     }
     [UnityTest]
     public IEnumerator ShouldInitializeWithEmptyTagsList()

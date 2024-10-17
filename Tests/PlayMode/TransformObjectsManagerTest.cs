@@ -23,6 +23,7 @@ public class TransformObjectsManagerTest : MonoBehaviour
     GameObject transformableObject0;
     GameObject transformableObject1;
     GameObject nonTransformableObject;
+    GameObject mockWrapper;
 
     [SetUp]
     public void SetUp()
@@ -42,6 +43,19 @@ public class TransformObjectsManagerTest : MonoBehaviour
         transformableObject1.AddComponent<ObjectTags>().AddTags(new Tag[2] {EditionTagsCreator.CreateSelectableTag(), EditionTagsCreator.CreateTransformableTag()});
         nonTransformableObject = new GameObject("nonTransformableObject");
         nonTransformableObject.AddComponent<ObjectTags>().AddTags(new Tag[1] {EditionTagsCreator.CreateSelectableTag()});
+        mockWrapper = new GameObject("wrapper");
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        GameObject.DestroyImmediate(containerGameObject);
+        GameObject.DestroyImmediate(transformWrapper);
+        GameObject.DestroyImmediate(runtimeTransformObj);
+        GameObject.DestroyImmediate(transformableObject0);
+        GameObject.DestroyImmediate(transformableObject1);
+        GameObject.DestroyImmediate(nonTransformableObject);
+        GameObject.DestroyImmediate(mockWrapper);
     }
 
     [UnityTest]
@@ -148,7 +162,7 @@ public class TransformObjectsManagerTest : MonoBehaviour
     {
         ObjectWrapperDTO objectWrapperDTO = new ObjectWrapperDTO()
         {
-            wrapper = new GameObject("wrapper"),
+            wrapper = mockWrapper,
             wrappedObjects = new List<GameObject>() { transformableObject0, transformableObject1},
         };
         transformObjectsManager.ActivateTransformMode(objectWrapperDTO, TransformMode.PositionMode);
@@ -166,7 +180,7 @@ public class TransformObjectsManagerTest : MonoBehaviour
     {
         ObjectWrapperDTO objectWrapperDTO = new ObjectWrapperDTO()
         {
-            wrapper = new GameObject("wrapper"),
+            wrapper = mockWrapper,
             wrappedObjects = new List<GameObject>() { transformableObject0, transformableObject1, nonTransformableObject }
         };
         transformObjectsManager.ActivateTransformMode(objectWrapperDTO, TransformMode.PositionMode);
@@ -180,7 +194,7 @@ public class TransformObjectsManagerTest : MonoBehaviour
     {
         ObjectWrapperDTO objectWrapperDTO = new ObjectWrapperDTO()
         {
-            wrapper = new GameObject("wrapper"),
+            wrapper = mockWrapper,
             wrappedObjects = new List<GameObject>() { transformableObject0, transformableObject1, nonTransformableObject }
         };
         transformObjectsManager.ActivateTransformMode(objectWrapperDTO, TransformMode.RotationMode);

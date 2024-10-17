@@ -41,6 +41,9 @@ namespace ReupVirtualTwinTests.controllers
         {
             objectRegistry.ClearRegistry();
             ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
+            GameObject.DestroyImmediate(object1);
+            GameObject.DestroyImmediate(object2);
+            GameObject.DestroyImmediate(objectWithNoMaterial);
             yield return null;
         }
 
