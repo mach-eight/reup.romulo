@@ -11,6 +11,7 @@ namespace ReupVirtualTwinTests.models
     public class ObjectInfoTest : MonoBehaviour
     {
         GameObject testObj;
+        GameObject testObjWithMaterial;
         ObjectInfo objectInfo;
 
         [SetUp]
@@ -18,12 +19,14 @@ namespace ReupVirtualTwinTests.models
         {
             testObj = new GameObject("testObj");
             objectInfo = testObj.AddComponent<ObjectInfo>();
+            testObjWithMaterial = new GameObject("testObjWithMaterial");
         }
 
         [TearDown]
         public void TearDown()
         {
-            Destroy(testObj);
+            GameObject.DestroyImmediate(testObj);
+            GameObject.DestroyImmediate(testObjWithMaterial);
         }
 
         [UnityTest]
@@ -35,7 +38,6 @@ namespace ReupVirtualTwinTests.models
         [UnityTest]
         public IEnumerator ShouldAddOriginalMaterialToObjectInfoOnInit_if_objectHasMaterial()
         {
-            GameObject testObjWithMaterial = new GameObject("testObjWithMaterial");
             Material dummyMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));
             dummyMaterial.name = "my dummy material";
             testObjWithMaterial.AddComponent<MeshRenderer>().sharedMaterial = dummyMaterial;

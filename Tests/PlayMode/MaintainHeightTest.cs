@@ -12,7 +12,7 @@ using ReupVirtualTwinTests.utils;
 public class MaintainHeightTest : MonoBehaviour
 {
     ReupSceneInstantiator.SceneObjects sceneObjects;
-    GameObject platformPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Tests/TestAssets/Platform.prefab");
+    GameObject platformPrefab;
     Transform character;
     GameObject widePlatform;
 
@@ -21,6 +21,7 @@ public class MaintainHeightTest : MonoBehaviour
     [SetUp]
     public void SetUp()
     {
+        platformPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Tests/TestAssets/Platform.prefab");
         sceneObjects = ReupSceneInstantiator.InstantiateScene();
         character = sceneObjects.character;
         var posManager = character.GetComponent<ICharacterPositionManager>();
@@ -32,7 +33,7 @@ public class MaintainHeightTest : MonoBehaviour
     [UnityTearDown]
     public IEnumerator TearDown()
     {
-        Destroy(widePlatform);
+        GameObject.DestroyImmediate(widePlatform);
         ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
         yield return null;
     }
