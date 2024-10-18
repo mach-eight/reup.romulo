@@ -16,7 +16,6 @@ namespace ReupVirtualTwin.managers
         [SerializeField]
         private int currentPage = 0;
         [SerializeField]
-        private string _searchText = "";
         private ITagsApiConsumer _tagsApiConsumer;
         [SerializeField]
         private List<Tag> tags = new List<Tag>();
@@ -54,7 +53,7 @@ namespace ReupVirtualTwin.managers
                 return tags;
             }
         }
-        
+
         public void CleanTags()
         {
             if (waitingForTagsResponse)
@@ -65,7 +64,8 @@ namespace ReupVirtualTwin.managers
             Reset();
         }
 
-        private void CheckIfThereIsStillTagsToFetch(PaginationResult<Tag> fetchedTagsResult) {
+        private void CheckIfThereIsStillTagsToFetch(PaginationResult<Tag> fetchedTagsResult)
+        {
             if (string.IsNullOrEmpty(fetchedTagsResult.next))
             {
                 areThereTagsToFetch = false;

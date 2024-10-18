@@ -136,20 +136,20 @@ public class TagsApiManagerTest : MonoBehaviour
         Assert.AreEqual(1, delayTagsWebRequesterSpy.numberOfTimesFetched);
         Assert.AreEqual(1, delayTagsWebRequesterSpy.lastPageFetched);
 
-        tagsApiManager.LoadMoreTags();
+        _ = tagsApiManager.LoadMoreTags();
         await tagsApiManager.LoadMoreTags();
         Assert.AreEqual(2, delayTagsWebRequesterSpy.numberOfTimesFetched);
         Assert.AreEqual(2, delayTagsWebRequesterSpy.lastPageFetched);
 
         await Task.Delay(1100); // Wait for the previous request to finish
 
-        tagsApiManager.LoadMoreTags(); // Should fetch
+        _ = tagsApiManager.LoadMoreTags(); // Should fetch
         await Task.Delay(100);
-        tagsApiManager.LoadMoreTags(); // Should not fetch
+        _ = tagsApiManager.LoadMoreTags(); // Should not fetch
         await Task.Delay(100);
-        tagsApiManager.LoadMoreTags(); // Should not fetch
+        _ = tagsApiManager.LoadMoreTags(); // Should not fetch
         await Task.Delay(1000);
-        tagsApiManager.LoadMoreTags(); // Should fetch
+        _ = tagsApiManager.LoadMoreTags(); // Should fetch
 
         Assert.AreEqual(4, delayTagsWebRequesterSpy.numberOfTimesFetched);
         Assert.AreEqual(4, delayTagsWebRequesterSpy.lastPageFetched);

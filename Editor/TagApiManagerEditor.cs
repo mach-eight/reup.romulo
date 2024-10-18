@@ -14,14 +14,14 @@ namespace ReupVirtualTwin.editor
     public class TagApiManagerEditor : Editor
     {
         private TagsApiManager tagsApiManager;
-        private async void OnEnable()
+        private void OnEnable()
         {
             tagsApiManager = (TagsApiManager)target;
         }
         public override void OnInspectorGUI()
         {
             DrawDefaultInspector();
-            if(GUILayout.Button("Reset Tags Api Manager"))
+            if (GUILayout.Button("Reset Tags Api Manager"))
             {
                 tagsApiManager.Reset();
             }
