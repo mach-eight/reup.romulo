@@ -649,8 +649,8 @@ GameObject:
   - component: {fileID: 1191157721440923679}
   - component: {fileID: 5331982094702007337}
   - component: {fileID: 9154797268538216174}
-  - component: {fileID: 2096867277068438891}
   - component: {fileID: 6309342067121530587}
+  - component: {fileID: 6846123107942417260}
   m_Layer: 7
   m_Name: Character
   m_TagString: Character
@@ -715,7 +715,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _innerCharacterTransform: {fileID: 6828359323882173037}
---- !u!114 &2096867277068438891
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -724,7 +723,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 1798908995094544088}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0eab5aecbc9d7a24992c9aef85118ebf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &6309342067121530587
@@ -741,6 +739,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sensitivity: 0.4
   _characterRotationManager: {fileID: 9154797268538216174}
+--- !u!65 &6846123107942417260
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1798908995094544088}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.4, y: 0.04, z: 0.4}
+  m_Center: {x: 0, y: -0.01, z: 0}
 --- !u!1 &1890947946663938951
 GameObject:
   m_ObjectHideFlags: 0
