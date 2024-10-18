@@ -5,8 +5,6 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.TestTools;
-using UnityEngine.Video;
-
 
 namespace ReupVirtualTwinTests.behaviours
 {
@@ -45,25 +43,6 @@ namespace ReupVirtualTwinTests.behaviours
         {
             ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
             yield return null;
-        }
-
-        [Test]
-        public void AngleTest()
-        {
-            Vector3 v1 = new Vector3(1, 1, 1);
-            Vector3 x = new Vector3(1, 0, 0);
-            Vector3 y = new Vector3(0, 1, 0);
-            Vector3 z = new Vector3(0, 0, 1);
-            float angle = Vector3.Angle(v1, x);
-            Debug.Log($"53: angle >>>\n{angle}");
-            float angle2 = Vector3.Angle(x, v1);
-            Debug.Log($"53: angle >>>\n{angle2}");
-            float angleY = Vector3.SignedAngle(v1, x, y);
-            float angleX = Vector3.SignedAngle(v1, x, x);
-            float angleZ = Vector3.SignedAngle(v1, x, z);
-            Debug.Log($"60: angleX >>>\n{angleX}");
-            Debug.Log($"61: angleY >>>\n{angleY}");
-            Debug.Log($"62: angleZ >>>\n{angleZ}");
         }
 
         [UnityTest]
@@ -118,9 +97,7 @@ namespace ReupVirtualTwinTests.behaviours
             yield return PointerUtils.DragMouseLeftButton(input, mouse, initialPointerRelativePosition, finalPointerRelativePosition, steps);
             yield return null;
             float expectedTravelAngleDeg = CameraUtils.GetTravelAngleFromViewPortCenterInRad(relativeViewPortMovementFromCenter, verticalFov) * Mathf.Rad2Deg;
-            Debug.Log($"121: expectedTravelAngleDeg >>>\n{expectedTravelAngleDeg}");
             float traveledAngle = MathUtils.NormalizeAngle(innerCharacter.eulerAngles.x);
-            Debug.Log($"123: traveledAngle >>>\n{traveledAngle}");
             Assert.AreEqual(expectedTravelAngleDeg, traveledAngle, errorThreshold);
             Assert.LessOrEqual(innerCharacter.eulerAngles.y, errorThreshold);
             Assert.LessOrEqual(innerCharacter.eulerAngles.y, errorThreshold);
@@ -140,9 +117,7 @@ namespace ReupVirtualTwinTests.behaviours
             yield return PointerUtils.MoveFinger(input, touch, touchId, initialPointerRelativePosition, finalPointerRelativePosition, steps);
             yield return null;
             float expectedTravelAngleDeg = CameraUtils.GetTravelAngleFromViewPortCenterInRad(relativeViewPortMovementFromCenter, verticalFov) * Mathf.Rad2Deg;
-            Debug.Log($"121: expectedTravelAngleDeg >>>\n{expectedTravelAngleDeg}");
             float traveledAngle = MathUtils.NormalizeAngle(innerCharacter.eulerAngles.x);
-            Debug.Log($"123: traveledAngle >>>\n{traveledAngle}");
             Assert.AreEqual(expectedTravelAngleDeg, traveledAngle, errorThreshold);
             Assert.LessOrEqual(innerCharacter.eulerAngles.y, errorThreshold);
             Assert.LessOrEqual(innerCharacter.eulerAngles.y, errorThreshold);
