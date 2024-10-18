@@ -114,7 +114,6 @@ namespace ReupVirtualTwinTests.utils
 
             SpacesRecord spacesRecord = baseGlobalScriptGameObject.transform.Find("SpacesRecord").GetComponent<SpacesRecord>();
 
-            MoveDhvCamera moveDhvCamera = dollhouseViewWrapper.GetComponent<MoveDhvCamera>();
             MoveDhvCamera moveDhvCameraBehavior = dollhouseViewWrapper.GetComponent<MoveDhvCamera>();
 
             ZoomDhvCamera zoomDhvCameraBehavior = dollhouseViewWrapper.GetComponent<ZoomDhvCamera>();
