@@ -2,24 +2,25 @@ using UnityEngine;
 using ReupVirtualTwin.inputs;
 using ReupVirtualTwin.managers;
 using Zenject;
+using ReupVirtualTwin.managerInterfaces;
 
 namespace ReupVirtualTwin.behaviours
 {
     public class CharacterRotationKeyboard : MonoBehaviour
     {
-        [SerializeField]
-        private Transform _innerCharacterTransform;
-        [SerializeField]
-        private CharacterRotationManager _characterRotationManager;
+        private ICharacterRotationManager characterRotationManager;
 
         private InputProvider inputProvider;
 
         private float ROTATION_SPEED_DEG_PER_SECOND = 180f;
 
         [Inject]
-        public void Init(InputProvider inputProvider)
+        public void Init(
+            ICharacterRotationManager characterRotationManager,
+            InputProvider inputProvider)
         {
             this.inputProvider = inputProvider;
+            this.characterRotationManager = characterRotationManager;
         }
 
         private void Update()
@@ -34,8 +35,8 @@ namespace ReupVirtualTwin.behaviours
                 return;
             }
             float deltaSpeed = ROTATION_SPEED_DEG_PER_SECOND * Time.deltaTime;
-            _characterRotationManager.horizontalRotation += (look.x * deltaSpeed);
-            _characterRotationManager.verticalRotation += (look.y * deltaSpeed * -1);
+            characterRotationManager.horizontalRotation += (look.x * deltaSpeed);
+            characterRotationManager.verticalRotation += (look.y * deltaSpeed * -1);
         }
     }
 }

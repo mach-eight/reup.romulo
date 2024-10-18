@@ -12,16 +12,16 @@ namespace ReupVirtualTwin.behaviours
         public float sensitivity = 0.4f;
 
 
-        [SerializeField]
-        private CharacterRotationManager _characterRotationManager;
+        private ICharacterRotationManager characterRotationManager;
         private IDragManager dragManager;
         private InputProvider inputProvider;
 
         [Inject]
-        public void Init(InputProvider inputProvider, IDragManager dragManager)
+        public void Init(InputProvider inputProvider, IDragManager dragManager, ICharacterRotationManager characterRotationManager)
         {
             this.inputProvider = inputProvider;
             this.dragManager = dragManager;
+            this.characterRotationManager = characterRotationManager;
         }
 
         void Update()
@@ -29,8 +29,8 @@ namespace ReupVirtualTwin.behaviours
             if (dragManager.dragging)
             {
                 Vector2 look = inputProvider.RotateViewInput();
-                _characterRotationManager.horizontalRotation += (look.x * sensitivity);
-                _characterRotationManager.verticalRotation += (look.y * sensitivity * -1f);
+                characterRotationManager.horizontalRotation += (look.x * sensitivity);
+                characterRotationManager.verticalRotation += (look.y * sensitivity * -1f);
             }
         }
 
