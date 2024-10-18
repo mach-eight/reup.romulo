@@ -204,7 +204,7 @@ namespace ReupVirtualTwin.managers
             }
             string type = message["type"].ToString();
             JToken payload = message["payload"];
-            ReceiveWebMessage(type, payload);
+            _ = ReceiveWebMessage(type, payload);
         }
 
         public async Task ReceiveWebMessage(string type, JToken payload)

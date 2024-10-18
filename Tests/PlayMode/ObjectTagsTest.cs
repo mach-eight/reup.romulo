@@ -11,14 +11,14 @@ public class ObjectTagsTest : MonoBehaviour
 {
     GameObject containerGameObject;
     ObjectTags objectTags;
-    Tag tag;
+    Tag testTag;
 
     [SetUp]
     public void SetUp()
     {
         containerGameObject = new GameObject("container");
         objectTags = containerGameObject.AddComponent<ObjectTags>();
-        tag = new Tag() { id = "tag-id" };
+        testTag = new Tag() { id = "tag-id" };
     }
     [TearDown]
     public void TearDown()
@@ -34,21 +34,21 @@ public class ObjectTagsTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldAddOneTag()
     {
-        objectTags.AddTag(tag);
+        objectTags.AddTag(testTag);
         Assert.AreEqual(1, objectTags.GetTags().Count);
-        Assert.IsTrue(objectTags.GetTags().Contains(tag));
+        Assert.IsTrue(objectTags.GetTags().Contains(testTag));
         yield return null;
     }
     [UnityTest]
     public IEnumerator ShouldRemoveOneTag()
     {
-        objectTags.AddTag(tag);
+        objectTags.AddTag(testTag);
         Assert.AreEqual(1, objectTags.GetTags().Count);
-        Assert.IsTrue(objectTags.GetTags().Contains(tag));
+        Assert.IsTrue(objectTags.GetTags().Contains(testTag));
         yield return null;
-        objectTags.RemoveTag(tag);
+        objectTags.RemoveTag(testTag);
         Assert.AreEqual(0, objectTags.GetTags().Count);
-        Assert.IsFalse(objectTags.GetTags().Contains(tag));
+        Assert.IsFalse(objectTags.GetTags().Contains(testTag));
         yield return null;
     }
 }
