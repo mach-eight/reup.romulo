@@ -1,8 +1,9 @@
 using ReupVirtualTwin.managerInterfaces;
 using UnityEngine;
+using Zenject;
 namespace ReupVirtualTwin.managers
 {
-    public class CharacterRotationManager : MonoBehaviour, ICharacterRotationManager
+    public class CharacterRotationManager : ICharacterRotationManager, IInitializable, ITickable
     {
         float ROTATION_SPEED = 10f;
         float ANGLE_THRESHOLD = 0.01f;
@@ -11,8 +12,8 @@ namespace ReupVirtualTwin.managers
         Quaternion _desiredInnerRotation;
         Quaternion _desiredHorizontalRotation;
 
-        [SerializeField]
-        Transform _innerCharacterTransform;
+        Transform characterTransform;
+        Transform innerCharacterTransform;
 
         bool _allowRotation = true;
         public bool allowRotation
@@ -49,13 +50,21 @@ namespace ReupVirtualTwin.managers
             }
         }
 
-        private void Start()
+        public CharacterRotationManager(
+            [Inject(Id = "character")] GameObject character,
+            [Inject(Id = "innerCharacter")] GameObject innerCharacter)
         {
-            verticalRotation = transform.rotation.eulerAngles.x;
-            horizontalRotation = transform.rotation.eulerAngles.y;
+            characterTransform = character.transform;
+            innerCharacterTransform = innerCharacter.transform;
         }
 
-        void Update()
+        public void Initialize()
+        {
+            verticalRotation = characterTransform.rotation.eulerAngles.x;
+            horizontalRotation = characterTransform.rotation.eulerAngles.y;
+        }
+
+        public void Tick()
         {
             if (ShouldRotate())
             {
@@ -68,13 +77,13 @@ namespace ReupVirtualTwin.managers
         }
         void SetDesiredInnerRotation()
         {
-            _desiredInnerRotation = Quaternion.Euler(_verticalRotation, transform.rotation.eulerAngles.y, 0);
+            _desiredInnerRotation = Quaternion.Euler(_verticalRotation, characterTransform.rotation.eulerAngles.y, 0);
         }
 
         bool ShouldRotate()
         {
-            var shouldRotateVertically = Quaternion.Angle(_desiredInnerRotation, _innerCharacterTransform.rotation) > ANGLE_THRESHOLD;
-            var shouldRotateHorizontally = Quaternion.Angle(_desiredHorizontalRotation, transform.rotation) > ANGLE_THRESHOLD;
+            var shouldRotateVertically = Quaternion.Angle(_desiredInnerRotation, innerCharacterTransform.rotation) > ANGLE_THRESHOLD;
+            var shouldRotateHorizontally = Quaternion.Angle(_desiredHorizontalRotation, characterTransform.rotation) > ANGLE_THRESHOLD;
             return shouldRotateVertically || shouldRotateHorizontally;
         }
 
@@ -87,11 +96,11 @@ namespace ReupVirtualTwin.managers
         void RotateInnerCharacter(float rotationStep)
         {
             SetDesiredInnerRotation();
-            _innerCharacterTransform.rotation = Quaternion.Slerp(_innerCharacterTransform.rotation, _desiredInnerRotation, rotationStep);
+            innerCharacterTransform.rotation = Quaternion.Slerp(innerCharacterTransform.rotation, _desiredInnerRotation, rotationStep);
         }
         void RotateCharacter(float rotationStep)
         {
-            transform.rotation = Quaternion.Slerp(transform.rotation, _desiredHorizontalRotation, rotationStep);
+            characterTransform.rotation = Quaternion.Slerp(characterTransform.rotation, _desiredHorizontalRotation, rotationStep);
         }
     }
 

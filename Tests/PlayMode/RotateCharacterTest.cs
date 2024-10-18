@@ -48,7 +48,7 @@ namespace ReupVirtualTwinTests.behaviours
             AssertUtils.AssertVectorIsZero(character.eulerAngles, zeroThreshold);
             AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, zeroThreshold);
             int touchId = 0;
-            yield return MovePointerUtils.MoveFinger(input, touch, touchId, new Vector2(0.5f, 0.5f), new Vector2(0.51f, 0.5f), 90);
+            yield return PointerUtils.MoveFinger(input, touch, touchId, new Vector2(0.5f, 0.5f), new Vector2(0.51f, 0.5f), 90);
             bool characterTurnedLeft = (character.eulerAngles.y > 180 && character.eulerAngles.y < 360) ||
                 (character.eulerAngles.y < 0 && character.eulerAngles.y > -180);
             Assert.IsTrue(characterTurnedLeft);
@@ -63,7 +63,7 @@ namespace ReupVirtualTwinTests.behaviours
         {
             AssertUtils.AssertVectorIsZero(character.eulerAngles, zeroThreshold);
             AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, zeroThreshold);
-            yield return MovePointerUtils.DragMouseLeftButton(input, mouse, new Vector2(0.5f, 0.5f), new Vector2(0.49f, 0.5f), 90);
+            yield return PointerUtils.DragMouseLeftButton(input, mouse, new Vector2(0.5f, 0.5f), new Vector2(0.49f, 0.5f), 90);
             bool characterTurnedLeft = (character.eulerAngles.y > 180 && character.eulerAngles.y < 360) ||
                 (character.eulerAngles.y < 0 && character.eulerAngles.y > -180);
             Assert.IsTrue(characterTurnedLeft);
@@ -78,7 +78,7 @@ namespace ReupVirtualTwinTests.behaviours
         {
             AssertUtils.AssertVectorIsZero(character.eulerAngles, zeroThreshold);
             AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, zeroThreshold);
-            yield return MovePointerUtils.DragMouseLeftButton(input, mouse, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.7f), 90);
+            yield return PointerUtils.DragMouseLeftButton(input, mouse, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.7f), 90);
             bool characterLookedUp = (innerCharacter.eulerAngles.x < 0 && innerCharacter.eulerAngles.x > -180) ||
                 (innerCharacter.eulerAngles.x > 180 && innerCharacter.eulerAngles.x < 360);
             AssertUtils.AssertVectorIsZero(character.eulerAngles, zeroThreshold);
@@ -94,7 +94,7 @@ namespace ReupVirtualTwinTests.behaviours
             AssertUtils.AssertVectorIsZero(character.eulerAngles, zeroThreshold);
             AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, zeroThreshold);
             int touchId = 0;
-            yield return MovePointerUtils.MoveFinger(input, touch, touchId, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.3f), 90);
+            yield return PointerUtils.MoveFinger(input, touch, touchId, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.3f), 90);
             bool characterLookedUp = (innerCharacter.eulerAngles.x < 0 && innerCharacter.eulerAngles.x > -180) ||
                 (innerCharacter.eulerAngles.x > 180 && innerCharacter.eulerAngles.x < 360);
             AssertUtils.AssertVectorIsZero(character.eulerAngles, zeroThreshold);
