@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.managerInterfaces;
@@ -20,31 +19,20 @@ namespace ReupVirtualTwin.managers
 
         public void ApplyMaterialToObject(GameObject obj, Material material)
         {
-            if (!ApplyMaterial(obj, material))
-            {
-                return;
-            }
+            ApplyMaterial(obj, material);
             UpdateRecords(obj);
         }
 
         public void ApplyProtectedMaterialToObject(GameObject obj, Material material)
         {
-            if (!ApplyMaterial(obj, material))
-            {
-                return;
-            }
+            ApplyMaterial(obj, material);
             CleanAllObjectRecords(obj);
         }
 
-        bool ApplyMaterial(GameObject obj, Material material)
+        void ApplyMaterial(GameObject obj, Material material)
         {
             Renderer renderer = obj.GetComponent<Renderer>();
-            if (renderer.material.GetTexture("_BaseMap") == material.GetTexture("_BaseMap"))
-            {
-                return false;
-            }
             renderer.material = material;
-            return true;
         }
 
         void UpdateRecords(GameObject obj)
@@ -57,12 +45,17 @@ namespace ReupVirtualTwin.managers
         }
         void UpdateTextureRecords(string objId, Texture oldTexture, Texture newTexture)
         {
-            CleanOldTextureRecords(objId, oldTexture);
+            CleanOldTextureRecordFromObject(objId, oldTexture);
             CreateNewTextureRecord(objId, newTexture);
+            CheckTexturesIsStillBeingUsed(oldTexture);
         }
 
         void CreateNewTextureRecord(string objId, Texture newTexture)
         {
+            if (newTexture == null)
+            {
+                return;
+            }
             if (!texturesToObjectIdsRecord.ContainsKey(newTexture))
             {
                 texturesToObjectIdsRecord[newTexture] = new HashSet<string>();
@@ -74,22 +67,25 @@ namespace ReupVirtualTwin.managers
         {
             string objId = idGetterController.GetIdFromObject(obj);
             Texture oldTexture = objectIdsToTexturesRecord.GetValueOrDefault(objId);
-            CleanOldTextureRecords(objId, oldTexture);
+            CleanOldTextureRecordFromObject(objId, oldTexture);
+            CheckTexturesIsStillBeingUsed(oldTexture);
         }
 
-        void CleanOldTextureRecords(string objId, Texture oldTexture)
+        void CleanOldTextureRecordFromObject(string objId, Texture oldTexture)
         {
             if (oldTexture != null && texturesToObjectIdsRecord[oldTexture] != null)
             {
                 texturesToObjectIdsRecord[oldTexture].Remove(objId);
-                if (texturesToObjectIdsRecord[oldTexture].Count == 0)
-                {
-                    Destroy(oldTexture);
-                    texturesToObjectIdsRecord.Remove(oldTexture);
-                }
             }
         }
-
+        void CheckTexturesIsStillBeingUsed(Texture texture)
+        {
+            if (texture != null && texturesToObjectIdsRecord[texture].Count == 0)
+            {
+                texturesToObjectIdsRecord.Remove(texture);
+                Destroy(texture);
+            }
+        }
     }
 
 }
