@@ -1,6 +1,7 @@
 using UnityEngine;
 using ReupVirtualTwin.inputs;
 using ReupVirtualTwin.managerInterfaces;
+using Zenject;
 
 namespace ReupVirtualTwin.behaviours
 {
@@ -10,8 +11,13 @@ namespace ReupVirtualTwin.behaviours
         public Transform innerCharacterTransform { set => _innerCharacterTransform = value; }
 
         private InputProvider _inputProvider;
-        private ICharacterPositionManager _characterPositionManager;
-        public ICharacterPositionManager characterPositionManager { set => _characterPositionManager = value; }
+        private ICharacterPositionManager characterPositionManager;
+
+        [Inject]
+        public void Init(ICharacterPositionManager characterPositionManager)
+        {
+            this.characterPositionManager = characterPositionManager;
+        }
 
         static public float WALK_SPEED_M_PER_SECOND = 2.5f;
 
@@ -35,10 +41,11 @@ namespace ReupVirtualTwin.behaviours
         private void PerformMovement(Vector2 direction)
         {
             Vector3 movementDirection = direction.y * GetCharacterForward() + direction.x * GetCharacterRight();
-            if (movementDirection != Vector3.zero && _characterPositionManager.allowWalking)
+            if (movementDirection != Vector3.zero && characterPositionManager.allowWalking)
             {
-                _characterPositionManager.StopWalking();
-                _characterPositionManager.MoveInDirection(movementDirection, WALK_SPEED_M_PER_SECOND);
+                Debug.Log("calling the movements methods");
+                characterPositionManager.StopWalking();
+                characterPositionManager.MoveInDirection(movementDirection, WALK_SPEED_M_PER_SECOND);
             }
         }
 

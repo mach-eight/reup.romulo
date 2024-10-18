@@ -17,6 +17,7 @@ using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Schema;
+using Zenject;
 
 namespace ReupVirtualTwin.managers
 {
@@ -75,6 +76,14 @@ namespace ReupVirtualTwin.managers
         public IOriginalSceneController originalSceneController { get => _originalSceneController; set => _originalSceneController = value; }
         public ISpacesRecord spacesRecord { get; set; }
         public IBuildingVisibilityController buildingVisibilityController { get; set; }
+
+        ICharacterPositionManager characterPositionManager;
+
+        [Inject]
+        public void Init(ICharacterPositionManager characterPositionManager)
+        {
+            this.characterPositionManager = characterPositionManager;
+        }
 
         public void Notify(ReupEvent eventName)
         {
