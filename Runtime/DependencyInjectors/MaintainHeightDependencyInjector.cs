@@ -13,7 +13,6 @@ namespace ReupVirtualTwin.dependencyInjectors
         {
             MaintainHeight maintainHeight = GetComponent<MaintainHeight>();
             maintainHeight.sensor = sensor.GetComponent<IPointSensor>();
-            // maintainHeight.characterPositionManager = positionManager.GetComponent<ICharacterPositionManager>();
             maintainHeight.maxStepHeight = maxStepHeight;
         }
     }
