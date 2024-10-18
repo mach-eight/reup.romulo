@@ -59,7 +59,6 @@ namespace ReupVirtualTwin.managers
         private IEnumerator SlideToTargetCoroutine(T target)
         {
             sliding = true;
-            Debug.Log($"63: positionManager >>>\n{positionManager}");
             interpolator.DefineOriginAndTarget(positionManager.characterPosition, target);
             while (movementDecitionMaker.ShouldKeepMoving(target))
             {

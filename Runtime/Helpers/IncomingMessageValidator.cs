@@ -29,6 +29,7 @@ namespace ReupVirtualTwin.helpers
             { WebMessageType.showObjects, RomuloExternalSchema.showOrHideObjectsPayloadSchema },
             { WebMessageType.hideObjects, RomuloExternalSchema.showOrHideObjectsPayloadSchema },
             { WebMessageType.showAllObjects, RomuloExternalSchema.simpleRequestIdPayloadSchema },
+            { WebMessageType.requestObjectTagsUnderCharacter, RomuloExternalSchema.simpleRequestIdPayloadSchema },
         };
 
         public bool ValidateMessage(JObject incomingMessage, out IList<string> errorMessages)

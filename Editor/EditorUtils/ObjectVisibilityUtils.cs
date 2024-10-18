@@ -39,6 +39,10 @@ namespace ReupVirtualTwin.editor
             }
         }
 
+        public static void ShowWholeObject(GameObject obj){
+            visibilityManager.Show(obj, true);
+        }
+
         private static void ApplyVisibilityToObject(GameObject obj, bool visibility)
         {
             if (visibility)
