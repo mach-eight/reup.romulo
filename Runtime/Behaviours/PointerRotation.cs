@@ -12,7 +12,7 @@ namespace ReupVirtualTwin.behaviours
         public float sensitivity = 0.4f;
 
         [SerializeField]
-        CharacterRotationManager _characterRotationManager;
+        ICharacterRotationManager characterRotationManager;
         IDragManager dragManager;
         InputProvider inputProvider;
         IGesturesManager gesturesManager;
@@ -21,11 +21,18 @@ namespace ReupVirtualTwin.behaviours
         Vector3 startDragRayRightDirection;
 
         [Inject]
-        public void Init(InputProvider inputProvider, IDragManager dragManager, IGesturesManager gesturesManager)
+        public void Init(
+            InputProvider inputProvider,
+            IDragManager dragManager,
+            ICharacterRotationManager characterRotationManager,
+            IGesturesManager gesturesManager)
         {
             this.inputProvider = inputProvider;
             this.dragManager = dragManager;
             this.gesturesManager = gesturesManager;
+            this.inputProvider = inputProvider;
+            this.dragManager = dragManager;
+            this.characterRotationManager = characterRotationManager;
         }
 
         private void OnEnable()
@@ -58,9 +65,9 @@ namespace ReupVirtualTwin.behaviours
             }
             Ray dragRay = Camera.main.ScreenPointToRay(inputProvider.PointerInput());
             float horizontalRotationAngle = GetHorizontalRotationAngle(dragRay.direction);
-            _characterRotationManager.horizontalRotation += horizontalRotationAngle;
+            characterRotationManager.horizontalRotation += horizontalRotationAngle;
             float verticalRotationAngle = GetVerticalRotationAngle(dragRay.direction);
-            _characterRotationManager.verticalRotation += verticalRotationAngle;
+            characterRotationManager.verticalRotation += verticalRotationAngle;
         }
 
         float GetHorizontalRotationAngle(Vector3 currentDragRayDirection)

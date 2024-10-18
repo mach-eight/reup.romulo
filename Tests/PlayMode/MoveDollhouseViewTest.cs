@@ -39,15 +39,21 @@ namespace ReupVirtualTwinTests.behaviours
             touch = InputSystem.AddDevice<Touchscreen>();
             limitFromBuildingInMeters = sceneObjects.moveDhvCameraBehavior.limitDistanceFromBuildingInMeters;
             dollhouseViewWrapper = sceneObjects.dollhouseViewWrapper;
-            moveSpeedMetresPerSecond = sceneObjects.moveDhvCameraBehavior.GetKeyboardMoveCameraRelativeSpeed();
             sceneObjects.viewModeManager.ActivateDHV();
             yield return null;
+            GetCameraInfoAfterTurningOnDHV();
         }
+
         [UnityTearDown]
         public IEnumerator TearDown()
         {
             ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
             yield return null;
+        }
+
+        void GetCameraInfoAfterTurningOnDHV()
+        {
+            moveSpeedMetresPerSecond = sceneObjects.moveDhvCameraBehavior.GetKeyboardMoveCameraRelativeSpeed();
         }
 
         [UnityTest]
