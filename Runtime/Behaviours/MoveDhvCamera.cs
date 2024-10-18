@@ -118,8 +118,6 @@ namespace ReupVirtualTwin.behaviours
 
         public float GetKeyboardMoveCameraRelativeSpeed()
         {
-            Debug.Log($"121: KeyboardMoveCameraSpeedMetersPerSecond >>>\n{KeyboardMoveCameraSpeedMetersPerSecond}");
-            Debug.Log($"122: GetFieldOfViewMultiplier() >>>\n{GetFieldOfViewMultiplier()}");
             return KeyboardMoveCameraSpeedMetersPerSecond * GetFieldOfViewMultiplier();
         }
 

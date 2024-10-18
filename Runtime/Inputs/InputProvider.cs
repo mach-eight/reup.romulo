@@ -134,10 +134,6 @@ namespace ReupVirtualTwin.inputs
             _input.MultiTouch.Disable();
         }
 
-        public Vector2 RotateViewInput()
-        {
-            return _input.Player.RotateView.ReadValue<Vector2>() * -1;
-        }
         public Vector2 RotateViewKeyboardInput()
         {
             return _input.Player.RotateViewKeyborad.ReadValue<Vector2>();
