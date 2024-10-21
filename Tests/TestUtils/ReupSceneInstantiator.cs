@@ -43,6 +43,7 @@ namespace ReupVirtualTwinTests.utils
             public ITexturesManager texturesManager;
             public GesturesManager gesturesManager;
             public ZoomDhvCamera zoomDhvCameraBehavior;
+            public GameObject houseContainer;
         }
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab)
         {
@@ -133,6 +134,8 @@ namespace ReupVirtualTwinTests.utils
 
             GesturesManager gesturesManager = baseGlobalScriptGameObject.transform.Find("GesturesManager").GetComponent<GesturesManager>();
 
+            GameObject houseContainer = reupGameObject.transform.Find("HouseContainer").gameObject;
+
             return new SceneObjects
             {
                 reupObject = reupGameObject,
@@ -162,6 +165,7 @@ namespace ReupVirtualTwinTests.utils
                 texturesManager = texturesManager,
                 gesturesManager = gesturesManager,
                 zoomDhvCameraBehavior = zoomDhvCameraBehavior,
+                houseContainer = houseContainer,
             };
         }
 

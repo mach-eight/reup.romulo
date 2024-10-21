@@ -90,9 +90,15 @@ namespace ReupVirtualTwin.editor
             {
                 ApplyFilters(building, TagFiltersApplier.ApplyInclusiveFiltersToTree);
             }
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Restore last objects visibility") && objectsVisibilityStates.Count > 0)
             {
                 UndoLastFilters(building);
+            }
+            if (GUILayout.Button("Display whole building") && objectsVisibilityStates.Count > 0)
+            {
+                DisplayWholeBuilding(building);
             }
             EditorGUILayout.EndHorizontal();
         }
@@ -101,6 +107,10 @@ namespace ReupVirtualTwin.editor
         {
             Dictionary<string, bool> lastVisibilityState = objectsVisibilityStates.PopLast();
             ObjectVisibilityUtils.ApplyVisibilityState(building, lastVisibilityState, new IdController());
+        }
+
+        private void DisplayWholeBuilding(GameObject building){
+            ObjectVisibilityUtils.ShowWholeObject(building);
         }
 
         private void ApplyFilters(GameObject building, Func<GameObject, List<ITagFilter>, List<GameObject>> filterFunction)
@@ -136,12 +146,8 @@ namespace ReupVirtualTwin.editor
         {
             EditorGUILayout.BeginHorizontal();
             filter.filterIsActive = EditorGUILayout.Toggle(filter.filterIsActive, GUILayout.Width(toggleFilterPropertyWidth));
-            GUIStyle dimmedLabelStyle = new GUIStyle(GUI.skin.label);
-            if (!filter.filterIsActive)
-            {
-                dimmedLabelStyle.normal.textColor = Color.gray;
-            }
-            EditorGUILayout.LabelField(filter.displayText, dimmedLabelStyle, GUILayout.Width(filterNameWidth));
+            GUIStyle filterLabelStyle = GetFilterLabelStyle(filter);
+            EditorGUILayout.LabelField(filter.displayText, filterLabelStyle, GUILayout.Width(filterNameWidth));
             if (GUILayout.Button("Remove filter", GUILayout.Width(removeFilterButtonWidth)))
             {
                 filter.RemoveFilter();
@@ -200,6 +206,20 @@ namespace ReupVirtualTwin.editor
                 substringTagFilters.Remove(tagFilter);
             };
             subStringFilterText = "";
+        }
+
+        private GUIStyle GetFilterLabelStyle(ITagFilter filter){
+            GUIStyle filterLabelStyle = new GUIStyle(GUI.skin.label);
+            if (!filter.filterIsActive)
+            {
+                filterLabelStyle.normal.textColor = Color.gray;
+                return filterLabelStyle;
+            }
+            if (filter.invertFilter){
+                filterLabelStyle.normal.textColor = new Color(0.95f, 0.36f, 0.3f);
+                return filterLabelStyle;
+            }
+            return filterLabelStyle;
         }
     }
 }
