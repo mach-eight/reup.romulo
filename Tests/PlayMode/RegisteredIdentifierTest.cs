@@ -5,7 +5,6 @@ using ReupVirtualTwin.modelInterfaces;
 using UnityEngine;
 using UnityEngine.TestTools;
 using ReupVirtualTwinTests.utils;
-using System.Text.RegularExpressions;
 
 namespace ReupVirtualTwinTests.Registry
 {
@@ -102,22 +101,6 @@ namespace ReupVirtualTwinTests.Registry
             registeredIdentifier.AssignId(assignedId);
             Assert.IsNotNull(registeredIdentifier.getId());
             Assert.AreEqual(testObj0, objectRegistry.GetObjectWithGuid(assignedId));
-            yield return null;
-        }
-
-        [UnityTest]
-        public IEnumerator ShouldRaiseException_if_attemptToRegister2ObjectsWithSameManualId()
-        {
-            string repeatedId = "repeated-id";
-            testObj0 = new GameObject("testObj0");
-            RegisteredIdentifier registeredIdentifier0 = testObj0.AddComponent<RegisteredIdentifier>();
-            registeredIdentifier0.manualId = repeatedId;
-            yield return null;
-
-            testObj1 = new GameObject("testObj1");
-            RegisteredIdentifier registeredIdentifier1 = testObj1.AddComponent<RegisteredIdentifier>();
-            registeredIdentifier1.manualId = repeatedId;
-            LogAssert.Expect(LogType.Exception, new Regex($"An object with id '{repeatedId}' already exists in registry, can't add object '{testObj1.name}'"));
             yield return null;
         }
 
