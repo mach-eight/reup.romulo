@@ -45,12 +45,12 @@ namespace ReupVirtualTwin.managers
         }
         void UpdateTextureRecords(string objId, Texture oldTexture, Texture newTexture)
         {
-            CleanOldTextureRecordFromObject(objId, oldTexture);
-            CreateNewTextureRecord(objId, newTexture);
+            RemoveObjectIdFromTextureRecord(objId, oldTexture);
+            AddObjectIdToTextureRecord(objId, newTexture);
             CheckTexturesIsStillBeingUsed(oldTexture);
         }
 
-        void CreateNewTextureRecord(string objId, Texture newTexture)
+        void AddObjectIdToTextureRecord(string objId, Texture newTexture)
         {
             if (newTexture == null)
             {
@@ -67,11 +67,12 @@ namespace ReupVirtualTwin.managers
         {
             string objId = idGetterController.GetIdFromObject(obj);
             Texture oldTexture = objectIdsToTexturesRecord.GetValueOrDefault(objId);
-            CleanOldTextureRecordFromObject(objId, oldTexture);
+            objectIdsToTexturesRecord.Remove(objId);
+            RemoveObjectIdFromTextureRecord(objId, oldTexture);
             CheckTexturesIsStillBeingUsed(oldTexture);
         }
 
-        void CleanOldTextureRecordFromObject(string objId, Texture oldTexture)
+        void RemoveObjectIdFromTextureRecord(string objId, Texture oldTexture)
         {
             if (oldTexture != null && texturesToObjectIdsRecord[oldTexture] != null)
             {
