@@ -13,34 +13,24 @@ namespace ReupVirtualTwin.managers
 
         private void Awake()
         {
-            viewMode = ViewMode.firstPerson;
-            dollhouseViewWrapper.SetActive(false);
+            ActivateFPV();
         }
 
         public void ActivateDHV()
         {
             viewMode = ViewMode.dollhouse;
-            ActivateDHVCamera();
+            character.SetActive(false);
+            dollhouseViewWrapper.SetActive(true);
             houseContainer.SetActive(false);
         }
 
         public void ActivateFPV()
         {
             viewMode = ViewMode.firstPerson;
-            ActivateFPVCamera();
+            character.SetActive(true);
+            dollhouseViewWrapper.SetActive(false);
             houseContainer.SetActive(true);
         }
 
-        private void ActivateDHVCamera()
-        {
-            character.SetActive(false);
-            dollhouseViewWrapper.SetActive(true);
-        }
-
-        private void ActivateFPVCamera()
-        {
-            character.SetActive(true);
-            dollhouseViewWrapper.SetActive(false);
-        }
     }
 }
