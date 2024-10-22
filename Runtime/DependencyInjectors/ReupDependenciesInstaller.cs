@@ -18,7 +18,6 @@ namespace ReupVirtualTwin.dependencyInjectors
             Container.Bind<GameObject>().WithId("character").FromInstance(character);
             Container.Bind<ICharacterPositionManager>().To<CharacterPositionManager>().AsSingle();
             Container.Bind<ITagsController>().To<TagsController>().AsSingle();
-            Container.Bind<int>().WithId("buildingLayerId").FromInstance(6);
         }
     }
 }
