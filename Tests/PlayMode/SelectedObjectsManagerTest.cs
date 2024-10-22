@@ -25,7 +25,7 @@ public class SelectedObjectsManagerTest : MonoBehaviour
     ObjectHighlighterSpy mockHighlighter;
     MockObjectWrapper mockObjectWrapper;
     ITagsController tagsController;
-    HighlightAnimatorMock highlighAnimatorMock;
+    HighlightAnimatorMock highlightAnimatorMock;
 
     [SetUp]
     public void SetUp()
@@ -43,17 +43,21 @@ public class SelectedObjectsManagerTest : MonoBehaviour
         selectedObjectsManager.highlighter = mockHighlighter;
         selectedObjectsManager.objectWrapper = mockObjectWrapper;
         tagsController = new TagsController();
-        highlighAnimatorMock = new HighlightAnimatorMock();
-        selectedObjectsManager.highlightAnimator = highlighAnimatorMock;
+        highlightAnimatorMock = new HighlightAnimatorMock();
+        selectedObjectsManager.highlightAnimator = highlightAnimatorMock;
         selectedObjectsManager.tagsController = tagsController;
     }
 
     [TearDown]
     public void TearDown()
     {
-        Destroy(containerGameObject);
-        Destroy(testGameObject0);
-        Destroy(testGameObject1);
+        mockHighlighter.DestroyTestObjects();
+        mockObjectWrapper.DestroyTestObjects();
+        mockMediator.DestroyTestObjects();
+        highlightAnimatorMock.DestroyTestObjects();
+        GameObject.DestroyImmediate(containerGameObject);
+        GameObject.DestroyImmediate(testGameObject0);
+        GameObject.DestroyImmediate(testGameObject1);
     }
 
 
@@ -171,11 +175,12 @@ public class SelectedObjectsManagerTest : MonoBehaviour
         tagsController.AddTagToObject(objectRegistry.objects[3], EditionTagsCreator.CreateSelectableTag());
         yield return null;
         selectedObjectsManager.HighlightSelectableObjects();
-        Assert.AreEqual(highlighAnimatorMock.requestedGameObjectsList.Count, 1);
+        Assert.AreEqual(highlightAnimatorMock.requestedGameObjectsList.Count, 1);
         Assert.AreEqual(
-            highlighAnimatorMock.requestedGameObjectsList[0],
+            highlightAnimatorMock.requestedGameObjectsList[0],
             new List<GameObject> { objectRegistry.objects[0], objectRegistry.objects[1], objectRegistry.objects[3] }
         );
+        objectRegistry.DestroyTestObjects();
     }
     private class MockMediator : IMediator
     {
@@ -193,6 +198,11 @@ public class SelectedObjectsManagerTest : MonoBehaviour
                 selectedObjects = ((ObjectWrapperDTO)(object)payload).wrappedObjects;
                 selectedObjectModified = true;
             }
+        }
+
+        public void DestroyTestObjects()
+        {
+            selectedObjects.Clear();
         }
     }
 
@@ -230,6 +240,12 @@ public class SelectedObjectsManagerTest : MonoBehaviour
             }
             return _wrapper;
         }
+
+        public void DestroyTestObjects()
+        {
+            GameObject.DestroyImmediate(_wrapper);
+            selectedObjects.Clear();
+        }
     }
 
     class HighlightAnimatorMock : IHighlightAnimator
@@ -238,6 +254,10 @@ public class SelectedObjectsManagerTest : MonoBehaviour
         public void HighlighObjectsEaseInEaseOut(List<GameObject> objs)
         {
             requestedGameObjectsList.Add(objs);
+        }
+        public void DestroyTestObjects()
+        {
+            requestedGameObjectsList.Clear();
         }
     }
 

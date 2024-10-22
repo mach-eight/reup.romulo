@@ -50,8 +50,8 @@ public class SphereMaterialContainerHandlerTest
     [UnityTearDown]
     public IEnumerator TearDownCoroutine()
     {
-        Object.Destroy(extensionSceneTriggers);
-        Object.Destroy(triggerObject);
+        GameObject.DestroyImmediate(extensionSceneTriggers);
+        GameObject.DestroyImmediate(triggerObject);
         ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
         yield return null;
     }

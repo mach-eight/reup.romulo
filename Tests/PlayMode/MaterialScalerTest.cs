@@ -12,6 +12,7 @@ namespace ReupVirtualTwinTests.helpers
         GameObject wallPrefabInCm = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Tests/TestAssets/150cmx150cm_inclined_texture_10cmx14cm.prefab");
         GameObject wallInstanceInM;
         GameObject wallInstanceInCm;
+        GameObject testObj;
         MaterialScaler materialScaler;
         Vector2 originalTextureDimensionsInMillimeters;
         Vector2 desiredTextureDimensionsInM;
@@ -28,12 +29,14 @@ namespace ReupVirtualTwinTests.helpers
             desiredTextureDimensionsInM = new Vector2(originalTextureDimensionsInMillimeters.x * xScale, originalTextureDimensionsInMillimeters.y * yScale);
             expectedMaterialScale = new Vector2(1 / xScale, 1 / yScale);
             materialScaler = new MaterialScaler();
+            testObj = new GameObject();
         }
         [TearDown]
         public void TearDown()
         {
-            GameObject.Destroy(wallInstanceInCm);
-            GameObject.Destroy(wallInstanceInM);
+            GameObject.DestroyImmediate(wallInstanceInCm);
+            GameObject.DestroyImmediate(wallInstanceInM);
+            GameObject.DestroyImmediate(testObj);
         }
 
         [Test]
@@ -55,10 +58,9 @@ namespace ReupVirtualTwinTests.helpers
         [Test]
         public void ShouldAdjustUVScaleToDimensions_while_selecting_non_collinear_triangle()
         {
-            GameObject wall = new GameObject();
-            MeshRenderer meshRenderer = wall.AddComponent<MeshRenderer>();
+            MeshRenderer meshRenderer = testObj.AddComponent<MeshRenderer>();
             meshRenderer.sharedMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit")); ;
-            MeshFilter meshFilter = wall.AddComponent<MeshFilter>();
+            MeshFilter meshFilter = testObj.AddComponent<MeshFilter>();
             Mesh mesh = new Mesh();
             mesh.vertices = new Vector3[] {
                 new Vector3(0,0,0), new Vector3(0,0.5f,0), new Vector3(0,1,0), // 3 points in the same line (same 3 points of first triangle)
@@ -75,18 +77,17 @@ namespace ReupVirtualTwinTests.helpers
                 2, 3, 4,
             };
             meshFilter.sharedMesh = mesh;
-            materialScaler.AdjustUVScaleToDimensions(wall, new Vector2(2000, 2000));
-            Material material = wall.GetComponent<Renderer>().material;
+            materialScaler.AdjustUVScaleToDimensions(testObj, new Vector2(2000, 2000));
+            Material material = testObj.GetComponent<Renderer>().material;
             AssertUtils.AssertVectorsAreEqual(new Vector2(0.5f, 0.5f), material.mainTextureScale);
         }
 
         [Test]
         public void ShouldAdjustUVScaleToDimensions_withTrianglesIndexesNotFollowingAnyOrder()
         {
-            GameObject wall = new GameObject();
-            MeshRenderer meshRenderer = wall.AddComponent<MeshRenderer>();
+            MeshRenderer meshRenderer = testObj.AddComponent<MeshRenderer>();
             meshRenderer.sharedMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit")); ;
-            MeshFilter meshFilter = wall.AddComponent<MeshFilter>();
+            MeshFilter meshFilter = testObj.AddComponent<MeshFilter>();
             Mesh mesh = new Mesh();
             mesh.vertices = new Vector3[] {
                 new Vector3(0,0,0),
@@ -102,18 +103,17 @@ namespace ReupVirtualTwinTests.helpers
                 2,0,1
             };
             meshFilter.sharedMesh = mesh;
-            materialScaler.AdjustUVScaleToDimensions(wall, new Vector2(2000, 2000));
-            Material material = wall.GetComponent<Renderer>().material;
+            materialScaler.AdjustUVScaleToDimensions(testObj, new Vector2(2000, 2000));
+            Material material = testObj.GetComponent<Renderer>().material;
             AssertUtils.AssertVectorsAreEqual(new Vector2(0.5f, 0.5f), material.mainTextureScale);
         }
 
         [Test]
         public void ShouldAdjustUVScaleToDimensions_even_when_infinitesimalArePresentUVOr3DPoints()
         {
-            GameObject obj = new GameObject();
-            MeshRenderer meshRenderer = obj.AddComponent<MeshRenderer>();
+            MeshRenderer meshRenderer = testObj.AddComponent<MeshRenderer>();
             meshRenderer.sharedMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit")); ;
-            MeshFilter meshFilter = obj.AddComponent<MeshFilter>();
+            MeshFilter meshFilter = testObj.AddComponent<MeshFilter>();
             Mesh mesh = new Mesh();
             mesh.vertices = new Vector3[] {
                 new Vector3(-14.1f, 2.9f,  0.12f),
@@ -129,18 +129,17 @@ namespace ReupVirtualTwinTests.helpers
                 0, 1, 2,
             };
             meshFilter.sharedMesh = mesh;
-            materialScaler.AdjustUVScaleToDimensions(obj, new Vector2(2000, 2000));
-            Material material = obj.GetComponent<Renderer>().material;
+            materialScaler.AdjustUVScaleToDimensions(testObj, new Vector2(2000, 2000));
+            Material material = testObj.GetComponent<Renderer>().material;
             AssertUtils.AssertVectorsAreEqual(new Vector2(1.196138f, 6.66403f), material.mainTextureScale);
         }
 
         [Test]
         public void ShouldMakeSureUVcoordinatesAreNotCollinear()
         {
-            GameObject wall = new GameObject();
-            MeshRenderer meshRenderer = wall.AddComponent<MeshRenderer>();
+            MeshRenderer meshRenderer = testObj.AddComponent<MeshRenderer>();
             meshRenderer.sharedMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit")); ;
-            MeshFilter meshFilter = wall.AddComponent<MeshFilter>();
+            MeshFilter meshFilter = testObj.AddComponent<MeshFilter>();
             Mesh mesh = new Mesh();
             mesh.vertices = new Vector3[] {
                 new Vector3(0,0,0),
@@ -159,8 +158,8 @@ namespace ReupVirtualTwinTests.helpers
                 1, 2, 3, // this triangle is the one that should be used to calculate the texture dimensions
             };
             meshFilter.sharedMesh = mesh;
-            materialScaler.AdjustUVScaleToDimensions(wall, new Vector2(2000, 2000));
-            Material material = wall.GetComponent<Renderer>().material;
+            materialScaler.AdjustUVScaleToDimensions(testObj, new Vector2(2000, 2000));
+            Material material = testObj.GetComponent<Renderer>().material;
             AssertUtils.AssertVectorsAreEqual(new Vector2(0.5f, 0.5f), material.mainTextureScale);
         }
 
