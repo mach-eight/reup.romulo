@@ -7,7 +7,7 @@ using Bogus;
 
 namespace ReupVirtualTwinTests.utils
 {
-    public static class SpaceSelectorFabric
+    public static class SpaceSelectorFactory
 
     {
         static GameObject spaceSelectorPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Assets/Quickstart/SpaceSelectors/SpaceSelector.prefab");

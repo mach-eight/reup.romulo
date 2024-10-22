@@ -2,6 +2,8 @@ using Zenject;
 using UnityEngine;
 using ReupVirtualTwin.managers;
 using ReupVirtualTwin.inputs;
+using ReupVirtualTwin.controllerInterfaces;
+using ReupVirtualTwin.controllers;
 
 namespace ReupVirtualTwin.dependencyInjectors
 {
@@ -20,6 +22,8 @@ namespace ReupVirtualTwin.dependencyInjectors
             Container.BindInterfacesAndSelfTo<InputProvider>().AsSingle();
             Container.BindInterfacesAndSelfTo<DragManager>().AsSingle();
             Container.BindInterfacesAndSelfTo<GesturesManager>().AsSingle();
+            Container.Bind<ITagsController>().To<TagsController>().AsSingle();
+            Container.Bind<int>().WithId("buildingLayerId").FromInstance(6);
         }
     }
 }

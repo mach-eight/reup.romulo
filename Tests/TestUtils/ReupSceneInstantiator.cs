@@ -48,18 +48,17 @@ namespace ReupVirtualTwinTests.utils
             public GameObject houseContainer;
             public ICharacterPositionManager characterPositionManager;
         }
+        public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab, Action<GameObject> modifyBuilding)
+        {
+            SceneObjects sceneObjects = InstantiateSceneWithBuildingFromPrefab(buildingPrefab);
+            modifyBuilding(sceneObjects.building);
+            return sceneObjects;
+        }
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab)
         {
             GameObject building = (GameObject)PrefabUtility.InstantiatePrefab(buildingPrefab);
             return InstantiateSceneWithBuildingObject(building);
         }
-        public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab, Action<GameObject> modifyBuilding)
-        {
-            GameObject building = (GameObject)PrefabUtility.InstantiatePrefab(buildingPrefab);
-            modifyBuilding(building);
-            return InstantiateSceneWithBuildingObject(building);
-        }
-
         public static SceneObjects InstantiateScene()
         {
             GameObject building = CreateDefaultBuilding();
@@ -81,6 +80,7 @@ namespace ReupVirtualTwinTests.utils
 
             setupBuilding.building = building;
             setupBuilding.AssignIdsAndObjectInfoToBuilding();
+            setupBuilding.AddTagSystemToBuildingObjects();
 
             EditMediator editMediator = baseGlobalScriptGameObject.transform
                 .Find("EditMediator").GetComponent<EditMediator>();
@@ -139,6 +139,7 @@ namespace ReupVirtualTwinTests.utils
             GesturesManager gesturesManager = diContainer.Resolve<GesturesManager>();
 
             ICharacterPositionManager characterPositionManager = diContainer.Resolve<ICharacterPositionManager>();
+
             GameObject houseContainer = reupGameObject.transform.Find("HouseContainer").gameObject;
 
             return new SceneObjects
