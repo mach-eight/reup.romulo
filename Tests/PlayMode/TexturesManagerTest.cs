@@ -158,6 +158,23 @@ namespace ReupVirtualTwinTests.managers
             Assert.AreEqual(appliedTexture, texture);
         }
 
+        [UnityTest]
+        public IEnumerator ShouldApplyMaterialOfDifferentColors_even_whenTheyHaveNoTextures()
+        {
+            Material material1 = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            material1.color = Color.red;
+            Material material2 = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            material2.color = Color.blue;
+            texturesManager.ApplyMaterialToObject(cube0, material1);
+            yield return null;
+            Material appliedMaterial1 = cube0.GetComponent<Renderer>().material;
+            Assert.AreEqual(Color.red, appliedMaterial1.color);
+            texturesManager.ApplyMaterialToObject(cube0, material2);
+            yield return null;
+            Material appliedMaterial2 = cube0.GetComponent<Renderer>().material;
+            Assert.AreEqual(Color.blue, appliedMaterial2.color);
+        }
+
     }
 
 }

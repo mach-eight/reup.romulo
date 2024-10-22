@@ -13,14 +13,12 @@ namespace ReupVirtualTwin.behaviours
         [SerializeField] public GameObject gesturesManagerGameObject;
         [SerializeField] public float limitDistanceFromBuildingInMeters = 35;
         [SerializeField] public float KeyboardMoveCameraSpeedMetersPerSecond = 40;
-        [SerializeField] public float PointerMoveCameraDistanceInMetersSquareViewport = 40;
 
         public Vector3 hitPoint;
         public Vector3 originalCameraPosition;
         public Vector3 originalWrapperPosition;
 
         InputProvider _inputProvider;
-        float distancePerPixel;
         IDragManager dragManager;
         IGesturesManager gesturesManager;
         GameObject building;
@@ -47,8 +45,6 @@ namespace ReupVirtualTwin.behaviours
         void Awake()
         {
             _inputProvider = new InputProvider();
-            int pixelsInSquareViewport = ViewportUtils.MinViewportDimension(Camera.main);
-            distancePerPixel = PointerMoveCameraDistanceInMetersSquareViewport / pixelsInSquareViewport;
             dragManager = dragManagerGameObject.GetComponent<IDragManager>();
             gesturesManager = gesturesManagerGameObject.GetComponent<IGesturesManager>();
         }
