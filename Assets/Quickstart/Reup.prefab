@@ -587,7 +587,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1191157721440923679}
   - component: {fileID: 5331982094702007337}
-  - component: {fileID: 2096867277068438891}
   m_Layer: 7
   m_Name: Character
   m_TagString: Character
@@ -639,7 +638,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!114 &2096867277068438891
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -648,7 +646,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 1798908995094544088}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0eab5aecbc9d7a24992c9aef85118ebf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1890947946663938951
