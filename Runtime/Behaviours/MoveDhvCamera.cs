@@ -78,12 +78,13 @@ namespace ReupVirtualTwin.behaviours
 
         void PointerUpdatePosition()
         {
+            if (gesturesManager.gestureInProgress)
+            {
+                UpdateOriginalPositions();
+                return;
+            }
             if (!dragManager.dragging)
             {
-                if (!gesturesManager.gestureInProgress)
-                {
-                    UpdateOriginalPositions();
-                }
                 return;
             }
             Ray cameraRay = RayUtils.GetRayFromCameraToScreenPoint(Camera.main, _inputProvider.PointerInput());
