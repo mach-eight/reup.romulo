@@ -6,13 +6,13 @@ using ReupVirtualTwin.enums;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.behaviourInterfaces;
+using Zenject;
 
 
 namespace ReupVirtualTwin.behaviours
 {
     public class HeightMediator : MonoBehaviour, IMediator, ICharacterHeightReseter
     {
-        private ICharacterColliderController _colliderController;
         private IMaintainHeight _maintainHeight;
         private IInitialSpawn _initialSpawn;
         private LayerMask _buildingLayerMask;
@@ -20,33 +20,37 @@ namespace ReupVirtualTwin.behaviours
         private float _ceilCheckHeight = -0.025f;
         private float _ceilCheckRadius = 0.07f;
         private float _characterHeight;
-        private ICharacterPositionManager _characterPositionManager;
+        private ICharacterPositionManager characterPositionManager;
 
         public float CharacterHeight { get => _characterHeight; }
         [Range(0.15f, 3f)]
         public float initialCharacterHeight = 1.75f;
 
-        public ICharacterColliderController colliderController { set { _colliderController = value; } }
         public IMaintainHeight maintainHeight { set { _maintainHeight = value; } }
         public IInitialSpawn initialSpawn { set { _initialSpawn = value; } }
-        public LayerMask buildingLayerMask { set =>  _buildingLayerMask = value; }
+        public LayerMask buildingLayerMask { set => _buildingLayerMask = value; }
+
+        [Inject]
+        public void Init(ICharacterPositionManager characterPositionManager)
+        {
+            this.characterPositionManager = characterPositionManager;
+        }
 
         private void Start()
         {
             ResetCharacterHeight();
             _initialSpawn.Spawn();
-            _characterPositionManager = ObjectFinder.FindCharacter().GetComponent<ICharacterPositionManager>();
         }
 
         private void Update()
         {
             if (IsTouchingCeil())
             {
-                _characterPositionManager.allowMovingUp = false;
+                characterPositionManager.allowMovingUp = false;
             }
             else
             {
-                _characterPositionManager.allowMovingUp = true;
+                characterPositionManager.allowMovingUp = true;
             }
         }
 
@@ -63,7 +67,7 @@ namespace ReupVirtualTwin.behaviours
         }
         public void Notify<T>(ReupEvent eventName, T payload)
         {
-            switch(eventName)
+            switch (eventName)
             {
                 case ReupEvent.addToCharacterHeight:
                     AddToHeight((float)(object)payload);
@@ -74,7 +78,6 @@ namespace ReupVirtualTwin.behaviours
         }
         private void updateHeight()
         {
-            _colliderController.UpdateCollider(_characterHeight);
             _maintainHeight.characterHeight = _characterHeight;
         }
         private bool IsTouchingCeil()
@@ -90,12 +93,11 @@ namespace ReupVirtualTwin.behaviours
                 Debug.LogWarning($"character has reached it's mininum allowed height of {minHeight} m.");
                 return;
             }
-            if(ceilGuard)
+            if (ceilGuard)
             {
                 Debug.LogWarning("character can not increase any further it's height because of ceil collision");
                 return;
             }
-            _colliderController.DestroyCollider();
             _characterHeight += heightDelta;
             _maintainHeight.characterHeight = _characterHeight;
         }

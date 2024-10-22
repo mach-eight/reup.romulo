@@ -2,11 +2,13 @@ using UnityEngine;
 using ReupVirtualTwin.helpers;
 using UnityEngine.Events;
 using ReupVirtualTwin.managerInterfaces;
+using Zenject;
 
 namespace ReupVirtualTwin.managers
 {
-    public class CharacterPositionManager : MonoBehaviour, ICharacterPositionManager
+    public class CharacterPositionManager : ICharacterPositionManager
     {
+        Transform transform;
         bool _allowSetHeight = true;
         bool _allowWalking = true;
         bool _allowMovingUp = true;
@@ -46,7 +48,7 @@ namespace ReupVirtualTwin.managers
                 {
                     walkSlider.StopMovement();
                 }
-                _allowWalking=value;
+                _allowWalking = value;
             }
         }
         public bool allowSetHeight
@@ -58,7 +60,7 @@ namespace ReupVirtualTwin.managers
                 {
                     heightSlider.StopMovement();
                 }
-                _allowSetHeight=value;
+                _allowSetHeight = value;
             }
         }
 
@@ -74,9 +76,16 @@ namespace ReupVirtualTwin.managers
             }
         }
 
-        void Awake()
+        DiContainer diContainer;
+
+        public CharacterPositionManager(
+            [Inject(Id = "character")] GameObject character,
+            DiContainer diContainer
+        )
         {
-            rb = GetComponent<Rigidbody>();
+            this.diContainer = diContainer;
+            transform = character.transform;
+            rb = character.GetComponent<Rigidbody>();
             rb.freezeRotation = true;
             rb.drag = bodyDrag;
             rb.mass = bodyMass;
@@ -88,19 +97,22 @@ namespace ReupVirtualTwin.managers
 
         void DefineWalkSlider()
         {
-            walkSlider = (SpaceSlider)transform.gameObject.AddComponent<SpaceSlider>()
+            walkSlider = (SpaceSlider)diContainer.InstantiateComponent<SpaceSlider>(transform.gameObject)
+                .SetPositionManager(this)
                 .SetHaltDecitionMaker(new WalkHaltDecitionMaker(this, STOP_WALK_THRESHOLD))
                 .SetInterpolator(new WalkInterpolator());
         }
         void DefineSpaceSlider()
         {
-            spaceSlider = (SpaceSlider)transform.gameObject.AddComponent<SpaceSlider>()
+            spaceSlider = (SpaceSlider)diContainer.InstantiateComponent<SpaceSlider>(transform.gameObject)
+                .SetPositionManager(this)
                 .SetHaltDecitionMaker(new SpaceSlideHaltDecitionMaker(this, STOP_MOVEMENT_THRESHOLD))
                 .SetInterpolator(new SpacesInterpolator());
         }
         void DefineHeightSlider()
         {
-            heightSlider = (LinearSlider)transform.gameObject.AddComponent<LinearSlider>()
+            heightSlider = (LinearSlider)diContainer.InstantiateComponent<LinearSlider>(transform.gameObject)
+                .SetPositionManager(this)
                 .SetHaltDecitionMaker(new HeightSlideHaltDecitionMaker(this, STOP_MOVEMENT_THRESHOLD))
                 .SetInterpolator(new HeightInterpolator());
         }
@@ -114,7 +126,7 @@ namespace ReupVirtualTwin.managers
         public void MoveInDirection(Vector3 direction, float speedInMetersPerSecond = 1f)
         {
             var normalizedDirection = Vector3.Normalize(direction);
-            characterPosition = characterPosition + normalizedDirection * speedInMetersPerSecond * Time.deltaTime;
+            rb.velocity = normalizedDirection * speedInMetersPerSecond;
         }
         public void ApplyForceInDirection(Vector3 direction)
         {

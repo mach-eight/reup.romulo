@@ -4,15 +4,12 @@ using UnityEngine.TestTools;
 using System.Collections;
 using ReupVirtualTwin.behaviours;
 using ReupVirtualTwin.enums;
-using ReupVirtualTwin.managers;
-using ReupVirtualTwin.managerInterfaces;
 
 public class FollowCharacterTest
 {
     private GameObject character;
     private GameObject materialPicker;
     private Rigidbody rb;
-    private ICharacterPositionManager posManager;
 
     private Vector3 originalCharacterPosition = new Vector3(1, 1, 1);
 
@@ -24,7 +21,6 @@ public class FollowCharacterTest
         character.transform.position = originalCharacterPosition;
         rb = character.AddComponent<Rigidbody>();
         rb.useGravity = false;
-        posManager = character.AddComponent<CharacterPositionManager>();
 
         materialPicker = new GameObject();
         materialPicker.AddComponent<FollowCharacter>();
@@ -34,8 +30,8 @@ public class FollowCharacterTest
     [TearDown]
     public void TearDown()
     {
-        UnityEngine.Object.Destroy(character);
-        UnityEngine.Object.Destroy(materialPicker);
+        GameObject.DestroyImmediate(character);
+        GameObject.DestroyImmediate(materialPicker);
     }
 
     [UnityTest]

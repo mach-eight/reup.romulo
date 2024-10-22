@@ -14,6 +14,7 @@ namespace ReupVirtualTwin.dependencyInjectors
             setUpBuilding.colliderAdder = new ColliderAdder();
             setUpBuilding.idAssignerController = new IdController();
             setUpBuilding.objectInfoController = new ObjectInfoController();
+            setUpBuilding.tagSystemController = new TagSystemController();
         }
     }
 }

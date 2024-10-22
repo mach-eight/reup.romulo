@@ -12,7 +12,7 @@ using ReupVirtualTwinTests.utils;
 using ReupVirtualTwinTests.mocks;
 using System.Linq;
 
-namespace ReupVirtualTwinTests.generalTests
+namespace ReupVirtualTwinTests.IOTests
 {
     public class SwitchViewModeTest
     {
@@ -239,6 +239,18 @@ namespace ReupVirtualTwinTests.generalTests
             yield return null;
             WebMessage<string[]> sentMessage = (WebMessage<string[]>)webMessageSenderSpy.sentMessages[0];
             Assert.AreEqual(WebMessageType.error, sentMessage.type);
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldDeactivateTheHouseContainer_when_InDollhouseView()
+        {
+            DefineMessages();
+            Assert.IsTrue(sceneObjects.houseContainer.activeSelf);
+            editMediator.ReceiveWebMessage(JsonConvert.SerializeObject(activateDHVMessage));
+            Assert.IsFalse(sceneObjects.houseContainer.activeSelf);
+            yield return null;
+            editMediator.ReceiveWebMessage(JsonConvert.SerializeObject(activateFPVMessage));
+            Assert.IsTrue(sceneObjects.houseContainer.activeSelf);
         }
     }
 

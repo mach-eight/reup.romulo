@@ -12,6 +12,7 @@ namespace ReupVirtualTwin.controllers
         public bool invertFilter { get => _invertFilter; set => _invertFilter = value; }
         public string displayText => _displayText;
         public Action onRemoveFilter { set => _onRemoveFilter = value; }
+        public bool filterIsActive { get; set; } = true;
 
         private bool _invertFilter = false;
         private string _displayText;
@@ -38,7 +39,7 @@ namespace ReupVirtualTwin.controllers
         private bool FilterFunction(GameObject gameObject)
         {
             string[] tagNames = tagsController.GetTagNamesFromObject(gameObject);
-            return tagNames.Any(tagName => tagName.Contains(substring));
+            return tagNames.Any(tagName => tagName.Contains(substring) || StringsUtils.MatchRegex(tagName, substring));
         }
     }
 }

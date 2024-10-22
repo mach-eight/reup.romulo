@@ -27,15 +27,16 @@ public class ModelInfoManagerTest : MonoBehaviour
     public void SetUp()
     {
         buildingGameObject = StubObjectTreeCreator.CreateMockBuilding(BUILDING_CHILDREN_DEPTH);
-        sceneObjects = ReupSceneInstantiator.InstantiateSceneWithBuildingWithBuildingObject(buildingGameObject);
+        sceneObjects = ReupSceneInstantiator.InstantiateSceneWithBuildingObject(buildingGameObject);
         modelInfoManager = sceneObjects.modelInfoManager;
     }
     [UnityTearDown]
     public IEnumerator TearDown()
     {
         ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
-        SpaceSelectorFabric.DestroySpaceSelectors(spaceSelectors);
+        SpaceSelectorFactory.DestroySpaceSelectors(spaceSelectors);
         spaceSelectors?.Clear();
+        GameObject.DestroyImmediate(buildingGameObject);
         yield return null;
     }
 
@@ -176,7 +177,7 @@ public class ModelInfoManagerTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldContainNamesInSpaceSelectorsList()
     {
-        spaceSelectors = SpaceSelectorFabric.CreateBulk(5);
+        spaceSelectors = SpaceSelectorFactory.CreateBulk(5);
         yield return null;
         WebMessage<JObject> message = modelInfoManager.ObtainModelInfoMessage();
         JArray spaceSelectorsList = message.payload["spaceSelectors"].ToObject<JArray>();
@@ -192,7 +193,7 @@ public class ModelInfoManagerTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldContainIdsInSpaceSelectorsList()
     {
-        spaceSelectors = SpaceSelectorFabric.CreateBulk(5);
+        spaceSelectors = SpaceSelectorFactory.CreateBulk(5);
         yield return null;
         WebMessage<JObject> message = modelInfoManager.ObtainModelInfoMessage();
         JArray spaceSelectorsList = message.payload["spaceSelectors"].ToObject<JArray>();
@@ -208,7 +209,7 @@ public class ModelInfoManagerTest : MonoBehaviour
     public IEnumerator SpaceSelectorsIdsShouldBeDifferentThanEmptyOrNull()
     {
         int numberOfSpaceSelectors = 5;
-        spaceSelectors = SpaceSelectorFabric.CreateBulk(numberOfSpaceSelectors);
+        spaceSelectors = SpaceSelectorFactory.CreateBulk(numberOfSpaceSelectors);
         WebMessage<JObject> message = modelInfoManager.ObtainModelInfoMessage();
         JArray spaceSelectorsList = message.payload["spaceSelectors"].ToObject<JArray>();
         Assert.AreEqual(numberOfSpaceSelectors, spaceSelectorsList.Count);
