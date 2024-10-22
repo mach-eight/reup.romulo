@@ -31,6 +31,8 @@ namespace ReupVirtualTwinTests.managers
         public IEnumerator TearDown()
         {
             ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
+            GameObject.DestroyImmediate(cube0);
+            GameObject.DestroyImmediate(cube1);
             yield return null;
         }
 
@@ -132,7 +134,28 @@ namespace ReupVirtualTwinTests.managers
             texturesManager.ApplyProtectedMaterialToObject(cube0, protectedMaterial);
             yield return null;
             Assert.IsTrue(nonProtectedTexture == null);
+        }
 
+        [UnityTest]
+        public IEnumerator ShouldDoNothing_when_RequestedToApplyMaterialToObjectThatAlreadyHasSuchMaterial()
+        {
+            Texture2D texture = new Texture2D(2, 2);
+            Material material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            Texture appliedTexture;
+            material.SetTexture("_BaseMap", texture);
+
+            texturesManager.ApplyMaterialToObject(cube0, material);
+            yield return null;
+            appliedTexture = cube0.GetComponent<Renderer>().material.GetTexture("_BaseMap");
+            Assert.NotNull(appliedTexture);
+            Assert.AreEqual(appliedTexture, texture);
+
+            texturesManager.ApplyMaterialToObject(cube0, material);
+            yield return null;
+            appliedTexture = cube0.GetComponent<Renderer>().material.GetTexture("_BaseMap");
+
+            Assert.NotNull(appliedTexture);
+            Assert.AreEqual(appliedTexture, texture);
         }
 
     }

@@ -25,7 +25,7 @@ public class ObjectMapperTest : MonoBehaviour
     [TearDown]
     public void TearDown()
     {
-        Destroy(mockBuilding);
+        GameObject.DestroyImmediate(mockBuilding);
     }
 
     [UnityTest]

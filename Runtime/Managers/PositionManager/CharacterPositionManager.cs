@@ -114,7 +114,7 @@ namespace ReupVirtualTwin.managers
         public void MoveInDirection(Vector3 direction, float speedInMetersPerSecond = 1f)
         {
             var normalizedDirection = Vector3.Normalize(direction);
-            characterPosition = characterPosition + normalizedDirection * speedInMetersPerSecond * Time.deltaTime;
+            rb.velocity = normalizedDirection * speedInMetersPerSecond;
         }
         public void ApplyForceInDirection(Vector3 direction)
         {
