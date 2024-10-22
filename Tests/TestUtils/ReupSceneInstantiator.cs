@@ -119,7 +119,6 @@ namespace ReupVirtualTwinTests.utils
 
             SpacesRecord spacesRecord = baseGlobalScriptGameObject.transform.Find("SpacesRecord").GetComponent<SpacesRecord>();
 
-            MoveDhvCamera moveDhvCamera = dollhouseViewWrapper.GetComponent<MoveDhvCamera>();
             MoveDhvCamera moveDhvCameraBehavior = dollhouseViewWrapper.GetComponent<MoveDhvCamera>();
 
             ZoomDhvCamera zoomDhvCameraBehavior = dollhouseViewWrapper.GetComponent<ZoomDhvCamera>();
@@ -139,9 +138,8 @@ namespace ReupVirtualTwinTests.utils
 
             GesturesManager gesturesManager = diContainer.Resolve<GesturesManager>();
 
-            GameObject houseContainer = reupGameObject.transform.Find("HouseContainer").gameObject;
-
             ICharacterPositionManager characterPositionManager = diContainer.Resolve<ICharacterPositionManager>();
+            GameObject houseContainer = reupGameObject.transform.Find("HouseContainer").gameObject;
 
             return new SceneObjects
             {

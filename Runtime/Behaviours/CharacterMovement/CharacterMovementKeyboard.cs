@@ -19,7 +19,7 @@ namespace ReupVirtualTwin.behaviours
             this.characterPositionManager = characterPositionManager;
         }
 
-        static public float WALK_SPEED_M_PER_SECOND = 3.5f;
+        static public float WALK_SPEED_M_PER_SECOND = 2.5f;
 
         [Inject]
         public void Init(InputProvider inputProvider)
