@@ -30,8 +30,8 @@ public class FollowCharacterTest
     [TearDown]
     public void TearDown()
     {
-        UnityEngine.Object.Destroy(character);
-        UnityEngine.Object.Destroy(materialPicker);
+        GameObject.DestroyImmediate(character);
+        GameObject.DestroyImmediate(materialPicker);
     }
 
     [UnityTest]

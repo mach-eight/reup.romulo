@@ -79,6 +79,15 @@ public class EditMediatorTest : MonoBehaviour
         editMediator.viewModeManager = viewModeManagerSpy;
     }
 
+    [TearDown]
+    public void TearDown()
+    {
+        GameObject.DestroyImmediate(containerGameObject);
+        registrySpy.DestroyTestObjects();
+        mockInsertObjectsManager.DestroyTestObjects();
+        mockSelectedObjectsManager.DestroyTestObjects();
+    }
+
     private class ViewModeManagerSpy : IViewModeManager
     {
         public ViewMode lastRequestedViewMode;
@@ -206,6 +215,21 @@ public class EditMediatorTest : MonoBehaviour
         {
             throw new System.NotImplementedException();
         }
+
+        public void DestroyTestObjects()
+        {
+            if (wrapperDTO != null && wrapperDTO.wrapper != null)
+            {
+                GameObject.DestroyImmediate(wrapperDTO.wrapper);
+                if (wrapperDTO.wrappedObjects != null)
+                {
+                    foreach (GameObject obj in wrapperDTO.wrappedObjects)
+                    {
+                        GameObject.DestroyImmediate(obj);
+                    }
+                }
+            }
+        }
     }
 
     private class MockModelInfoManager : IModelInfoManager, ISceneStateManager
@@ -318,6 +342,11 @@ public class EditMediatorTest : MonoBehaviour
             };
             editMediator.Notify(ReupEvent.insertedObjectLoaded, insertedObjectPayload);
             requestedObjectId = insertObjectMessagePayload.objectId;
+        }
+
+        public void DestroyTestObjects()
+        {
+            GameObject.DestroyImmediate(injectedObject);
         }
     }
     private class MockObjectMapper : IObjectMapper
@@ -576,9 +605,10 @@ public class EditMediatorTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldSendMessageOfLoadObjectSuccessAndUpdateBuildingMessage()
     {
+        GameObject mockInsertedObject = new GameObject("insertedObject");
         InsertedObjectPayload insertedObjectPayload = new InsertedObjectPayload()
         {
-            loadedObject = new GameObject("insertedObject"),
+            loadedObject = mockInsertedObject,
         };
         editMediator.Notify(ReupEvent.insertedObjectLoaded, insertedObjectPayload);
         yield return null;
@@ -588,6 +618,7 @@ public class EditMediatorTest : MonoBehaviour
         WebMessage<JObject> sentUpdateBuildingMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[1];
         Assert.AreEqual(WebMessageType.updateBuilding, sentUpdateBuildingMessage.type);
         Assert.IsTrue(JObject.DeepEquals(JObject.FromObject(mockModelInfoManager.building), sentUpdateBuildingMessage.payload["building"]));
+        GameObject.DestroyImmediate(mockInsertedObject);
     }
 
     [UnityTest]

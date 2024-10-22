@@ -28,9 +28,10 @@ public class ObjectWrapperTest : MonoBehaviour
     [TearDown]
     public void TearDown()
     {
-        Destroy(obj0);
-        Destroy(obj1);
-        Destroy(originalParent);
+        GameObject.DestroyImmediate(obj0);
+        GameObject.DestroyImmediate(obj1);
+        GameObject.DestroyImmediate(originalParent);
+        GameObject.DestroyImmediate(objectWrapper.wrapper);
     }
 
     [UnityTest]

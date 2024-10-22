@@ -27,7 +27,7 @@ public class ModelInfoManagerTest : MonoBehaviour
     public void SetUp()
     {
         buildingGameObject = StubObjectTreeCreator.CreateMockBuilding(BUILDING_CHILDREN_DEPTH);
-        sceneObjects = ReupSceneInstantiator.InstantiateSceneWithBuildingWithBuildingObject(buildingGameObject);
+        sceneObjects = ReupSceneInstantiator.InstantiateSceneWithBuildingObject(buildingGameObject);
         modelInfoManager = sceneObjects.modelInfoManager;
     }
     [UnityTearDown]
@@ -36,6 +36,7 @@ public class ModelInfoManagerTest : MonoBehaviour
         ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
         SpaceSelectorFabric.DestroySpaceSelectors(spaceSelectors);
         spaceSelectors?.Clear();
+        GameObject.DestroyImmediate(buildingGameObject);
         yield return null;
     }
 
