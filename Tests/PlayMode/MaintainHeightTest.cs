@@ -24,7 +24,7 @@ public class MaintainHeightTest : MonoBehaviour
         platformPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Tests/TestAssets/Platform.prefab");
         sceneObjects = ReupSceneInstantiator.InstantiateScene();
         character = sceneObjects.character;
-        var posManager = character.GetComponent<ICharacterPositionManager>();
+        var posManager = sceneObjects.characterPositionManager;
         posManager.maxStepHeight = 0.25f;
         widePlatform = (GameObject)PrefabUtility.InstantiatePrefab(platformPrefab);
         SetPlatform();
