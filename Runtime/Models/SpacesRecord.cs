@@ -14,7 +14,6 @@ namespace ReupVirtualTwin.models
 
     public class SpacesRecord : MonoBehaviour, ISpacesRecord
     {
-        [SerializeField] LayerMask ignoreLayerMask;
         ICharacterPositionManager characterPositionManager;
         ICharacterHeightReseter _characterHeightReseter;
         List<ISpaceJumpPoint> _jumpPoints;
@@ -158,7 +157,8 @@ namespace ReupVirtualTwin.models
         {
             RaycastHit hit;
             var ray = GetDownRayFromSpaceSelector(spaceSelector);
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, ~ignoreLayerMask))
+            LayerMask buildingLayerMask = LayerMaskUtils.GetLayerMaskById(RomuloLayerIds.buildingLayerId);
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, buildingLayerMask))
             {
                 return hit;
             }
