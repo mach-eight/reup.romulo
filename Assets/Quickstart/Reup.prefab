@@ -1756,6 +1756,8 @@ MonoBehaviour:
   KeyboardMoveCameraSpeedMetersPerSecond: 40
   PointerMoveCameraDistanceInMetersSquareViewport: 40
   hitPoint: {x: 0, y: 0, z: 0}
+  originalCameraPosition: {x: 0, y: 0, z: 0}
+  originalWrapperPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &5049356630348509960
 MonoBehaviour:
   m_ObjectHideFlags: 0

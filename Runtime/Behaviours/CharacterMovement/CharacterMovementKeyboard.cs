@@ -43,7 +43,6 @@ namespace ReupVirtualTwin.behaviours
             Vector3 movementDirection = direction.y * GetCharacterForward() + direction.x * GetCharacterRight();
             if (movementDirection != Vector3.zero && characterPositionManager.allowWalking)
             {
-                Debug.Log("calling the movements methods");
                 characterPositionManager.StopWalking();
                 characterPositionManager.MoveInDirection(movementDirection, WALK_SPEED_M_PER_SECOND);
             }

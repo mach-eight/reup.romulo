@@ -3,6 +3,8 @@ using UnityEngine;
 using System.Collections;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.managers;
+using ReupVirtualTwin.controllerInterfaces;
+using ReupVirtualTwin.controllers;
 
 namespace ReupVirtualTwin.dependencyInjectors
 {
@@ -15,6 +17,8 @@ namespace ReupVirtualTwin.dependencyInjectors
             container = Container;
             Container.Bind<GameObject>().WithId("character").FromInstance(character);
             Container.Bind<ICharacterPositionManager>().To<CharacterPositionManager>().AsSingle();
+            Container.Bind<ITagsController>().To<TagsController>().AsSingle();
+            Container.Bind<int>().WithId("buildingLayerId").FromInstance(6);
         }
     }
 }
