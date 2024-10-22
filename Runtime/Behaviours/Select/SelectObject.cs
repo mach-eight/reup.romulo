@@ -13,15 +13,14 @@ namespace ReupVirtualTwin.behaviours
     {
         private IObjectSelector _objectSelector;
 
-        protected override void Start()
+        protected virtual void Start()
         {
-            base.Start();
             _objectSelector = GetComponent<IObjectSelector>();
         }
 
         public override void OnSelect(InputAction.CallbackContext ctx)
         {
-            if (!_dragManager.prevDragging)
+            if (!dragManager.prevDragging)
             {
                 Ray ray = _rayProvider.GetRay();
                 //Debug.DrawRay(ray.origin, ray.direction, Color.red, 1);

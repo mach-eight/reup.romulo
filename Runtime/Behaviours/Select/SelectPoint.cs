@@ -9,10 +9,8 @@ namespace ReupVirtualTwin.behaviours
     {
         private IRayCastHitSelector _hitSelector;
 
-
-        protected override void Start()
+        void Start()
         {
-            base.Start();
             _hitSelector = GetComponent<IRayCastHitSelector>();
         }
 
@@ -24,7 +22,7 @@ namespace ReupVirtualTwin.behaviours
 
         public override void OnSelect(InputAction.CallbackContext ctx)
         {
-            if (!_dragManager.prevDragging)
+            if (!dragManager.prevDragging)
             {
                 Ray ray = _rayProvider.GetRay();
                 RaycastHit? hit = _hitSelector.GetHit(ray);
