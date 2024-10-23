@@ -36,10 +36,7 @@ namespace ReupVirtualTwin.behaviours
 
         void OnHoldStarted(InputAction.CallbackContext ctx)
         {
-            Ray hitRay = Camera.main.ScreenPointToRay(_inputProvider.PointerInput());
-            hitPoint = RayUtils.GetHitPoint(hitRay);
-            originalCameraPosition = hitRay.origin;
-            originalWrapperPosition = dollhouseViewWrapperTransform.position;
+            UpdateOriginalPositions();
         }
 
         void Awake()
@@ -81,7 +78,12 @@ namespace ReupVirtualTwin.behaviours
 
         void PointerUpdatePosition()
         {
-            if (!dragManager.dragging || gesturesManager.gestureInProgress)
+            if (gesturesManager.gestureInProgress)
+            {
+                UpdateOriginalPositions();
+                return;
+            }
+            if (!dragManager.dragging)
             {
                 return;
             }
@@ -90,6 +92,14 @@ namespace ReupVirtualTwin.behaviours
             Vector3 newCameraPosition = RayUtils.ProjectRayToHeight(invertedRay, originalCameraPosition.y);
             Vector3 newWrapperPosition = originalWrapperPosition + (newCameraPosition - originalCameraPosition);
             PerformMovement(newWrapperPosition);
+        }
+
+        private void UpdateOriginalPositions()
+        {
+            Ray hitRay = Camera.main.ScreenPointToRay(_inputProvider.PointerInput());
+            hitPoint = RayUtils.GetHitPoint(hitRay);
+            originalCameraPosition = hitRay.origin;
+            originalWrapperPosition = dollhouseViewWrapperTransform.position;
         }
 
         private void PerformMovement(Vector3 nextPosition)
