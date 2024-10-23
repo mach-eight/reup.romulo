@@ -3,7 +3,6 @@ using ReupVirtualTwin.inputs;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.managers;
 using UnityEngine;
-using Zenject;
 
 namespace ReupVirtualTwin.behaviours
 {
@@ -12,25 +11,25 @@ namespace ReupVirtualTwin.behaviours
         public float sensitivity = 0.4f;
 
 
-        private ICharacterRotationManager characterRotationManager;
-        private IDragManager dragManager;
-        private InputProvider inputProvider;
+        [SerializeField]
+        private CharacterRotationManager _characterRotationManager;
+        private IDragManager _dragManager;
+        private InputProvider _inputProvider;
 
-        [Inject]
-        public void Init(InputProvider inputProvider, IDragManager dragManager, ICharacterRotationManager characterRotationManager)
+        private void Awake()
         {
-            this.inputProvider = inputProvider;
-            this.dragManager = dragManager;
-            this.characterRotationManager = characterRotationManager;
+            _inputProvider = new InputProvider();
+            _dragManager = ObjectFinder.FindDragManager().GetComponent<IDragManager>();
         }
+
 
         void Update()
         {
-            if (dragManager.dragging)
+            if (_dragManager.dragging)
             {
-                Vector2 look = inputProvider.RotateViewInput();
-                characterRotationManager.horizontalRotation += (look.x * sensitivity);
-                characterRotationManager.verticalRotation += (look.y * sensitivity * -1f);
+                Vector2 look = _inputProvider.RotateViewInput();
+                _characterRotationManager.horizontalRotation += (look.x * sensitivity);
+                _characterRotationManager.verticalRotation += (look.y * sensitivity * -1f);
             }
         }
 

@@ -5,6 +5,7 @@ using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.managers;
 using ReupVirtualTwin.controllers;
+using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.webRequesters;
 using ReupVirtualTwin.models;
 
@@ -27,6 +28,7 @@ namespace ReupVirtualTwin.dependencyInjectors
         [SerializeField] ViewModeManager viewModeManager;
         [SerializeField] SpacesRecord spacesRecord;
         [SerializeField] TexturesManager texturesManager;
+        [SerializeField] CharacterRotationManager characterRotationManager;
         [SerializeField] ObjectRegistry objectRegistry;
         [SerializeField] GameObject setupBuilding;
 
@@ -50,6 +52,7 @@ namespace ReupVirtualTwin.dependencyInjectors
                 throw new System.Exception("Some dependencies are missing");
             }
             editMediator = GetComponent<EditMediator>();
+            editMediator.characterRotationManager = characterRotationManager;
             editMediator.editModeManager = editModeManager;
             editMediator.selectedObjectsManager = selectedObjectsManager;
             editMediator.transformObjectsManager = transformObjectsManager;

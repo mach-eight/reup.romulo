@@ -13,7 +13,7 @@ namespace ReupVirtualTwin.behaviours
         ISelectableObjectsHighlighter _selectableObjectsHighlighter;
         public ISelectableObjectsHighlighter selectableObjectsHighlighter
         {
-            get { return _selectableObjectsHighlighter; }
+            get { return  _selectableObjectsHighlighter; }
             set { _selectableObjectsHighlighter = value; }
         }
         override protected void Start()
@@ -24,7 +24,7 @@ namespace ReupVirtualTwin.behaviours
         }
         public override void HandleObject(GameObject obj)
         {
-            if (_selectedObjectsManager.wrapperDTO.wrappedObjects.Contains(obj))
+            if(_selectedObjectsManager.wrapperDTO.wrappedObjects.Contains(obj))
             {
                 _selectedObjectsManager.RemoveObjectFromSelection(obj);
                 return;

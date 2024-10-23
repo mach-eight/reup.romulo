@@ -42,21 +42,15 @@ namespace ReupVirtualTwinTests.behaviours
             touch = InputSystem.AddDevice<Touchscreen>();
             limitFromBuildingInMeters = sceneObjects.moveDhvCameraBehavior.limitDistanceFromBuildingInMeters;
             dollhouseViewWrapper = sceneObjects.dollhouseViewWrapper;
+            moveSpeedMetresPerSecond = sceneObjects.moveDhvCameraBehavior.GetKeyboardMoveCameraRelativeSpeed();
             sceneObjects.viewModeManager.ActivateDHV();
             yield return null;
-            GetCameraInfoAfterTurningOnDHV();
         }
-
         [UnityTearDown]
         public IEnumerator TearDown()
         {
             ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
             yield return null;
-        }
-
-        void GetCameraInfoAfterTurningOnDHV()
-        {
-            moveSpeedMetresPerSecond = sceneObjects.moveDhvCameraBehavior.GetKeyboardMoveCameraRelativeSpeed();
         }
 
         [UnityTest]
@@ -115,13 +109,12 @@ namespace ReupVirtualTwinTests.behaviours
         public IEnumerator ShouldNotMoveSidewaysWithMouseWhenNoDragging()
         {
             Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
-            yield return PointerUtils.MoveMouse(input, mouse, Vector2.zero, new Vector2(1, 1), pointerSteps);
+            yield return PointerUtils.MoveMouse(input, mouse, Vector2.zero, new Vector2(1,1), pointerSteps);
             Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
             yield return null;
         }
 
-        Vector3 GetHitPointWhenSelectingCubePrefabFromDHVCamera(Vector3 DHVCameraPosition)
-        {
+        Vector3 GetHitPointWhenSelectingCubePrefabFromDHVCamera(Vector3 DHVCameraPosition){
             // This is a simplified estimation assuming the cube is located at (0,0,0) and it has a scale of (1,1,1)
             Assert.AreEqual(Vector3.zero, cube.transform.position);
             Assert.AreEqual(Vector3.one, cube.transform.localScale);
@@ -136,13 +129,11 @@ namespace ReupVirtualTwinTests.behaviours
             return new Vector3(0, hitPointHeight, -cubeHalfSize);
         }
 
-        float GetTravelAngleFromViewPortCenterInRad(float relativeToViewPortPointerMovement, float fovDeg)
-        {
-            return Mathf.Atan(2 * relativeToViewPortPointerMovement * Mathf.Tan(fovDeg * Mathf.Deg2Rad / 2));
+        float GetTravelAngleFromViewPortCenterInRad(float relativeToViewPortPointerMovement, float fovDeg){
+            return Mathf.Atan(2*relativeToViewPortPointerMovement * Mathf.Tan(fovDeg * Mathf.Deg2Rad / 2));
         }
 
-        Vector3 GetExpectedCameraPositionAfterSidewayMovement(float relativeViewPortMovementFromCenter)
-        {
+        Vector3 GetExpectedCameraPositionAfterSidewayMovement(float relativeViewPortMovementFromCenter){
             float horizontalFov = CameraUtils.GetHorizontalFov(mainCamera);
             Vector3 cameraPosition = mainCamera.transform.position;
             Vector3 expectedCubeHitRayPosition = GetHitPointWhenSelectingCubePrefabFromDHVCamera(cameraPosition);
@@ -153,8 +144,7 @@ namespace ReupVirtualTwinTests.behaviours
             return expectedCameraPosition;
         }
 
-        Vector3 GetExpectedCameraPositionAfterForwardMovement(float relativeViewPortMovementFromCenter)
-        {
+        Vector3 GetExpectedCameraPositionAfterForwardMovement(float relativeViewPortMovementFromCenter){
             Vector3 cameraPosition = mainCamera.transform.position;
             Vector3 expectedCubeHitRayPosition = GetHitPointWhenSelectingCubePrefabFromDHVCamera(cameraPosition);
             float verticalFov = CameraUtils.GetVerticalFov(mainCamera);
@@ -231,7 +221,7 @@ namespace ReupVirtualTwinTests.behaviours
             float extraDistanceInMeters = 5;
             float movementDistanceBeyondBoundaries = limitFromBuildingInMeters + extraDistanceInMeters;
             float timeToMoveBeyondBoundaries = movementDistanceBeyondBoundaries / moveSpeedMetresPerSecond;
-
+            
             input.Press(keyboard.wKey);
             yield return new WaitForSeconds(timeToMoveBeyondBoundaries);
             input.Release(keyboard.wKey);

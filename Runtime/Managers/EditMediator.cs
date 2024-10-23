@@ -23,7 +23,11 @@ namespace ReupVirtualTwin.managers
 {
     public class EditMediator : MonoBehaviour, IMediator, IWebMessageReceiver
     {
-        private ICharacterRotationManager characterRotationManager;
+        private ICharacterRotationManager _characterRotationManager;
+        public ICharacterRotationManager characterRotationManager
+        {
+            set { _characterRotationManager = value; }
+        }
         private IEditModeManager _editModeManager;
         public IEditModeManager editModeManager { set => _editModeManager = value; }
         private ISelectedObjectsManager _selectedObjectsManager;
@@ -80,11 +84,9 @@ namespace ReupVirtualTwin.managers
         [Inject]
         public void Init(
             ICharacterPositionManager characterPositionManager,
-            ICharacterRotationManager characterRotationManager,
             [Inject(Id = "buildingLayerId")] int buildingLayerId,
             ITagsController tagsController)
         {
-            this.characterRotationManager = characterRotationManager;
             this.characterPositionManager = characterPositionManager;
             this.tagsController = tagsController;
             this.buildingLayerId = buildingLayerId;
@@ -95,10 +97,10 @@ namespace ReupVirtualTwin.managers
             switch (eventName)
             {
                 case ReupEvent.transformHandleStartInteraction:
-                    characterRotationManager.allowRotation = false;
+                    _characterRotationManager.allowRotation = false;
                     break;
                 case ReupEvent.transformHandleStopInteraction:
-                    characterRotationManager.allowRotation = true;
+                    _characterRotationManager.allowRotation = true;
                     break;
                 case ReupEvent.positionTransformModeActivated:
                     ProcessTransformModeActivation(TransformMode.PositionMode);

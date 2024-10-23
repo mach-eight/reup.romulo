@@ -3,13 +3,13 @@ using ReupVirtualTwin.inputs;
 using ReupVirtualTwin.managerInterfaces;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Zenject;
 
 namespace ReupVirtualTwin.behaviours
 {
     public class MoveDhvCamera : MonoBehaviour
     {
         [SerializeField] public Transform dollhouseViewWrapperTransform;
+        [SerializeField] public GameObject dragManagerGameObject;
         [SerializeField] public GameObject gesturesManagerGameObject;
         [SerializeField] public float limitDistanceFromBuildingInMeters = 35;
         [SerializeField] public float KeyboardMoveCameraSpeedMetersPerSecond = 40;
@@ -39,17 +39,12 @@ namespace ReupVirtualTwin.behaviours
             UpdateOriginalPositions();
         }
 
-        [Inject]
-        public void Init(
-            IDragManager dragManager,
-            InputProvider inputProvider,
-            IGesturesManager gesturesManager)
+        void Awake()
         {
-            _inputProvider = inputProvider;
-            this.dragManager = dragManager;
-            this.gesturesManager = gesturesManager;
+            _inputProvider = new InputProvider();
+            dragManager = dragManagerGameObject.GetComponent<IDragManager>();
+            gesturesManager = gesturesManagerGameObject.GetComponent<IGesturesManager>();
         }
-
         void Start()
         {
             building = ObjectFinder.FindSetupBuilding().GetComponent<SetupBuilding>().building;
@@ -128,8 +123,6 @@ namespace ReupVirtualTwin.behaviours
 
         public float GetKeyboardMoveCameraRelativeSpeed()
         {
-            Debug.Log($"121: KeyboardMoveCameraSpeedMetersPerSecond >>>\n{KeyboardMoveCameraSpeedMetersPerSecond}");
-            Debug.Log($"122: GetFieldOfViewMultiplier() >>>\n{GetFieldOfViewMultiplier()}");
             return KeyboardMoveCameraSpeedMetersPerSecond * GetFieldOfViewMultiplier();
         }
 

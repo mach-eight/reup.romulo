@@ -4,38 +4,35 @@ using UnityEngine.InputSystem;
 using ReupVirtualTwin.inputs;
 using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwin.managerInterfaces;
-using Zenject;
 
 namespace ReupVirtualTwin.behaviours
 {
     [RequireComponent(typeof(IRayProvider))]
     public abstract class Select : MonoBehaviour
     {
-        protected InputProvider inputProvider;
+        protected InputProvider _inputProvider;
         protected IRayProvider _rayProvider;
-        protected IDragManager dragManager;
+        protected IDragManager _dragManager;
 
         protected virtual void Awake()
         {
+            _inputProvider = new InputProvider();
             _rayProvider = GetComponent<IRayProvider>();
         }
-
-        [Inject]
-        public void Init(IDragManager dragManager, InputProvider inputProvider)
+        protected virtual void Start()
         {
-            this.dragManager = dragManager;
-            this.inputProvider = inputProvider;
+            _dragManager = ObjectFinder.FindDragManager().GetComponent<IDragManager>();
         }
 
         private void OnEnable()
         {
-            inputProvider.selectPerformed += OnSelect;
+            _inputProvider.selectPerformed += OnSelect;
         }
 
 
         private void OnDisable()
         {
-            inputProvider.selectPerformed -= OnSelect;
+            _inputProvider.selectPerformed -= OnSelect;
         }
 
 

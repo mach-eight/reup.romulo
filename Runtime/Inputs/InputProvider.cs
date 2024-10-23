@@ -1,13 +1,12 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Zenject;
 
 namespace ReupVirtualTwin.inputs
 {
-    public class InputProvider : IInitializable, IDisposable
+    public class InputProvider
     {
-        private static AppInputActions _input = new();
+        private static AppInputActions _input = new ();
 
         public event Action<InputAction.CallbackContext> selectStarted
         {
@@ -120,14 +119,14 @@ namespace ReupVirtualTwin.inputs
                 _input.MultiTouch.Touch2Hold.canceled -= value;
             }
         }
-        public void Initialize()
+        public void Enable()
         {
             _input.Player.Enable();
             _input.DollhouseView.Enable();
             _input.MultiTouch.Enable();
         }
 
-        public void Dispose()
+        public void Disable()
         {
             _input.Player.Disable();
             _input.DollhouseView.Disable();
@@ -144,7 +143,7 @@ namespace ReupVirtualTwin.inputs
         }
 
         public Vector2 MovementInput()
-        {
+        { 
             return _input.Player.Movement.ReadValue<Vector2>();
         }
 
@@ -166,11 +165,11 @@ namespace ReupVirtualTwin.inputs
         }
         public Vector2 Touch1Position()
         {
-            return _input.MultiTouch.Touch1Position.ReadValue<Vector2>();
+            return _input.MultiTouch.Touch1Position.ReadValue<Vector2>(); 
         }
         public Vector2 Touch2Position()
         {
-            return _input.MultiTouch.Touch2Position.ReadValue<Vector2>();
+            return _input.MultiTouch.Touch2Position.ReadValue<Vector2>(); 
         }
     }
 }

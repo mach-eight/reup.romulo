@@ -1,23 +1,23 @@
 ﻿using ReupVirtualTwin.inputs;
 using UnityEngine;
 using ReupVirtualTwin.helperInterfaces;
-using Zenject;
 
 namespace ReupVirtualTwin.helpers
 {
     public class MainCameraToPointerRayProvider : MonoBehaviour, IRayProvider
     {
-        private InputProvider inputProvider;
+        private InputProvider _inputProvider;
 
-        [Inject]
-        public void Init(InputProvider inputProvider)
+        private void Start()
         {
-            this.inputProvider = inputProvider;
+            // todo: is it really necessary to create an instance?
+            // can you make all the input methods statics instead?
+            _inputProvider = new InputProvider();
         }
 
         public Ray GetRay()
         {
-            return Camera.main.ScreenPointToRay(inputProvider.PointerInput());
+            return Camera.main.ScreenPointToRay(_inputProvider.PointerInput());
         }
     }
 }
