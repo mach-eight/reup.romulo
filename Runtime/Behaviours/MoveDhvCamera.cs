@@ -3,13 +3,13 @@ using ReupVirtualTwin.inputs;
 using ReupVirtualTwin.managerInterfaces;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Zenject;
 
 namespace ReupVirtualTwin.behaviours
 {
     public class MoveDhvCamera : MonoBehaviour
     {
         [SerializeField] public Transform dollhouseViewWrapperTransform;
-        [SerializeField] public GameObject dragManagerGameObject;
         [SerializeField] public GameObject gesturesManagerGameObject;
         [SerializeField] public float limitDistanceFromBuildingInMeters = 35;
         [SerializeField] public float KeyboardMoveCameraSpeedMetersPerSecond = 40;
@@ -36,18 +36,20 @@ namespace ReupVirtualTwin.behaviours
 
         void OnHoldStarted(InputAction.CallbackContext ctx)
         {
-            Ray hitRay = Camera.main.ScreenPointToRay(_inputProvider.PointerInput());
-            hitPoint = RayUtils.GetHitPoint(hitRay);
-            originalCameraPosition = hitRay.origin;
-            originalWrapperPosition = dollhouseViewWrapperTransform.position;
+            UpdateOriginalPositions();
         }
 
-        void Awake()
+        [Inject]
+        public void Init(
+            IDragManager dragManager,
+            InputProvider inputProvider,
+            IGesturesManager gesturesManager)
         {
-            _inputProvider = new InputProvider();
-            dragManager = dragManagerGameObject.GetComponent<IDragManager>();
-            gesturesManager = gesturesManagerGameObject.GetComponent<IGesturesManager>();
+            _inputProvider = inputProvider;
+            this.dragManager = dragManager;
+            this.gesturesManager = gesturesManager;
         }
+
         void Start()
         {
             building = ObjectFinder.FindSetupBuilding().GetComponent<SetupBuilding>().building;
@@ -81,7 +83,12 @@ namespace ReupVirtualTwin.behaviours
 
         void PointerUpdatePosition()
         {
-            if (!dragManager.dragging || gesturesManager.gestureInProgress)
+            if (gesturesManager.gestureInProgress)
+            {
+                UpdateOriginalPositions();
+                return;
+            }
+            if (!dragManager.dragging)
             {
                 return;
             }
@@ -90,6 +97,14 @@ namespace ReupVirtualTwin.behaviours
             Vector3 newCameraPosition = RayUtils.ProjectRayToHeight(invertedRay, originalCameraPosition.y);
             Vector3 newWrapperPosition = originalWrapperPosition + (newCameraPosition - originalCameraPosition);
             PerformMovement(newWrapperPosition);
+        }
+
+        private void UpdateOriginalPositions()
+        {
+            Ray hitRay = Camera.main.ScreenPointToRay(_inputProvider.PointerInput());
+            hitPoint = RayUtils.GetHitPoint(hitRay);
+            originalCameraPosition = hitRay.origin;
+            originalWrapperPosition = dollhouseViewWrapperTransform.position;
         }
 
         private void PerformMovement(Vector3 nextPosition)
@@ -113,6 +128,8 @@ namespace ReupVirtualTwin.behaviours
 
         public float GetKeyboardMoveCameraRelativeSpeed()
         {
+            Debug.Log($"121: KeyboardMoveCameraSpeedMetersPerSecond >>>\n{KeyboardMoveCameraSpeedMetersPerSecond}");
+            Debug.Log($"122: GetFieldOfViewMultiplier() >>>\n{GetFieldOfViewMultiplier()}");
             return KeyboardMoveCameraSpeedMetersPerSecond * GetFieldOfViewMultiplier();
         }
 
