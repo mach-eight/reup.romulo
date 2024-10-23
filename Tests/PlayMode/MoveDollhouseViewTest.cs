@@ -257,5 +257,23 @@ namespace ReupVirtualTwinTests.behaviours
             Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
             yield return null;
         }
+
+        [UnityTest]
+        public IEnumerator ShouldNotMoveWhenDraggingAndThenZooming()
+        {
+            Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
+            input.BeginTouch(0, new Vector2(200, 200), true, touch);
+            input.BeginTouch(1, new Vector2(400, 400), true, touch);
+            yield return null;
+            input.MoveTouch(0, new Vector2(100, 100));
+            yield return null;
+            input.EndTouch(1, new Vector2(400, 400), Vector2.zero, true, touch);
+            yield return null;
+            Vector3 finalPosition = dollhouseViewWrapper.position;
+            Assert.AreEqual(0, finalPosition.x, errorToleranceInMeters);
+            Assert.AreEqual(0, finalPosition.y, errorToleranceInMeters);
+            Assert.AreEqual(0, finalPosition.z, errorToleranceInMeters);
+            yield return null;
+        }
     }
 }
