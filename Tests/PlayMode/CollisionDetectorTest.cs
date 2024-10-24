@@ -7,6 +7,7 @@ using System.Collections;
 using ReupVirtualTwin.managers;
 using ReupVirtualTwinTests.utils;
 using ReupVirtualTwin.managerInterfaces;
+using UnityEngine.InputSystem;
 
 public class CollisionDetectorTest : MonoBehaviour
 {
@@ -17,6 +18,8 @@ public class CollisionDetectorTest : MonoBehaviour
     GameObject cubePrefab;
     GameObject widePlatform;
     GameObject wall;
+    Keyboard keyboard;
+    InputTestFixture input;
 
     [SetUp]
     public void SetUp()
@@ -27,6 +30,8 @@ public class CollisionDetectorTest : MonoBehaviour
         posManager = sceneObjects.characterPositionManager;
         wall = (GameObject)PrefabUtility.InstantiatePrefab(cubePrefab);
         widePlatform = (GameObject)PrefabUtility.InstantiatePrefab(cubePrefab);
+        keyboard = InputSystem.AddDevice<Keyboard>();
+        input = sceneObjects.input;
         SetPlatform();
         SetWallAt2MetersInZAxis();
     }
@@ -52,6 +57,16 @@ public class CollisionDetectorTest : MonoBehaviour
 
         Assert.LessOrEqual(character.transform.position.z, 2);
     }
+
+    [UnityTest]
+    public IEnumerator CharacterShouldNotCrossWallWhileMovingWithKeyboard()
+    {
+        input.Press(keyboard.wKey);
+        yield return new WaitForSeconds(1);
+        input.Release(keyboard.wKey);
+        Assert.LessOrEqual(character.transform.position.z, 2);
+    }
+
     private void SetPlatform()
     {
         widePlatform.transform.localScale = new Vector3(10, 0.1f, 10);

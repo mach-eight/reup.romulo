@@ -21,25 +21,18 @@ namespace ReupVirtualTwin.managers
         [Inject]
         public void Init(InputProvider inputProvider)
         {
-            Debug.Log("in drag manager init");
             this.inputProvider = inputProvider;
-            Debug.Log($"25: this.inputProvider >>>\n{this.inputProvider}");
         }
 
 
         public void Initialize()
         {
-            Debug.Log("in drag manager initialize");
-            // inputProvider = new InputProvider();
-            // Debug.Log("in drag manager");
-            // Debug.Log($"24: _inputProvider >>>\n{inputProvider}");
             inputProvider.holdStarted += OnHold;
             inputProvider.holdCanceled += OnHoldCanceled;
         }
 
         public void Dispose()
         {
-            Debug.Log("disposing drag manager");
             inputProvider.holdStarted -= OnHold;
             inputProvider.holdCanceled -= OnHoldCanceled;
         }
