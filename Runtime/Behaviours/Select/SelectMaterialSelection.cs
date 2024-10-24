@@ -20,7 +20,7 @@ namespace ReupVirtualTwin.behaviours
         }
         public override void MissObject()
         {
-            if (!_dragManager.dragging && !_dragManager.prevDragging)
+            if (!dragManager.dragging && !dragManager.prevDragging)
             {
                 _materialContainerHandler.HideContainer();
             }

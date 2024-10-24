@@ -6,15 +6,6 @@
             "id": "e802d882-c0c7-4181-8e8a-98ee0a1d31b6",
             "actions": [
                 {
-                    "name": "RotateView",
-                    "type": "Value",
-                    "id": "bcff9012-19bb-47e0-b5f0-c22d224031c2",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
                     "name": "RotateViewKeyborad",
                     "type": "Button",
                     "id": "9d5202b1-f2ba-4ed6-b80c-e60943ebd3fe",
@@ -70,39 +61,6 @@
                 }
             ],
             "bindings": [
-                {
-                    "name": "",
-                    "id": "9efac98a-919e-40e3-bdb0-d34ca51c61b2",
-                    "path": "<Touchscreen>/primaryTouch/delta",
-                    "interactions": "",
-                    "processors": "ScaleVector2(x=0.2,y=0.2)",
-                    "groups": "Touchscreen",
-                    "action": "RotateView",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "93a9c1e8-d5d5-4fc0-8c68-89843672807f",
-                    "path": "<Pen>/delta",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "RotateView",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "79812bdb-eca7-4e2d-b977-9cd0f507ddaf",
-                    "path": "<Mouse>/delta",
-                    "interactions": "",
-                    "processors": "InvertVector2",
-                    "groups": "KeyboardAndMouse",
-                    "action": "RotateView",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
                 {
                     "name": "",
                     "id": "7209ec38-8250-437e-998a-dbd77063f3ff",

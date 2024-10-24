@@ -4,9 +4,9 @@ using UnityEngine.TestTools;
 using UnityEditor;
 using System.Collections;
 
-using ReupVirtualTwin.managers;
 using ReupVirtualTwinTests.utils;
 using ReupVirtualTwin.managerInterfaces;
+using UnityEngine.InputSystem;
 
 public class CollisionDetectorTest : MonoBehaviour
 {
@@ -17,9 +17,12 @@ public class CollisionDetectorTest : MonoBehaviour
     GameObject cubePrefab;
     GameObject widePlatform;
     GameObject wall;
+    Keyboard keyboard;
+    InputTestFixture input;
+    float wallDistance = 0.50f;
 
-    [SetUp]
-    public void SetUp()
+    [UnitySetUp]
+    public IEnumerator SetUp()
     {
         cubePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Tests/TestAssets/Cube.prefab");
         sceneObjects = ReupSceneInstantiator.InstantiateScene();
@@ -27,8 +30,12 @@ public class CollisionDetectorTest : MonoBehaviour
         posManager = sceneObjects.characterPositionManager;
         wall = (GameObject)PrefabUtility.InstantiatePrefab(cubePrefab);
         widePlatform = (GameObject)PrefabUtility.InstantiatePrefab(cubePrefab);
+        keyboard = InputSystem.AddDevice<Keyboard>();
+        input = sceneObjects.input;
         SetPlatform();
-        SetWallAt2MetersInZAxis();
+        SetWallAtDefinedDistanceInZAxis();
+        character.transform.position = new Vector3(0, 1.5f, 0);
+        yield return null;
     }
 
     [UnityTearDown]
@@ -43,23 +50,30 @@ public class CollisionDetectorTest : MonoBehaviour
     [UnityTest]
     public IEnumerator CharacterShouldNotCrossWall()
     {
-        character.transform.position = new Vector3(0, 1.5f, 0);
-        yield return new WaitForSeconds(0.2f);
-
         posManager.WalkToTarget(new Vector3(0, 0, 5));
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.5f);
 
-        Assert.LessOrEqual(character.transform.position.z, 2);
+        Assert.LessOrEqual(character.transform.position.z, wallDistance);
     }
+
+    [UnityTest]
+    public IEnumerator CharacterShouldNotCrossWallWhileMovingWithKeyboard()
+    {
+        input.Press(keyboard.wKey);
+        yield return new WaitForSeconds(0.5f);
+        input.Release(keyboard.wKey);
+        Assert.LessOrEqual(character.transform.position.z, wallDistance);
+    }
+
     private void SetPlatform()
     {
         widePlatform.transform.localScale = new Vector3(10, 0.1f, 10);
         widePlatform.transform.position = new Vector3(0, -0.05f, 0);
     }
-    private void SetWallAt2MetersInZAxis()
+    private void SetWallAtDefinedDistanceInZAxis()
     {
         wall.transform.localScale = new Vector3(10, 10, 0.1f);
-        wall.transform.position = new Vector3(0, 0, 2.05f);
+        wall.transform.position = new Vector3(0, 0, wallDistance + 0.05f);
     }
 }
