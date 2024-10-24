@@ -7,7 +7,12 @@ namespace ReupVirtualTwin.inputs
 {
     public class InputProvider : IInitializable, IDisposable
     {
-        private static AppInputActions _input = new();
+        AppInputActions _input;
+
+        public InputProvider()
+        {
+            _input = new AppInputActions();
+        }
 
         public event Action<InputAction.CallbackContext> selectStarted
         {

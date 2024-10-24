@@ -14,12 +14,13 @@ namespace ReupVirtualTwin.dependencyInjectors
         public DiContainer container;
         public override void InstallBindings()
         {
+            Debug.Log("install bindings");
             container = Container;
+            Container.BindInterfacesAndSelfTo<InputProvider>().AsSingle();
             Container.Bind<GameObject>().WithId("character").FromInstance(character);
             Container.Bind<GameObject>().WithId("innerCharacter").FromInstance(innerCharacter);
             Container.BindInterfacesAndSelfTo<CharacterPositionManager>().AsSingle();
             Container.BindInterfacesAndSelfTo<CharacterRotationManager>().AsSingle();
-            Container.BindInterfacesAndSelfTo<InputProvider>().AsSingle();
             Container.BindInterfacesAndSelfTo<DragManager>().AsSingle();
             Container.BindInterfacesAndSelfTo<GesturesManager>().AsSingle();
             Container.Bind<ITagsController>().To<TagsController>().AsSingle();
