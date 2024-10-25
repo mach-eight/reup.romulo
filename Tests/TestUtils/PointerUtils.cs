@@ -47,6 +47,26 @@ namespace ReupVirtualTwinTests.utils
             );
         }
 
+        public static IEnumerator DragMouseRightButton(
+            InputTestFixture input,
+            Mouse mouse,
+            Vector2 startMousePoint,
+            Vector2 endMousePoint,
+            int steps
+        ) {
+            return MovePointer(
+                startMousePoint,
+                endMousePoint,
+                steps,
+                (Vector2 startPosition) => { input.Move(mouse.position, startPosition); input.Press(mouse.rightButton); },
+                (Vector2 currentPosition, Vector2 delta) => {
+                    input.Move(mouse.position, currentPosition, delta);
+                    input.Set(mouse.delta, delta);
+                },
+                (Vector2 endPosition) => input.Release(mouse.leftButton)
+            );
+        }
+
         public static IEnumerator MoveFinger(
             InputTestFixture input,
             Touchscreen touch,

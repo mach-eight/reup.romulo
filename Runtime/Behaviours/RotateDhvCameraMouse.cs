@@ -32,7 +32,7 @@ namespace ReupVirtualTwin.behaviours
         {
             Vector2 mouseDelta = _inputProvider.MouseRotateDhvCamera();
 
-            float horizontalRotation = (mouseDelta.x / Screen.width) * 360f;
+            float horizontalRotation = (mouseDelta.x / Screen.width) * 180f;
             float verticalRotation = (mouseDelta.y / Screen.height) * 180f;
 
             float currentVerticalAngle = dollhouseViewWrapper.localEulerAngles.x;
