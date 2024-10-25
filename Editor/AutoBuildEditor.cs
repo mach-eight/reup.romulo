@@ -2,12 +2,13 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 using ReupVirtualTwin.editor;
-using ReupVirtualTwin.behaviours;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.controllers;
 using System.Collections.Generic;
 using System.Linq;
+using Zenject;
+using ReupVirtualTwin.dependencyInjectors;
 
 public class AutoBuildEditor : MonoBehaviour
 {
@@ -28,9 +29,9 @@ public class AutoBuildEditor : MonoBehaviour
         if (Camera.allCamerasCount > 1)
         {
             EditorUtility.DisplayDialog(
-                "Error", 
+                "Error",
                 "More than one camera found in the scene\n\n" +
-                "Please erase any additional cameras outside the Reup Prefab", 
+                "Please erase any additional cameras outside the Reup Prefab",
                 "OK"
             );
             return;
@@ -79,7 +80,7 @@ public class AutoBuildEditor : MonoBehaviour
         {
             EditorUtility.DisplayDialog("Error", "Build failed", "OK");
         }
-        
+
     }
 
     private static void AddShaders()
@@ -111,14 +112,14 @@ public class AutoBuildEditor : MonoBehaviour
 
     private static GameObject GetBuilding()
     {
-        GameObject setupBuilding = ObjectFinder.FindSetupBuilding();
-        if (setupBuilding == null)
+        GameObject reup = ObjectFinder.FindReupObject();
+        if (reup == null)
         {
-            Debug.LogError("No setup building game object found");
+            Debug.LogError("No setup reup object found");
             return null;
         }
-        SetupBuilding setupBuildingComponent = setupBuilding.GetComponent<SetupBuilding>();
-        GameObject building = setupBuildingComponent.building;
+        ExternalInstaller externalInstaller = reup.GetComponent<ExternalInstaller>();
+        GameObject building = externalInstaller.building;
         if (building == null)
         {
             Debug.LogError("No building game object found");
@@ -183,7 +184,8 @@ public class AutoBuildEditor : MonoBehaviour
         string message = $"{totalDisabledObjectsCount} disabled object(s) found in the scene:\n\n";
         message += $"{disableObjectsNames}\n";
 
-        if (totalDisabledObjectsCount > 10) {
+        if (totalDisabledObjectsCount > 10)
+        {
             message += $"... and {totalDisabledObjectsCount - 10} more.\n";
         }
         message += "\nThis may affect the model's behavior.\n\n";

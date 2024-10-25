@@ -253,7 +253,6 @@ MonoBehaviour:
   spacesRecord: {fileID: 6371165624866328778}
   texturesManager: {fileID: 7203003387684823839}
   objectRegistry: {fileID: 2043244847565700485}
-  setupBuilding: {fileID: 7508923528206428603}
 --- !u!114 &6350977991642200349
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1143,7 +1142,7 @@ GameObject:
   - component: {fileID: 2780762634315471753}
   m_Layer: 0
   m_Name: Reup
-  m_TagString: Untagged
+  m_TagString: ReupObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

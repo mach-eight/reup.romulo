@@ -15,7 +15,7 @@ namespace ReupVirtualTwinTests.utils
             setupBuildingGameObject.AddComponent<FakeSetupBuilding>();
             return setupBuildingGameObject;
         }
-        public class FakeSetupBuilding : MonoBehaviour, IOnBuildingSetup, IBuildingGetterSetter
+        public class FakeSetupBuilding : MonoBehaviour, IOnBuildingSetup
         {
             GameObject _building;
             public GameObject building { get => _building; set => _building = value; }
