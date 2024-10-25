@@ -73,6 +73,15 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
+                    ""name"": ""HoldRightClick"",
+                    ""type"": ""Button"",
+                    ""id"": ""61daf675-28cd-442b-bdbd-7a7e904ac599"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
                     ""name"": ""ChangeHeight"",
                     ""type"": ""Value"",
                     ""id"": ""2d42ce9a-959b-4302-9393-88cf408eb893"",
@@ -313,6 +322,17 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""ChangeHeight"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""646b4329-111b-4262-9380-a747878e7c69"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": ""Hold"",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""HoldRightClick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -333,6 +353,24 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
                     ""name"": ""ScrollWheelZoom"",
                     ""type"": ""Value"",
                     ""id"": ""af634b69-5c62-4466-9137-f1d5c9c87534"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""KeyboardRotateCamera"",
+                    ""type"": ""Button"",
+                    ""id"": ""0ba760c7-b398-4a12-b6c6-bb750e6c0e32"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MouseRotateCamera"",
+                    ""type"": ""Value"",
+                    ""id"": ""a8784a6e-3cbe-4687-9353-67195f25ccb8"",
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -403,6 +441,72 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""KeyboardAndMouse"",
                     ""action"": ""ScrollWheelZoom"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""arrows"",
+                    ""id"": ""34f4e53c-2544-4aa5-afba-fc600d1806d7"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""KeyboardRotateCamera"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""d43b6166-1298-473b-8b5a-d077dc3d18a6"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""KeyboardRotateCamera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""95d39c00-9f70-48eb-9435-6bf8643e6c6b"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""KeyboardRotateCamera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""11c02a70-7e89-4b45-be94-f811dabe759a"",
+                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""KeyboardRotateCamera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""c31dd477-af7f-415c-a6dd-6b9b936ae691"",
+                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""KeyboardRotateCamera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""69af43d7-1529-4d83-8a61-3ff5cdfab82d"",
+                    ""path"": ""<Mouse>/delta"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardAndMouse"",
+                    ""action"": ""MouseRotateCamera"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -534,11 +638,14 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
         m_Player_Select = m_Player.FindAction("Select", throwIfNotFound: true);
         m_Player_Pointer = m_Player.FindAction("Pointer", throwIfNotFound: true);
         m_Player_Hold = m_Player.FindAction("Hold", throwIfNotFound: true);
+        m_Player_HoldRightClick = m_Player.FindAction("HoldRightClick", throwIfNotFound: true);
         m_Player_ChangeHeight = m_Player.FindAction("ChangeHeight", throwIfNotFound: true);
         // DollhouseView
         m_DollhouseView = asset.FindActionMap("DollhouseView", throwIfNotFound: true);
         m_DollhouseView_KeyboardMoveCamera = m_DollhouseView.FindAction("KeyboardMoveCamera", throwIfNotFound: true);
         m_DollhouseView_ScrollWheelZoom = m_DollhouseView.FindAction("ScrollWheelZoom", throwIfNotFound: true);
+        m_DollhouseView_KeyboardRotateCamera = m_DollhouseView.FindAction("KeyboardRotateCamera", throwIfNotFound: true);
+        m_DollhouseView_MouseRotateCamera = m_DollhouseView.FindAction("MouseRotateCamera", throwIfNotFound: true);
         // MultiTouch
         m_MultiTouch = asset.FindActionMap("MultiTouch", throwIfNotFound: true);
         m_MultiTouch_Touch1Hold = m_MultiTouch.FindAction("Touch1Hold", throwIfNotFound: true);
@@ -611,6 +718,7 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Select;
     private readonly InputAction m_Player_Pointer;
     private readonly InputAction m_Player_Hold;
+    private readonly InputAction m_Player_HoldRightClick;
     private readonly InputAction m_Player_ChangeHeight;
     public struct PlayerActions
     {
@@ -621,6 +729,7 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
         public InputAction @Select => m_Wrapper.m_Player_Select;
         public InputAction @Pointer => m_Wrapper.m_Player_Pointer;
         public InputAction @Hold => m_Wrapper.m_Player_Hold;
+        public InputAction @HoldRightClick => m_Wrapper.m_Player_HoldRightClick;
         public InputAction @ChangeHeight => m_Wrapper.m_Player_ChangeHeight;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
@@ -646,6 +755,9 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
             @Hold.started += instance.OnHold;
             @Hold.performed += instance.OnHold;
             @Hold.canceled += instance.OnHold;
+            @HoldRightClick.started += instance.OnHoldRightClick;
+            @HoldRightClick.performed += instance.OnHoldRightClick;
+            @HoldRightClick.canceled += instance.OnHoldRightClick;
             @ChangeHeight.started += instance.OnChangeHeight;
             @ChangeHeight.performed += instance.OnChangeHeight;
             @ChangeHeight.canceled += instance.OnChangeHeight;
@@ -668,6 +780,9 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
             @Hold.started -= instance.OnHold;
             @Hold.performed -= instance.OnHold;
             @Hold.canceled -= instance.OnHold;
+            @HoldRightClick.started -= instance.OnHoldRightClick;
+            @HoldRightClick.performed -= instance.OnHoldRightClick;
+            @HoldRightClick.canceled -= instance.OnHoldRightClick;
             @ChangeHeight.started -= instance.OnChangeHeight;
             @ChangeHeight.performed -= instance.OnChangeHeight;
             @ChangeHeight.canceled -= instance.OnChangeHeight;
@@ -694,12 +809,16 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
     private List<IDollhouseViewActions> m_DollhouseViewActionsCallbackInterfaces = new List<IDollhouseViewActions>();
     private readonly InputAction m_DollhouseView_KeyboardMoveCamera;
     private readonly InputAction m_DollhouseView_ScrollWheelZoom;
+    private readonly InputAction m_DollhouseView_KeyboardRotateCamera;
+    private readonly InputAction m_DollhouseView_MouseRotateCamera;
     public struct DollhouseViewActions
     {
         private @AppInputActions m_Wrapper;
         public DollhouseViewActions(@AppInputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @KeyboardMoveCamera => m_Wrapper.m_DollhouseView_KeyboardMoveCamera;
         public InputAction @ScrollWheelZoom => m_Wrapper.m_DollhouseView_ScrollWheelZoom;
+        public InputAction @KeyboardRotateCamera => m_Wrapper.m_DollhouseView_KeyboardRotateCamera;
+        public InputAction @MouseRotateCamera => m_Wrapper.m_DollhouseView_MouseRotateCamera;
         public InputActionMap Get() { return m_Wrapper.m_DollhouseView; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -715,6 +834,12 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
             @ScrollWheelZoom.started += instance.OnScrollWheelZoom;
             @ScrollWheelZoom.performed += instance.OnScrollWheelZoom;
             @ScrollWheelZoom.canceled += instance.OnScrollWheelZoom;
+            @KeyboardRotateCamera.started += instance.OnKeyboardRotateCamera;
+            @KeyboardRotateCamera.performed += instance.OnKeyboardRotateCamera;
+            @KeyboardRotateCamera.canceled += instance.OnKeyboardRotateCamera;
+            @MouseRotateCamera.started += instance.OnMouseRotateCamera;
+            @MouseRotateCamera.performed += instance.OnMouseRotateCamera;
+            @MouseRotateCamera.canceled += instance.OnMouseRotateCamera;
         }
 
         private void UnregisterCallbacks(IDollhouseViewActions instance)
@@ -725,6 +850,12 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
             @ScrollWheelZoom.started -= instance.OnScrollWheelZoom;
             @ScrollWheelZoom.performed -= instance.OnScrollWheelZoom;
             @ScrollWheelZoom.canceled -= instance.OnScrollWheelZoom;
+            @KeyboardRotateCamera.started -= instance.OnKeyboardRotateCamera;
+            @KeyboardRotateCamera.performed -= instance.OnKeyboardRotateCamera;
+            @KeyboardRotateCamera.canceled -= instance.OnKeyboardRotateCamera;
+            @MouseRotateCamera.started -= instance.OnMouseRotateCamera;
+            @MouseRotateCamera.performed -= instance.OnMouseRotateCamera;
+            @MouseRotateCamera.canceled -= instance.OnMouseRotateCamera;
         }
 
         public void RemoveCallbacks(IDollhouseViewActions instance)
@@ -837,12 +968,15 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
         void OnSelect(InputAction.CallbackContext context);
         void OnPointer(InputAction.CallbackContext context);
         void OnHold(InputAction.CallbackContext context);
+        void OnHoldRightClick(InputAction.CallbackContext context);
         void OnChangeHeight(InputAction.CallbackContext context);
     }
     public interface IDollhouseViewActions
     {
         void OnKeyboardMoveCamera(InputAction.CallbackContext context);
         void OnScrollWheelZoom(InputAction.CallbackContext context);
+        void OnKeyboardRotateCamera(InputAction.CallbackContext context);
+        void OnMouseRotateCamera(InputAction.CallbackContext context);
     }
     public interface IMultiTouchActions
     {
