@@ -9,8 +9,6 @@ namespace ReupVirtualTwin.behaviours
 {
     public class PointerRotation : MonoBehaviour
     {
-        public float sensitivity = 0.4f;
-
         [SerializeField]
         ICharacterRotationManager characterRotationManager;
         IDragManager dragManager;

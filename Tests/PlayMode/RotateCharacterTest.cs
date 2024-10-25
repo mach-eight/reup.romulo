@@ -17,7 +17,6 @@ namespace ReupVirtualTwinTests.behaviours
         Keyboard keyboard;
         Mouse mouse;
         Touchscreen touch;
-        float errorThreshold = 1e-4f;
         float errorAngleThreshold = 1.0f;
         Camera mainCamera;
         int steps = 10;
@@ -46,11 +45,16 @@ namespace ReupVirtualTwinTests.behaviours
             yield return null;
         }
 
+        void AssertExpectedAngle(float expectedAngle, float actualAngle)
+        {
+            Assert.LessOrEqual(Mathf.Abs(MathUtils.NormalizeAngle(expectedAngle) - MathUtils.NormalizeAngle(actualAngle)), errorAngleThreshold);
+        }
+
         [UnityTest]
         public IEnumerator ShouldRotateHorizontallyInTouchscreen()
         {
-            AssertUtils.AssertVectorIsZero(character.eulerAngles, errorThreshold);
-            AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, errorThreshold);
+            AssertUtils.AssertVectorIsZero(character.eulerAngles, errorAngleThreshold);
+            AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, errorAngleThreshold);
             float horizontalFov = CameraUtils.GetHorizontalFov(mainCamera);
             float relativeViewPortMovementFromCenter = 0.2f;
             Vector2 initialPointerRelativePosition = new Vector2(0.5f, 0.5f);
@@ -59,18 +63,18 @@ namespace ReupVirtualTwinTests.behaviours
             yield return null;
             float expectedTravelAngleDeg = -CameraUtils.GetTravelAngleFromViewPortCenterInRad(relativeViewPortMovementFromCenter, horizontalFov) * Mathf.Rad2Deg;
             float traveledAngle = MathUtils.NormalizeAngle(character.eulerAngles.y);
-            Assert.AreEqual(expectedTravelAngleDeg, traveledAngle, errorAngleThreshold);
-            Assert.LessOrEqual(character.eulerAngles.x, errorThreshold);
-            Assert.LessOrEqual(character.eulerAngles.z, errorThreshold);
-            AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, errorThreshold);
+            AssertExpectedAngle(expectedTravelAngleDeg, traveledAngle);
+            AssertExpectedAngle(0, character.eulerAngles.x);
+            AssertExpectedAngle(0, character.eulerAngles.z);
+            AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, errorAngleThreshold);
             yield return null;
         }
 
         [UnityTest]
         public IEnumerator ShouldRotateHorizontallyWithMouse()
         {
-            AssertUtils.AssertVectorIsZero(character.eulerAngles, errorThreshold);
-            AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, errorThreshold);
+            AssertUtils.AssertVectorIsZero(character.eulerAngles, errorAngleThreshold);
+            AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, errorAngleThreshold);
             float horizontalFov = CameraUtils.GetHorizontalFov(mainCamera);
             float relativeViewPortMovementFromCenter = 0.4f;
             Vector2 initialPointerRelativePosition = new Vector2(0.5f, 0.5f);
@@ -79,18 +83,18 @@ namespace ReupVirtualTwinTests.behaviours
             yield return null;
             float expectedTravelAngleDeg = -CameraUtils.GetTravelAngleFromViewPortCenterInRad(relativeViewPortMovementFromCenter, horizontalFov) * Mathf.Rad2Deg;
             float traveledAngle = MathUtils.NormalizeAngle(character.eulerAngles.y);
-            Assert.AreEqual(expectedTravelAngleDeg, traveledAngle, errorAngleThreshold);
-            Assert.LessOrEqual(character.eulerAngles.x, errorThreshold);
-            Assert.LessOrEqual(character.eulerAngles.z, errorThreshold);
-            AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, errorThreshold);
+            AssertExpectedAngle(expectedTravelAngleDeg, traveledAngle);
+            AssertExpectedAngle(0, character.eulerAngles.x);
+            AssertExpectedAngle(0, character.eulerAngles.z);
+            AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, errorAngleThreshold);
             yield return null;
         }
 
         [UnityTest]
         public IEnumerator ShouldRotateVerticallyWithMouse()
         {
-            AssertUtils.AssertVectorIsZero(character.eulerAngles, errorThreshold);
-            AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, errorThreshold);
+            AssertUtils.AssertVectorIsZero(character.eulerAngles, errorAngleThreshold);
+            AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, errorAngleThreshold);
             float verticalFov = CameraUtils.GetVerticalFov(mainCamera);
             float relativeViewPortMovementFromCenter = 0.4f;
             Vector2 initialPointerRelativePosition = new Vector2(0.5f, 0.5f);
@@ -99,18 +103,18 @@ namespace ReupVirtualTwinTests.behaviours
             yield return null;
             float expectedTravelAngleDeg = CameraUtils.GetTravelAngleFromViewPortCenterInRad(relativeViewPortMovementFromCenter, verticalFov) * Mathf.Rad2Deg;
             float traveledAngle = MathUtils.NormalizeAngle(innerCharacter.eulerAngles.x);
-            Assert.AreEqual(expectedTravelAngleDeg, traveledAngle, errorAngleThreshold);
-            Assert.LessOrEqual(innerCharacter.eulerAngles.y, errorThreshold);
-            Assert.LessOrEqual(innerCharacter.eulerAngles.y, errorThreshold);
-            AssertUtils.AssertVectorIsZero(character.eulerAngles, errorThreshold);
+            AssertExpectedAngle(expectedTravelAngleDeg, traveledAngle);
+            AssertExpectedAngle(0, innerCharacter.eulerAngles.y);
+            AssertExpectedAngle(0, innerCharacter.eulerAngles.z);
+            AssertUtils.AssertVectorIsZero(character.eulerAngles, errorAngleThreshold);
             yield return null;
         }
 
         [UnityTest]
         public IEnumerator ShouldRotateVerticallyInTouchscreen()
         {
-            AssertUtils.AssertVectorIsZero(character.eulerAngles, errorThreshold);
-            AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, errorThreshold);
+            AssertUtils.AssertVectorIsZero(character.eulerAngles, errorAngleThreshold);
+            AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, errorAngleThreshold);
             float verticalFov = CameraUtils.GetVerticalFov(mainCamera);
             float relativeViewPortMovementFromCenter = 0.4f;
             Vector2 initialPointerRelativePosition = new Vector2(0.5f, 0.5f);
@@ -119,10 +123,10 @@ namespace ReupVirtualTwinTests.behaviours
             yield return null;
             float expectedTravelAngleDeg = CameraUtils.GetTravelAngleFromViewPortCenterInRad(relativeViewPortMovementFromCenter, verticalFov) * Mathf.Rad2Deg;
             float traveledAngle = MathUtils.NormalizeAngle(innerCharacter.eulerAngles.x);
-            Assert.AreEqual(expectedTravelAngleDeg, traveledAngle, errorAngleThreshold);
-            Assert.LessOrEqual(innerCharacter.eulerAngles.y, errorThreshold);
-            Assert.LessOrEqual(innerCharacter.eulerAngles.y, errorThreshold);
-            AssertUtils.AssertVectorIsZero(character.eulerAngles, errorThreshold);
+            AssertExpectedAngle(expectedTravelAngleDeg, traveledAngle);
+            AssertExpectedAngle(0, innerCharacter.eulerAngles.y);
+            AssertExpectedAngle(0, innerCharacter.eulerAngles.z);
+            AssertUtils.AssertVectorIsZero(character.eulerAngles, errorAngleThreshold);
             yield return null;
 
         }
@@ -130,34 +134,34 @@ namespace ReupVirtualTwinTests.behaviours
         [UnityTest]
         public IEnumerator ShouldRotateHorizontallyUsingLeftArrowKey()
         {
-            AssertUtils.AssertVectorIsZero(character.eulerAngles, errorThreshold);
-            AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, errorThreshold);
+            AssertUtils.AssertVectorIsZero(character.eulerAngles, errorAngleThreshold);
+            AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, errorAngleThreshold);
             input.Press(keyboard.leftArrowKey);
             yield return new WaitForSeconds(timeInSecsForHoldingButton);
             input.Release(keyboard.leftArrowKey);
             bool characterTurnedLeft = (character.eulerAngles.y > 180 && character.eulerAngles.y < 360) ||
                 (character.eulerAngles.y < 0 && character.eulerAngles.y > -180);
             Assert.IsTrue(characterTurnedLeft);
-            Assert.LessOrEqual(character.eulerAngles.x, errorThreshold);
-            Assert.LessOrEqual(character.eulerAngles.z, errorThreshold);
-            AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, errorThreshold);
+            Assert.LessOrEqual(character.eulerAngles.x, errorAngleThreshold);
+            Assert.LessOrEqual(character.eulerAngles.z, errorAngleThreshold);
+            AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, errorAngleThreshold);
             yield return null;
         }
 
         [UnityTest]
         public IEnumerator ShouldRotateHorizontallyUsingRightArrowKey()
         {
-            AssertUtils.AssertVectorIsZero(character.eulerAngles, errorThreshold);
-            AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, errorThreshold);
+            AssertUtils.AssertVectorIsZero(character.eulerAngles, errorAngleThreshold);
+            AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, errorAngleThreshold);
             input.Press(keyboard.rightArrowKey);
             yield return new WaitForSeconds(timeInSecsForHoldingButton);
             input.Release(keyboard.rightArrowKey);
             bool characterTurnedLeft = (character.eulerAngles.y > 180 && character.eulerAngles.y < 360) ||
                 (character.eulerAngles.y < 0 && character.eulerAngles.y > -180);
             Assert.IsFalse(characterTurnedLeft);
-            Assert.LessOrEqual(character.eulerAngles.x, errorThreshold);
-            Assert.LessOrEqual(character.eulerAngles.z, errorThreshold);
-            AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, errorThreshold);
+            Assert.LessOrEqual(character.eulerAngles.x, errorAngleThreshold);
+            Assert.LessOrEqual(character.eulerAngles.z, errorAngleThreshold);
+            AssertUtils.AssertVectorIsZero(innerCharacter.localEulerAngles, errorAngleThreshold);
             yield return null;
         }
 
