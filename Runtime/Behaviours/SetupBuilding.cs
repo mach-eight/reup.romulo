@@ -45,10 +45,11 @@ namespace ReupVirtualTwin.behaviours
 
         [Inject]
         public void Init(
-            [Inject(Id = "buildingLayerId")] int buildingLayerId
-        )
+            [Inject(Id = "building")] GameObject building,
+            [Inject(Id = "buildingLayerId")] int buildingLayerId)
         {
             this.buildingLayerId = buildingLayerId;
+            this._building = building;
         }
 
         void Start()
