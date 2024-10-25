@@ -1,25 +1,20 @@
+using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.managerInterfaces;
 using UnityEngine;
+using Zenject;
+
 namespace ReupVirtualTwin.managers
 {
-    public class CharacterRotationManager : MonoBehaviour, ICharacterRotationManager
+    public class CharacterRotationManager : ICharacterRotationManager, IInitializable, ILateTickable
     {
-        float ROTATION_SPEED = 10f;
         float ANGLE_THRESHOLD = 0.01f;
         float _verticalRotation = 0f;
         float _horizontalRotation = 0f;
         Quaternion _desiredInnerRotation;
         Quaternion _desiredHorizontalRotation;
-
-        [SerializeField]
-        Transform _innerCharacterTransform;
-
-        bool _allowRotation = true;
-        public bool allowRotation
-        {
-            set { _allowRotation = value; }
-            get { return _allowRotation; }
-        }
+        Transform characterTransform;
+        Transform innerCharacterTransform;
+        public bool allowRotation { get; set; } = true;
 
         public float verticalRotation
         {
@@ -29,7 +24,7 @@ namespace ReupVirtualTwin.managers
             }
             set
             {
-                if (!_allowRotation) { return; }
+                if (!allowRotation) { return; }
                 if (value > 180f) value -= 360f;
                 _verticalRotation = Mathf.Clamp(value, -90f, 90f);
                 SetDesiredInnerRotation();
@@ -43,19 +38,27 @@ namespace ReupVirtualTwin.managers
             }
             set
             {
-                if (!_allowRotation) { return; }
+                if (!allowRotation) { return; }
                 _horizontalRotation = value;
                 SetDesiredHorizontalRotation();
             }
         }
 
-        private void Start()
+        public CharacterRotationManager(
+            [Inject(Id = "character")] GameObject character,
+            [Inject(Id = "innerCharacter")] GameObject innerCharacter)
         {
-            verticalRotation = transform.rotation.eulerAngles.x;
-            horizontalRotation = transform.rotation.eulerAngles.y;
+            characterTransform = character.transform;
+            innerCharacterTransform = innerCharacter.transform;
         }
 
-        void Update()
+        public void Initialize()
+        {
+            verticalRotation = characterTransform.rotation.eulerAngles.x;
+            horizontalRotation = characterTransform.rotation.eulerAngles.y;
+        }
+
+        public void LateTick()
         {
             if (ShouldRotate())
             {
@@ -68,31 +71,21 @@ namespace ReupVirtualTwin.managers
         }
         void SetDesiredInnerRotation()
         {
-            _desiredInnerRotation = Quaternion.Euler(_verticalRotation, transform.rotation.eulerAngles.y, 0);
+            _desiredInnerRotation = Quaternion.Euler(_verticalRotation, characterTransform.rotation.eulerAngles.y, 0);
         }
 
         bool ShouldRotate()
         {
-            var shouldRotateVertically = Quaternion.Angle(_desiredInnerRotation, _innerCharacterTransform.rotation) > ANGLE_THRESHOLD;
-            var shouldRotateHorizontally = Quaternion.Angle(_desiredHorizontalRotation, transform.rotation) > ANGLE_THRESHOLD;
+            var shouldRotateVertically = MathUtils.CalculateAngle(_desiredInnerRotation, innerCharacterTransform.rotation) > ANGLE_THRESHOLD;
+            var shouldRotateHorizontally = MathUtils.CalculateAngle(characterTransform.rotation, _desiredHorizontalRotation) > ANGLE_THRESHOLD;
             return shouldRotateVertically || shouldRotateHorizontally;
         }
 
         void Rotate()
         {
-            var rotationStep = ROTATION_SPEED * Time.deltaTime;
-            RotateCharacter(rotationStep);
-            RotateInnerCharacter(rotationStep);
-        }
-        void RotateInnerCharacter(float rotationStep)
-        {
             SetDesiredInnerRotation();
-            _innerCharacterTransform.rotation = Quaternion.Slerp(_innerCharacterTransform.rotation, _desiredInnerRotation, rotationStep);
-        }
-        void RotateCharacter(float rotationStep)
-        {
-            transform.rotation = Quaternion.Slerp(transform.rotation, _desiredHorizontalRotation, rotationStep);
+            innerCharacterTransform.rotation = _desiredInnerRotation;
+            characterTransform.rotation = _desiredHorizontalRotation;
         }
     }
-
 }

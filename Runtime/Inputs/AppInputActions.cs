@@ -28,15 +28,6 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
             ""id"": ""e802d882-c0c7-4181-8e8a-98ee0a1d31b6"",
             ""actions"": [
                 {
-                    ""name"": ""RotateView"",
-                    ""type"": ""Value"",
-                    ""id"": ""bcff9012-19bb-47e0-b5f0-c22d224031c2"",
-                    ""expectedControlType"": ""Vector2"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                },
-                {
                     ""name"": ""RotateViewKeyborad"",
                     ""type"": ""Button"",
                     ""id"": ""9d5202b1-f2ba-4ed6-b80c-e60943ebd3fe"",
@@ -92,39 +83,6 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
                 }
             ],
             ""bindings"": [
-                {
-                    ""name"": """",
-                    ""id"": ""9efac98a-919e-40e3-bdb0-d34ca51c61b2"",
-                    ""path"": ""<Touchscreen>/primaryTouch/delta"",
-                    ""interactions"": """",
-                    ""processors"": ""ScaleVector2(x=0.2,y=0.2)"",
-                    ""groups"": ""Touchscreen"",
-                    ""action"": ""RotateView"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""93a9c1e8-d5d5-4fc0-8c68-89843672807f"",
-                    ""path"": ""<Pen>/delta"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""RotateView"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""79812bdb-eca7-4e2d-b977-9cd0f507ddaf"",
-                    ""path"": ""<Mouse>/delta"",
-                    ""interactions"": """",
-                    ""processors"": ""InvertVector2"",
-                    ""groups"": ""KeyboardAndMouse"",
-                    ""action"": ""RotateView"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
                 {
                     ""name"": """",
                     ""id"": ""7209ec38-8250-437e-998a-dbd77063f3ff"",
@@ -571,7 +529,6 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
 }");
         // Player
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
-        m_Player_RotateView = m_Player.FindAction("RotateView", throwIfNotFound: true);
         m_Player_RotateViewKeyborad = m_Player.FindAction("RotateViewKeyborad", throwIfNotFound: true);
         m_Player_Movement = m_Player.FindAction("Movement", throwIfNotFound: true);
         m_Player_Select = m_Player.FindAction("Select", throwIfNotFound: true);
@@ -649,7 +606,6 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
     // Player
     private readonly InputActionMap m_Player;
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
-    private readonly InputAction m_Player_RotateView;
     private readonly InputAction m_Player_RotateViewKeyborad;
     private readonly InputAction m_Player_Movement;
     private readonly InputAction m_Player_Select;
@@ -660,7 +616,6 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
     {
         private @AppInputActions m_Wrapper;
         public PlayerActions(@AppInputActions wrapper) { m_Wrapper = wrapper; }
-        public InputAction @RotateView => m_Wrapper.m_Player_RotateView;
         public InputAction @RotateViewKeyborad => m_Wrapper.m_Player_RotateViewKeyborad;
         public InputAction @Movement => m_Wrapper.m_Player_Movement;
         public InputAction @Select => m_Wrapper.m_Player_Select;
@@ -676,9 +631,6 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_PlayerActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_PlayerActionsCallbackInterfaces.Add(instance);
-            @RotateView.started += instance.OnRotateView;
-            @RotateView.performed += instance.OnRotateView;
-            @RotateView.canceled += instance.OnRotateView;
             @RotateViewKeyborad.started += instance.OnRotateViewKeyborad;
             @RotateViewKeyborad.performed += instance.OnRotateViewKeyborad;
             @RotateViewKeyborad.canceled += instance.OnRotateViewKeyborad;
@@ -701,9 +653,6 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
 
         private void UnregisterCallbacks(IPlayerActions instance)
         {
-            @RotateView.started -= instance.OnRotateView;
-            @RotateView.performed -= instance.OnRotateView;
-            @RotateView.canceled -= instance.OnRotateView;
             @RotateViewKeyborad.started -= instance.OnRotateViewKeyborad;
             @RotateViewKeyborad.performed -= instance.OnRotateViewKeyborad;
             @RotateViewKeyborad.canceled -= instance.OnRotateViewKeyborad;
@@ -883,7 +832,6 @@ public partial class @AppInputActions: IInputActionCollection2, IDisposable
     }
     public interface IPlayerActions
     {
-        void OnRotateView(InputAction.CallbackContext context);
         void OnRotateViewKeyborad(InputAction.CallbackContext context);
         void OnMovement(InputAction.CallbackContext context);
         void OnSelect(InputAction.CallbackContext context);
