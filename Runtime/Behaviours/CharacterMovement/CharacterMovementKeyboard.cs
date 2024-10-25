@@ -1,6 +1,7 @@
 using UnityEngine;
 using ReupVirtualTwin.inputs;
 using ReupVirtualTwin.managerInterfaces;
+using Zenject;
 
 namespace ReupVirtualTwin.behaviours
 {
@@ -9,16 +10,21 @@ namespace ReupVirtualTwin.behaviours
         private Transform _innerCharacterTransform;
         public Transform innerCharacterTransform { set => _innerCharacterTransform = value; }
 
-        private InputProvider _inputProvider;
-        private ICharacterPositionManager _characterPositionManager;
-        public ICharacterPositionManager characterPositionManager { set => _characterPositionManager = value; }
+        private InputProvider inputProvider;
+        private ICharacterPositionManager characterPositionManager;
+
+        [Inject]
+        public void Init(ICharacterPositionManager characterPositionManager)
+        {
+            this.characterPositionManager = characterPositionManager;
+        }
 
         static public float WALK_SPEED_M_PER_SECOND = 2.5f;
 
-
-        private void Awake()
+        [Inject]
+        public void Init(InputProvider inputProvider)
         {
-            _inputProvider = new InputProvider();
+            this.inputProvider = inputProvider;
         }
 
         private void Update()
@@ -28,17 +34,17 @@ namespace ReupVirtualTwin.behaviours
 
         private void UpdatePosition()
         {
-            Vector2 inputValue = _inputProvider.MovementInput().normalized;
+            Vector2 inputValue = inputProvider.MovementInput().normalized;
             PerformMovement(inputValue);
         }
 
         private void PerformMovement(Vector2 direction)
         {
             Vector3 movementDirection = direction.y * GetCharacterForward() + direction.x * GetCharacterRight();
-            if (movementDirection != Vector3.zero && _characterPositionManager.allowWalking)
+            if (movementDirection != Vector3.zero && characterPositionManager.allowWalking)
             {
-                _characterPositionManager.StopWalking();
-                _characterPositionManager.MoveInDirection(movementDirection, WALK_SPEED_M_PER_SECOND);
+                characterPositionManager.StopWalking();
+                characterPositionManager.MoveInDirection(movementDirection, WALK_SPEED_M_PER_SECOND);
             }
         }
 

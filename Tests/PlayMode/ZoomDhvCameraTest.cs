@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
 using ReupVirtualTwin.behaviours;
 using ReupVirtualTwinTests.utils;
@@ -99,10 +98,9 @@ namespace ReupVirtualTwinTests.behaviours
             Vector2 ZoomInEndFinger1 = new Vector2(100, 100);
             Vector2 ZoomInEndFinger2 = new Vector2(500, 500);
 
-            float expectedZoomInFov = calculateNextPinchZoomFov(ZoomInStartFinger1, ZoomInStartFinger2, ZoomInEndFinger1, ZoomInEndFinger2);  
-            yield return MovePointerUtils.TouchGesture(input, touch, ZoomInStartFinger1, ZoomInStartFinger2, ZoomInEndFinger1, ZoomInEndFinger2, zoomSepts);
+            float expectedZoomInFov = calculateNextPinchZoomFov(ZoomInStartFinger1, ZoomInStartFinger2, ZoomInEndFinger1, ZoomInEndFinger2);
+            yield return PointerUtils.TouchGesture(input, touch, ZoomInStartFinger1, ZoomInStartFinger2, ZoomInEndFinger1, ZoomInEndFinger2, zoomSepts);
             yield return new WaitForSeconds(0.5f);
-
             Assert.AreEqual(expectedZoomInFov, dhvCineMachineComponent.Lens.FieldOfView, errorToleranceInDegrees);
 
             Vector2 ZoomOutStartFinger1 = new Vector2(100, 100);
@@ -110,8 +108,8 @@ namespace ReupVirtualTwinTests.behaviours
             Vector2 ZoomOutEndFinger1 = new Vector2(200, 200);
             Vector2 ZoomOutEndFinger2 = new Vector2(400, 400);
 
-            float expectedZoomOutFov = calculateNextPinchZoomFov(ZoomOutStartFinger1, ZoomOutStartFinger2, ZoomOutEndFinger1, ZoomOutEndFinger2);  
-            yield return MovePointerUtils.TouchGesture(input, touch, ZoomOutStartFinger1, ZoomOutStartFinger2, ZoomOutEndFinger1, ZoomOutEndFinger2, zoomSepts);
+            float expectedZoomOutFov = calculateNextPinchZoomFov(ZoomOutStartFinger1, ZoomOutStartFinger2, ZoomOutEndFinger1, ZoomOutEndFinger2);
+            yield return PointerUtils.TouchGesture(input, touch, ZoomOutStartFinger1, ZoomOutStartFinger2, ZoomOutEndFinger1, ZoomOutEndFinger2, zoomSepts);
             yield return new WaitForSeconds(0.5f);
             Assert.AreEqual(expectedZoomOutFov, dhvCineMachineComponent.Lens.FieldOfView, errorToleranceInDegrees);
 
@@ -139,7 +137,7 @@ namespace ReupVirtualTwinTests.behaviours
         {
             Assert.AreEqual(initialFieldOfView, dhvCineMachineComponent.Lens.FieldOfView);
 
-            Vector2 scrollInput = new Vector2(0, -scrollStep );
+            Vector2 scrollInput = new Vector2(0, -scrollStep);
 
             yield return SimulateScrollInput(scrollInput, 100);
             yield return new WaitForSeconds(0.5f);

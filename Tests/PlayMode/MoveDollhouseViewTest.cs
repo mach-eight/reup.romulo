@@ -1,16 +1,18 @@
 using NUnit.Framework;
-using ReupVirtualTwin.behaviours;
 using ReupVirtualTwinTests.utils;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.TestTools;
+using UnityEditor;
+using ReupVirtualTwin.helpers;
 
 
 namespace ReupVirtualTwinTests.behaviours
 {
     public class MoveDollhouseViewTest : MonoBehaviour
     {
+        GameObject cubePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Tests/TestAssets/Cube.prefab");
         InputTestFixture input;
         ReupSceneInstantiator.SceneObjects sceneObjects;
         Transform dollhouseViewWrapper;
@@ -22,21 +24,26 @@ namespace ReupVirtualTwinTests.behaviours
         float timeInSecsForHoldingButton = 0.25f;
         float errorToleranceInMeters = 0.1f;
         int pointerSteps = 10;
+        Camera mainCamera;
+        GameObject cube;
 
         [UnitySetUp]
         public IEnumerator Setup()
         {
-            sceneObjects = ReupSceneInstantiator.InstantiateScene();
+            sceneObjects = ReupSceneInstantiator.InstantiateSceneWithBuildingFromPrefab(cubePrefab);
+            cube = sceneObjects.building;
             input = sceneObjects.input;
+            mainCamera = sceneObjects.mainCamera;
             keyboard = InputSystem.AddDevice<Keyboard>();
             mouse = InputSystem.AddDevice<Mouse>();
             touch = InputSystem.AddDevice<Touchscreen>();
             limitFromBuildingInMeters = sceneObjects.moveDhvCameraBehavior.limitDistanceFromBuildingInMeters;
             dollhouseViewWrapper = sceneObjects.dollhouseViewWrapper;
-            moveSpeedMetresPerSecond = sceneObjects.moveDhvCameraBehavior.KeyboardMoveCameraSpeedMetersPerSecond;
             sceneObjects.viewModeManager.ActivateDHV();
             yield return null;
+            GetCameraInfoAfterTurningOnDHV();
         }
+
         [UnityTearDown]
         public IEnumerator TearDown()
         {
@@ -44,10 +51,9 @@ namespace ReupVirtualTwinTests.behaviours
             yield return null;
         }
 
-        [Test]
-        public void MoveDhvCameraSpeedIsDefined()
+        void GetCameraInfoAfterTurningOnDHV()
         {
-            Assert.AreEqual(40, moveSpeedMetresPerSecond);
+            moveSpeedMetresPerSecond = sceneObjects.moveDhvCameraBehavior.GetKeyboardMoveCameraRelativeSpeed();
         }
 
         [UnityTest]
@@ -106,70 +112,106 @@ namespace ReupVirtualTwinTests.behaviours
         public IEnumerator ShouldNotMoveSidewaysWithMouseWhenNoDragging()
         {
             Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
-            yield return MovePointerUtils.MoveMouse(input, mouse, Vector2.zero, new Vector2(1,1), pointerSteps);
+            yield return PointerUtils.MoveMouse(input, mouse, Vector2.zero, new Vector2(1, 1), pointerSteps);
             Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
             yield return null;
+        }
+
+        Vector3 GetHitPointWhenSelectingCubePrefabFromDHVCamera(Vector3 DHVCameraPosition)
+        {
+            // This is a simplified estimation assuming the cube is located at (0,0,0) and it has a scale of (1,1,1)
+            Assert.AreEqual(Vector3.zero, cube.transform.position);
+            Assert.AreEqual(Vector3.one, cube.transform.localScale);
+            // And also it's assuming the camera x position is 0, it's elevation angle from the origin is less than 45 degrees
+            // and it's looking at the cube from the -z axis
+            Assert.Zero(DHVCameraPosition.x);
+            Assert.Less(DHVCameraPosition.z, 0);
+            Assert.Less(Mathf.Atan(DHVCameraPosition.y / -DHVCameraPosition.z) * Mathf.Rad2Deg, 45);
+            float cubeHalfSize = 0.5f;
+            float cameraAngle = Mathf.Atan(DHVCameraPosition.y / DHVCameraPosition.z);
+            float hitPointHeight = cubeHalfSize * -Mathf.Tan(cameraAngle);
+            return new Vector3(0, hitPointHeight, -cubeHalfSize);
+        }
+
+        Vector3 GetExpectedCameraPositionAfterSidewayMovement(float relativeViewPortMovementFromCenter)
+        {
+            float horizontalFov = CameraUtils.GetHorizontalFov(mainCamera);
+            Vector3 cameraPosition = mainCamera.transform.position;
+            Vector3 expectedCubeHitRayPosition = GetHitPointWhenSelectingCubePrefabFromDHVCamera(cameraPosition);
+            float distanceFromCameraToHitPoint = Vector3.Distance(cameraPosition, expectedCubeHitRayPosition);
+            float travelAngleRad = CameraUtils.GetTravelAngleFromViewPortCenterInRad(relativeViewPortMovementFromCenter, horizontalFov);
+            float expectedCameraDistanceMovement = distanceFromCameraToHitPoint * Mathf.Tan(travelAngleRad);
+            Vector3 expectedCameraPosition = mainCamera.transform.position - new Vector3(expectedCameraDistanceMovement, 0, 0);
+            return expectedCameraPosition;
+        }
+
+        Vector3 GetExpectedCameraPositionAfterForwardMovement(float relativeViewPortMovementFromCenter)
+        {
+            Vector3 cameraPosition = mainCamera.transform.position;
+            Vector3 expectedCubeHitRayPosition = GetHitPointWhenSelectingCubePrefabFromDHVCamera(cameraPosition);
+            float verticalFov = CameraUtils.GetVerticalFov(mainCamera);
+            float travelAngleRad = CameraUtils.GetTravelAngleFromViewPortCenterInRad(relativeViewPortMovementFromCenter, verticalFov);
+            Vector3 cameraPositionRelativeToHitPoint = cameraPosition - expectedCubeHitRayPosition;
+            float cameraHeight = cameraPositionRelativeToHitPoint.y;
+            float distanceFromCameraToHitPoint = Vector3.Distance(cameraPosition, expectedCubeHitRayPosition);
+            float cameraAttackAngleRad = Mathf.Asin(cameraHeight / distanceFromCameraToHitPoint);
+            float expectedCameraDistanceMovement = cameraHeight * ((1 / Mathf.Tan(cameraAttackAngleRad)) - (1 / Mathf.Tan(cameraAttackAngleRad + travelAngleRad)));
+            Vector3 expectedCameraPosition = cameraPosition + new Vector3(0, 0, expectedCameraDistanceMovement);
+            return expectedCameraPosition;
         }
 
         [UnityTest]
         public IEnumerator ShouldMoveSidewaysWithMouse()
         {
-            Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
-            float relativeMovement = 0.4f;
-            Vector2 initialPosition = new Vector2(0.5f, 0.5f);
-            Vector2 finalPosition = new Vector2(0.5f + relativeMovement, 0.5f);
-            yield return MovePointerUtils.DragMouseLeftButton(input, mouse, initialPosition, finalPosition, pointerSteps);
-            float expectedMovement = -1 * relativeMovement * sceneObjects.moveDhvCameraBehavior.PointerMoveCameraDistanceInMetersSquareViewport;
-            Assert.LessOrEqual(dollhouseViewWrapper.position.x, expectedMovement + errorToleranceInMeters);
-            Assert.Zero(dollhouseViewWrapper.position.z);
-            Assert.Zero(dollhouseViewWrapper.position.y);
+            float relativeToViewPortPointerMovement = 0.1f;
+            Vector3 expectedCameraPosition = GetExpectedCameraPositionAfterSidewayMovement(relativeToViewPortPointerMovement);
+            Vector2 initialPointerRelativePosition = new Vector2(0.5f, 0.5f);
+            Vector2 finalPointerRelativePosition = new Vector2(initialPointerRelativePosition.x + relativeToViewPortPointerMovement, initialPointerRelativePosition.y);
+            yield return PointerUtils.DragMouseLeftButton(input, mouse, initialPointerRelativePosition, finalPointerRelativePosition, pointerSteps);
+            float differenceFromExpected = Vector3.Distance(expectedCameraPosition, mainCamera.transform.position);
+            Assert.LessOrEqual(differenceFromExpected, errorToleranceInMeters);
             yield return null;
         }
 
         [UnityTest]
         public IEnumerator ShouldMoveForwardWithMouse()
         {
-            Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
-            float relativeMovement = 0.4f;
-            Vector2 initialPosition = new Vector2(0.5f, 0.5f);
-            Vector2 finalPosition = new Vector2(0.5f, 0.5f - relativeMovement);
-            yield return MovePointerUtils.DragMouseLeftButton(input, mouse, initialPosition, finalPosition, pointerSteps);
-            float expectedMovement = relativeMovement * sceneObjects.moveDhvCameraBehavior.PointerMoveCameraDistanceInMetersSquareViewport;
-            Assert.Zero(dollhouseViewWrapper.position.x);
-            Assert.Zero(dollhouseViewWrapper.position.y);
-            Assert.GreaterOrEqual(dollhouseViewWrapper.position.z, expectedMovement - errorToleranceInMeters);
+            float relativeToViewPortPointerMovement = 0.1f;
+            Vector3 expectedCameraPosition = GetExpectedCameraPositionAfterForwardMovement(relativeToViewPortPointerMovement);
+            Vector2 initialPointerRelativePosition = new Vector2(0.5f, 0.5f);
+            Vector2 finalPointerRelativePosition = new Vector2(initialPointerRelativePosition.x, initialPointerRelativePosition.y - relativeToViewPortPointerMovement);
+            yield return PointerUtils.DragMouseLeftButton(input, mouse, initialPointerRelativePosition, finalPointerRelativePosition, pointerSteps);
+            float differenceFromExpected = Vector3.Distance(expectedCameraPosition, mainCamera.transform.position);
+            Assert.LessOrEqual(differenceFromExpected, errorToleranceInMeters);
             yield return null;
         }
+
 
         [UnityTest]
         public IEnumerator ShouldMoveSidewaysWithTouch()
         {
-            Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
-            float relativeMovement = 0.4f;
-            Vector2 initialPosition = new Vector2(0.5f, 0.5f);
-            Vector2 finalPosition = new Vector2(0.5f + relativeMovement, 0.5f);
+            float relativeToViewPortPointerMovement = 0.1f;
+            Vector3 expectedCameraPosition = GetExpectedCameraPositionAfterSidewayMovement(relativeToViewPortPointerMovement);
+            Vector2 initialPointerRelativePosition = new Vector2(0.5f, 0.5f);
+            Vector2 finalPointerRelativePosition = new Vector2(initialPointerRelativePosition.x + relativeToViewPortPointerMovement, initialPointerRelativePosition.y);
             int touchId = 0;
-            yield return MovePointerUtils.MoveFinger(input, touch, touchId, initialPosition, finalPosition, pointerSteps);
-            float expectedMovement = -1 * relativeMovement * sceneObjects.moveDhvCameraBehavior.PointerMoveCameraDistanceInMetersSquareViewport;
-            Assert.LessOrEqual(dollhouseViewWrapper.position.x, expectedMovement + errorToleranceInMeters);
-            Assert.Zero(dollhouseViewWrapper.position.z);
-            Assert.Zero(dollhouseViewWrapper.position.y);
+            yield return PointerUtils.MoveFinger(input, touch, touchId, initialPointerRelativePosition, finalPointerRelativePosition, pointerSteps);
+            float differenceFromExpected = Vector3.Distance(expectedCameraPosition, mainCamera.transform.position);
+            Assert.LessOrEqual(differenceFromExpected, errorToleranceInMeters);
             yield return null;
         }
 
         [UnityTest]
         public IEnumerator ShouldMoveForwardWithTouch()
         {
-            Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
-            float relativeMovement = 0.4f;
-            Vector2 initialPosition = new Vector2(0.5f, 0.5f);
-            Vector2 finalPosition = new Vector2(0.5f, 0.5f - relativeMovement);
+            float relativeToViewPortPointerMovement = 0.1f;
+            Vector3 expectedCameraPosition = GetExpectedCameraPositionAfterForwardMovement(relativeToViewPortPointerMovement);
+            Vector2 initialPointerRelativePosition = new Vector2(0.5f, 0.5f);
+            Vector2 finalPointerRelativePosition = new Vector2(initialPointerRelativePosition.x, initialPointerRelativePosition.y - relativeToViewPortPointerMovement);
             int touchId = 0;
-            yield return MovePointerUtils.MoveFinger(input, touch, touchId, initialPosition, finalPosition, pointerSteps);
-            float expectedMovement = -1 * relativeMovement * sceneObjects.moveDhvCameraBehavior.PointerMoveCameraDistanceInMetersSquareViewport;
-            Assert.Zero(dollhouseViewWrapper.position.x);
-            Assert.GreaterOrEqual(dollhouseViewWrapper.position.z, expectedMovement - errorToleranceInMeters);
-            Assert.Zero(dollhouseViewWrapper.position.y);
+            yield return PointerUtils.MoveFinger(input, touch, touchId, initialPointerRelativePosition, finalPointerRelativePosition, pointerSteps);
+            float differenceFromExpected = Vector3.Distance(expectedCameraPosition, mainCamera.transform.position);
+            Assert.LessOrEqual(differenceFromExpected, errorToleranceInMeters);
             yield return null;
         }
 
@@ -181,7 +223,7 @@ namespace ReupVirtualTwinTests.behaviours
             float extraDistanceInMeters = 5;
             float movementDistanceBeyondBoundaries = limitFromBuildingInMeters + extraDistanceInMeters;
             float timeToMoveBeyondBoundaries = movementDistanceBeyondBoundaries / moveSpeedMetresPerSecond;
-            
+
             input.Press(keyboard.wKey);
             yield return new WaitForSeconds(timeToMoveBeyondBoundaries);
             input.Release(keyboard.wKey);
@@ -202,9 +244,27 @@ namespace ReupVirtualTwinTests.behaviours
             Vector2 startFinger2 = new Vector2(400, 400);
             Vector2 endFinger1 = new Vector2(100, 100);
             Vector2 endFinger2 = new Vector2(500, 500);
-            yield return MovePointerUtils.TouchGesture(input, touch, startFinger1, startFinger2, endFinger1, endFinger2, 10);
+            yield return PointerUtils.TouchGesture(input, touch, startFinger1, startFinger2, endFinger1, endFinger2, 10);
 
             Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldNotMoveWhenDraggingAndThenZooming()
+        {
+            Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
+            input.BeginTouch(0, new Vector2(200, 200), true, touch);
+            input.BeginTouch(1, new Vector2(400, 400), true, touch);
+            yield return null;
+            input.MoveTouch(0, new Vector2(100, 100));
+            yield return null;
+            input.EndTouch(1, new Vector2(400, 400), Vector2.zero, true, touch);
+            yield return null;
+            Vector3 finalPosition = dollhouseViewWrapper.position;
+            Assert.AreEqual(0, finalPosition.x, errorToleranceInMeters);
+            Assert.AreEqual(0, finalPosition.y, errorToleranceInMeters);
+            Assert.AreEqual(0, finalPosition.z, errorToleranceInMeters);
             yield return null;
         }
     }

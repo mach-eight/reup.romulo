@@ -17,16 +17,13 @@ using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Schema;
+using Zenject;
 
 namespace ReupVirtualTwin.managers
 {
     public class EditMediator : MonoBehaviour, IMediator, IWebMessageReceiver
     {
-        private ICharacterRotationManager _characterRotationManager;
-        public ICharacterRotationManager characterRotationManager
-        {
-            set { _characterRotationManager = value; }
-        }
+        private ICharacterRotationManager characterRotationManager;
         private IEditModeManager _editModeManager;
         public IEditModeManager editModeManager { set => _editModeManager = value; }
         private ISelectedObjectsManager _selectedObjectsManager;
@@ -76,15 +73,32 @@ namespace ReupVirtualTwin.managers
         public ISpacesRecord spacesRecord { get; set; }
         public IBuildingVisibilityController buildingVisibilityController { get; set; }
 
+        ICharacterPositionManager characterPositionManager;
+        ITagsController tagsController;
+        int buildingLayerId;
+
+        [Inject]
+        public void Init(
+            ICharacterPositionManager characterPositionManager,
+            ICharacterRotationManager characterRotationManager,
+            [Inject(Id = "buildingLayerId")] int buildingLayerId,
+            ITagsController tagsController)
+        {
+            this.characterRotationManager = characterRotationManager;
+            this.characterPositionManager = characterPositionManager;
+            this.tagsController = tagsController;
+            this.buildingLayerId = buildingLayerId;
+        }
+
         public void Notify(ReupEvent eventName)
         {
             switch (eventName)
             {
                 case ReupEvent.transformHandleStartInteraction:
-                    _characterRotationManager.allowRotation = false;
+                    characterRotationManager.allowRotation = false;
                     break;
                 case ReupEvent.transformHandleStopInteraction:
-                    _characterRotationManager.allowRotation = true;
+                    characterRotationManager.allowRotation = true;
                     break;
                 case ReupEvent.positionTransformModeActivated:
                     ProcessTransformModeActivation(TransformMode.PositionMode);
@@ -287,7 +301,38 @@ namespace ReupVirtualTwin.managers
                 case WebMessageType.showAllObjects:
                     ShowAllObjects((JObject)payload);
                     break;
+                case WebMessageType.requestObjectTagsUnderCharacter:
+                    ProcessObjectTagsUnderCharacterRequest(payload["requestId"].ToString());
+                    break;
             }
+        }
+
+        void ProcessObjectTagsUnderCharacterRequest(string requestId)
+        {
+            Vector3 characterPosition = characterPositionManager.characterPosition;
+            Ray characterDownRay = new Ray(characterPosition, Vector3.down);
+            RaycastHit hit;
+            if (Physics.Raycast(characterDownRay, out hit, Mathf.Infinity, 1 << buildingLayerId))
+            {
+                GameObject hitObject = hit.collider.gameObject;
+                SendObjectTagsUnderCharacterResponse(requestId, hitObject);
+                return;
+            }
+            SendFailureMessage(requestId, "No object under character", WebMessageType.requestObjectTagsUnderCharacterFailure);
+        }
+
+        void SendObjectTagsUnderCharacterResponse(string requestId, GameObject obj)
+        {
+            List<Tag> tags = tagsController.GetTagsFromObject(obj);
+            WebMessage<JObject> message = new()
+            {
+                type = WebMessageType.requestObjectTagsUnderCharacterSuccess,
+                payload = new JObject(
+                    new JProperty("requestId", requestId),
+                    new JProperty("tags", JArray.FromObject(tags))
+                )
+            };
+            _webMessageSender.SendWebMessage(message);
         }
 
         void ActivateViewMode(JObject payload)
@@ -307,7 +352,7 @@ namespace ReupVirtualTwin.managers
             }
             catch (Exception e)
             {
-                SendActivateViewModeErrorMessage(payload, e.Message);
+                SendFailureMessage(payload["requestId"].ToString(), e.Message, WebMessageType.activateViewModeFailure);
             }
         }
 
@@ -317,7 +362,7 @@ namespace ReupVirtualTwin.managers
             TaskResult isSuccess = buildingVisibilityController.SetObjectsVisibility(objectIds, show);
             if (!isSuccess.isSuccess)
             {
-                SendHideShowObjectsFailureMessage(payload, isSuccess.error);
+                SendFailureMessage(payload["requestId"].ToString(), isSuccess.error, WebMessageType.showHideObjectsFailure);
                 return;
             }
             SendHideShowObjectsSuccessMessage(payload);
@@ -328,7 +373,7 @@ namespace ReupVirtualTwin.managers
             TaskResult isSuccess = buildingVisibilityController.ShowAllObjects();
             if (!isSuccess.isSuccess)
             {
-                SendHideShowObjectsFailureMessage(payload, isSuccess.error);
+                SendFailureMessage(payload["requestId"].ToString(), isSuccess.error, WebMessageType.showHideObjectsFailure);
                 return;
             }
             SendHideShowObjectsSuccessMessage(payload);
@@ -340,19 +385,6 @@ namespace ReupVirtualTwin.managers
             {
                 type = WebMessageType.showHideObjectsSuccess,
                 payload = new JObject(
-                    new JProperty("requestId", payload["requestId"])
-                )
-            };
-            _webMessageSender.SendWebMessage(message);
-        }
-
-        private void SendHideShowObjectsFailureMessage(JObject payload, string errorMessage)
-        {
-            WebMessage<JObject> message = new()
-            {
-                type = WebMessageType.showHideObjectsFailure,
-                payload = new JObject(
-                    new JProperty("errorMessage", errorMessage),
                     new JProperty("requestId", payload["requestId"])
                 )
             };
@@ -413,7 +445,6 @@ namespace ReupVirtualTwin.managers
                    new JProperty("errorMessage", errorMessage)
                )
             };
-
             _webMessageSender.SendWebMessage(failureMessage);
         }
 
@@ -778,17 +809,17 @@ namespace ReupVirtualTwin.managers
             });
         }
 
-        void SendActivateViewModeErrorMessage(JObject payload, string errorMessage)
+        void SendFailureMessage(string requestId, string errorMessage, string messageType)
         {
-            JObject errorMessagePayload = JObject.FromObject(payload);
-            errorMessagePayload.Add("errorMessage", errorMessage);
             _webMessageSender.SendWebMessage(new WebMessage<JObject>
             {
-                type = WebMessageType.activateViewModeFailure,
-                payload = errorMessagePayload,
+                type = messageType,
+                payload = new JObject(
+                    new JProperty("requestId", requestId),
+                    new JProperty("errorMessage", errorMessage)
+                )
             });
         }
-
     }
 
 }

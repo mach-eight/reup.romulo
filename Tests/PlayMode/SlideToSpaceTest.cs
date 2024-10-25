@@ -13,7 +13,7 @@ using ReupVirtualTwin.dataModels;
 using ReupVirtualTwinTests.utils;
 using ReupVirtualTwinTests.mocks;
 
-namespace ReupVirtualTwinTests.generalTests
+namespace ReupVirtualTwinTests.IOTests
 {
     public class SlideToSpaceTest : MonoBehaviour
     {
@@ -45,7 +45,7 @@ namespace ReupVirtualTwinTests.generalTests
         public IEnumerator TearDown()
         {
             ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
-            SpaceSelectorFabric.DestroySpaceSelectors(spaceSelectors);
+            SpaceSelectorFactory.DestroySpaceSelectors(spaceSelectors);
             spaceSelectors?.Clear();
             yield return null;
         }
@@ -84,7 +84,7 @@ namespace ReupVirtualTwinTests.generalTests
         public IEnumerator SpacesListShouldContainAllSpaceJumpPointsInTheScene()
         {
             DefineConstants();
-            spaceSelectors = SpaceSelectorFabric.CreateBulk(5);
+            spaceSelectors = SpaceSelectorFactory.CreateBulk(5);
             yield return null;
             Assert.AreEqual(5, spacesRecord.jumpPoints.Count);
             for (int i = 0; i < 5; i++)
@@ -100,7 +100,7 @@ namespace ReupVirtualTwinTests.generalTests
             DefineConstants();
             Vector3 spaceJumpPointPosition = new Vector3(0.2f, 2, 0.3f);
             spaceSelectors = new List<GameObject>(){
-                SpaceSelectorFabric.Create(new SpaceSelectorFabric.SpaceSelectorConfig
+                SpaceSelectorFactory.Create(new SpaceSelectorFactory.SpaceSelectorConfig
                 {
                     id = spaceJumpPointId,
                     position = spaceJumpPointPosition,
@@ -119,7 +119,7 @@ namespace ReupVirtualTwinTests.generalTests
             DefineConstants();
             Vector3 spaceJumpPointPosition = new Vector3(0.2f, 2, 0.3f);
             spaceSelectors = new List<GameObject>(){
-                SpaceSelectorFabric.Create(new SpaceSelectorFabric.SpaceSelectorConfig
+                SpaceSelectorFactory.Create(new SpaceSelectorFactory.SpaceSelectorConfig
                 {
                     id = spaceJumpPointId,
                     position = spaceJumpPointPosition,
@@ -179,7 +179,7 @@ namespace ReupVirtualTwinTests.generalTests
         {
             DefineConstants();
             spaceSelectors = new List<GameObject>(){
-                SpaceSelectorFabric.Create(new SpaceSelectorFabric.SpaceSelectorConfig
+                SpaceSelectorFactory.Create(new SpaceSelectorFactory.SpaceSelectorConfig
                 {
                     id = spaceJumpPointId,
                     position = new Vector3(100,100,100),
@@ -206,7 +206,7 @@ namespace ReupVirtualTwinTests.generalTests
         [UnityTest]
         public IEnumerator ShouldSendSlideToSpaceFailMessage_when_anotherSlideToSpaceRequestInterruptTheCurrentOne()
         {
-            spaceSelectors = SpaceSelectorFabric.CreateBulk(2);
+            spaceSelectors = SpaceSelectorFactory.CreateBulk(2);
             spaceSelectors[0].transform.position = new Vector3(1, 1, 1);
             spaceSelectors[1].transform.position = new Vector3(-0.1f, -0.1f, -0.1f);
             string id1 = "space-jump-point-1";

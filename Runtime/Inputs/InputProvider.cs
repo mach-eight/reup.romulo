@@ -1,12 +1,18 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Zenject;
 
 namespace ReupVirtualTwin.inputs
 {
-    public class InputProvider
+    public class InputProvider : IInitializable, IDisposable
     {
-        private static AppInputActions _input = new ();
+        AppInputActions _input;
+
+        public InputProvider()
+        {
+            _input = new AppInputActions();
+        }
 
         public event Action<InputAction.CallbackContext> selectStarted
         {
@@ -119,31 +125,27 @@ namespace ReupVirtualTwin.inputs
                 _input.MultiTouch.Touch2Hold.canceled -= value;
             }
         }
-        public void Enable()
+        public void Initialize()
         {
             _input.Player.Enable();
             _input.DollhouseView.Enable();
             _input.MultiTouch.Enable();
         }
 
-        public void Disable()
+        public void Dispose()
         {
             _input.Player.Disable();
             _input.DollhouseView.Disable();
             _input.MultiTouch.Disable();
         }
 
-        public Vector2 RotateViewInput()
-        {
-            return _input.Player.RotateView.ReadValue<Vector2>() * -1;
-        }
         public Vector2 RotateViewKeyboardInput()
         {
             return _input.Player.RotateViewKeyborad.ReadValue<Vector2>();
         }
 
         public Vector2 MovementInput()
-        { 
+        {
             return _input.Player.Movement.ReadValue<Vector2>();
         }
 
@@ -159,21 +161,17 @@ namespace ReupVirtualTwin.inputs
         {
             return _input.DollhouseView.KeyboardMoveCamera.ReadValue<Vector2>();
         }
-        public Vector2 PointerMoveDhvCamera()
-        {
-            return -1 * _input.DollhouseView.PointerMoveCamera.ReadValue<Vector2>();
-        }
         public Vector2 ScrollWheelZoomDhvCamera()
         {
             return _input.DollhouseView.ScrollWheelZoom.ReadValue<Vector2>();
         }
         public Vector2 Touch1Position()
         {
-            return _input.MultiTouch.Touch1Position.ReadValue<Vector2>(); 
+            return _input.MultiTouch.Touch1Position.ReadValue<Vector2>();
         }
         public Vector2 Touch2Position()
         {
-            return _input.MultiTouch.Touch2Position.ReadValue<Vector2>(); 
+            return _input.MultiTouch.Touch2Position.ReadValue<Vector2>();
         }
     }
 }
