@@ -1,3 +1,4 @@
+using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.inputs;
 using ReupVirtualTwin.managerInterfaces;
@@ -24,6 +25,7 @@ namespace ReupVirtualTwin.behaviours
         GameObject building;
         private Vector3 buildingCenter;
         private float baseFieldOfView = 60;
+        IZoomPositionRotationDHVController zoomPositionRotationDHVController;
 
         private void OnEnable()
         {
@@ -44,12 +46,14 @@ namespace ReupVirtualTwin.behaviours
             IDragManager dragManager,
             InputProvider inputProvider,
             [Inject(Id = "building")] GameObject building,
+            IZoomPositionRotationDHVController zoomPositionRotationDHVController,
             IGesturesManager gesturesManager)
         {
             _inputProvider = inputProvider;
             this.dragManager = dragManager;
             this.gesturesManager = gesturesManager;
             this.building = building;
+            this.zoomPositionRotationDHVController = zoomPositionRotationDHVController;
         }
 
         void Start()
@@ -66,20 +70,7 @@ namespace ReupVirtualTwin.behaviours
         void KeyboardUpdatePosition()
         {
             Vector2 inputValue = _inputProvider.KeyboardMoveDhvCamera().normalized;
-            if (inputValue == Vector2.zero)
-            {
-                return;
-            }
-
-            Vector3 cameraForward = Vector3.ProjectOnPlane(dollhouseViewWrapperTransform.forward, Vector3.up).normalized;
-            Vector3 cameraRight = Vector3.Cross(Vector3.up, cameraForward).normalized;
-            Vector3 finalMovement = cameraRight * inputValue.x + cameraForward * inputValue.y;
-            Vector3 normalizedDirection = Vector3.Normalize(finalMovement);
-
-            float movementDistance = GetKeyboardMoveCameraRelativeSpeed() * Time.deltaTime;
-            Vector3 nextPosition = dollhouseViewWrapperTransform.position + (normalizedDirection * movementDistance);
-
-            PerformMovement(nextPosition);
+            zoomPositionRotationDHVController.moveInDirection(inputValue, KeyboardMoveCameraSpeedMetersPerSecond);
         }
 
         void PointerUpdatePosition()

@@ -1949,6 +1949,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   character: {fileID: 1798908995094544088}
   innerCharacter: {fileID: 8118322865444789567}
+  dhvWrapper: {fileID: 2471139282865268767}
 --- !u!1 &5684383910040997618
 GameObject:
   m_ObjectHideFlags: 0
@@ -2618,7 +2619,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e3a5046ec0f28f49b35a656df3c9ceb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _building: {fileID: 0}
+  building: {fileID: 0}
 --- !u!114 &2950805034537537334
 MonoBehaviour:
   m_ObjectHideFlags: 0
