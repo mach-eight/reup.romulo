@@ -75,19 +75,15 @@ namespace ReupVirtualTwin.managers
 
         ICharacterPositionManager characterPositionManager;
         ITagsController tagsController;
-        int buildingLayerId;
 
         [Inject]
         public void Init(
             ICharacterPositionManager characterPositionManager,
-            ICharacterRotationManager characterRotationManager,
-            [Inject(Id = "buildingLayerId")] int buildingLayerId,
             ITagsController tagsController)
         {
             this.characterRotationManager = characterRotationManager;
             this.characterPositionManager = characterPositionManager;
             this.tagsController = tagsController;
-            this.buildingLayerId = buildingLayerId;
         }
 
         public void Notify(ReupEvent eventName)
@@ -305,9 +301,10 @@ namespace ReupVirtualTwin.managers
         void ProcessObjectTagsUnderCharacterRequest(string requestId)
         {
             Vector3 characterPosition = characterPositionManager.characterPosition;
+            LayerMask buildingLayerMask = LayerMaskUtils.GetLayerMaskById(RomuloLayerIds.buildingLayerId);
             Ray characterDownRay = new Ray(characterPosition, Vector3.down);
             RaycastHit hit;
-            if (Physics.Raycast(characterDownRay, out hit, Mathf.Infinity, 1 << buildingLayerId))
+            if (Physics.Raycast(characterDownRay, out hit, Mathf.Infinity, buildingLayerMask))
             {
                 GameObject hitObject = hit.collider.gameObject;
                 SendObjectTagsUnderCharacterResponse(requestId, hitObject);

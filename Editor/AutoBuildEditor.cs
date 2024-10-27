@@ -8,12 +8,16 @@ using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.controllers;
 using System.Collections.Generic;
 using System.Linq;
+using ReupVirtualTwin.models;
+using ReupVirtualTwin.enums;
+using ReupVirtualTwin.helperInterfaces;
 
 public class AutoBuildEditor : MonoBehaviour
 {
     private static IIdAssignerController idAssignerController = new IdController();
     private static IIdHasRepeatedController idHasRepeatedController = new IdController();
     private static IObjectInfoController objectInfoController = new ObjectInfoController();
+    private static IColliderAdder colliderAdder = new ColliderAdder();
 
     [MenuItem("Reup Romulo/Build")]
     public static void Build()
@@ -44,12 +48,19 @@ public class AutoBuildEditor : MonoBehaviour
             return;
         }
 
+        AddLayerAndCollidersToBuilding(building);
+
         if (!CheckObjectsActiveStatus(building))
         {
             EditorUtility.DisplayDialog("Error", "Build canceled", "OK");
             return;
         }
 
+        if (!CheckSpaceJumpPoints())
+        {
+            EditorUtility.DisplayDialog("Error", "Build canceled", "OK");
+            return;
+        }
 
         if (!AddUniqueIDs(building))
         {
@@ -191,4 +202,50 @@ public class AutoBuildEditor : MonoBehaviour
 
         return message;
     }
+
+    private static void AddLayerAndCollidersToBuilding(GameObject building)
+    {
+        colliderAdder.AddCollidersToTree(building);
+        GameObjectUtils.ApplyLayerToObjectTree(building, RomuloLayerIds.buildingLayerId);
+        EditorUtility.DisplayDialog("Success", "Colliders and Building Layer successfully applied", "OK");
+    }
+
+    private static bool CheckSpaceJumpPoints()
+    {
+        List<string> invalidSpaceJumpPointNames = GetInvalidSpaceJumpPoints();
+
+        if (invalidSpaceJumpPointNames.Count > 0)
+        {
+            string message = $"The following space jump points are not over the building:\n\n{string.Join("\n", invalidSpaceJumpPointNames)}";
+            EditorUtility.DisplayDialog("Error", message, "OK");
+            return false;
+        }
+
+        return true;
+    }
+
+    private static List<string> GetInvalidSpaceJumpPoints()
+    {
+        List<string> invalidSpaceJumpPointNames = new List<string>();
+        SpacesRecord spacesRecord = ObjectFinder.FindSpacesRecord().GetComponent<SpacesRecord>();
+        LayerMask buildingLayerMask = LayerMaskUtils.GetLayerMaskById(RomuloLayerIds.buildingLayerId);
+
+        foreach (var jumpPoint in spacesRecord.jumpPoints)
+        {
+            SpaceJumpPoint spaceSelector = jumpPoint as SpaceJumpPoint;
+            if (spaceSelector != null && !IsOverBuilding(spaceSelector, buildingLayerMask))
+            {
+                invalidSpaceJumpPointNames.Add(spaceSelector.spaceName);
+            }
+        }
+
+        return invalidSpaceJumpPointNames;
+    }
+
+    private static bool IsOverBuilding(SpaceJumpPoint spaceSelector, LayerMask buildingLayerMask)
+    {
+        Ray ray = new Ray(spaceSelector.transform.position, Vector3.down);
+        return Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, buildingLayerMask);
+    }
+
 }
