@@ -89,5 +89,13 @@ namespace ReupVirtualTwinTests.mocks
         {
             return objects.ConvertAll(obj => obj.GetComponent<IUniqueIdentifier>().getId()).ToArray();
         }
+
+        public void DestroyTestObjects()
+        {
+            foreach (GameObject obj in objects)
+            {
+                GameObject.DestroyImmediate(obj);
+            }
+        }
     }
 }

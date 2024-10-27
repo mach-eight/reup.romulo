@@ -32,10 +32,10 @@ public class ChangeColorObjectsTest : MonoBehaviour
     public IEnumerator TearDown()
     {
         ReupSceneInstantiator.DestroySceneObjects(sceneObjects);
-        Destroy(meshedParent);
-        Destroy(unmeshedParent);
-        Destroy(meshedChild);
-        Destroy(unmeshedChild);
+        GameObject.DestroyImmediate(meshedParent);
+        GameObject.DestroyImmediate(unmeshedParent);
+        GameObject.DestroyImmediate(meshedChild);
+        GameObject.DestroyImmediate(unmeshedChild);
         yield return null;
     }
     private void CreateObjects()

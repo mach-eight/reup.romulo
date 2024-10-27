@@ -1,35 +1,38 @@
+using System;
 using ReupVirtualTwin.inputs;
 using ReupVirtualTwin.managerInterfaces;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Zenject;
 
 namespace ReupVirtualTwin.managers
 {
-    public class GesturesManager : MonoBehaviour, IGesturesManager
+    public class GesturesManager : IGesturesManager, IInitializable, IDisposable
     {
         [HideInInspector] public bool gestureInProgress { get; private set; } = false;
-        InputProvider _inputProvider;
+        InputProvider inputProvider;
         private int activeTouchInputs = 0;
 
-        private void Awake()
+        [Inject]
+        public void Init(InputProvider inputProvider)
         {
-            _inputProvider = new InputProvider();
+            this.inputProvider = inputProvider;
         }
 
-        private void OnEnable()
+        public void Initialize()
         {
-            _inputProvider.touch1HoldStarted += TouchStarted;
-            _inputProvider.touch1HoldSCanceled += TouchStopped; 
-            _inputProvider.touch2HoldStarted += TouchStarted;
-            _inputProvider.touch2HoldCanceled += TouchStopped;          
+            inputProvider.touch1HoldStarted += TouchStarted;
+            inputProvider.touch1HoldSCanceled += TouchStopped;
+            inputProvider.touch2HoldStarted += TouchStarted;
+            inputProvider.touch2HoldCanceled += TouchStopped;
         }
 
-        private void OnDisable()
+        public void Dispose()
         {
-            _inputProvider.touch1HoldStarted -= TouchStarted;
-            _inputProvider.touch1HoldSCanceled -= TouchStopped; 
-            _inputProvider.touch2HoldStarted -= TouchStarted;
-            _inputProvider.touch2HoldCanceled -= TouchStopped;        
+            inputProvider.touch1HoldStarted -= TouchStarted;
+            inputProvider.touch1HoldSCanceled -= TouchStopped;
+            inputProvider.touch2HoldStarted -= TouchStarted;
+            inputProvider.touch2HoldCanceled -= TouchStopped;
         }
 
         private void TouchStarted(InputAction.CallbackContext ctx)

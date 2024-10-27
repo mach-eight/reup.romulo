@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
 using ReupVirtualTwin.behaviours;
 using ReupVirtualTwinTests.utils;
@@ -102,7 +101,6 @@ namespace ReupVirtualTwinTests.behaviours
             float expectedZoomInFov = calculateNextPinchZoomFov(ZoomInStartFinger1, ZoomInStartFinger2, ZoomInEndFinger1, ZoomInEndFinger2);
             yield return PointerUtils.TouchGesture(input, touch, ZoomInStartFinger1, ZoomInStartFinger2, ZoomInEndFinger1, ZoomInEndFinger2, zoomSepts);
             yield return new WaitForSeconds(0.5f);
-
             Assert.AreEqual(expectedZoomInFov, dhvCineMachineComponent.Lens.FieldOfView, errorToleranceInDegrees);
 
             Vector2 ZoomOutStartFinger1 = new Vector2(100, 100);

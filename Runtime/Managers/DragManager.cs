@@ -2,44 +2,47 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using ReupVirtualTwin.inputs;
 using ReupVirtualTwin.managerInterfaces;
+using Zenject;
+using System;
+using UnityEditor;
 
 namespace ReupVirtualTwin.managers
 {
-    public class DragManager : MonoBehaviour, IDragManager
+    public class DragManager : IDragManager, IInitializable, ITickable, IDisposable
     {
-        [HideInInspector]
         public bool dragging { get; private set; } = false;
-        [HideInInspector]
         public bool prevDragging { get; private set; } = false;
 
         private bool _isHolding = false;
         private Vector2 _selectPosition;
-        private InputProvider _inputProvider;
+        private InputProvider inputProvider;
         private float _dragDistanceThreshold = 2.0f;
 
-        private void Awake()
+        [Inject]
+        public void Init(InputProvider inputProvider)
         {
-            _inputProvider = new InputProvider();
+            this.inputProvider = inputProvider;
         }
 
-        private void OnEnable()
+
+        public void Initialize()
         {
-            _inputProvider.holdStarted += OnHold;
-            _inputProvider.holdCanceled += OnHoldCanceled;
+            inputProvider.holdStarted += OnHold;
+            inputProvider.holdCanceled += OnHoldCanceled;
         }
 
-        private void OnDisable()
+        public void Dispose()
         {
-            _inputProvider.holdStarted -= OnHold;
-            _inputProvider.holdCanceled -= OnHoldCanceled;
+            inputProvider.holdStarted -= OnHold;
+            inputProvider.holdCanceled -= OnHoldCanceled;
         }
 
-        void Update()
+        public void Tick()
         {
             prevDragging = dragging;
             if (_isHolding == true && dragging == false)
             {
-                var pointer = _inputProvider.PointerInput();
+                var pointer = inputProvider.PointerInput();
                 var distance = Vector2.Distance(pointer, _selectPosition);
                 dragging = distance > _dragDistanceThreshold;
             }
@@ -48,7 +51,7 @@ namespace ReupVirtualTwin.managers
         private void OnHold(InputAction.CallbackContext obj)
         {
             _isHolding = true;
-            _selectPosition = _inputProvider.PointerInput();
+            _selectPosition = inputProvider.PointerInput();
         }
 
         private void OnHoldCanceled(InputAction.CallbackContext obj)
