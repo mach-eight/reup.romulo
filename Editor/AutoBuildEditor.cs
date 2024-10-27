@@ -10,8 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using ReupVirtualTwin.models;
 using ReupVirtualTwin.enums;
-using System;
-using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.helperInterfaces;
 
 public class AutoBuildEditor : MonoBehaviour
@@ -218,7 +216,7 @@ public class AutoBuildEditor : MonoBehaviour
 
         if (invalidSpaceJumpPointNames.Count > 0)
         {
-            string message = $"The following space jump points are not over The building:\n\n{string.Join("\n", invalidSpaceJumpPointNames)}";
+            string message = $"The following space jump points are not over the building:\n\n{string.Join("\n", invalidSpaceJumpPointNames)}";
             EditorUtility.DisplayDialog("Error", message, "OK");
             return false;
         }
