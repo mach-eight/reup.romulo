@@ -6,7 +6,8 @@ namespace ReupVirtualTwin.controllerInterfaces
 {
     public interface IZoomPositionRotationDHVController
     {
-        Ray focusRay { get; set; }
+        Ray focusRay { set; }
+        Ray startingFocusRay { set; }
         bool moveInDirection(Vector2 direction, float speed);
     }
 

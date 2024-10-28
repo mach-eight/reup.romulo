@@ -75,28 +75,35 @@ namespace ReupVirtualTwin.behaviours
 
         void PointerUpdatePosition()
         {
-            if (gesturesManager.gestureInProgress)
-            {
-                UpdateOriginalPositions();
-                return;
-            }
+            // if (gesturesManager.gestureInProgress)
+            // {
+            //     UpdateOriginalPositions();
+            //     return;
+            // }
             if (!dragManager.dragging)
             {
                 return;
             }
-            Ray cameraRay = RayUtils.GetRayFromCameraToScreenPoint(Camera.main, _inputProvider.PointerInput());
-            Ray invertedRay = new Ray(hitPoint, -cameraRay.direction);
-            Vector3 newCameraPosition = RayUtils.ProjectRayToHeight(invertedRay, originalCameraPosition.y);
-            Vector3 newWrapperPosition = originalWrapperPosition + (newCameraPosition - originalCameraPosition);
-            PerformMovement(newWrapperPosition);
+
+            Debug.Log("PointerUpdatePosition");
+            Ray focusRay = RayUtils.GetRayFromCameraToScreenPoint(Camera.main, _inputProvider.PointerInput());
+            Debug.DrawRay(focusRay.origin, focusRay.direction * 100, Color.red);
+            zoomPositionRotationDHVController.focusRay = focusRay;
+
+            // Ray cameraRay = RayUtils.GetRayFromCameraToScreenPoint(Camera.main, _inputProvider.PointerInput());
+            // Ray invertedRay = new Ray(hitPoint, -cameraRay.direction);
+            // Vector3 newCameraPosition = RayUtils.ProjectRayToHeight(invertedRay, originalCameraPosition.y);
+            // Vector3 newWrapperPosition = originalWrapperPosition + (newCameraPosition - originalCameraPosition);
+            // PerformMovement(newWrapperPosition);
         }
 
         private void UpdateOriginalPositions()
         {
             Ray hitRay = Camera.main.ScreenPointToRay(_inputProvider.PointerInput());
-            hitPoint = RayUtils.GetHitPoint(hitRay);
-            originalCameraPosition = hitRay.origin;
-            originalWrapperPosition = dollhouseViewWrapperTransform.position;
+            zoomPositionRotationDHVController.startingFocusRay = hitRay;
+            // hitPoint = RayUtils.GetHitPoint(hitRay);
+            // originalCameraPosition = hitRay.origin;
+            // originalWrapperPosition = dollhouseViewWrapperTransform.position;
         }
 
         private void PerformMovement(Vector3 nextPosition)

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using ReupVirtualTwin.controllerInterfaces;
+using ReupVirtualTwin.helpers;
 using UnityEngine;
 using Zenject;
 
@@ -8,12 +9,31 @@ namespace ReupVirtualTwin.controllers
 {
     public class ZoomPositionRotationDHVController : IZoomPositionRotationDHVController
     {
+        public Ray focusRay
+        {
+            set
+            {
+                Debug.Log($"17: _focusRay >>>\n{_focusRay}");
+                UpdateCameraPosition(value);
+            }
+        }
         Ray _focusRay;
-        public Ray focusRay { get => _focusRay; set => _focusRay = value; }
+        public Ray startingFocusRay
+        {
+            set
+            {
+                SetStartingFocusRay(value);
+            }
+        }
+        Ray _startingFocusRay;
         Transform dollhouseViewWrapperTransform;
         float baseFieldOfView = 60; // todo: this is a magic number, it should be obtained from the camera in initialization
         Vector3 buildingCenter;
         float limitDistanceFromBuildingInMeters = 35;
+
+        Vector3 hitPoint;
+        Vector3 originalCameraPosition;
+        Vector3 originalWrapperPosition;
 
         [SerializeField] public float KeyboardMoveCameraSpeedMetersPerSecond = 40;
 
@@ -64,6 +84,22 @@ namespace ReupVirtualTwin.controllers
             bool withinZBounds = Mathf.Abs(offsetFromCenter.z) <= limitDistanceFromBuildingInMeters;
 
             return withinXBounds && withinZBounds;
+        }
+        void SetStartingFocusRay(Ray startingFocusRay)
+        {
+            _startingFocusRay = startingFocusRay;
+            hitPoint = RayUtils.GetHitPoint(_startingFocusRay);
+            originalCameraPosition = _startingFocusRay.origin;
+            originalWrapperPosition = dollhouseViewWrapperTransform.position;
+        }
+
+        void UpdateCameraPosition(Ray focusRay)
+        {
+            _focusRay = focusRay;
+            Ray invertedRay = new Ray(hitPoint, -_focusRay.direction);
+            Vector3 newCameraPosition = RayUtils.ProjectRayToHeight(invertedRay, originalCameraPosition.y);
+            Vector3 newWrapperPosition = originalWrapperPosition + (newCameraPosition - originalCameraPosition);
+            PerformMovement(newWrapperPosition);
         }
 
     }
