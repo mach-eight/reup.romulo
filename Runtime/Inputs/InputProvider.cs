@@ -14,6 +14,20 @@ namespace ReupVirtualTwin.inputs
             _input = new AppInputActions();
         }
 
+        public void Initialize()
+        {
+            _input.Player.Enable();
+            _input.DollhouseView.Enable();
+            _input.MultiTouch.Enable();
+        }
+
+        public void Dispose()
+        {
+            _input.Player.Disable();
+            _input.DollhouseView.Disable();
+            _input.MultiTouch.Disable();
+        }
+
         public event Action<InputAction.CallbackContext> selectStarted
         {
             add
@@ -47,7 +61,6 @@ namespace ReupVirtualTwin.inputs
                 _input.Player.Select.canceled -= value;
             }
         }
-
         public event Action<InputAction.CallbackContext> holdStarted
         {
             add
@@ -81,62 +94,58 @@ namespace ReupVirtualTwin.inputs
                 _input.Player.Hold.canceled -= value;
             }
         }
-        public event Action<InputAction.CallbackContext> touch1HoldStarted
+        public event Action<InputAction.CallbackContext> touch0Started
         {
             add
             {
-                _input.MultiTouch.Touch1Hold.started += value;
+                _input.MultiTouch.Touch0.started += value;
             }
             remove
             {
-                _input.MultiTouch.Touch1Hold.started -= value;
+                _input.MultiTouch.Touch0.started -= value;
             }
         }
-        public event Action<InputAction.CallbackContext> touch1HoldSCanceled
+        public event Action<InputAction.CallbackContext> touch0Canceled
         {
             add
             {
-                _input.MultiTouch.Touch1Hold.canceled += value;
+                _input.MultiTouch.Touch0.canceled += value;
             }
             remove
             {
-                _input.MultiTouch.Touch1Hold.canceled -= value;
+                _input.MultiTouch.Touch0.canceled -= value;
             }
         }
-        public event Action<InputAction.CallbackContext> touch2HoldStarted
+        public event Action<InputAction.CallbackContext> touch1Started
         {
             add
             {
-                _input.MultiTouch.Touch2Hold.started += value;
+                _input.MultiTouch.Touch1.started += value;
             }
             remove
             {
-                _input.MultiTouch.Touch2Hold.started -= value;
+                _input.MultiTouch.Touch1.started -= value;
             }
         }
-        public event Action<InputAction.CallbackContext> touch2HoldCanceled
+        public event Action<InputAction.CallbackContext> touch1Canceled
         {
             add
             {
-                _input.MultiTouch.Touch2Hold.canceled += value;
+                _input.MultiTouch.Touch1.canceled += value;
             }
             remove
             {
-                _input.MultiTouch.Touch2Hold.canceled -= value;
+                _input.MultiTouch.Touch1.canceled -= value;
             }
-        }
-        public void Initialize()
-        {
-            _input.Player.Enable();
-            _input.DollhouseView.Enable();
-            _input.MultiTouch.Enable();
         }
 
-        public void Dispose()
+        public Vector2 Touch0()
         {
-            _input.Player.Disable();
-            _input.DollhouseView.Disable();
-            _input.MultiTouch.Disable();
+            return _input.MultiTouch.Touch0.ReadValue<Vector2>();
+        }
+        public Vector2 Touch1()
+        {
+            return _input.MultiTouch.Touch1.ReadValue<Vector2>();
         }
 
         public Vector2 RotateViewKeyboardInput()
@@ -164,14 +173,6 @@ namespace ReupVirtualTwin.inputs
         public Vector2 ScrollWheelZoomDhvCamera()
         {
             return _input.DollhouseView.ScrollWheelZoom.ReadValue<Vector2>();
-        }
-        public Vector2 Touch1Position()
-        {
-            return _input.MultiTouch.Touch1Position.ReadValue<Vector2>();
-        }
-        public Vector2 Touch2Position()
-        {
-            return _input.MultiTouch.Touch2Position.ReadValue<Vector2>();
         }
     }
 }
