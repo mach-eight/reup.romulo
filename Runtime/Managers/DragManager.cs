@@ -43,19 +43,23 @@ namespace ReupVirtualTwin.managers
             if (_isHolding == true && dragging == false)
             {
                 var pointer = inputProvider.PointerInput();
+                // Debug.Log($"46: pointer >>>\n{pointer}");
                 var distance = Vector2.Distance(pointer, _selectPosition);
+                // Debug.Log($"48: distance >>>\n{distance}");
                 dragging = distance > _dragDistanceThreshold;
             }
         }
 
         private void OnHold(InputAction.CallbackContext obj)
         {
+            // Debug.Log("onHOld started");
             _isHolding = true;
             _selectPosition = inputProvider.PointerInput();
         }
 
         private void OnHoldCanceled(InputAction.CallbackContext obj)
         {
+            // Debug.Log("onHOld canceled");
             _isHolding = false;
             dragging = false;
         }

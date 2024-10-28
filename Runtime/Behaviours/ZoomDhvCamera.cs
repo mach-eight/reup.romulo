@@ -40,7 +40,7 @@ namespace ReupVirtualTwin.behaviours
 
         private void Update()
         {
-            PinchGestureUpdateZoom();
+            // PinchGestureUpdateZoom();
             ScrollWheelUpdateZoom();
             ApplySmoothZoom();
         }

@@ -114,6 +114,17 @@ namespace ReupVirtualTwin.inputs
                 _input.MultiTouch.Touch2Hold.started -= value;
             }
         }
+        public event Action<InputAction.CallbackContext> touch2HoldPerformed
+        {
+            add
+            {
+                _input.MultiTouch.Touch2Hold.performed += value;
+            }
+            remove
+            {
+                _input.MultiTouch.Touch2Hold.performed -= value;
+            }
+        }
         public event Action<InputAction.CallbackContext> touch2HoldCanceled
         {
             add
