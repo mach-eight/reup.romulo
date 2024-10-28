@@ -10,21 +10,10 @@ namespace ReupVirtualTwin.behaviours
 {
     public class MoveDhvCamera : MonoBehaviour
     {
-        [SerializeField] public Transform dollhouseViewWrapperTransform;
-        [SerializeField] public GameObject gesturesManagerGameObject;
-        [SerializeField] public float limitDistanceFromBuildingInMeters = 35;
-        [SerializeField] public float KeyboardMoveCameraSpeedMetersPerSecond = 40;
-
-        public Vector3 hitPoint;
-        public Vector3 originalCameraPosition;
-        public Vector3 originalWrapperPosition;
+        [SerializeField] public float KeyboardMoveCameraSpeedMetersPerSecond = 40; //todo inject this from Reup prefab
 
         InputProvider _inputProvider;
         IDragManager dragManager;
-        IGesturesManager gesturesManager;
-        GameObject building;
-        private Vector3 buildingCenter;
-        private float baseFieldOfView = 60;
         IZoomPositionRotationDHVController zoomPositionRotationDHVController;
 
         private void OnEnable()
@@ -38,27 +27,18 @@ namespace ReupVirtualTwin.behaviours
 
         void OnHoldStarted(InputAction.CallbackContext ctx)
         {
-            UpdateOriginalPositions();
+            DefineStartingFocusRay();
         }
 
         [Inject]
         public void Init(
             IDragManager dragManager,
             InputProvider inputProvider,
-            [Inject(Id = "building")] GameObject building,
-            IZoomPositionRotationDHVController zoomPositionRotationDHVController,
-            IGesturesManager gesturesManager)
+            IZoomPositionRotationDHVController zoomPositionRotationDHVController)
         {
             _inputProvider = inputProvider;
             this.dragManager = dragManager;
-            this.gesturesManager = gesturesManager;
-            this.building = building;
             this.zoomPositionRotationDHVController = zoomPositionRotationDHVController;
-        }
-
-        void Start()
-        {
-            buildingCenter = BoundariesUtils.CalculateCenter(building);
         }
 
         void Update()
@@ -75,64 +55,19 @@ namespace ReupVirtualTwin.behaviours
 
         void PointerUpdatePosition()
         {
-            // if (gesturesManager.gestureInProgress)
-            // {
-            //     UpdateOriginalPositions();
-            //     return;
-            // }
             if (!dragManager.dragging)
             {
                 return;
             }
-
-            Debug.Log("PointerUpdatePosition");
             Ray focusRay = RayUtils.GetRayFromCameraToScreenPoint(Camera.main, _inputProvider.PointerInput());
             Debug.DrawRay(focusRay.origin, focusRay.direction * 100, Color.red);
             zoomPositionRotationDHVController.focusRay = focusRay;
-
-            // Ray cameraRay = RayUtils.GetRayFromCameraToScreenPoint(Camera.main, _inputProvider.PointerInput());
-            // Ray invertedRay = new Ray(hitPoint, -cameraRay.direction);
-            // Vector3 newCameraPosition = RayUtils.ProjectRayToHeight(invertedRay, originalCameraPosition.y);
-            // Vector3 newWrapperPosition = originalWrapperPosition + (newCameraPosition - originalCameraPosition);
-            // PerformMovement(newWrapperPosition);
         }
 
-        private void UpdateOriginalPositions()
+        private void DefineStartingFocusRay()
         {
-            Ray hitRay = Camera.main.ScreenPointToRay(_inputProvider.PointerInput());
-            zoomPositionRotationDHVController.startingFocusRay = hitRay;
-            // hitPoint = RayUtils.GetHitPoint(hitRay);
-            // originalCameraPosition = hitRay.origin;
-            // originalWrapperPosition = dollhouseViewWrapperTransform.position;
-        }
-
-        private void PerformMovement(Vector3 nextPosition)
-        {
-            if (!isNextPositionInsideBoundaries(nextPosition))
-            {
-                return;
-            }
-            dollhouseViewWrapperTransform.position = nextPosition;
-        }
-
-        private bool isNextPositionInsideBoundaries(Vector3 positionToCheck)
-        {
-            Vector3 offsetFromCenter = positionToCheck - buildingCenter;
-
-            bool withinXBounds = Mathf.Abs(offsetFromCenter.x) <= limitDistanceFromBuildingInMeters;
-            bool withinZBounds = Mathf.Abs(offsetFromCenter.z) <= limitDistanceFromBuildingInMeters;
-
-            return withinXBounds && withinZBounds;
-        }
-
-        public float GetKeyboardMoveCameraRelativeSpeed()
-        {
-            return KeyboardMoveCameraSpeedMetersPerSecond * GetFieldOfViewMultiplier();
-        }
-
-        public float GetFieldOfViewMultiplier()
-        {
-            return Camera.main.fieldOfView / baseFieldOfView;
+            Ray startingFocusRay = Camera.main.ScreenPointToRay(_inputProvider.PointerInput());
+            zoomPositionRotationDHVController.startingFocusRay = startingFocusRay;
         }
     }
 }

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.helpers;
 using UnityEngine;
@@ -9,38 +7,28 @@ namespace ReupVirtualTwin.controllers
 {
     public class ZoomPositionRotationDHVController : IZoomPositionRotationDHVController
     {
-        public Ray focusRay
-        {
-            set
-            {
-                Debug.Log($"17: _focusRay >>>\n{_focusRay}");
-                UpdateCameraPosition(value);
-            }
-        }
+        public Ray focusRay { set => UpdateFocusRay(value); }
         Ray _focusRay;
-        public Ray startingFocusRay
-        {
-            set
-            {
-                SetStartingFocusRay(value);
-            }
-        }
+        public Ray startingFocusRay { set => SetStartingFocusRay(value); }
         Ray _startingFocusRay;
         Transform dollhouseViewWrapperTransform;
         float baseFieldOfView = 60; // todo: this is a magic number, it should be obtained from the camera in initialization
         Vector3 buildingCenter;
-        float limitDistanceFromBuildingInMeters = 35;
+        public float limitDistanceFromBuildingInMeters = 35;
 
         Vector3 hitPoint;
         Vector3 originalCameraPosition;
         Vector3 originalWrapperPosition;
 
-        [SerializeField] public float KeyboardMoveCameraSpeedMetersPerSecond = 40;
+        [SerializeField] public float KeyboardMoveCameraSpeedMetersPerSecond = 40; // todo inject this from the Reup prefab
+        public float keyboardMoveCameraRelativeSpeed { get => KeyboardMoveCameraSpeedMetersPerSecond * GetFieldOfViewMultiplier(); }
 
         public ZoomPositionRotationDHVController(
+            [Inject(Id = "building")] GameObject building,
             [Inject(Id = "dhvWrapper")] Transform dhvWrapper)
         {
             dollhouseViewWrapperTransform = dhvWrapper;
+            DefineBuildingCenter(building);
         }
 
         public bool moveInDirection(Vector2 direction, float speed)
@@ -50,23 +38,24 @@ namespace ReupVirtualTwin.controllers
             Vector3 finalMovement = cameraRight * direction.x + cameraForward * direction.y;
             Vector3 normalizedDirection = Vector3.Normalize(finalMovement);
 
-            float movementDistance = GetKeyboardMoveCameraRelativeSpeed() * Time.deltaTime;
+            float movementDistance = keyboardMoveCameraRelativeSpeed * Time.deltaTime;
             Vector3 nextPosition = dollhouseViewWrapperTransform.position + (normalizedDirection * movementDistance);
 
             return PerformMovement(nextPosition);
         }
 
-        public float GetKeyboardMoveCameraRelativeSpeed()
-        {
-            return KeyboardMoveCameraSpeedMetersPerSecond * GetFieldOfViewMultiplier();
-        }
 
         public float GetFieldOfViewMultiplier()
         {
             return Camera.main.fieldOfView / baseFieldOfView;
         }
 
-        private bool PerformMovement(Vector3 nextPosition)
+        void DefineBuildingCenter(GameObject building)
+        {
+            buildingCenter = BoundariesUtils.CalculateCenter(building);
+        }
+
+        bool PerformMovement(Vector3 nextPosition)
         {
             if (!isNextPositionInsideBoundaries(nextPosition))
             {
@@ -76,7 +65,7 @@ namespace ReupVirtualTwin.controllers
             return true;
         }
 
-        private bool isNextPositionInsideBoundaries(Vector3 positionToCheck)
+        bool isNextPositionInsideBoundaries(Vector3 positionToCheck)
         {
             Vector3 offsetFromCenter = positionToCheck - buildingCenter;
 
@@ -93,7 +82,7 @@ namespace ReupVirtualTwin.controllers
             originalWrapperPosition = dollhouseViewWrapperTransform.position;
         }
 
-        void UpdateCameraPosition(Ray focusRay)
+        void UpdateFocusRay(Ray focusRay)
         {
             _focusRay = focusRay;
             Ray invertedRay = new Ray(hitPoint, -_focusRay.direction);

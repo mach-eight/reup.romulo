@@ -26,7 +26,7 @@ namespace ReupVirtualTwin.dependencyInjectors
             Container.BindInterfacesAndSelfTo<GesturesManager>().AsSingle();
             Container.Bind<ITagsController>().To<TagsController>().AsSingle();
             Container.Bind<int>().WithId("buildingLayerId").FromInstance(6);
-            Container.Bind<IZoomPositionRotationDHVController>().To<ZoomPositionRotationDHVController>().AsSingle();
+            Container.BindInterfacesAndSelfTo<ZoomPositionRotationDHVController>().AsSingle();
         }
     }
 }

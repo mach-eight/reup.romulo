@@ -13,7 +13,6 @@ using ReupVirtualTwinTests.utils;
 public class ReupPrefabTest : MonoBehaviour
 {
     ReupSceneInstantiator.SceneObjects sceneObjects;
-    Transform character;
 
     IObjectRegistry objectRegistry;
 
@@ -37,8 +36,6 @@ public class ReupPrefabTest : MonoBehaviour
         GameObject editMediatorGameObject = baseGlobalScriptGameObject.transform.Find("EditMediator").gameObject;
         editMediator = editMediatorGameObject.GetComponent<EditMediator>();
         editModeManager = editMediatorGameObject.transform.Find("EditModeManager").GetComponent<EditModeManager>();
-
-        character = sceneObjects.character;
     }
 
     [UnityTearDown]
@@ -154,13 +151,6 @@ public class ReupPrefabTest : MonoBehaviour
     {
         ViewModeManager viewModeManager = sceneObjects.viewModeManager;
         Assert.IsNotNull(viewModeManager.character);
-        yield return null;
-    }
-
-    [UnityTest]
-    public IEnumerator DHVCameraMovementShouldHaveADHVCameraTransformHandler()
-    {
-        Assert.IsNotNull(sceneObjects.moveDhvCameraBehavior.dollhouseViewWrapperTransform);
         yield return null;
     }
 

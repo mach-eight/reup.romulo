@@ -37,7 +37,7 @@ namespace ReupVirtualTwinTests.behaviours
             keyboard = InputSystem.AddDevice<Keyboard>();
             mouse = InputSystem.AddDevice<Mouse>();
             touch = InputSystem.AddDevice<Touchscreen>();
-            limitFromBuildingInMeters = sceneObjects.moveDhvCameraBehavior.limitDistanceFromBuildingInMeters;
+            limitFromBuildingInMeters = sceneObjects.zoomPositionRotationDHVController.limitDistanceFromBuildingInMeters;
             dollhouseViewWrapper = sceneObjects.dollhouseViewWrapper;
             sceneObjects.viewModeManager.ActivateDHV();
             yield return null;
@@ -53,7 +53,7 @@ namespace ReupVirtualTwinTests.behaviours
 
         void GetCameraInfoAfterTurningOnDHV()
         {
-            moveSpeedMetresPerSecond = sceneObjects.moveDhvCameraBehavior.GetKeyboardMoveCameraRelativeSpeed();
+            moveSpeedMetresPerSecond = sceneObjects.zoomPositionRotationDHVController.keyboardMoveCameraRelativeSpeed;
         }
 
         [UnityTest]
