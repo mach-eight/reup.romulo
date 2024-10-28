@@ -7,10 +7,10 @@ namespace ReupVirtualTwin.controllers
 {
     public class ZoomPositionRotationDHVController : IZoomPositionRotationDHVController
     {
-        public Ray focusRay { set => UpdateFocusRay(value); }
-        Ray _focusRay;
-        public Ray startingFocusRay { set => SetStartingFocusRay(value); }
-        Ray _startingFocusRay;
+        public Vector2 focusScreenPoint { set => UpdateFocusRay(value); }
+        Ray focusRay;
+        public Vector2 startingFocusScreenPoint { set => SetStartingFocusRay(value); }
+        Ray startingFocusRay;
         Transform dollhouseViewWrapperTransform;
         float baseFieldOfView = 60; // todo: this is a magic number, it should be obtained from the camera in initialization
         Vector3 buildingCenter;
@@ -74,18 +74,18 @@ namespace ReupVirtualTwin.controllers
 
             return withinXBounds && withinZBounds;
         }
-        void SetStartingFocusRay(Ray startingFocusRay)
+        void SetStartingFocusRay(Vector2 pointerPosition)
         {
-            _startingFocusRay = startingFocusRay;
-            hitPoint = RayUtils.GetHitPoint(_startingFocusRay);
-            originalCameraPosition = _startingFocusRay.origin;
+            startingFocusRay = RayUtils.GetRayFromCameraToScreenPoint(Camera.main, pointerPosition);
+            hitPoint = RayUtils.GetHitPoint(this.startingFocusRay);
+            originalCameraPosition = this.startingFocusRay.origin;
             originalWrapperPosition = dollhouseViewWrapperTransform.position;
         }
 
-        void UpdateFocusRay(Ray focusRay)
+        void UpdateFocusRay(Vector2 pointerPosition)
         {
-            _focusRay = focusRay;
-            Ray invertedRay = new Ray(hitPoint, -_focusRay.direction);
+            focusRay = RayUtils.GetRayFromCameraToScreenPoint(Camera.main, pointerPosition);
+            Ray invertedRay = new Ray(hitPoint, -this.focusRay.direction);
             Vector3 newCameraPosition = RayUtils.ProjectRayToHeight(invertedRay, originalCameraPosition.y);
             Vector3 newWrapperPosition = originalWrapperPosition + (newCameraPosition - originalCameraPosition);
             PerformMovement(newWrapperPosition);

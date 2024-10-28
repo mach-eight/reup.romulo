@@ -1,5 +1,4 @@
 using ReupVirtualTwin.controllerInterfaces;
-using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.inputs;
 using ReupVirtualTwin.managerInterfaces;
 using UnityEngine;
@@ -27,7 +26,7 @@ namespace ReupVirtualTwin.behaviours
 
         void OnHoldStarted(InputAction.CallbackContext ctx)
         {
-            DefineStartingFocusRay();
+            zoomPositionRotationDHVController.startingFocusScreenPoint = _inputProvider.PointerInput();
         }
 
         [Inject]
@@ -59,15 +58,8 @@ namespace ReupVirtualTwin.behaviours
             {
                 return;
             }
-            Ray focusRay = RayUtils.GetRayFromCameraToScreenPoint(Camera.main, _inputProvider.PointerInput());
-            Debug.DrawRay(focusRay.origin, focusRay.direction * 100, Color.red);
-            zoomPositionRotationDHVController.focusRay = focusRay;
+            zoomPositionRotationDHVController.focusScreenPoint = _inputProvider.PointerInput();
         }
 
-        private void DefineStartingFocusRay()
-        {
-            Ray startingFocusRay = Camera.main.ScreenPointToRay(_inputProvider.PointerInput());
-            zoomPositionRotationDHVController.startingFocusRay = startingFocusRay;
-        }
     }
 }
