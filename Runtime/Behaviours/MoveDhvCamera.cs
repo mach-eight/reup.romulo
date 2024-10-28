@@ -20,38 +20,39 @@ namespace ReupVirtualTwin.behaviours
         {
             _inputProvider.holdStarted += OnHoldStarted;
             // _inputProvider.touch2HoldStarted += OnSecondTouchStarted;
-            _inputProvider.touch2HoldPerformed += OnSecondTouchStarted;
+            // _inputProvider.touch2HoldPerformed += OnSecondTouchStarted;
+            _inputProvider.touch1Started += OnSecondTouchStarted;
         }
         private void OnDisable()
         {
             _inputProvider.holdStarted -= OnHoldStarted;
             // _inputProvider.touch2HoldStarted -= OnSecondTouchStarted;
-            _inputProvider.touch2HoldPerformed -= OnSecondTouchStarted;
+            _inputProvider.touch1Started -= OnSecondTouchStarted;
         }
 
         void OnHoldStarted(InputAction.CallbackContext ctx)
         {
-            Debug.Log("inside on hold started");
+            // Debug.Log("inside on hold started");
             LogScreenDimensions();
             zoomPositionRotationDHVController.startingFocusScreenPoint = _inputProvider.PointerInput();
         }
         void OnSecondTouchStarted(InputAction.CallbackContext ctx)
         {
-            Debug.Log("inside on second touch started");
+            // Debug.Log("inside on second touch started");
             zoomPositionRotationDHVController.startingFocusScreenPoint = GetMeanPointBetweenTouches();
         }
 
         void LogScreenDimensions()
         {
-            Debug.Log("Screen dimensions: " + Screen.width + "x" + Screen.height);
+            // Debug.Log("Screen dimensions: " + Screen.width + "x" + Screen.height);
         }
         Vector2 GetMeanPointBetweenTouches()
         {
-            Debug.Log("getting the mean point between touches");
+            // Debug.Log("getting the mean point between touches");
             Vector2 firstTouchPosition = _inputProvider.Touch1Position();
-            Debug.Log($"49: firstTouchPosition >>>\n{firstTouchPosition}");
+            // Debug.Log($"49: firstTouchPosition >>>\n{firstTouchPosition}");
             Vector2 secondTouchPosition = _inputProvider.Touch2Position();
-            Debug.Log($"51: secondTouchPosition >>>\n{secondTouchPosition}");
+            // Debug.Log($"51: secondTouchPosition >>>\n{secondTouchPosition}");
             return (firstTouchPosition + secondTouchPosition) / 2;
         }
 
@@ -70,7 +71,7 @@ namespace ReupVirtualTwin.behaviours
 
         void Update()
         {
-            Debug.Log($"73: _inputProvider.Touch2Position() >>>\n{_inputProvider.Touch2Position()}");
+            // Debug.Log($"73: _inputProvider.Touch2Position() >>>\n{_inputProvider.Touch2Position()}");
             Ray touch0Ray = Camera.main.ScreenPointToRay(_inputProvider.Touch1Position());
             Debug.DrawRay(touch0Ray.origin, touch0Ray.direction * 100, Color.red);
             Ray touch1Ray = Camera.main.ScreenPointToRay(_inputProvider.Touch2Position());
@@ -100,7 +101,6 @@ namespace ReupVirtualTwin.behaviours
 
             if (gesturesManager.gestureInProgress)
             {
-                Debug.Log("gesture in progress");
                 return GetMeanPointBetweenTouches();
             }
             return _inputProvider.PointerInput();

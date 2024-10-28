@@ -14,6 +14,20 @@ namespace ReupVirtualTwin.inputs
             _input = new AppInputActions();
         }
 
+        public void Initialize()
+        {
+            _input.Player.Enable();
+            _input.DollhouseView.Enable();
+            _input.MultiTouch.Enable();
+        }
+
+        public void Dispose()
+        {
+            _input.Player.Disable();
+            _input.DollhouseView.Disable();
+            _input.MultiTouch.Disable();
+        }
+
         public event Action<InputAction.CallbackContext> selectStarted
         {
             add
@@ -47,7 +61,6 @@ namespace ReupVirtualTwin.inputs
                 _input.Player.Select.canceled -= value;
             }
         }
-
         public event Action<InputAction.CallbackContext> holdStarted
         {
             add
@@ -136,18 +149,58 @@ namespace ReupVirtualTwin.inputs
                 _input.MultiTouch.Touch2Hold.canceled -= value;
             }
         }
-        public void Initialize()
+        public event Action<InputAction.CallbackContext> touch0Started
         {
-            _input.Player.Enable();
-            _input.DollhouseView.Enable();
-            _input.MultiTouch.Enable();
+            add
+            {
+                _input.MultiTouch.Touch0.started += value;
+            }
+            remove
+            {
+                _input.MultiTouch.Touch0.started -= value;
+            }
+        }
+        public event Action<InputAction.CallbackContext> touch0Canceled
+        {
+            add
+            {
+                _input.MultiTouch.Touch0.canceled += value;
+            }
+            remove
+            {
+                _input.MultiTouch.Touch0.canceled -= value;
+            }
+        }
+        public event Action<InputAction.CallbackContext> touch1Started
+        {
+            add
+            {
+                _input.MultiTouch.Touch1.started += value;
+            }
+            remove
+            {
+                _input.MultiTouch.Touch1.started -= value;
+            }
+        }
+        public event Action<InputAction.CallbackContext> touch1Canceled
+        {
+            add
+            {
+                _input.MultiTouch.Touch1.canceled += value;
+            }
+            remove
+            {
+                _input.MultiTouch.Touch1.canceled -= value;
+            }
         }
 
-        public void Dispose()
+        public Vector2 Touch0()
         {
-            _input.Player.Disable();
-            _input.DollhouseView.Disable();
-            _input.MultiTouch.Disable();
+            return _input.MultiTouch.Touch0.ReadValue<Vector2>();
+        }
+        public Vector2 Touch1()
+        {
+            return _input.MultiTouch.Touch1.ReadValue<Vector2>();
         }
 
         public Vector2 RotateViewKeyboardInput()

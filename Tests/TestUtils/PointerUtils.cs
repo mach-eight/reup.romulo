@@ -119,17 +119,17 @@ namespace ReupVirtualTwinTests.utils
             Vector2 endFinger2Position,
             int steps)
         {
-            Debug.Log($"122: startFinger1Position >>>\n{startFinger1Position}");
-            Debug.Log($"123: startFinger2Position >>>\n{startFinger2Position}");
-            Debug.Log($"124: endFinger1Position >>>\n{endFinger1Position}");
-            Debug.Log($"125: endFinger2Position >>>\n{endFinger2Position}");
+            // Debug.Log($"122: startFinger1Position >>>\n{startFinger1Position}");
+            // Debug.Log($"123: startFinger2Position >>>\n{startFinger2Position}");
+            // Debug.Log($"124: endFinger1Position >>>\n{endFinger1Position}");
+            // Debug.Log($"125: endFinger2Position >>>\n{endFinger2Position}");
             input.BeginTouch(0, startFinger1Position, true, touch);
-            Debug.Log("first touch done");
+            // Debug.Log("first touch done");
             yield return null;
             input.BeginTouch(1, startFinger2Position, true, touch);
-            Debug.Log("second touch done");
+            // Debug.Log("second touch done");
             yield return null;
-            Debug.Log("one extra frame before starting to move");
+            // Debug.Log("one extra frame before starting to move");
             yield return null;
 
             for (int i = 1; i <= steps; i++)

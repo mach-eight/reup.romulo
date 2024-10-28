@@ -23,7 +23,7 @@ namespace ReupVirtualTwinTests.behaviours
         float limitFromBuildingInMeters;
         float timeInSecsForHoldingButton = 0.25f;
         float errorToleranceInMeters = 0.01f;
-        int pointerSteps = 10;
+        int pointerSteps = 1000;
         Camera mainCamera;
         GameObject cube;
 
@@ -283,7 +283,7 @@ namespace ReupVirtualTwinTests.behaviours
                 new Vector2(0.5f, 1.0f - initialFinger0Y - 2 * relativeToViewPortPointerMovement), // the end mean of the two fingers is relativeToViewPortPointerMovement below the initial mean
             };
             yield return PointerUtils.TouchGesture(input, touch, startFingerPositions[0], startFingerPositions[1], EndFingerPositions[0], EndFingerPositions[1], pointerSteps);
-            // yield return new WaitForSeconds(5);
+            yield return new WaitForSeconds(50);
             float differenceFromExpected = Vector3.Distance(expectedCameraPosition, mainCamera.transform.position);
             Assert.LessOrEqual(differenceFromExpected, errorToleranceInMeters);
             yield return null;
@@ -311,6 +311,20 @@ namespace ReupVirtualTwinTests.behaviours
             Assert.LessOrEqual(differenceFromExpected, errorToleranceInMeters);
             yield return null;
         }
+
+        [UnityTest]
+        public IEnumerator MyTest()
+        {
+            input.BeginTouch(0, new Vector2(200, 200), true, touch);
+            yield return null;
+            yield return null;
+            yield return null;
+            input.BeginTouch(1, new Vector2(200, 200), true, touch);
+            yield return null;
+            yield return null;
+            yield return null;
+        }
+
 
     }
 }

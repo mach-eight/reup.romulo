@@ -76,7 +76,7 @@ namespace ReupVirtualTwin.controllers
         }
         void SetStartingFocusRay(Vector2 pointerPosition)
         {
-            Debug.Log($"79:setting starting pointerPosition >>>\n{pointerPosition}");
+            // Debug.Log($"79:setting starting pointerPosition >>>\n{pointerPosition}");
             startingFocusRay = RayUtils.GetRayFromCameraToScreenPoint(Camera.main, pointerPosition);
             hitPoint = RayUtils.GetHitPoint(this.startingFocusRay);
             originalCameraPosition = this.startingFocusRay.origin;
@@ -85,7 +85,7 @@ namespace ReupVirtualTwin.controllers
 
         void UpdateFocusRay(Vector2 pointerPosition)
         {
-            Debug.Log($"89: updating focus pointerPosition >>>\n{pointerPosition}");
+            // Debug.Log($"89: updating focus pointerPosition >>>\n{pointerPosition}");
             focusRay = RayUtils.GetRayFromCameraToScreenPoint(Camera.main, pointerPosition);
             Debug.DrawRay(focusRay.origin, focusRay.direction * 100, Color.green);
             Ray invertedRay = new Ray(hitPoint, -this.focusRay.direction);
