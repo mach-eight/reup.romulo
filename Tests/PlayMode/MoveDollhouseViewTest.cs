@@ -22,7 +22,7 @@ namespace ReupVirtualTwinTests.behaviours
         float moveSpeedMetresPerSecond;
         float limitFromBuildingInMeters;
         float timeInSecsForHoldingButton = 0.25f;
-        float errorToleranceInMeters = 0.1f;
+        float errorToleranceInMeters = 0.01f;
         int pointerSteps = 10;
         Camera mainCamera;
         GameObject cube;
@@ -244,7 +244,7 @@ namespace ReupVirtualTwinTests.behaviours
             Vector2 startFinger2 = new Vector2(400, 400);
             Vector2 endFinger1 = new Vector2(100, 100);
             Vector2 endFinger2 = new Vector2(500, 500);
-            yield return PointerUtils.TouchGesture(input, touch, startFinger1, startFinger2, endFinger1, endFinger2, 10);
+            yield return PointerUtils.AbsolutePositionTouchGesture(input, touch, startFinger1, startFinger2, endFinger1, endFinger2, 10);
 
             Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
             yield return null;
@@ -267,5 +267,49 @@ namespace ReupVirtualTwinTests.behaviours
             Assert.AreEqual(0, finalPosition.z, errorToleranceInMeters);
             yield return null;
         }
+
+        [UnityTest]
+        public IEnumerator ShouldMoveCameraMovingTwoTouchPoints()
+        {
+            Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
+            float relativeToViewPortPointerMovement = 0.1f;
+            float initialFinger0Y = 0.4f;
+            Vector2[] startFingerPositions = new[] {
+                new Vector2(0.5f, initialFinger0Y), new Vector2(0.5f, 1.0f - initialFinger0Y) // the mean of the two fingers is 0.5, 0.5
+            };
+            Vector2[] EndFingerPositions = new[] {
+                new Vector2(0.5f, initialFinger0Y), // the finger 1 is not moving
+                new Vector2(0.5f, 1.0f - initialFinger0Y - 2 * relativeToViewPortPointerMovement), // the end mean of the two fingers is relativeToViewPortPointerMovement below the initial mean
+            };
+            yield return PointerUtils.TouchGesture(input, touch, startFingerPositions[0], startFingerPositions[1], EndFingerPositions[0], EndFingerPositions[1], 10);
+            Vector3 expectedCameraPosition = GetExpectedCameraPositionAfterForwardMovement(relativeToViewPortPointerMovement);
+            float differenceFromExpected = Vector3.Distance(expectedCameraPosition, mainCamera.transform.position);
+            Assert.LessOrEqual(differenceFromExpected, errorToleranceInMeters);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldMoveCamera_firstWith1Touch_and_then_with2()
+        {
+            Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
+            float relativeToViewPortPointerMovement = 0.1f;
+            Vector3 expectedCameraPosition = GetExpectedCameraPositionAfterForwardMovement(relativeToViewPortPointerMovement);
+            int[] fingerIds = new int[] { 0, 1 };
+            float initialFinger0Y = 0.6f;
+            Vector2[] startFingerPositions = new[] {
+                new Vector2(0.5f, initialFinger0Y), new Vector2(0.5f, 1.0f - initialFinger0Y) // the mean of the two fingers is 0.5, 0.5
+            };
+            Vector2 midFinger0Position = new Vector2(0.5f, 0.5f);
+            Vector2 endFinger1Position = new Vector2(0.5f, startFingerPositions[1].y - 2 * relativeToViewPortPointerMovement); // the end mean of the two fingers is relativeToViewPortPointerMovement below the initial mean
+            yield return PointerUtils.MoveFinger(input, touch, fingerIds[0], startFingerPositions[0], midFinger0Position, pointerSteps, false);
+            Assert.AreNotEqual(Vector3.zero, dollhouseViewWrapper.position);
+            yield return PointerUtils.MoveFinger(input, touch, fingerIds[0], midFinger0Position, startFingerPositions[0], pointerSteps, false, false);
+            AssertUtils.AssertVectorIsZero(dollhouseViewWrapper.position, errorToleranceInMeters); // the camera returned to it's initial position
+            yield return PointerUtils.MoveFinger(input, touch, fingerIds[1], startFingerPositions[1], endFinger1Position, pointerSteps);
+            float differenceFromExpected = Vector3.Distance(expectedCameraPosition, mainCamera.transform.position);
+            Assert.LessOrEqual(differenceFromExpected, errorToleranceInMeters);
+            yield return null;
+        }
+
     }
 }

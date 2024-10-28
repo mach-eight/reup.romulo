@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using System;
 using UnityEngine.InputSystem;
-using InSys = UnityEngine.InputSystem;
+// using InSys = UnityEngine.InputSystem;
 
 namespace ReupVirtualTwinTests.utils
 {
@@ -14,13 +14,15 @@ namespace ReupVirtualTwinTests.utils
             Vector2 startMousePoint,
             Vector2 endMousePoint,
             int steps
-        ) {
+        )
+        {
             return MovePointer(
                 startMousePoint,
                 endMousePoint,
                 steps,
                 (Vector2 startPosition) => input.Move(mouse.position, startPosition),
-                (Vector2 currentPosition, Vector2 delta) => {
+                (Vector2 currentPosition, Vector2 delta) =>
+                {
                     input.Move(mouse.position, currentPosition, delta);
                     input.Set(mouse.delta, delta);
                 },
@@ -33,13 +35,15 @@ namespace ReupVirtualTwinTests.utils
             Vector2 startMousePoint,
             Vector2 endMousePoint,
             int steps
-        ) {
+        )
+        {
             return MovePointer(
                 startMousePoint,
                 endMousePoint,
                 steps,
                 (Vector2 startPosition) => { input.Move(mouse.position, startPosition); input.Press(mouse.leftButton); },
-                (Vector2 currentPosition, Vector2 delta) => {
+                (Vector2 currentPosition, Vector2 delta) =>
+                {
                     input.Move(mouse.position, currentPosition, delta);
                     input.Set(mouse.delta, delta);
                 },
@@ -53,15 +57,30 @@ namespace ReupVirtualTwinTests.utils
             int touchId,
             Vector2 startScreenPosition,
             Vector2 endScreenPosition,
-            int steps
-        ) {
+            int steps,
+            bool endTouch = true,
+            bool startTouch = true
+        )
+        {
             return MovePointer(
                 startScreenPosition,
                 endScreenPosition,
                 steps,
-                (Vector2 startPosition) => input.SetTouch(touchId, InSys.TouchPhase.Began, startPosition, Vector2.zero, true, touch),
-                (Vector2 currentPosition, Vector2 delta) => input.SetTouch(touchId, InSys.TouchPhase.Moved, currentPosition, delta, true, touch),
-                (Vector2 endPosition) => input.EndTouch(touchId, endPosition, Vector2.zero, true, touch)
+                (Vector2 startPosition) =>
+                {
+                    if (startTouch)
+                    {
+                        input.BeginTouch(touchId, startPosition, true, touch);
+                    }
+                },
+                (Vector2 currentPosition, Vector2 delta) => input.MoveTouch(touchId, currentPosition, delta, true, touch),
+                (Vector2 endPosition) =>
+                {
+                    if (endTouch)
+                    {
+                        input.EndTouch(touchId, endPosition, Vector2.zero, true, touch);
+                    }
+                }
             );
         }
 
@@ -72,13 +91,14 @@ namespace ReupVirtualTwinTests.utils
             Action<Vector2> startAction,
             Action<Vector2, Vector2> stepAction,
             Action<Vector2> endAction
-        ) {
+        )
+        {
             Vector2 startPosition = Camera.main.ViewportToScreenPoint(startScreenPosition);
             Vector2 endPosition = Camera.main.ViewportToScreenPoint(endScreenPosition);
             startAction(startPosition);
             for (int i = 1; i < steps + 1; i++)
             {
-                float prevT = (float)(i-1) / steps;
+                float prevT = (float)(i - 1) / steps;
                 float t = (float)i / steps;
                 Vector2 prevPostion = Vector2.Lerp(startPosition, endPosition, prevT);
                 Vector2 currentPosition = Vector2.Lerp(startPosition, endPosition, t);
@@ -90,15 +110,15 @@ namespace ReupVirtualTwinTests.utils
             yield return null;
         }
 
-        public static IEnumerator TouchGesture(
+        public static IEnumerator AbsolutePositionTouchGesture(
             InputTestFixture input,
             Touchscreen touch,
             Vector2 startFinger1Position,
             Vector2 startFinger2Position,
             Vector2 endFinger1Position,
             Vector2 endFinger2Position,
-            int steps
-        ) {
+            int steps)
+        {
             input.BeginTouch(0, startFinger1Position, true, touch);
             input.BeginTouch(1, startFinger2Position, true, touch);
             yield return null;
@@ -124,9 +144,28 @@ namespace ReupVirtualTwinTests.utils
             yield return null;
         }
 
-        public static void Tap(InputTestFixture input, Touchscreen touch, Vector2 tapPosition, int touchId = 0){
-            InSys.TouchPhase phase = InSys.TouchPhase.Began;
-            input.SetTouch(touchId, phase, tapPosition, 1.0f, Vector2.zero, true, touch);
+        public static IEnumerator TouchGesture(
+            InputTestFixture input,
+            Touchscreen touch,
+            Vector2 relativeStartFinger1Position,
+            Vector2 relativeStartFinger2Position,
+            Vector2 relativeEndFinger1Position,
+            Vector2 relativeEndFinger2Position,
+            int steps)
+        {
+            yield return AbsolutePositionTouchGesture(
+                input,
+                touch,
+                Camera.main.ViewportToScreenPoint(relativeStartFinger1Position),
+                Camera.main.ViewportToScreenPoint(relativeStartFinger2Position),
+                Camera.main.ViewportToScreenPoint(relativeEndFinger1Position),
+                Camera.main.ViewportToScreenPoint(relativeEndFinger2Position),
+                steps);
+        }
+
+        public static void Tap(InputTestFixture input, Touchscreen touch, Vector2 tapPosition, int touchId = 0)
+        {
+            input.BeginTouch(touchId, tapPosition, true, touch);
             input.EndTouch(touchId, tapPosition);
         }
     }
