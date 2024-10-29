@@ -74,7 +74,7 @@ public class AutoBuildEditor : MonoBehaviour
 
         if (summary.result == BuildResult.Succeeded)
         {
-            EditorUtility.DisplayDialog("Success", "Build succeeded", "OK");
+            EditorUtility.DisplayDialog("Success", $"Build {path} succeeded", "OK");
         }
         else
         {
