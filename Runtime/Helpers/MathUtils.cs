@@ -24,5 +24,13 @@ namespace ReupVirtualTwin.helpers
             return angleInRadians * Mathf.Rad2Deg;
         }
 
+        public static float DistanceBetweenPointAndRay(Vector3 point, Ray ray)
+        {
+            Vector3 rayOriginToPoint = point - ray.origin;
+            Vector3 rayDirection = ray.direction;
+            float projection = Vector3.Dot(rayOriginToPoint, rayDirection) / Vector3.Dot(rayDirection, rayDirection);
+            return Vector3.Distance(point, ray.origin + rayDirection * projection);
+        }
+
     }
 }

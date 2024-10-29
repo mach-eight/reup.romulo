@@ -9,7 +9,7 @@ namespace ReupVirtualTwin.helpers
             return camera.ScreenPointToRay(screenPoint);
         }
 
-        public static Vector3 GetHitPoint(Ray ray)
+        public static Vector3 GetHitPointDefaultToGround(Ray ray)
         {
             RaycastHit hit;
             if (CastRay(ray, out hit))

@@ -4,7 +4,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.TestTools;
-using UnityEditor;
+using Editor = UnityEditor;
 using ReupVirtualTwin.helpers;
 
 
@@ -12,7 +12,7 @@ namespace ReupVirtualTwinTests.behaviours
 {
     public class MoveDollhouseViewTest : MonoBehaviour
     {
-        GameObject cubePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Tests/TestAssets/Cube.prefab");
+        GameObject cubePrefab = Editor.AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Tests/TestAssets/Cube.prefab");
         InputTestFixture input;
         ReupSceneInstantiator.SceneObjects sceneObjects;
         Transform dollhouseViewWrapper;
@@ -272,22 +272,43 @@ namespace ReupVirtualTwinTests.behaviours
         public IEnumerator ShouldMoveCameraMovingTwoTouchPoints()
         {
             Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
-            float relativeToViewPortPointerMovement = 0.1f;
-            Vector3 expectedCameraPosition = GetExpectedCameraPositionAfterForwardMovement(relativeToViewPortPointerMovement);
-            float initialFinger0Y = 0.4f;
-            Vector2[] startFingerPositions = new[] {
-                new Vector2(0.5f, initialFinger0Y), new Vector2(0.5f, 1.0f - initialFinger0Y) // the mean of the two fingers is 0.5, 0.5
+            Vector2[] startFingerPositions = new[] { new Vector2(0.5f, 0.4f), new Vector2(0.5f, 0.6f) };
+            Vector2[] endFingerPositions = new[] { new Vector2(0.5f, 0.4f), new Vector2(0.5f, 0.8f) };
+            Vector2[] betweenFingersPositions = new[] {
+                (startFingerPositions[0] + startFingerPositions[1]) / 2,
+                (endFingerPositions[0] + endFingerPositions[1]) / 2,
             };
-            Vector2[] EndFingerPositions = new[] {
-                new Vector2(0.5f, initialFinger0Y), // the finger 0 is not moving
-                new Vector2(0.5f, 1.0f - initialFinger0Y - 2 * relativeToViewPortPointerMovement), // the end mean of the two fingers is relativeToViewPortPointerMovement below the initial mean
-            };
-            yield return PointerUtils.TouchGesture(input, touch, startFingerPositions[0], startFingerPositions[1], EndFingerPositions[0], EndFingerPositions[1], pointerSteps);
-            yield return new WaitForSeconds(50);
-            float differenceFromExpected = Vector3.Distance(expectedCameraPosition, mainCamera.transform.position);
-            Assert.LessOrEqual(differenceFromExpected, errorToleranceInMeters);
+            Ray originalRay = mainCamera.ViewportPointToRay(betweenFingersPositions[0]);
+            Debug.Log($"282: originalRay >>>\n{originalRay}");
+            Vector3 hitPoint = RayUtils.GetHitPointDefaultToGround(originalRay);
+            Debug.Log($"283: hitPoint >>>\n{hitPoint}");
+            yield return PointerUtils.TouchGesture(input, touch, startFingerPositions[0], startFingerPositions[1], endFingerPositions[0], endFingerPositions[1], pointerSteps);
+            Ray finalRay = mainCamera.ViewportPointToRay(betweenFingersPositions[1]);
+            Vector3 newHitPoint = RayUtils.GetHitPointDefaultToGround(finalRay);
+            Assert.AreEqual(0, MathUtils.DistanceBetweenPointAndRay(hitPoint, finalRay), errorToleranceInMeters);
             yield return null;
         }
+
+        // [UnityTest]
+        // public IEnumerator ShouldMoveCameraMovingTwoTouchPoints()
+        // {
+        //     Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
+        //     float relativeToViewPortPointerMovement = 0.1f;
+        //     // Vector3 expectedCameraPosition = GetExpectedCameraPositionAfterForwardMovement(relativeToViewPortPointerMovement);
+        //     float initialFinger0Y = 0.4f;
+        //     Vector2[] startFingerPositions = new[] {
+        //         new Vector2(0.5f, initialFinger0Y), new Vector2(0.5f, 1.0f - initialFinger0Y) // the mean of the two fingers is 0.5, 0.5
+        //     };
+        //     Vector2[] EndFingerPositions = new[] {
+        //         new Vector2(0.5f, initialFinger0Y), // the finger 0 is not moving
+        //         new Vector2(0.5f, 1.0f - initialFinger0Y - 2 * relativeToViewPortPointerMovement), // the end mean of the two fingers is relativeToViewPortPointerMovement below the initial mean
+        //     };
+        //     yield return PointerUtils.TouchGesture(input, touch, startFingerPositions[0], startFingerPositions[1], EndFingerPositions[0], EndFingerPositions[1], pointerSteps);
+        //     yield return new WaitForSeconds(50);
+        //     // float differenceFromExpected = Vector3.Distance(expectedCameraPosition, mainCamera.transform.position);
+        //     // Assert.LessOrEqual(differenceFromExpected, errorToleranceInMeters);
+        //     yield return null;
+        // }
 
         [UnityTest]
         public IEnumerator ShouldMoveCamera_firstWith1Touch_and_then_with2()

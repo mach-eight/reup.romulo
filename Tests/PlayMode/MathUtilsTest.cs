@@ -37,6 +37,42 @@ namespace ReupVirtualTwinTests.helpers
             Assert.AreEqual(-pi / 2, MathUtils.NormalizeAngleRad(3 * pi / 2), errorThreshold);
             Assert.AreEqual(0, MathUtils.NormalizeAngleRad(2 * pi), errorThreshold);
         }
+
+        [Test]
+        public void DistanceFromPointToRayTest()
+        {
+            Assert.AreEqual(
+                1,
+                MathUtils.DistanceBetweenPointAndRay(
+                    new Vector3(1, 1, 0),
+                    new Ray(new Vector3(0, 0, 0), new Vector3(1, 0, 0))
+            ));
+            Assert.AreEqual(
+                1 / Mathf.Sqrt(2),
+                MathUtils.DistanceBetweenPointAndRay(
+                    new Vector3(1, 0, 0),
+                    new Ray(new Vector3(0, 0, 0), new Vector3(1, 1, 0))
+            ));
+            Assert.AreEqual(
+                0,
+                MathUtils.DistanceBetweenPointAndRay(
+                    new Vector3(1, 1, 1),
+                    new Ray(new Vector3(0, 0, 1), new Vector3(1, 1, 0))
+            ));
+            Assert.AreEqual(
+                1,
+                MathUtils.DistanceBetweenPointAndRay(
+                    new Vector3(1, 1, 0),
+                    new Ray(new Vector3(0, 0, 1), new Vector3(1, 1, 0))
+            ));
+            Assert.AreEqual(
+                Mathf.Sqrt(2),
+                MathUtils.DistanceBetweenPointAndRay(
+                    new Vector3(1, 0, 1),
+                    new Ray(new Vector3(0, 1, 10000), new Vector3(0, 0, 1))
+            ));
+        }
+
     }
 
 }

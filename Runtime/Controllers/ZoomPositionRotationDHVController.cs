@@ -78,7 +78,7 @@ namespace ReupVirtualTwin.controllers
         {
             // Debug.Log($"79:setting starting pointerPosition >>>\n{pointerPosition}");
             startingFocusRay = RayUtils.GetRayFromCameraToScreenPoint(Camera.main, pointerPosition);
-            hitPoint = RayUtils.GetHitPoint(this.startingFocusRay);
+            hitPoint = RayUtils.GetHitPointDefaultToGround(this.startingFocusRay);
             originalCameraPosition = this.startingFocusRay.origin;
             originalWrapperPosition = dollhouseViewWrapperTransform.position;
         }
