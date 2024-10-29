@@ -51,6 +51,12 @@ namespace ReupVirtualTwinTests.utils
             );
         }
 
+        public static void BeginFinger(InputTestFixture input, Touchscreen touch, int touchId, Vector2 position)
+        {
+            Vector2 absolutePosition = Camera.main.ViewportToScreenPoint(position);
+            input.BeginTouch(touchId, absolutePosition, true, touch);
+        }
+
         public static IEnumerator MoveFinger(
             InputTestFixture input,
             Touchscreen touch,

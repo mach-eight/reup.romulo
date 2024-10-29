@@ -2,7 +2,6 @@ using UnityEngine;
 using ReupVirtualTwin.inputs;
 using Unity.Cinemachine;
 using ReupVirtualTwin.managerInterfaces;
-using System;
 using Zenject;
 
 namespace ReupVirtualTwin.behaviours

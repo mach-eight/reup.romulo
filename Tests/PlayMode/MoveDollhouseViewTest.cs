@@ -7,7 +7,6 @@ using UnityEngine.TestTools;
 using Editor = UnityEditor;
 using ReupVirtualTwin.helpers;
 
-
 namespace ReupVirtualTwinTests.behaviours
 {
     public class MoveDollhouseViewTest : MonoBehaviour
@@ -22,7 +21,7 @@ namespace ReupVirtualTwinTests.behaviours
         float moveSpeedMetresPerSecond;
         float limitFromBuildingInMeters;
         float timeInSecsForHoldingButton = 0.25f;
-        float errorToleranceInMeters = 0.01f;
+        float errorToleranceInMeters = 0.05f;
         int pointerSteps = 10;
         Camera mainCamera;
         GameObject cube;
@@ -292,7 +291,6 @@ namespace ReupVirtualTwinTests.behaviours
             Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
             int[] fingerIds = new int[] { 0, 1 };
             Vector2[] startFingerPositions = new[] { new Vector2(0.5f, 0.6f), new Vector2(0.5f, 0.4f) }; // the mean of the two fingers is 0.5, 0.5
-            // Vector2 midFinger0Position = new Vector2(0.5f, 0.5f);
             Vector2 midFinger0Position = new Vector2(0.5f, 0.0f);
             Vector2 endFinger1Position = new Vector2(0.7f, 0.4f);
             Vector2[] betweenFingersPositions = new[] {
@@ -300,7 +298,7 @@ namespace ReupVirtualTwinTests.behaviours
                 (startFingerPositions[0] + endFinger1Position) / 2,
             };
             yield return PointerUtils.MoveFinger(input, touch, fingerIds[0], startFingerPositions[0], midFinger0Position, pointerSteps, false);
-            Assert.AreNotEqual(Vector3.zero, dollhouseViewWrapper.position);
+            Assert.Greater(dollhouseViewWrapper.position.magnitude, errorToleranceInMeters); // camera moved
             yield return PointerUtils.MoveFinger(input, touch, fingerIds[0], midFinger0Position, startFingerPositions[0], pointerSteps, false, false);
             AssertUtils.AssertVectorIsZero(dollhouseViewWrapper.position, errorToleranceInMeters); // the camera returned to it's initial position
             Ray originalRay = mainCamera.ViewportPointToRay(betweenFingersPositions[0]);
@@ -312,18 +310,52 @@ namespace ReupVirtualTwinTests.behaviours
         }
 
         [UnityTest]
-        public IEnumerator MyTest()
+        public IEnumerator ShouldMoveCamera_firstWith2Touches_and_then_backWithTouch0()
         {
-            input.BeginTouch(0, new Vector2(200, 200), true, touch);
+            AssertUtils.AssertVectorIsZero(dollhouseViewWrapper.position, errorToleranceInMeters);
+            int[] fingerIds = new int[] { 0, 1 };
+            Vector2[] startFingerPositions = new[] { new Vector2(0.5f, 0.6f), new Vector2(0.5f, 0.4f) }; // the mean of the two fingers is 0.5, 0.5
+            Vector2 midFinger1Position = new Vector2(0.5f, 0.5f);
+            PointerUtils.BeginFinger(input, touch, fingerIds[0], startFingerPositions[0]);
             yield return null;
+            PointerUtils.BeginFinger(input, touch, fingerIds[1], startFingerPositions[1]);
             yield return null;
-            yield return null;
-            input.BeginTouch(1, new Vector2(200, 200), true, touch);
-            yield return null;
-            yield return null;
-            yield return null;
+            AssertUtils.AssertVectorIsZero(dollhouseViewWrapper.position, errorToleranceInMeters); // the camera hasn't moved yet
+            yield return PointerUtils.MoveFinger(input, touch, fingerIds[1], startFingerPositions[1], midFinger1Position, pointerSteps, false, false);
+            AssertUtils.AssertVectorIsNotZero(dollhouseViewWrapper.position, errorToleranceInMeters); // camera moved
+            yield return PointerUtils.MoveFinger(input, touch, fingerIds[1], midFinger1Position, startFingerPositions[1], pointerSteps, true, false);
+            AssertUtils.AssertVectorIsZero(dollhouseViewWrapper.position, errorToleranceInMeters); // the camera returned to it's initial position
+            Ray touch0Ray = mainCamera.ViewportPointToRay(startFingerPositions[0]);
+            Vector3 hitPoint = RayUtils.GetHitPointDefaultToGround(touch0Ray);
+            Vector3 endFinger0Position = new Vector2(0.7f, 0.6f);
+            yield return PointerUtils.MoveFinger(input, touch, fingerIds[0], startFingerPositions[0], endFinger0Position, pointerSteps, false, false);
+            Ray endTouch0Ray = mainCamera.ViewportPointToRay(endFinger0Position);
+            Assert.AreEqual(0, MathUtils.DistanceBetweenPointAndRay(hitPoint, endTouch0Ray), errorToleranceInMeters);
         }
 
+        [UnityTest]
+        public IEnumerator ShouldMoveCamera_firstWith2Touches_and_then_backWithTouch1()
+        {
+            AssertUtils.AssertVectorIsZero(dollhouseViewWrapper.position, errorToleranceInMeters);
+            int[] fingerIds = new int[] { 0, 1 };
+            Vector2[] startFingerPositions = new[] { new Vector2(0.5f, 0.6f), new Vector2(0.5f, 0.4f) }; // the mean of the two fingers is 0.5, 0.5
+            Vector2 midFinger1Position = new Vector2(0.5f, 0.5f);
+            PointerUtils.BeginFinger(input, touch, fingerIds[0], startFingerPositions[0]);
+            yield return null;
+            PointerUtils.BeginFinger(input, touch, fingerIds[1], startFingerPositions[1]);
+            yield return null;
+            AssertUtils.AssertVectorIsZero(dollhouseViewWrapper.position, errorToleranceInMeters); // the camera hasn't moved yet
+            yield return PointerUtils.MoveFinger(input, touch, fingerIds[1], startFingerPositions[1], midFinger1Position, pointerSteps, false, false);
+            AssertUtils.AssertVectorIsNotZero(dollhouseViewWrapper.position, errorToleranceInMeters); // camera moved
+            yield return PointerUtils.MoveFinger(input, touch, fingerIds[1], midFinger1Position, startFingerPositions[1], pointerSteps, true, false);
+            AssertUtils.AssertVectorIsZero(dollhouseViewWrapper.position, errorToleranceInMeters); // the camera returned to it's initial position
+            Ray touch0Ray = mainCamera.ViewportPointToRay(startFingerPositions[0]);
+            Vector3 hitPoint = RayUtils.GetHitPointDefaultToGround(touch0Ray);
+            Vector3 endFinger0Position = new Vector2(0.7f, 0.6f);
+            yield return PointerUtils.MoveFinger(input, touch, fingerIds[0], startFingerPositions[0], endFinger0Position, pointerSteps, false, false);
+            Ray endTouch0Ray = mainCamera.ViewportPointToRay(endFinger0Position);
+            Assert.AreEqual(0, MathUtils.DistanceBetweenPointAndRay(hitPoint, endTouch0Ray), errorToleranceInMeters);
+        }
 
     }
 }

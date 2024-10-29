@@ -61,9 +61,12 @@ namespace ReupVirtualTwinTests.utils
 
         public static void AssertVectorIsZero(Vector3 vector, float zeroThreshold)
         {
-            Assert.LessOrEqual(vector.x, zeroThreshold);
-            Assert.LessOrEqual(vector.y, zeroThreshold);
-            Assert.LessOrEqual(vector.z, zeroThreshold);
+            Assert.LessOrEqual(vector.magnitude, zeroThreshold);
+        }
+
+        public static void AssertVectorIsNotZero(Vector3 vector, float zeroThreshold)
+        {
+            Assert.Greater(vector.magnitude, zeroThreshold);
         }
 
     }

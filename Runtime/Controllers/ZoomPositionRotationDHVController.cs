@@ -77,7 +77,7 @@ namespace ReupVirtualTwin.controllers
         }
         void SetStartingFocusRay(Vector2 pointerPosition)
         {
-            // Debug.Log($"79:setting starting pointerPosition >>>\n{pointerPosition}");
+            Debug.Log($"79:setting starting pointerPosition >>>\n{pointerPosition}");
             startingFocusRay = RayUtils.GetRayFromCameraToScreenPoint(Camera.main, pointerPosition);
             hitPoint = RayUtils.GetHitPointDefaultToGround(this.startingFocusRay);
             originalCameraPosition = this.startingFocusRay.origin;

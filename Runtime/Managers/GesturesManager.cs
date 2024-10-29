@@ -21,34 +21,30 @@ namespace ReupVirtualTwin.managers
 
         public void Initialize()
         {
-            inputProvider.touch1HoldStarted += TouchStarted;
-            inputProvider.touch1HoldSCanceled += TouchStopped;
-            inputProvider.touch2HoldStarted += TouchStarted;
-            inputProvider.touch2HoldCanceled += TouchStopped;
-            // inputProvider.touch1HoldStarted += Touch1Started;
-            // inputProvider.touch2HoldStarted += Touch2Started;
-            // inputProvider.touch0Started += Touch1Started;
+            inputProvider.touch0Started += TouchStarted;
+            inputProvider.touch0Canceled += TouchStopped;
+            inputProvider.touch1Started += TouchStarted;
+            inputProvider.touch1Canceled += TouchStopped;
         }
 
         public void Dispose()
         {
-            inputProvider.touch1HoldStarted -= TouchStarted;
-            inputProvider.touch1HoldSCanceled -= TouchStopped;
-            inputProvider.touch2HoldStarted -= TouchStarted;
-            inputProvider.touch2HoldCanceled -= TouchStopped;
-            // inputProvider.touch1HoldStarted -= Touch1Started;
-            // inputProvider.touch2HoldStarted -= Touch2Started;
-            // inputProvider.touch0Started -= Touch1Started;
+            inputProvider.touch0Started -= TouchStarted;
+            inputProvider.touch0Canceled -= TouchStopped;
+            inputProvider.touch1Started -= TouchStarted;
+            inputProvider.touch1Canceled -= TouchStopped;
         }
 
         private void TouchStarted(InputAction.CallbackContext ctx)
         {
+            Debug.Log("a touch started");
             activeTouchInputs++;
             gestureInProgress = activeTouchInputs > 1;
         }
 
         private void TouchStopped(InputAction.CallbackContext ctx)
         {
+            Debug.Log("a touch ended");
             activeTouchInputs--;
             gestureInProgress = activeTouchInputs > 1;
         }
