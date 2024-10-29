@@ -1585,6 +1585,7 @@ GameObject:
   - component: {fileID: 5049356630348509960}
   - component: {fileID: 2229151576000372229}
   - component: {fileID: 635520396724393132}
+  - component: {fileID: 7447753011683123804}
   m_Layer: 0
   m_Name: DollhouseViewWrapper
   m_TagString: Untagged
@@ -1660,6 +1661,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dollhouseViewWrapper: {fileID: 2471139282865268767}
   keyboardRotationSpeedDegreesPerSecond: 80
+  maxVerticalAngle: 89.9
+  minVerticalAngle: 10
 --- !u!114 &635520396724393132
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1673,6 +1676,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dollhouseViewWrapper: {fileID: 2471139282865268767}
+  maxVerticalAngle: 89.9
+  minVerticalAngle: 10
+--- !u!114 &7447753011683123804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4327920938282454304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95e1c10f2c75e8c47b213088dc4b77a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dollhouseViewWrapper: {fileID: 2471139282865268767}
+  maxVerticalAngle: 89.9
+  minVerticalAngle: 10
 --- !u!1 &5184782299159025455
 GameObject:
   m_ObjectHideFlags: 0

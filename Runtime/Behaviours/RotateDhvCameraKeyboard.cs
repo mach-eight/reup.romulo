@@ -8,9 +8,9 @@ namespace ReupVirtualTwin.behaviours
     {
         [SerializeField] public Transform dollhouseViewWrapper;
         [SerializeField] public float keyboardRotationSpeedDegreesPerSecond = 80f;
+        [SerializeField] public float maxVerticalAngle = 89.9f;
+        [SerializeField] public float minVerticalAngle = 10f;
 
-        private float maxVerticalAngle = 89.9f;
-        private float minVerticalAngle = 10f;
         private InputProvider _inputProvider;
 
         [Inject]

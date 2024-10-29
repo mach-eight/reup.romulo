@@ -15,16 +15,17 @@ namespace ReupVirtualTwinTests.behaviours
         Transform dollhouseViewWrapper;
         RotateDhvCameraKeyboard rotateDhvCameraKeyboardBehavior;
         RotateDhvCameraMouse rotateDhvCameraMouseBehavior;
+        RotateDhvCameraTouch rotateDhvCameraTouchBehavior;
         Keyboard keyboard;
         Mouse mouse;
+        Touchscreen touch;
 
         private float initialRotationX;
         private float initialRotationY;
         private float keyboardRotationSpeedDegreesPerSecond;
-        private float maxVerticalAngle = 89.9f;
-        private float minVerticalAngle = 10f;
         private float timeInSecsForHoldingButton = 0.25f;
         private float errorToleranceInDegrees = 1.0f;
+        private const int steps = 10;
 
         [UnitySetUp]
         public IEnumerator SetUp()
@@ -33,9 +34,11 @@ namespace ReupVirtualTwinTests.behaviours
             dollhouseViewWrapper = sceneObjects.dollhouseViewWrapper;
             rotateDhvCameraKeyboardBehavior = sceneObjects.rotateDhvCameraKeyboardBehavior;
             rotateDhvCameraMouseBehavior = sceneObjects.rotateDhvCameraMouseBehavior;
+            rotateDhvCameraTouchBehavior = sceneObjects.rotateDhvCameraTouchBehavior;
             input = sceneObjects.input;
             keyboard = InputSystem.AddDevice<Keyboard>();
             mouse = InputSystem.AddDevice<Mouse>();
+            touch = InputSystem.AddDevice<Touchscreen>();
             initialRotationX = dollhouseViewWrapper.localEulerAngles.x;
             initialRotationY = dollhouseViewWrapper.localEulerAngles.y;
             keyboardRotationSpeedDegreesPerSecond = rotateDhvCameraKeyboardBehavior.keyboardRotationSpeedDegreesPerSecond;
@@ -123,14 +126,14 @@ namespace ReupVirtualTwinTests.behaviours
             Assert.AreEqual(initialRotationX, dollhouseViewWrapper.localEulerAngles.x);
             Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
 
-            float angleToClamp = maxVerticalAngle + 5;
+            float angleToClamp = rotateDhvCameraKeyboardBehavior.maxVerticalAngle + 5;
             float timeToHoldHeyBeyondClamp = Mathf.Abs((angleToClamp - initialRotationX)) / keyboardRotationSpeedDegreesPerSecond;
 
             input.Press(keyboard.upArrowKey);
             yield return new WaitForSeconds(timeToHoldHeyBeyondClamp);
             input.Release(keyboard.upArrowKey);
 
-            Assert.AreEqual(89.9f, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
+            Assert.AreEqual(rotateDhvCameraKeyboardBehavior.maxVerticalAngle, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
         }
 
         [UnityTest]
@@ -139,14 +142,14 @@ namespace ReupVirtualTwinTests.behaviours
             Assert.AreEqual(initialRotationX, dollhouseViewWrapper.localEulerAngles.x);
             Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
 
-            float angleToClamp = minVerticalAngle - 5;
+            float angleToClamp = rotateDhvCameraKeyboardBehavior.minVerticalAngle - 5;
             float timeToHoldHeyBeyondClamp = Mathf.Abs((angleToClamp - initialRotationX)) / keyboardRotationSpeedDegreesPerSecond;
 
             input.Press(keyboard.downArrowKey);
             yield return new WaitForSeconds(timeToHoldHeyBeyondClamp);
             input.Release(keyboard.downArrowKey);
 
-            Assert.AreEqual(10f, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
+            Assert.AreEqual(rotateDhvCameraKeyboardBehavior.minVerticalAngle, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
         }
 
         [UnityTest]
@@ -155,56 +158,82 @@ namespace ReupVirtualTwinTests.behaviours
             Assert.AreEqual(initialRotationX, dollhouseViewWrapper.localEulerAngles.x);
             Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
 
-            yield return PointerUtils.DragMouseLeftButton(input, mouse, new Vector2(0.5f, 0.5f), new Vector2(0.7f, 0.7f), 10);
+            yield return PointerUtils.DragMouseLeftButton(input, mouse, new Vector2(0.5f, 0.5f), new Vector2(0.7f, 0.7f), steps);
 
             Assert.AreEqual(initialRotationX, dollhouseViewWrapper.localEulerAngles.x);
             Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
         }   
 
         [UnityTest]
-        public IEnumerator ShouldRotateUpDHVWithMouseWhenDraggingRightButtonDown()
+        public IEnumerator ShouldRotate9DegreesUpDHVWithMouseWhenDraggingRightButtonDown()
         {
             Assert.AreEqual(initialRotationX, dollhouseViewWrapper.localEulerAngles.x);
             Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
 
-            yield return PointerUtils.DragMouseRightButton(input, mouse, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.3f), 10);
+            float percentageOfTheScreenDragged = 5f / 100f;
+            float performedRotationInDegrees = percentageOfTheScreenDragged * 180;
+            Vector2 initialPosition = new Vector2(0.0f, 1.0f);
+            Vector2 finalPosition = new Vector2(0.0f, 0.95f);
 
-            Assert.Greater(dollhouseViewWrapper.localEulerAngles.x, initialRotationX);
+            yield return PointerUtils.DragMouseRightButton(input, mouse, initialPosition, finalPosition, steps);
+
+            float expectedRotation = initialRotationX + performedRotationInDegrees;
+
+            Assert.AreEqual(expectedRotation, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
         }
 
         [UnityTest]
-        public IEnumerator ShouldRotateDownDHVWithMouseWhenDraggingRightButtonUp()
+        public IEnumerator ShouldRotate9DegreesDownWithMouseWhenDraggingRightButtonUp()
         {
             Assert.AreEqual(initialRotationX, dollhouseViewWrapper.localEulerAngles.x);
             Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
 
-            yield return PointerUtils.DragMouseRightButton(input, mouse, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.7f), 10);
+            float percentageOfTheScreenDragged = 5f / 100f;
+            float performedRotationInDegrees = percentageOfTheScreenDragged * 180;
+            Vector2 initialPosition = new Vector2(0.0f, 0.0f);
+            Vector2 finalPosition = new Vector2(0.0f, 0.05f);
 
-            Assert.Less(dollhouseViewWrapper.localEulerAngles.x, initialRotationX);
+            yield return PointerUtils.DragMouseRightButton(input, mouse, initialPosition, finalPosition, steps);
+
+            float expectedRotation = initialRotationX - performedRotationInDegrees;
+
+            Assert.AreEqual(dollhouseViewWrapper.localEulerAngles.x, expectedRotation, errorToleranceInDegrees);
         }
 
         [UnityTest]
-        public IEnumerator ShouldRotateLeftDHVWithMouseWhenDraggingRightButtonRight()
+        public IEnumerator ShouldRotate9DegreesLeftWithMouseWhenDraggingRightButtonRight()
         {
             Assert.AreEqual(initialRotationX, dollhouseViewWrapper.localEulerAngles.x);
             Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
 
-            yield return PointerUtils.DragMouseRightButton(input, mouse, new Vector2(0.5f, 0.5f), new Vector2(0.3f, 0.5f), 10);
+            float percentageOfTheScreenDragged = 5f / 100f;
+            float performedRotationInDegrees = percentageOfTheScreenDragged * 180;
+            Vector2 initialPosition = new Vector2(0.5f, 0.5f);
+            Vector2 finalPosition = new Vector2(0.45f, 0.5f);
 
-            float normalizedFinalRotation = NormalizeAngle(dollhouseViewWrapper.localEulerAngles.y);
-            Assert.Greater(normalizedFinalRotation, initialRotationY);
+            yield return PointerUtils.DragMouseRightButton(input, mouse, initialPosition, finalPosition, steps);
+
+            float expectedRotation = 360 - performedRotationInDegrees;
+
+            Assert.AreEqual(expectedRotation, dollhouseViewWrapper.localEulerAngles.y, errorToleranceInDegrees);
         }
 
         [UnityTest]
-        public IEnumerator ShouldRotateRightDHVWithMouseWhenDraggingRightButtonLeft()
+        public IEnumerator ShouldRotate9DegreesRightWithMouseWhenDraggingRightButtonLeft()
         {
             Assert.AreEqual(initialRotationX, dollhouseViewWrapper.localEulerAngles.x);
             Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
 
-            yield return PointerUtils.DragMouseRightButton(input, mouse, new Vector2(0.5f, 0.5f), new Vector2(0.7f, 0.5f), 10);
+            float percentageOfTheScreenDragged = 5f / 100f;
+            float performedRotationInDegrees = percentageOfTheScreenDragged * 180;
+            Vector2 initialPosition = new Vector2(0.5f, 0.5f);
+            Vector2 finalPosition = new Vector2(0.55f, 0.5f);
 
-            float normalizedFinalRotation = NormalizeAngle(dollhouseViewWrapper.localEulerAngles.y);
-            Assert.Greater(normalizedFinalRotation, initialRotationY);
+            yield return PointerUtils.DragMouseRightButton(input, mouse, initialPosition, finalPosition, steps);
+
+            float expectedRotation = initialRotationY + performedRotationInDegrees;
+
+            Assert.AreEqual(expectedRotation, dollhouseViewWrapper.localEulerAngles.y, errorToleranceInDegrees);
         }
 
         [UnityTest]
@@ -213,9 +242,9 @@ namespace ReupVirtualTwinTests.behaviours
             Assert.AreEqual(initialRotationX, dollhouseViewWrapper.localEulerAngles.x);
             Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
 
-            yield return PointerUtils.DragMouseRightButton(input, mouse, new Vector2(0.5f, 0.5f), new Vector2(0.5f, -100.0f), 10);
+            yield return PointerUtils.DragMouseRightButton(input, mouse, new Vector2(0.5f, 0.5f), new Vector2(0.5f, -100.0f), steps);
 
-            Assert.AreEqual(89.9f, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
+            Assert.AreEqual(rotateDhvCameraMouseBehavior.maxVerticalAngle, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
         }
 
         [UnityTest]
@@ -224,9 +253,155 @@ namespace ReupVirtualTwinTests.behaviours
             Assert.AreEqual(initialRotationX, dollhouseViewWrapper.localEulerAngles.x);
             Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
 
-            yield return PointerUtils.DragMouseRightButton(input, mouse, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 100.0f), 10);
+            yield return PointerUtils.DragMouseRightButton(input, mouse, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 100.0f), steps);
 
-            Assert.AreEqual(10f, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
+            Assert.AreEqual(rotateDhvCameraMouseBehavior.minVerticalAngle, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldNotRotateWithMultiTouchGestureWhenAngleDoesNotChange()
+        {
+            Assert.AreEqual(initialRotationX, dollhouseViewWrapper.localEulerAngles.x);
+            Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
+
+            Vector2 initialPositionTouch1 = new Vector2(0.0f, 0.0f);
+            Vector2 initialPositionTouch2 = new Vector2(0.0f, 0.5f);
+            Vector2 finalPositionTouch1 = new Vector2(0.0f, 0.0f);
+            Vector2 finalPositionTouch2 = new Vector2(0.0f, 0.10f);
+
+            yield return PointerUtils.AbsolutePositionTouchGesture(input, touch, initialPositionTouch1, initialPositionTouch2, finalPositionTouch1, finalPositionTouch2, steps);
+
+            float actualRotationX = dollhouseViewWrapper.localEulerAngles.x;
+            float actualRotationY = dollhouseViewWrapper.localEulerAngles.y;
+
+            Assert.AreEqual(initialRotationX, actualRotationX, errorToleranceInDegrees);
+            Assert.AreEqual(initialRotationY, actualRotationY, errorToleranceInDegrees);
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldRotate45DegreesCounterClockWiseWithMultiTouch()
+        {
+            Assert.AreEqual(initialRotationX, dollhouseViewWrapper.localEulerAngles.x);
+            Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
+
+            float performedRotation = 45;
+            Vector2 initialPositionTouch1 = new Vector2(0.0f, 0.0f);
+            Vector2 initialPositionTouch2 = new Vector2(0.0f, 0.5f);
+            Vector2 finalPositionTouch1 = new Vector2(0.0f, 0.0f);
+            Vector2 finalPositionTouch2 = new Vector2(0.5f, 0.5f);
+
+            yield return PointerUtils.AbsolutePositionTouchGesture(input, touch, initialPositionTouch1, initialPositionTouch2, finalPositionTouch1, finalPositionTouch2, steps);
+            
+            float expectedRotationY = 360 - performedRotation; // 360 -> Because we are rotating counter clockwise
+            
+            Assert.AreEqual(expectedRotationY, dollhouseViewWrapper.localEulerAngles.y, errorToleranceInDegrees);
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldRotate45DegreesClockwiseWithMultiTouchGesture()
+        {
+            Assert.AreEqual(initialRotationX, dollhouseViewWrapper.localEulerAngles.x);
+            Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
+
+            float performedRotation = 45;
+            Vector2 initialPositionTouch1 = new Vector2(0.0f, 0.0f);
+            Vector2 initialPositionTouch2 = new Vector2(0.0f, 0.5f);
+            Vector2 finalPositionTouch1 = new Vector2(0.0f, 0.0f);
+            Vector2 finalPositionTouch2 = new Vector2(-0.5f, 0.5f);
+
+            yield return PointerUtils.AbsolutePositionTouchGesture(input, touch, initialPositionTouch1, initialPositionTouch2, finalPositionTouch1, finalPositionTouch2, steps);
+            
+            float expectedRotationY = initialRotationY + performedRotation;
+
+            Assert.AreEqual(expectedRotationY, dollhouseViewWrapper.localEulerAngles.y, errorToleranceInDegrees);
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldNotRotateVerticallyWithOpposingTouches()
+        {
+            Assert.AreEqual(initialRotationX, dollhouseViewWrapper.localEulerAngles.x);
+            Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
+
+            Vector2 initialPositionTouch1 = new Vector2(0.0f, 0.0f);
+            Vector2 initialPositionTouch2 = new Vector2(0.0f, 0.5f);
+            Vector2 finalPositionTouch1 = new Vector2(0.0f, 0.0f);
+            Vector2 finalPositionTouch2 = new Vector2(0.5f, 0.0f);
+
+            yield return PointerUtils.AbsolutePositionTouchGesture(input, touch, initialPositionTouch1, initialPositionTouch2, finalPositionTouch1, finalPositionTouch2, steps);
+
+            Assert.AreEqual(initialRotationX, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldRotate9DegreesVerticallyDownWithAlignedTouches()
+        {
+            Assert.AreEqual(initialRotationX, dollhouseViewWrapper.localEulerAngles.x);
+            Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
+
+            float percentageOfTheScreenDragged = 5f / 100f;
+            float performedRotationInDegrees = percentageOfTheScreenDragged * 180;
+            Vector2 initialPositionTouch1 = new Vector2(0.0f, 0.0f);
+            Vector2 initialPositionTouch2 = new Vector2(0.1f, 0.0f);
+            Vector2 finalPositionTouch1 = new Vector2(0.0f, 0.05f);
+            Vector2 finalPositionTouch2 = new Vector2(0.1f, 0.05f);
+
+            yield return PointerUtils.TouchGesture(input, touch, initialPositionTouch1, initialPositionTouch2, finalPositionTouch1, finalPositionTouch2, steps);
+
+            float expectedRotationX = initialRotationX - performedRotationInDegrees;
+
+            Assert.AreEqual(expectedRotationX, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldRotate9DegreesVerticallyUpWithAlignedTouches()
+        {
+            Assert.AreEqual(initialRotationX, dollhouseViewWrapper.localEulerAngles.x);
+            Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
+
+            float percentageOfTheScreenDragged = 5f / 100f;
+            float performedRotationInDegrees = percentageOfTheScreenDragged * 180;
+            Vector2 initialPositionTouch1 = new Vector2(0.0f, 1.0f);
+            Vector2 initialPositionTouch2 = new Vector2(0.1f, 1.0f);
+            Vector2 finalPositionTouch1 = new Vector2(0.0f, 0.95f);
+            Vector2 finalPositionTouch2 = new Vector2(0.1f, 0.95f);
+
+            yield return PointerUtils.TouchGesture(input, touch, initialPositionTouch1, initialPositionTouch2, finalPositionTouch1, finalPositionTouch2, steps);
+
+            float expectedRotationX = initialRotationX + performedRotationInDegrees;
+
+            Assert.AreEqual(expectedRotationX, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldClampVerticalRotationToMaxVerticalRotationAngleWithMultiTouchGesture()
+        {
+            Assert.AreEqual(initialRotationX, dollhouseViewWrapper.localEulerAngles.x);
+            Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
+
+            Vector2 initialPositionTouch1 = new Vector2(0.0f, 1.0f);
+            Vector2 initialPositionTouch2 = new Vector2(0.1f, 1.0f);
+            Vector2 finalPositionTouch1 = new Vector2(0.0f, 0.0f);
+            Vector2 finalPositionTouch2 = new Vector2(0.1f, 0.0f);
+
+            yield return PointerUtils.TouchGesture(input, touch, initialPositionTouch1, initialPositionTouch2, finalPositionTouch1, finalPositionTouch2, steps);
+
+            Assert.AreEqual(rotateDhvCameraTouchBehavior.maxVerticalAngle, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldClampVerticalRotationToMinVerticalRotationAngleWithMultiTouchGesture()
+        {
+            Assert.AreEqual(initialRotationX, dollhouseViewWrapper.localEulerAngles.x);
+            Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
+
+            Vector2 initialPositionTouch1 = new Vector2(0.0f, 0.0f);
+            Vector2 initialPositionTouch2 = new Vector2(0.1f, 0.0f);
+            Vector2 finalPositionTouch1 = new Vector2(0.0f, 1.0f);
+            Vector2 finalPositionTouch2 = new Vector2(0.1f, 1.0f);
+
+            yield return PointerUtils.TouchGesture(input, touch, initialPositionTouch1, initialPositionTouch2, finalPositionTouch1, finalPositionTouch2, steps);
+
+            Assert.AreEqual(rotateDhvCameraTouchBehavior.minVerticalAngle, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
         }
     }
 }

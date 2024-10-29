@@ -8,9 +8,9 @@ namespace ReupVirtualTwin.behaviours
 {
     public class RotateDhvCameraMouse : MonoBehaviour
     {
-        [SerializeField] public Transform dollhouseViewWrapper;
-        private float maxVerticalAngle = 89.9f;
-        private float minVerticalAngle = 10f;
+        [SerializeField] public Transform dollhouseViewWrapper;        
+        [SerializeField] public float maxVerticalAngle = 89.9f;
+        [SerializeField] public float minVerticalAngle = 10f;
         InputProvider _inputProvider;
         IDragManager dragManager;
 
