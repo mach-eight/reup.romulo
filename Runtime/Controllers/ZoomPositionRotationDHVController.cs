@@ -23,6 +23,7 @@ namespace ReupVirtualTwin.controllers
         [SerializeField] public float KeyboardMoveCameraSpeedMetersPerSecond = 40; // todo inject this from the Reup prefab
         public float keyboardMoveCameraRelativeSpeed { get => KeyboardMoveCameraSpeedMetersPerSecond * GetFieldOfViewMultiplier(); }
 
+        [Inject]
         public ZoomPositionRotationDHVController(
             [Inject(Id = "building")] GameObject building,
             [Inject(Id = "dhvWrapper")] Transform dhvWrapper)
