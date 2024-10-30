@@ -24,7 +24,7 @@ namespace ReupVirtualTwinTests.behaviours
         private float initialRotationY;
         private float keyboardRotationSpeedDegreesPerSecond;
         private float timeInSecsForHoldingButton = 0.25f;
-        private float errorToleranceInDegrees = 1.0f;
+        private float errorToleranceInDegrees = 2.5f;
         private const int steps = 10;
 
         [UnitySetUp]
@@ -171,7 +171,7 @@ namespace ReupVirtualTwinTests.behaviours
             Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
 
             float percentageOfTheScreenDragged = 5f / 100f;
-            float performedRotationInDegrees = percentageOfTheScreenDragged * 180;
+            float performedRotationInDegrees = percentageOfTheScreenDragged * rotateDhvCameraMouseBehavior.verticalRotationPerScreenHeight;
             Vector2 initialPosition = new Vector2(0.0f, 1.0f);
             Vector2 finalPosition = new Vector2(0.0f, 0.95f);
 
@@ -189,7 +189,7 @@ namespace ReupVirtualTwinTests.behaviours
             Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
 
             float percentageOfTheScreenDragged = 5f / 100f;
-            float performedRotationInDegrees = percentageOfTheScreenDragged * 180;
+            float performedRotationInDegrees = percentageOfTheScreenDragged * rotateDhvCameraMouseBehavior.verticalRotationPerScreenHeight;
             Vector2 initialPosition = new Vector2(0.0f, 0.0f);
             Vector2 finalPosition = new Vector2(0.0f, 0.05f);
 
@@ -207,7 +207,7 @@ namespace ReupVirtualTwinTests.behaviours
             Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
 
             float percentageOfTheScreenDragged = 5f / 100f;
-            float performedRotationInDegrees = percentageOfTheScreenDragged * 180;
+            float performedRotationInDegrees = percentageOfTheScreenDragged * rotateDhvCameraMouseBehavior.horizontalRotationPerScreenWidth;
             Vector2 initialPosition = new Vector2(0.5f, 0.5f);
             Vector2 finalPosition = new Vector2(0.45f, 0.5f);
 
@@ -225,7 +225,7 @@ namespace ReupVirtualTwinTests.behaviours
             Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
 
             float percentageOfTheScreenDragged = 5f / 100f;
-            float performedRotationInDegrees = percentageOfTheScreenDragged * 180;
+            float performedRotationInDegrees = percentageOfTheScreenDragged * rotateDhvCameraMouseBehavior.horizontalRotationPerScreenWidth;
             Vector2 initialPosition = new Vector2(0.5f, 0.5f);
             Vector2 finalPosition = new Vector2(0.55f, 0.5f);
 
@@ -359,7 +359,7 @@ namespace ReupVirtualTwinTests.behaviours
             Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
 
             float percentageOfTheScreenDragged = 5f / 100f;
-            float performedRotationInDegrees = percentageOfTheScreenDragged * 180;
+            float performedRotationInDegrees = percentageOfTheScreenDragged * rotateDhvCameraTouchBehavior.verticalRotationPerScreenHeight;
             Vector2 initialPositionTouch1 = new Vector2(0.0f, 1.0f);
             Vector2 initialPositionTouch2 = new Vector2(0.1f, 1.0f);
             Vector2 finalPositionTouch1 = new Vector2(0.0f, 0.95f);

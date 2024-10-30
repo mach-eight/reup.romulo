@@ -11,6 +11,8 @@ namespace ReupVirtualTwin.behaviours
         [SerializeField] public Transform dollhouseViewWrapper;        
         [SerializeField] public float maxVerticalAngle = 89.9f;
         [SerializeField] public float minVerticalAngle = 10f;
+        [SerializeField] public float verticalRotationPerScreenHeight = 180f;
+        [SerializeField] public float horizontalRotationPerScreenWidth = 180f;
         InputProvider _inputProvider;
         IDragManager dragManager;
 
@@ -32,8 +34,8 @@ namespace ReupVirtualTwin.behaviours
         {
             Vector2 mouseDelta = _inputProvider.MouseRotateDhvCamera();
 
-            float horizontalRotation = (mouseDelta.x / Screen.width) * 180f;
-            float verticalRotation = (mouseDelta.y / Screen.height) * 180f;
+            float horizontalRotation = (mouseDelta.x / Screen.width) * horizontalRotationPerScreenWidth;
+            float verticalRotation = (mouseDelta.y / Screen.height) * verticalRotationPerScreenHeight;
 
             float currentVerticalAngle = dollhouseViewWrapper.localEulerAngles.x;
             float newVerticalAngle = Mathf.Clamp(currentVerticalAngle - verticalRotation, minVerticalAngle, maxVerticalAngle);
