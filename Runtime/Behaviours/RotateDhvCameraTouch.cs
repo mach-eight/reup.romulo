@@ -65,8 +65,8 @@ namespace ReupVirtualTwin.behaviours
 
         private void SetInitialData()
         {
-            initialTouch1Position = inputProvider.Touch1Position();
-            initialTouch2Position = inputProvider.Touch2Position();
+            initialTouch1Position = inputProvider.Touch0();
+            initialTouch2Position = inputProvider.Touch1();
             touch1Position = initialTouch1Position;
             touch2Position = initialTouch2Position;
             currentAngle = Vector2.SignedAngle(touch2Position - touch1Position, Vector2.right);
@@ -82,8 +82,8 @@ namespace ReupVirtualTwin.behaviours
 
         private void DetermineRotationType()
         {
-            Vector2 touch1 = inputProvider.Touch1Position();
-            Vector2 touch2 = inputProvider.Touch2Position();
+            Vector2 touch1 = inputProvider.Touch0();
+            Vector2 touch2 = inputProvider.Touch1();
 
             float angleDelta = Vector2.SignedAngle(touch2 - touch1, Vector2.right) - currentAngle;
             float newAverageY = (touch1.y + touch2.y) / 2;
@@ -102,8 +102,9 @@ namespace ReupVirtualTwin.behaviours
 
         private void UpdateHorizontalCameraRotation()
         {
-            Vector2 touch1 = inputProvider.Touch1Position();
-            Vector2 touch2 = inputProvider.Touch2Position();
+            Vector2 touch1 = inputProvider.Touch0();
+            Vector2 touch2 = inputProvider.Touch1();
+            Debug.Log("Touch1: " + touch1 + " Touch2: " + touch2);
 
             float newAngle = Vector2.SignedAngle(touch2 - touch1, Vector2.right);
             float angleDelta = newAngle - currentAngle;
@@ -115,8 +116,8 @@ namespace ReupVirtualTwin.behaviours
 
         private void UpdateVerticalCameraRotation()
         {
-            Vector2 touch1 = inputProvider.Touch1Position();
-            Vector2 touch2 = inputProvider.Touch2Position();
+            Vector2 touch1 = inputProvider.Touch0();
+            Vector2 touch2 = inputProvider.Touch1();
 
             if (!AreTouchesMovingInSameDirection(touch1, touch2))
             {

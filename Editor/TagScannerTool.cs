@@ -6,9 +6,9 @@ using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.helpers;
-using ReupVirtualTwin.behaviourInterfaces;
 using System.Linq;
 using System;
+using ReupVirtualTwin.dependencyInjectors;
 
 namespace ReupVirtualTwin.editor
 {
@@ -17,7 +17,6 @@ namespace ReupVirtualTwin.editor
         private SelectTagsSection selectTagsSection;
         private List<ITagFilter> tagFilters = new List<ITagFilter>();
         private List<ITagFilter> substringTagFilters = new List<ITagFilter>();
-        private IBuildingGetterSetter setupBuilding;
         private SceneVisibilityManager sceneVisibilityManager;
         private List<Tag> selectedTags = new List<Tag>();
         private string subStringFilterText = "";
@@ -26,6 +25,7 @@ namespace ReupVirtualTwin.editor
         private float removeFilterButtonWidth;
         private float toggleFilterPropertyWidth;
         private List<Dictionary<string, bool>> objectsVisibilityStates = new List<Dictionary<string, bool>>();
+        GameObject building;
 
         [MenuItem("Reup Romulo/Tag Scanner")]
         public static void ShowWindow()
@@ -36,7 +36,7 @@ namespace ReupVirtualTwin.editor
         private void CreateGUI()
         {
             CreateTagSection();
-            SetSetupBuilding();
+            SetBuilding();
             sceneVisibilityManager = SceneVisibilityManager.instance;
             SetUpTagFilters(selectedTags);
         }
@@ -70,11 +70,10 @@ namespace ReupVirtualTwin.editor
         }
         private void ShowApplyButtons()
         {
-            if (setupBuilding == null)
+            if (building == null)
             {
-                SetSetupBuilding();
+                SetBuilding();
             }
-            GameObject building = setupBuilding.building;
             if (building == null)
             {
                 Debug.LogError("No building found");
@@ -109,7 +108,8 @@ namespace ReupVirtualTwin.editor
             ObjectVisibilityUtils.ApplyVisibilityState(building, lastVisibilityState, new IdController());
         }
 
-        private void DisplayWholeBuilding(GameObject building){
+        private void DisplayWholeBuilding(GameObject building)
+        {
             ObjectVisibilityUtils.ShowWholeObject(building);
         }
 
@@ -178,9 +178,9 @@ namespace ReupVirtualTwin.editor
                 tagFilters.Remove(tagFilter);
             };
         }
-        private void SetSetupBuilding()
+        private void SetBuilding()
         {
-            setupBuilding = ObjectFinder.FindSetupBuilding().GetComponent<IBuildingGetterSetter>();
+            building = ObjectFinder.FindReupObject().GetComponent<ExternalInstaller>().building;
         }
         private async void CreateTagSection()
         {
@@ -208,14 +208,16 @@ namespace ReupVirtualTwin.editor
             subStringFilterText = "";
         }
 
-        private GUIStyle GetFilterLabelStyle(ITagFilter filter){
+        private GUIStyle GetFilterLabelStyle(ITagFilter filter)
+        {
             GUIStyle filterLabelStyle = new GUIStyle(GUI.skin.label);
             if (!filter.filterIsActive)
             {
                 filterLabelStyle.normal.textColor = Color.gray;
                 return filterLabelStyle;
             }
-            if (filter.invertFilter){
+            if (filter.invertFilter)
+            {
                 filterLabelStyle.normal.textColor = new Color(0.95f, 0.36f, 0.3f);
                 return filterLabelStyle;
             }

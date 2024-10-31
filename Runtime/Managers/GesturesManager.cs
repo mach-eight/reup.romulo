@@ -21,18 +21,18 @@ namespace ReupVirtualTwin.managers
 
         public void Initialize()
         {
-            inputProvider.touch1HoldStarted += TouchStarted;
-            inputProvider.touch1HoldSCanceled += TouchStopped;
-            inputProvider.touch2HoldStarted += TouchStarted;
-            inputProvider.touch2HoldCanceled += TouchStopped;
+            inputProvider.touch0Started += TouchStarted;
+            inputProvider.touch0Canceled += TouchStopped;
+            inputProvider.touch1Started += TouchStarted;
+            inputProvider.touch1Canceled += TouchStopped;
         }
 
         public void Dispose()
         {
-            inputProvider.touch1HoldStarted -= TouchStarted;
-            inputProvider.touch1HoldSCanceled -= TouchStopped;
-            inputProvider.touch2HoldStarted -= TouchStarted;
-            inputProvider.touch2HoldCanceled -= TouchStopped;
+            inputProvider.touch0Started -= TouchStarted;
+            inputProvider.touch0Canceled -= TouchStopped;
+            inputProvider.touch1Started -= TouchStarted;
+            inputProvider.touch1Canceled -= TouchStopped;
         }
 
         private void TouchStarted(InputAction.CallbackContext ctx)
