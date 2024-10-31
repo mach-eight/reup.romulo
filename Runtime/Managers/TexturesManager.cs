@@ -9,23 +9,23 @@ namespace ReupVirtualTwin.managers
     public class TexturesManager : MonoBehaviour, ITexturesManager
     {
         public IIdGetterController idGetterController { set; get; }
-        IObjectTexturesRecord objectsTexturesRecord;
+        IObjectTexturesRecord objectTexturesRecord;
 
         private void Awake()
         {
-            objectsTexturesRecord = new ObjectTexturesRecord();
+            objectTexturesRecord = new ObjectTexturesRecord();
         }
 
         public void ApplyMaterialToObject(GameObject obj, Material material)
         {
             ApplyMaterial(obj, material);
-            objectsTexturesRecord.UpdateRecords(obj);
+            objectTexturesRecord.UpdateRecords(obj);
         }
 
         public void ApplyProtectedMaterialToObject(GameObject obj, Material material)
         {
             ApplyMaterial(obj, material);
-            objectsTexturesRecord.CleanRecords(obj);
+            objectTexturesRecord.CleanRecords(obj);
         }
 
         void ApplyMaterial(GameObject obj, Material material)
