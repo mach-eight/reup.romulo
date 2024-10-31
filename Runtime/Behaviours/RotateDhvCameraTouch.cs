@@ -2,6 +2,7 @@ using ReupVirtualTwin.enums;
 using ReupVirtualTwin.inputs;
 using ReupVirtualTwin.managerInterfaces;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Zenject;
 
 namespace ReupVirtualTwin.behaviours
@@ -23,7 +24,6 @@ namespace ReupVirtualTwin.behaviours
 
         float currentAngle;
 
-        bool isDataInitialized = false;
         bool isHorizontalRotation = false;
         bool isVerticalRotation = false;
 
@@ -34,15 +34,22 @@ namespace ReupVirtualTwin.behaviours
             this.gesturesManager = gesturesManager;
         }
 
+        private void OnEnable() 
+        {
+            inputProvider.touch1Started += OnGestureStarted;
+            inputProvider.touch1Canceled += OnGestureFinished;    
+        }
+
+        private void OnDisable() 
+        {
+            inputProvider.touch1Started -= OnGestureStarted;
+            inputProvider.touch1Canceled -= OnGestureFinished;
+        }
+
         private void Update() 
         {
             if (gesturesManager.gestureInProgress) 
             {
-                if (!isDataInitialized)
-                {
-                    SetInitialData();
-                }
-
                 if (!isHorizontalRotation && !isVerticalRotation)
                 {
                     DetermineRotationType();
@@ -57,25 +64,19 @@ namespace ReupVirtualTwin.behaviours
                     UpdateVerticalCameraRotation();
                 }
             }
-            else 
-            {
-                ResetInitialData();
-            }
         }
 
-        private void SetInitialData()
+        private void OnGestureStarted(InputAction.CallbackContext ctx)
         {
             initialTouch1Position = inputProvider.Touch0();
             initialTouch2Position = inputProvider.Touch1();
             touch1Position = initialTouch1Position;
             touch2Position = initialTouch2Position;
             currentAngle = Vector2.SignedAngle(touch2Position - touch1Position, Vector2.right);
-            isDataInitialized = true;
         }
 
-        private void ResetInitialData()
+        private void OnGestureFinished(InputAction.CallbackContext ctx)
         {
-            isDataInitialized = false;
             isHorizontalRotation = false;
             isVerticalRotation = false;
         }

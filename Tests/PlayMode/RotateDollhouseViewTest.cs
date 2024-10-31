@@ -280,10 +280,10 @@ namespace ReupVirtualTwinTests.behaviours
             Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
 
             float performedRotation = 45;
-            Vector2 initialPositionTouch1 = new Vector2(0.0f, 0.0f);
-            Vector2 initialPositionTouch2 = new Vector2(0.0f, 0.5f);
-            Vector2 finalPositionTouch1 = new Vector2(0.0f, 0.0f);
-            Vector2 finalPositionTouch2 = new Vector2(0.5f, 0.5f);
+            Vector2 initialPositionTouch1 = new Vector2(1.0f, 0.0f);
+            Vector2 initialPositionTouch2 = new Vector2(1.0f, 0.5f);
+            Vector2 finalPositionTouch1 = new Vector2(1.0f, 0.0f);
+            Vector2 finalPositionTouch2 = new Vector2(1.5f, 0.5f);
 
             yield return PointerUtils.AbsolutePositionTouchGesture(input, touch, initialPositionTouch1, initialPositionTouch2, finalPositionTouch1, finalPositionTouch2, steps);
             
@@ -299,10 +299,10 @@ namespace ReupVirtualTwinTests.behaviours
             Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
 
             float performedRotation = 45;
-            Vector2 initialPositionTouch1 = new Vector2(0.0f, 0.0f);
-            Vector2 initialPositionTouch2 = new Vector2(0.0f, 0.5f);
-            Vector2 finalPositionTouch1 = new Vector2(0.0f, 0.0f);
-            Vector2 finalPositionTouch2 = new Vector2(-0.5f, 0.5f);
+            Vector2 initialPositionTouch1 = new Vector2(1.0f, 0.0f);
+            Vector2 initialPositionTouch2 = new Vector2(1.0f, 0.5f);
+            Vector2 finalPositionTouch1 = new Vector2(1.0f, 0.0f);
+            Vector2 finalPositionTouch2 = new Vector2(0.5f, 0.5f);
 
             yield return PointerUtils.AbsolutePositionTouchGesture(input, touch, initialPositionTouch1, initialPositionTouch2, finalPositionTouch1, finalPositionTouch2, steps);
             
