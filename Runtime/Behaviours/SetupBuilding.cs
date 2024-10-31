@@ -3,8 +3,9 @@ using System;
 using ReupVirtualTwin.behaviourInterfaces;
 using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwin.controllerInterfaces;
-using Zenject;
 using ReupVirtualTwin.helpers;
+using ReupVirtualTwin.enums;
+using Zenject;
 
 namespace ReupVirtualTwin.behaviours
 {
@@ -40,14 +41,11 @@ namespace ReupVirtualTwin.behaviours
         public IColliderAdder colliderAdder { set => _colliderAdder = value; }
         private IIdAssignerController _idAssignerController;
         public IIdAssignerController idAssignerController { get => _idAssignerController; set => _idAssignerController = value; }
-        int buildingLayerId;
 
         [Inject]
         public void Init(
-            [Inject(Id = "building")] GameObject building,
-            [Inject(Id = "buildingLayerId")] int buildingLayerId)
+            [Inject(Id = "building")] GameObject building)
         {
-            this.buildingLayerId = buildingLayerId;
             this.building = building;
         }
 
@@ -56,7 +54,7 @@ namespace ReupVirtualTwin.behaviours
             if (building != null)
             {
                 _colliderAdder.AddCollidersToTree(building);
-                GameObjectUtils.ApplyLayerToObjectTree(building, buildingLayerId);
+                GameObjectUtils.ApplyLayerToObjectTree(building, RomuloLayerIds.buildingLayerId);
             }
             else
             {

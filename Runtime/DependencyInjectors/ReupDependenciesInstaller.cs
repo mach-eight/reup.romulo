@@ -23,7 +23,6 @@ namespace ReupVirtualTwin.dependencyInjectors
             Container.BindInterfacesAndSelfTo<DragManager>().AsSingle();
             Container.BindInterfacesAndSelfTo<GesturesManager>().AsSingle();
             Container.Bind<ITagsController>().To<TagsController>().AsSingle();
-            Container.Bind<int>().WithId("buildingLayerId").FromInstance(6);
         }
     }
 }
