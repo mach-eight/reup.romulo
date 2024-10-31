@@ -12,7 +12,7 @@ namespace ReupVirtualTwin.behaviours
     public class SetupBuilding : MonoBehaviour, ISetUpBuilding, IOnBuildingSetup
     {
 
-        GameObject building;
+        public GameObject building;
 
         private bool buildingSetup = false;
         private ITagSystemController _tagSystemController;
