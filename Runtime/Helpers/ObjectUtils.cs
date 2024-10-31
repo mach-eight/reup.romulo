@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ReupVirtualTwinTests.utils
+namespace ReupVirtualTwin.helpers
 {
     public static class ObjectUtils
     {
@@ -17,6 +17,15 @@ namespace ReupVirtualTwinTests.utils
                 }
             }
             return filteredObjects;
+        }
+
+        public static void ActivateAllObjects(GameObject obj)
+        {
+            obj.SetActive(true);
+            foreach (Transform child in obj.transform)
+            {
+                ActivateAllObjects(child.gameObject);
+            }
         }
 
     }
