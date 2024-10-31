@@ -94,6 +94,39 @@ namespace ReupVirtualTwin.inputs
                 _input.Player.Hold.canceled -= value;
             }
         }
+        public event Action<InputAction.CallbackContext> holdRightClickStarted
+        {
+            add
+            {
+                _input.Player.HoldRightClick.started += value;
+            }
+            remove
+            {
+                _input.Player.HoldRightClick.started -= value;
+            }
+        }
+        public event Action<InputAction.CallbackContext> holdRightClickPerformed
+        {
+            add
+            {
+                _input.Player.HoldRightClick.performed += value;
+            }
+            remove
+            {
+                _input.Player.HoldRightClick.performed -= value;
+            }
+        }
+        public event Action<InputAction.CallbackContext> holdRightClickCanceled
+        {
+            add
+            {
+                _input.Player.HoldRightClick.canceled += value;
+            }
+            remove
+            {
+                _input.Player.HoldRightClick.canceled -= value;
+            }
+        }
         public event Action<InputAction.CallbackContext> touch0Started
         {
             add
@@ -173,6 +206,16 @@ namespace ReupVirtualTwin.inputs
         public Vector2 ScrollWheelZoomDhvCamera()
         {
             return _input.DollhouseView.ScrollWheelZoom.ReadValue<Vector2>();
+        }
+
+        public Vector2 KeyboardRotateDhvCamera()
+        {
+            return _input.DollhouseView.KeyboardRotateCamera.ReadValue<Vector2>();
+        }
+
+        public Vector2 MouseRotateDhvCamera()
+        {
+            return _input.DollhouseView.MouseRotateCamera.ReadValue<Vector2>();
         }
     }
 }

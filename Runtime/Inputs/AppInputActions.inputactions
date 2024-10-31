@@ -51,6 +51,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "HoldRightClick",
+                    "type": "Button",
+                    "id": "61daf675-28cd-442b-bdbd-7a7e904ac599",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "ChangeHeight",
                     "type": "Value",
                     "id": "2d42ce9a-959b-4302-9393-88cf408eb893",
@@ -291,6 +300,17 @@
                     "action": "ChangeHeight",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "646b4329-111b-4262-9380-a747878e7c69",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "Hold",
+                    "processors": "",
+                    "groups": "KeyboardAndMouse",
+                    "action": "HoldRightClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -311,6 +331,24 @@
                     "name": "ScrollWheelZoom",
                     "type": "Value",
                     "id": "af634b69-5c62-4466-9137-f1d5c9c87534",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "KeyboardRotateCamera",
+                    "type": "Button",
+                    "id": "0ba760c7-b398-4a12-b6c6-bb750e6c0e32",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "MouseRotateCamera",
+                    "type": "Value",
+                    "id": "a8784a6e-3cbe-4687-9353-67195f25ccb8",
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
@@ -381,6 +419,72 @@
                     "processors": "",
                     "groups": "KeyboardAndMouse",
                     "action": "ScrollWheelZoom",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "arrows",
+                    "id": "34f4e53c-2544-4aa5-afba-fc600d1806d7",
+                    "path": "2DVector",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "KeyboardRotateCamera",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "up",
+                    "id": "d43b6166-1298-473b-8b5a-d077dc3d18a6",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardAndMouse",
+                    "action": "KeyboardRotateCamera",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "95d39c00-9f70-48eb-9435-6bf8643e6c6b",
+                    "path": "<Keyboard>/downArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardAndMouse",
+                    "action": "KeyboardRotateCamera",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "left",
+                    "id": "11c02a70-7e89-4b45-be94-f811dabe759a",
+                    "path": "<Keyboard>/leftArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardAndMouse",
+                    "action": "KeyboardRotateCamera",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "c31dd477-af7f-415c-a6dd-6b9b936ae691",
+                    "path": "<Keyboard>/rightArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardAndMouse",
+                    "action": "KeyboardRotateCamera",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "69af43d7-1529-4d83-8a61-3ff5cdfab82d",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardAndMouse",
+                    "action": "MouseRotateCamera",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
