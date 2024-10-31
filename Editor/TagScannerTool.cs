@@ -36,7 +36,6 @@ namespace ReupVirtualTwin.editor
         private void CreateGUI()
         {
             CreateTagSection();
-            SetBuilding();
             sceneVisibilityManager = SceneVisibilityManager.instance;
             SetUpTagFilters(selectedTags);
         }
@@ -115,6 +114,7 @@ namespace ReupVirtualTwin.editor
 
         private void ApplyFilters(GameObject building, Func<GameObject, List<ITagFilter>, List<GameObject>> filterFunction)
         {
+            SetBuilding();
             objectsVisibilityStates.Add(ObjectVisibilityUtils.GetVisibilityStateOfAllObjects(building, new IdController()));
             List<ITagFilter> filters = substringTagFilters.Concat(tagFilters).ToList();
             if (filters.Count == 0)
