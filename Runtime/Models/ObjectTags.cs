@@ -6,7 +6,7 @@ using ReupVirtualTwin.dataModels;
 
 namespace ReupVirtualTwin.models
 {
-    public class ObjectTags : MonoBehaviour, IObjectTags 
+    public class ObjectTags : MonoBehaviour, IObjectTags
     {
         public List<Tag> tags = new List<Tag>();
 
@@ -31,6 +31,11 @@ namespace ReupVirtualTwin.models
         {
             tags.AddRange(tagsList);
             return tags;
+        }
+
+        public void RemoveAllTags()
+        {
+            tags.Clear();
         }
     }
 }

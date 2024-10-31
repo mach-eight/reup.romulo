@@ -11,5 +11,7 @@ namespace ReupVirtualTwin.controllerInterfaces
         public List<Tag> RemoveTagFromObject(GameObject obj, Tag tag);
         public bool DoesObjectHaveTag(GameObject obj, string tagId);
         public string[] GetTagNamesFromObject(GameObject obj);
+        public void RemoveAllTagsFromTree(GameObject obj);
+        public void RemoveAllTagsFromObject(GameObject obj);
     }
 }

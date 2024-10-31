@@ -48,9 +48,8 @@ namespace ReupVirtualTwin.editor
             tagsTargetObject = EditorGUILayout.ObjectField("Target object", tagsTargetObject, typeof(GameObject), true) as GameObject;
             if (GUILayout.Button("Transfer tags"))
             {
-                // ObjectUtils.TransferTags(tagsOriginObject, tagsTargetObject);
+                TagTransferUtils.TransferTags(tagsOriginObject, tagsTargetObject);
             }
         }
-
     }
 }

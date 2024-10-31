@@ -43,6 +43,22 @@ namespace ReupVirtualTwin.controllers
             return objectTags.GetTags();
         }
 
+        public void RemoveAllTagsFromObject(GameObject obj)
+        {
+            IObjectTags objectTags = obj.GetComponent<IObjectTags>();
+            if (objectTags == null) return;
+            objectTags.RemoveAllTags();
+        }
+
+        public void RemoveAllTagsFromTree(GameObject obj)
+        {
+            RemoveAllTagsFromObject(obj);
+            foreach (Transform child in obj.transform)
+            {
+                RemoveAllTagsFromTree(child.gameObject);
+            }
+        }
+
         public List<Tag> RemoveTagFromObject(GameObject obj, Tag tag)
         {
             IObjectTags objectTags = obj.GetComponent<IObjectTags>();
