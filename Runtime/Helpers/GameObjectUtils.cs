@@ -36,5 +36,18 @@ namespace ReupVirtualTwin.helpers
                 ApplyLayerToObjectTree(child.gameObject, layer);
             }
         }
+        public static Dictionary<string, GameObject> MapGameObjectsByName(List<GameObject> objects)
+        {
+            Dictionary<string, GameObject> objectsByName = new Dictionary<string, GameObject>();
+            foreach (GameObject obj in objects)
+            {
+                if (objectsByName.ContainsKey(obj.name))
+                {
+                    throw new System.Exception("There are two objects with the same name: " + obj.name);
+                }
+                objectsByName[obj.name] = obj;
+            }
+            return objectsByName;
+        }
     }
 }

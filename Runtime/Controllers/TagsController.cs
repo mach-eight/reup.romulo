@@ -11,6 +11,15 @@ namespace ReupVirtualTwin.controllers
 {
     public class TagsController : ITagsController
     {
+        public List<Tag> AddTagsToObject(GameObject obj, List<Tag> tags)
+        {
+            foreach (Tag tag in tags)
+            {
+                AddTagToObject(obj, tag);
+            }
+            return GetTagsFromObject(obj);
+        }
+
         public List<Tag> AddTagToObject(GameObject obj, Tag tag)
         {
             IObjectTags objectTags = obj.GetComponent<IObjectTags>();
