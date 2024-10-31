@@ -4,12 +4,12 @@ using UnityEngine;
 
 namespace ReupVirtualTwin.models
 {
-    public class ObjectsTexturesRecord : IObjectsTexturesRecord
+    public class ObjectTexturesRecord : IObjectTexturesRecord
     {
         public Dictionary<string, Texture> objectIdsToTexturesRecord;
         public Dictionary<Texture, HashSet<string>> texturesToObjectIdsRecord;
 
-        public ObjectsTexturesRecord()
+        public ObjectTexturesRecord()
         {
             objectIdsToTexturesRecord = new Dictionary<string, Texture>();
             texturesToObjectIdsRecord = new Dictionary<Texture, HashSet<string>>();

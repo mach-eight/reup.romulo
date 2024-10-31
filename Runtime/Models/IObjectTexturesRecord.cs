@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ReupVirtualTwin.models
 {
-    public interface IObjectsTexturesRecord
+    public interface IObjectTexturesRecord
     {
         public void UpdateRecords(GameObject obj);
         public void CleanRecords(GameObject obj);
