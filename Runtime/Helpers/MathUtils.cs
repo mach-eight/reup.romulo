@@ -9,6 +9,11 @@ namespace ReupVirtualTwin.helpers
             return -(((-angle + 180) % 360 + 360) % 360) + 180;
         }
 
+        public static float NormalizeTo360Degrees(float angle)
+        {
+            return ((angle % 360) + 360) % 360;
+        }
+
         public static float NormalizeAngleRad(float angle)
         {
             float pi = Mathf.PI;

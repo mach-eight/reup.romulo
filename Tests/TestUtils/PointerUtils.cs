@@ -47,6 +47,26 @@ namespace ReupVirtualTwinTests.utils
             );
         }
 
+        public static IEnumerator DragMouseRightButton(
+            InputTestFixture input,
+            Mouse mouse,
+            Vector2 startMousePoint,
+            Vector2 endMousePoint,
+            int steps
+        ) {
+            return MovePointer(
+                startMousePoint,
+                endMousePoint,
+                steps,
+                (Vector2 startPosition) => { input.Move(mouse.position, startPosition); input.Press(mouse.rightButton); },
+                (Vector2 currentPosition, Vector2 delta) => {
+                    input.Move(mouse.position, currentPosition, delta);
+                    input.Set(mouse.delta, delta);
+                },
+                (Vector2 endPosition) => input.Release(mouse.leftButton)
+            );
+        }
+
         public static IEnumerator MoveFinger(
             InputTestFixture input,
             Touchscreen touch,
@@ -90,7 +110,7 @@ namespace ReupVirtualTwinTests.utils
             yield return null;
         }
 
-        public static IEnumerator TouchGesture(
+        public static IEnumerator AbsolutePositionTouchGesture(
             InputTestFixture input,
             Touchscreen touch,
             Vector2 startFinger1Position,
@@ -122,6 +142,25 @@ namespace ReupVirtualTwinTests.utils
             input.EndTouch(0, endFinger1Position, Vector2.zero, true, touch);
             input.EndTouch(1, endFinger2Position, Vector2.zero, true, touch);
             yield return null;
+        }
+
+        public static IEnumerator TouchGesture(
+            InputTestFixture input,
+            Touchscreen touch,
+            Vector2 relativeStartFinger1Position,
+            Vector2 relativeStartFinger2Position,
+            Vector2 relativeEndFinger1Position,
+            Vector2 relativeEndFinger2Position,
+            int steps)
+        {
+            yield return AbsolutePositionTouchGesture(
+                input,
+                touch,
+                Camera.main.ViewportToScreenPoint(relativeStartFinger1Position),
+                Camera.main.ViewportToScreenPoint(relativeStartFinger2Position),
+                Camera.main.ViewportToScreenPoint(relativeEndFinger1Position),
+                Camera.main.ViewportToScreenPoint(relativeEndFinger2Position),
+                steps);
         }
 
         public static void Tap(InputTestFixture input, Touchscreen touch, Vector2 tapPosition, int touchId = 0){
