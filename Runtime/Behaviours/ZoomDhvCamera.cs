@@ -53,15 +53,15 @@ namespace ReupVirtualTwin.behaviours
                 return;
             }
 
-            Vector2 touch1 = inputProvider.Touch1Position();
-            Vector2 touch2 = inputProvider.Touch2Position();
+            Vector2 touch0 = inputProvider.Touch0();
+            Vector2 touch1 = inputProvider.Touch1();
 
             if (initialPinchDistance == 0)
             {
-                initialPinchDistance = Vector2.Distance(touch1, touch2);
+                initialPinchDistance = Vector2.Distance(touch0, touch1);
             }
 
-            float currentDistance = Vector2.Distance(touch1, touch2);
+            float currentDistance = Vector2.Distance(touch0, touch1);
             float zoomFactor = currentDistance / initialPinchDistance;
 
             targetFieldOfView = Mathf.Clamp(targetFieldOfView / zoomFactor, minFieldOfView, maxFieldOfView);
