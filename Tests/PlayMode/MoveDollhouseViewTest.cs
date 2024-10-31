@@ -244,7 +244,7 @@ namespace ReupVirtualTwinTests.behaviours
             Vector2 startFinger2 = new Vector2(400, 400);
             Vector2 endFinger1 = new Vector2(100, 100);
             Vector2 endFinger2 = new Vector2(500, 500);
-            yield return PointerUtils.TouchGesture(input, touch, startFinger1, startFinger2, endFinger1, endFinger2, 10);
+            yield return PointerUtils.AbsolutePositionTouchGesture(input, touch, startFinger1, startFinger2, endFinger1, endFinger2, 10);
 
             Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
             yield return null;

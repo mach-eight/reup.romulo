@@ -106,7 +106,9 @@ namespace ReupVirtualTwinTests.behaviours
             AssertExpectedAngle(expectedTravelAngleDeg, traveledAngle);
             AssertExpectedAngle(0, innerCharacter.eulerAngles.y);
             AssertExpectedAngle(0, innerCharacter.eulerAngles.z);
-            AssertUtils.AssertVectorIsZero(character.eulerAngles, errorAngleThreshold);
+            AssertExpectedAngle(0, character.eulerAngles.x);
+            AssertExpectedAngle(0, character.eulerAngles.y);
+            AssertExpectedAngle(0, character.eulerAngles.z);
             yield return null;
         }
 
@@ -126,7 +128,9 @@ namespace ReupVirtualTwinTests.behaviours
             AssertExpectedAngle(expectedTravelAngleDeg, traveledAngle);
             AssertExpectedAngle(0, innerCharacter.eulerAngles.y);
             AssertExpectedAngle(0, innerCharacter.eulerAngles.z);
-            AssertUtils.AssertVectorIsZero(character.eulerAngles, errorAngleThreshold);
+            AssertExpectedAngle(0, character.eulerAngles.x);
+            AssertExpectedAngle(0, character.eulerAngles.y);
+            AssertExpectedAngle(0, character.eulerAngles.z);
             yield return null;
 
         }

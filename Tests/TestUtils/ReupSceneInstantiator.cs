@@ -47,6 +47,9 @@ namespace ReupVirtualTwinTests.utils
             public ZoomDhvCamera zoomDhvCameraBehavior;
             public GameObject houseContainer;
             public ICharacterPositionManager characterPositionManager;
+            public RotateDhvCameraKeyboard rotateDhvCameraKeyboardBehavior;
+            public RotateDhvCameraMouse rotateDhvCameraMouseBehavior;
+            public RotateDhvCameraTouch rotateDhvCameraTouchBehavior;
         }
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab, Action<GameObject> modifyBuilding)
         {
@@ -69,6 +72,9 @@ namespace ReupVirtualTwinTests.utils
         {
             InputTestFixture input = new InputTestFixture();
             input.Setup();
+            ExternalInstaller externalInstaller = reupPrefab.transform.GetComponent<ExternalInstaller>();
+            externalInstaller.building = building;
+
             GameObject reupGameObject = (GameObject)PrefabUtility.InstantiatePrefab(reupPrefab);
             DiContainer diContainer = reupGameObject.transform.Find("SceneContext").GetComponent<ReupDependenciesInstaller>().container;
             GameObject baseGlobalScriptGameObject = reupGameObject.transform.Find("BaseGlobalScripts").gameObject;
@@ -78,7 +84,6 @@ namespace ReupVirtualTwinTests.utils
 
             SetupBuilding setupBuilding = baseGlobalScriptGameObject.transform.Find("SetupBuilding").GetComponent<SetupBuilding>();
 
-            setupBuilding.building = building;
             setupBuilding.AssignIdsAndObjectInfoToBuilding();
             setupBuilding.AddTagSystemToBuildingObjects();
 
@@ -105,7 +110,6 @@ namespace ReupVirtualTwinTests.utils
 
             GameObject dhvCamera = reupGameObject.transform
                 .Find("DollhouseViewWrapper")
-                .Find("VerticalRotationWrapper")
                 .Find("DHVCinemachineCamera").gameObject;
 
             GameObject fpvCamera = character.transform.Find("InnerCharacter").Find("FPVCinemachineCamera").gameObject;
@@ -122,6 +126,12 @@ namespace ReupVirtualTwinTests.utils
             MoveDhvCamera moveDhvCameraBehavior = dollhouseViewWrapper.GetComponent<MoveDhvCamera>();
 
             ZoomDhvCamera zoomDhvCameraBehavior = dollhouseViewWrapper.GetComponent<ZoomDhvCamera>();
+
+            RotateDhvCameraKeyboard rotateDhvCameraKeyboardBehavior = dollhouseViewWrapper.GetComponent<RotateDhvCameraKeyboard>();
+
+            RotateDhvCameraMouse rotateDhvCameraMouseBehavior = dollhouseViewWrapper.GetComponent<RotateDhvCameraMouse>();
+
+            RotateDhvCameraTouch rotateDhvCameraTouchBehavior = dollhouseViewWrapper.GetComponent<RotateDhvCameraTouch>();
 
             ModelInfoManager modelInfoManager = baseGlobalScriptGameObject.transform.Find("ModelInfo").GetComponent<ModelInfoManager>();
 
@@ -173,6 +183,9 @@ namespace ReupVirtualTwinTests.utils
                 zoomDhvCameraBehavior = zoomDhvCameraBehavior,
                 houseContainer = houseContainer,
                 characterPositionManager = characterPositionManager,
+                rotateDhvCameraKeyboardBehavior = rotateDhvCameraKeyboardBehavior,
+                rotateDhvCameraMouseBehavior = rotateDhvCameraMouseBehavior,
+                rotateDhvCameraTouchBehavior = rotateDhvCameraTouchBehavior,
             };
         }
 

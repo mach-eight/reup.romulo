@@ -43,16 +43,17 @@ namespace ReupVirtualTwin.behaviours
         public void Init(
             IDragManager dragManager,
             InputProvider inputProvider,
+            [Inject(Id = "building")] GameObject building,
             IGesturesManager gesturesManager)
         {
             _inputProvider = inputProvider;
             this.dragManager = dragManager;
             this.gesturesManager = gesturesManager;
+            this.building = building;
         }
 
         void Start()
         {
-            building = ObjectFinder.FindSetupBuilding().GetComponent<SetupBuilding>().building;
             buildingCenter = BoundariesUtils.CalculateCenter(building);
         }
 
@@ -88,7 +89,7 @@ namespace ReupVirtualTwin.behaviours
                 UpdateOriginalPositions();
                 return;
             }
-            if (!dragManager.dragging)
+            if (!dragManager.primaryDragging)
             {
                 return;
             }

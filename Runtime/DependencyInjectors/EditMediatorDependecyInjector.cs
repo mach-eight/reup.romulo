@@ -7,6 +7,7 @@ using ReupVirtualTwin.managers;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.webRequesters;
 using ReupVirtualTwin.models;
+using Zenject;
 
 namespace ReupVirtualTwin.dependencyInjectors
 {
@@ -28,7 +29,14 @@ namespace ReupVirtualTwin.dependencyInjectors
         [SerializeField] SpacesRecord spacesRecord;
         [SerializeField] TexturesManager texturesManager;
         [SerializeField] ObjectRegistry objectRegistry;
-        [SerializeField] GameObject setupBuilding;
+        GameObject building;
+
+        [Inject]
+        public void Init(
+            [Inject(Id = "building")] GameObject building)
+        {
+            this.building = building;
+        }
 
         private void Awake()
         {
@@ -44,8 +52,7 @@ namespace ReupVirtualTwin.dependencyInjectors
                 !spacesRecord ||
                 !texturesManager ||
                 !character ||
-                !viewModeManager ||
-                !setupBuilding)
+                !viewModeManager)
             {
                 throw new System.Exception("Some dependencies are missing");
             }
@@ -80,7 +87,7 @@ namespace ReupVirtualTwin.dependencyInjectors
             editMediator.spacesRecord = spacesRecord;
             editMediator.buildingVisibilityController = new BuildingVisibilityController(
                 objectRegistry,
-                setupBuilding.GetComponent<IBuildingGetterSetter>().building
+                building
             );
         }
     }

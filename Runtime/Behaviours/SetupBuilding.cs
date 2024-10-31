@@ -5,15 +5,14 @@ using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.enums;
+using Zenject;
 
 namespace ReupVirtualTwin.behaviours
 {
-    public class SetupBuilding : MonoBehaviour, ISetUpBuilding, IOnBuildingSetup, IBuildingGetterSetter
+    public class SetupBuilding : MonoBehaviour, ISetUpBuilding, IOnBuildingSetup
     {
 
-        [SerializeField]
-        GameObject _building;
-        public GameObject building { get => _building; set => _building = value; }
+        GameObject building;
 
         private bool buildingSetup = false;
         private ITagSystemController _tagSystemController;
@@ -41,6 +40,13 @@ namespace ReupVirtualTwin.behaviours
         public IColliderAdder colliderAdder { set => _colliderAdder = value; }
         private IIdAssignerController _idAssignerController;
         public IIdAssignerController idAssignerController { get => _idAssignerController; set => _idAssignerController = value; }
+
+        [Inject]
+        public void Init(
+            [Inject(Id = "building")] GameObject building)
+        {
+            this.building = building;
+        }
 
         void Start()
         {

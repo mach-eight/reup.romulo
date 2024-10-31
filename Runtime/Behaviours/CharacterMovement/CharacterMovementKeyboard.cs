@@ -13,17 +13,14 @@ namespace ReupVirtualTwin.behaviours
         private InputProvider inputProvider;
         private ICharacterPositionManager characterPositionManager;
 
-        [Inject]
-        public void Init(ICharacterPositionManager characterPositionManager)
-        {
-            this.characterPositionManager = characterPositionManager;
-        }
-
         static public float WALK_SPEED_M_PER_SECOND = 2.5f;
 
         [Inject]
-        public void Init(InputProvider inputProvider)
+        public void Init(
+            ICharacterPositionManager characterPositionManager,
+            InputProvider inputProvider)
         {
+            this.characterPositionManager = characterPositionManager;
             this.inputProvider = inputProvider;
         }
 
