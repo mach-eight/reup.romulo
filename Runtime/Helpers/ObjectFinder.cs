@@ -36,6 +36,10 @@ namespace ReupVirtualTwin.helpers
         {
             return GameObject.FindGameObjectWithTag(TagsEnum.setupBuilding);
         }
+        public static GameObject FindReupObject()
+        {
+            return GameObject.FindGameObjectWithTag(TagsEnum.reupObject);
+        }
         public static GameObject FindObjectRegistry()
         {
             return GameObject.FindGameObjectWithTag(TagsEnum.objectRegistry);

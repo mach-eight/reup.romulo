@@ -253,7 +253,6 @@ MonoBehaviour:
   spacesRecord: {fileID: 6371165624866328778}
   texturesManager: {fileID: 7203003387684823839}
   objectRegistry: {fileID: 2043244847565700485}
-  setupBuilding: {fileID: 7508923528206428603}
 --- !u!114 &6350977991642200349
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1140,9 +1139,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1178337683573207492}
+  - component: {fileID: 2780762634315471753}
   m_Layer: 0
   m_Name: Reup
-  m_TagString: Untagged
+  m_TagString: ReupObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1170,6 +1170,19 @@ Transform:
   - {fileID: 6297158031737565208}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2780762634315471753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2800249913291930678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c05b57d0ff85784bb56d0bf0a7b6639, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  building: {fileID: 0}
 --- !u!1 &2920257305175609590
 GameObject:
   m_ObjectHideFlags: 0
@@ -1904,6 +1917,7 @@ MonoBehaviour:
   _scriptableObjectInstallers: []
   _monoInstallers:
   - {fileID: 255449812736853486}
+  - {fileID: 2780762634315471753}
   _installerPrefabs: []
   _autoRun: 1
   OnPreInstall:
@@ -1963,8 +1977,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5684383910040997618}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.09223037, y: 0.90251505, z: -0.24182823, w: 0.34420836}
-  m_LocalPosition: {x: -29.473972, y: 14.330002, z: 7.5215926}
+  m_LocalRotation: {x: 0.2944764, y: 0.8820902, z: -0.23635541, w: 0.28166765}
+  m_LocalPosition: {x: -25.094208, y: 15.98725, z: 9.191982}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2661,7 +2675,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56e78e2605d5b47b1a22da782bf8a994, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sensitivity: 0.5
 --- !u!1 &8060287538316763243
 GameObject:
   m_ObjectHideFlags: 0

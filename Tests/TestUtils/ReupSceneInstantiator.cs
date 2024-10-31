@@ -69,6 +69,9 @@ namespace ReupVirtualTwinTests.utils
         {
             InputTestFixture input = new InputTestFixture();
             input.Setup();
+            ExternalInstaller externalInstaller = reupPrefab.transform.GetComponent<ExternalInstaller>();
+            externalInstaller.building = building;
+
             GameObject reupGameObject = (GameObject)PrefabUtility.InstantiatePrefab(reupPrefab);
             DiContainer diContainer = reupGameObject.transform.Find("SceneContext").GetComponent<ReupDependenciesInstaller>().container;
             GameObject baseGlobalScriptGameObject = reupGameObject.transform.Find("BaseGlobalScripts").gameObject;
@@ -78,7 +81,6 @@ namespace ReupVirtualTwinTests.utils
 
             SetupBuilding setupBuilding = baseGlobalScriptGameObject.transform.Find("SetupBuilding").GetComponent<SetupBuilding>();
 
-            setupBuilding.building = building;
             setupBuilding.AssignIdsAndObjectInfoToBuilding();
             setupBuilding.AddTagSystemToBuildingObjects();
 
