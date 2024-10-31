@@ -49,6 +49,7 @@ namespace ReupVirtualTwinTests.utils
             public ICharacterPositionManager characterPositionManager;
             public RotateDhvCameraKeyboard rotateDhvCameraKeyboardBehavior;
             public RotateDhvCameraMouse rotateDhvCameraMouseBehavior;
+            public RotateDhvCameraTouch rotateDhvCameraTouchBehavior;
         }
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab, Action<GameObject> modifyBuilding)
         {
@@ -128,6 +129,8 @@ namespace ReupVirtualTwinTests.utils
 
             RotateDhvCameraMouse rotateDhvCameraMouseBehavior = dollhouseViewWrapper.GetComponent<RotateDhvCameraMouse>();
 
+            RotateDhvCameraTouch rotateDhvCameraTouchBehavior = dollhouseViewWrapper.GetComponent<RotateDhvCameraTouch>();
+
             ModelInfoManager modelInfoManager = baseGlobalScriptGameObject.transform.Find("ModelInfo").GetComponent<ModelInfoManager>();
 
             ObjectRegistry objectRegistry = baseGlobalScriptGameObject.transform.Find("ObjectRegistry").GetComponent<ObjectRegistry>();
@@ -179,7 +182,8 @@ namespace ReupVirtualTwinTests.utils
                 houseContainer = houseContainer,
                 characterPositionManager = characterPositionManager,
                 rotateDhvCameraKeyboardBehavior = rotateDhvCameraKeyboardBehavior,
-                rotateDhvCameraMouseBehavior = rotateDhvCameraMouseBehavior
+                rotateDhvCameraMouseBehavior = rotateDhvCameraMouseBehavior,
+                rotateDhvCameraTouchBehavior = rotateDhvCameraTouchBehavior,
             };
         }
 

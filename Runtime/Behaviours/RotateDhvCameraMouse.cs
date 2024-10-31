@@ -1,3 +1,4 @@
+using ReupVirtualTwin.enums;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.inputs;
 using ReupVirtualTwin.managerInterfaces;
@@ -8,16 +9,14 @@ namespace ReupVirtualTwin.behaviours
 {
     public class RotateDhvCameraMouse : MonoBehaviour
     {
-        [SerializeField] public Transform dollhouseViewWrapper;
-        private float maxVerticalAngle = 89.9f;
-        private float minVerticalAngle = 10f;
-        InputProvider _inputProvider;
+        [SerializeField] public Transform dollhouseViewWrapper;        
+        InputProvider inputProvider;
         IDragManager dragManager;
 
         [Inject]
         public void Init(IDragManager dragManager, InputProvider inputProvider)
         {
-            _inputProvider = inputProvider;
+            this.inputProvider = inputProvider;
             this.dragManager = dragManager;
         }
         private void Update()
@@ -30,13 +29,17 @@ namespace ReupVirtualTwin.behaviours
 
         private void UpdateCameraRotationWithMouse()
         {
-            Vector2 mouseDelta = _inputProvider.MouseRotateDhvCamera();
+            Vector2 mouseDelta = inputProvider.MouseRotateDhvCamera();
 
-            float horizontalRotation = (mouseDelta.x / Screen.width) * 180f;
-            float verticalRotation = (mouseDelta.y / Screen.height) * 180f;
+            float horizontalRotation = (mouseDelta.x / Screen.width) * RomuloGlobalSettings.horizontalRotationPerScreenWidth;
+            float verticalRotation = (mouseDelta.y / Screen.height) * RomuloGlobalSettings.verticalRotationPerScreenHeight;
 
             float currentVerticalAngle = dollhouseViewWrapper.localEulerAngles.x;
-            float newVerticalAngle = Mathf.Clamp(currentVerticalAngle - verticalRotation, minVerticalAngle, maxVerticalAngle);
+            float newVerticalAngle = Mathf.Clamp(
+                currentVerticalAngle - verticalRotation, 
+                RomuloGlobalSettings.minVerticalAngle, 
+                RomuloGlobalSettings.maxVerticalAngle
+            );
 
             dollhouseViewWrapper.localEulerAngles = new Vector3(
                 newVerticalAngle,
