@@ -1,13 +1,13 @@
 using UnityEngine;
 using UnityEditor;
-using ReupVirtualTwin.behaviours;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.controllerInterfaces;
+using ReupVirtualTwin.dependencyInjectors;
 
 namespace ReupVirtualTwin.editor
 {
-    [CustomEditor(typeof(SetupBuilding))]
-    public class SetUpBuildingEditor : Editor
+    [CustomEditor(typeof(ExternalInstaller))]
+    public class ExternalInstallerEditor : Editor
     {
         bool showIdsOptions = false;
         bool showTagsOptions = false;
@@ -18,24 +18,24 @@ namespace ReupVirtualTwin.editor
         {
             base.OnInspectorGUI();
 
-            SetupBuilding setUpBuilding = (SetupBuilding)target;
+            ExternalInstaller externalInstaller = (ExternalInstaller)target;
 
             showIdsOptions = EditorGUILayout.Foldout(showIdsOptions, "Objects Ids");
             if (showIdsOptions)
             {
                 if (GUILayout.Button("Add Ids to objects"))
                 {
-                    AssignIdsAndObjectInfoToBuilding(setUpBuilding.building);
+                    AssignIdsAndObjectInfoToBuilding(externalInstaller.building);
                     Debug.Log("Ids and object info added to tree");
                 }
                 if (GUILayout.Button("Remove Ids from objects"))
                 {
-                    RemoveIdsAndObjectInfoFromBuilding(setUpBuilding.building);
+                    RemoveIdsAndObjectInfoFromBuilding(externalInstaller.building);
                     Debug.Log("Ids and object info removed from tree");
                 }
                 if (GUILayout.Button("Reset Ids from objects"))
                 {
-                    ResetIdsOfBuilding(setUpBuilding.building);
+                    ResetIdsOfBuilding(externalInstaller.building);
                     Debug.Log("Ids and object info reseted from tree");
                 }
             }
@@ -44,7 +44,7 @@ namespace ReupVirtualTwin.editor
             {
                 if (GUILayout.Button("Add tag system to objects"))
                 {
-                    AddTagSystemToBuildingObjects(setUpBuilding.building);
+                    AddTagSystemToBuildingObjects(externalInstaller.building);
                     Debug.Log("tags script added to tree");
                 }
             }
