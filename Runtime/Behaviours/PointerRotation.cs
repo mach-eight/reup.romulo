@@ -57,7 +57,7 @@ namespace ReupVirtualTwin.behaviours
 
         void Update()
         {
-            if (!dragManager.dragging || gesturesManager.gestureInProgress)
+            if (!dragManager.primaryDragging || gesturesManager.gestureInProgress)
             {
                 return;
             }
