@@ -10,19 +10,16 @@ namespace ReupVirtualTwin.managers
 {
     public class DragManager : IDragManager, IInitializable, ITickable, IDisposable
     {
-        [HideInInspector]
         public bool primaryDragging { get; private set; } = false;
-        [HideInInspector]
         public bool secondaryDragging { get; private set; } = false;
-        [HideInInspector]
         public bool prevDragging { get; private set; } = false;
 
-        private bool _isHoldingPrimaryDrag = false;
-        private bool _isHoldingSecondaryDrag = false;
-        private Vector2 _selectPositionPrimaryDrag;
-        private Vector2 _selectPositionSecondaryDrag;
+        private bool isHoldingPrimaryDrag = false;
+        private bool isHoldingSecondaryDrag = false;
+        private Vector2 selectPositionPrimaryDrag;
+        private Vector2 selectPositionSecondaryDrag;
         private InputProvider inputProvider;
-        private float _dragDistanceThreshold = 2.0f;
+        private float dragDistanceThreshold = 2.0f;
 
         [Inject]
         public void Init(InputProvider inputProvider)
@@ -51,44 +48,44 @@ namespace ReupVirtualTwin.managers
         {
             prevDragging = primaryDragging || secondaryDragging;
             Vector2 currentPointerPosition = inputProvider.PointerInput();
-            if (_isHoldingPrimaryDrag && !primaryDragging)
+            if (isHoldingPrimaryDrag && !primaryDragging)
             {
-                primaryDragging = isDragging(currentPointerPosition, _selectPositionPrimaryDrag);
+                primaryDragging = isDragging(currentPointerPosition, selectPositionPrimaryDrag);
             }
             
-            if (_isHoldingSecondaryDrag && !secondaryDragging)
+            if (isHoldingSecondaryDrag && !secondaryDragging)
             {
-                secondaryDragging = isDragging(currentPointerPosition, _selectPositionSecondaryDrag);
+                secondaryDragging = isDragging(currentPointerPosition, selectPositionSecondaryDrag);
             }
         }
 
         private bool isDragging(Vector2 pointerPosition, Vector2 selectPosition)
         {
             float distance = Vector2.Distance(pointerPosition, selectPosition);
-            return distance > _dragDistanceThreshold;
+            return distance > dragDistanceThreshold;
         }
 
         private void OnHold(InputAction.CallbackContext obj)
         {
-            _isHoldingPrimaryDrag = true;
-            _selectPositionPrimaryDrag = inputProvider.PointerInput();
+            isHoldingPrimaryDrag = true;
+            selectPositionPrimaryDrag = inputProvider.PointerInput();
         }
 
         private void OnHoldRightClick(InputAction.CallbackContext obj)
         {
-            _isHoldingSecondaryDrag = true;
-            _selectPositionSecondaryDrag = inputProvider.PointerInput();
+            isHoldingSecondaryDrag = true;
+            selectPositionSecondaryDrag = inputProvider.PointerInput();
         }
 
         private void OnHoldCanceled(InputAction.CallbackContext obj)
         {
-            _isHoldingPrimaryDrag = false;
+            isHoldingPrimaryDrag = false;
             primaryDragging = false;
         }
 
         private void OnHoldRightClickCanceled(InputAction.CallbackContext obj)
         {
-            _isHoldingSecondaryDrag = false;
+            isHoldingSecondaryDrag = false;
             secondaryDragging = false;
         }
 

@@ -1,6 +1,8 @@
 using System.Collections;
 using NUnit.Framework;
 using ReupVirtualTwin.behaviours;
+using ReupVirtualTwin.enums;
+using ReupVirtualTwin.helpers;
 using ReupVirtualTwinTests.utils;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -53,13 +55,6 @@ namespace ReupVirtualTwinTests.behaviours
             yield return null;
         }
 
-        private float NormalizeAngle(float angle)
-        {
-            angle = angle % 360;
-            if (angle < 0) angle += 360;
-            return angle;
-        }
-
         [UnityTest]
         public IEnumerator UpArrowKeyShouldRotateDHVUp()
         {
@@ -71,7 +66,7 @@ namespace ReupVirtualTwinTests.behaviours
             input.Release(keyboard.upArrowKey);
             yield return null;
 
-            float expectedRotation = NormalizeAngle(initialRotationX + (keyboardRotationSpeedDegreesPerSecond * timeInSecsForHoldingButton));
+            float expectedRotation = MathUtils.NormalizeTo360Degrees(initialRotationX + (keyboardRotationSpeedDegreesPerSecond * timeInSecsForHoldingButton));
             Assert.AreEqual(expectedRotation, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
         }
 
@@ -86,7 +81,7 @@ namespace ReupVirtualTwinTests.behaviours
             input.Release(keyboard.downArrowKey);
             yield return null;
 
-            float expectedRotation = NormalizeAngle(initialRotationX - (keyboardRotationSpeedDegreesPerSecond * timeInSecsForHoldingButton));
+            float expectedRotation = MathUtils.NormalizeTo360Degrees(initialRotationX - (keyboardRotationSpeedDegreesPerSecond * timeInSecsForHoldingButton));
             Assert.AreEqual(expectedRotation, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
         }
 
@@ -101,7 +96,7 @@ namespace ReupVirtualTwinTests.behaviours
             input.Release(keyboard.leftArrowKey);
             yield return null;
 
-            float expectedRotation = NormalizeAngle(initialRotationY + (keyboardRotationSpeedDegreesPerSecond * timeInSecsForHoldingButton));
+            float expectedRotation = MathUtils.NormalizeTo360Degrees(initialRotationY + (keyboardRotationSpeedDegreesPerSecond * timeInSecsForHoldingButton));
             Assert.AreEqual(expectedRotation, dollhouseViewWrapper.localEulerAngles.y, errorToleranceInDegrees);
         }
 
@@ -116,7 +111,7 @@ namespace ReupVirtualTwinTests.behaviours
             input.Release(keyboard.rightArrowKey);
             yield return null;
 
-            float expectedRotation = NormalizeAngle(initialRotationY - (keyboardRotationSpeedDegreesPerSecond * timeInSecsForHoldingButton));
+            float expectedRotation = MathUtils.NormalizeTo360Degrees(initialRotationY - (keyboardRotationSpeedDegreesPerSecond * timeInSecsForHoldingButton));
             Assert.AreEqual(expectedRotation, dollhouseViewWrapper.localEulerAngles.y, errorToleranceInDegrees);
         }
 
@@ -126,14 +121,14 @@ namespace ReupVirtualTwinTests.behaviours
             Assert.AreEqual(initialRotationX, dollhouseViewWrapper.localEulerAngles.x);
             Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
 
-            float angleToClamp = rotateDhvCameraKeyboardBehavior.maxVerticalAngle + 5;
+            float angleToClamp = RomuloGlobalSettings.maxVerticalAngle + 5;
             float timeToHoldHeyBeyondClamp = Mathf.Abs((angleToClamp - initialRotationX)) / keyboardRotationSpeedDegreesPerSecond;
 
             input.Press(keyboard.upArrowKey);
             yield return new WaitForSeconds(timeToHoldHeyBeyondClamp);
             input.Release(keyboard.upArrowKey);
 
-            Assert.AreEqual(rotateDhvCameraKeyboardBehavior.maxVerticalAngle, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
+            Assert.AreEqual(RomuloGlobalSettings.maxVerticalAngle, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
         }
 
         [UnityTest]
@@ -142,14 +137,14 @@ namespace ReupVirtualTwinTests.behaviours
             Assert.AreEqual(initialRotationX, dollhouseViewWrapper.localEulerAngles.x);
             Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
 
-            float angleToClamp = rotateDhvCameraKeyboardBehavior.minVerticalAngle - 5;
+            float angleToClamp = RomuloGlobalSettings.minVerticalAngle - 5;
             float timeToHoldHeyBeyondClamp = Mathf.Abs((angleToClamp - initialRotationX)) / keyboardRotationSpeedDegreesPerSecond;
 
             input.Press(keyboard.downArrowKey);
             yield return new WaitForSeconds(timeToHoldHeyBeyondClamp);
             input.Release(keyboard.downArrowKey);
 
-            Assert.AreEqual(rotateDhvCameraKeyboardBehavior.minVerticalAngle, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
+            Assert.AreEqual(RomuloGlobalSettings.minVerticalAngle, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
         }
 
         [UnityTest]
@@ -171,7 +166,7 @@ namespace ReupVirtualTwinTests.behaviours
             Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
 
             float percentageOfTheScreenDragged = 5f / 100f;
-            float performedRotationInDegrees = percentageOfTheScreenDragged * rotateDhvCameraMouseBehavior.verticalRotationPerScreenHeight;
+            float performedRotationInDegrees = percentageOfTheScreenDragged * RomuloGlobalSettings.verticalRotationPerScreenHeight;
             Vector2 initialPosition = new Vector2(0.0f, 1.0f);
             Vector2 finalPosition = new Vector2(0.0f, 0.95f);
 
@@ -189,7 +184,7 @@ namespace ReupVirtualTwinTests.behaviours
             Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
 
             float percentageOfTheScreenDragged = 5f / 100f;
-            float performedRotationInDegrees = percentageOfTheScreenDragged * rotateDhvCameraMouseBehavior.verticalRotationPerScreenHeight;
+            float performedRotationInDegrees = percentageOfTheScreenDragged * RomuloGlobalSettings.verticalRotationPerScreenHeight;
             Vector2 initialPosition = new Vector2(0.0f, 0.0f);
             Vector2 finalPosition = new Vector2(0.0f, 0.05f);
 
@@ -207,7 +202,7 @@ namespace ReupVirtualTwinTests.behaviours
             Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
 
             float percentageOfTheScreenDragged = 5f / 100f;
-            float performedRotationInDegrees = percentageOfTheScreenDragged * rotateDhvCameraMouseBehavior.horizontalRotationPerScreenWidth;
+            float performedRotationInDegrees = percentageOfTheScreenDragged * RomuloGlobalSettings.horizontalRotationPerScreenWidth;
             Vector2 initialPosition = new Vector2(0.5f, 0.5f);
             Vector2 finalPosition = new Vector2(0.45f, 0.5f);
 
@@ -225,7 +220,7 @@ namespace ReupVirtualTwinTests.behaviours
             Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
 
             float percentageOfTheScreenDragged = 5f / 100f;
-            float performedRotationInDegrees = percentageOfTheScreenDragged * rotateDhvCameraMouseBehavior.horizontalRotationPerScreenWidth;
+            float performedRotationInDegrees = percentageOfTheScreenDragged * RomuloGlobalSettings.horizontalRotationPerScreenWidth;
             Vector2 initialPosition = new Vector2(0.5f, 0.5f);
             Vector2 finalPosition = new Vector2(0.55f, 0.5f);
 
@@ -244,7 +239,7 @@ namespace ReupVirtualTwinTests.behaviours
 
             yield return PointerUtils.DragMouseRightButton(input, mouse, new Vector2(0.5f, 0.5f), new Vector2(0.5f, -100.0f), steps);
 
-            Assert.AreEqual(rotateDhvCameraMouseBehavior.maxVerticalAngle, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
+            Assert.AreEqual(RomuloGlobalSettings.maxVerticalAngle, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
         }
 
         [UnityTest]
@@ -255,7 +250,7 @@ namespace ReupVirtualTwinTests.behaviours
 
             yield return PointerUtils.DragMouseRightButton(input, mouse, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 100.0f), steps);
 
-            Assert.AreEqual(rotateDhvCameraMouseBehavior.minVerticalAngle, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
+            Assert.AreEqual(RomuloGlobalSettings.minVerticalAngle, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
         }
 
         [UnityTest]
@@ -359,7 +354,7 @@ namespace ReupVirtualTwinTests.behaviours
             Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
 
             float percentageOfTheScreenDragged = 5f / 100f;
-            float performedRotationInDegrees = percentageOfTheScreenDragged * rotateDhvCameraTouchBehavior.verticalRotationPerScreenHeight;
+            float performedRotationInDegrees = percentageOfTheScreenDragged * RomuloGlobalSettings.verticalRotationPerScreenHeight;
             Vector2 initialPositionTouch1 = new Vector2(0.0f, 1.0f);
             Vector2 initialPositionTouch2 = new Vector2(0.1f, 1.0f);
             Vector2 finalPositionTouch1 = new Vector2(0.0f, 0.95f);
@@ -385,7 +380,7 @@ namespace ReupVirtualTwinTests.behaviours
 
             yield return PointerUtils.TouchGesture(input, touch, initialPositionTouch1, initialPositionTouch2, finalPositionTouch1, finalPositionTouch2, steps);
 
-            Assert.AreEqual(rotateDhvCameraTouchBehavior.maxVerticalAngle, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
+            Assert.AreEqual(RomuloGlobalSettings.maxVerticalAngle, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
         }
 
         [UnityTest]
@@ -401,7 +396,7 @@ namespace ReupVirtualTwinTests.behaviours
 
             yield return PointerUtils.TouchGesture(input, touch, initialPositionTouch1, initialPositionTouch2, finalPositionTouch1, finalPositionTouch2, steps);
 
-            Assert.AreEqual(rotateDhvCameraTouchBehavior.minVerticalAngle, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
+            Assert.AreEqual(RomuloGlobalSettings.minVerticalAngle, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
         }
     }
 }

@@ -1,9 +1,7 @@
-using NUnit.Framework;
-using NUnit.Framework.Internal;
+using ReupVirtualTwin.enums;
 using ReupVirtualTwin.inputs;
 using ReupVirtualTwin.managerInterfaces;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using Zenject;
 
 namespace ReupVirtualTwin.behaviours
@@ -11,12 +9,8 @@ namespace ReupVirtualTwin.behaviours
     public class RotateDhvCameraTouch : MonoBehaviour
     {
         [SerializeField] public Transform dollhouseViewWrapper;
-        [SerializeField] public float maxVerticalAngle = 89.9f;
-        [SerializeField] public float minVerticalAngle = 10f;
-        [SerializeField] public float rotationThreshold = 2.5f;
-        [SerializeField] public float verticalRotationPerScreenHeight = 180f;
 
-        InputProvider _inputProvider;
+        InputProvider inputProvider;
         IGesturesManager gesturesManager;
 
         Vector2 initialTouch1Position;
@@ -24,16 +18,19 @@ namespace ReupVirtualTwin.behaviours
 
         Vector2 touch1Position;
         Vector2 touch2Position;
+
+        float rotationThreshold = 3f;
+
         float currentAngle;
 
-        bool isInitDataSet = false;
+        bool isDataInitialized = false;
         bool isHorizontalRotation = false;
         bool isVerticalRotation = false;
 
         [Inject]
         public void Init(InputProvider inputProvider, IGesturesManager gesturesManager)
         {
-            _inputProvider = inputProvider;
+            this.inputProvider = inputProvider;
             this.gesturesManager = gesturesManager;
         }
 
@@ -41,7 +38,7 @@ namespace ReupVirtualTwin.behaviours
         {
             if (gesturesManager.gestureInProgress) 
             {
-                if (!isInitDataSet)
+                if (!isDataInitialized)
                 {
                     SetInitialData();
                 }
@@ -68,25 +65,25 @@ namespace ReupVirtualTwin.behaviours
 
         private void SetInitialData()
         {
-            initialTouch1Position = _inputProvider.Touch1Position();
-            initialTouch2Position = _inputProvider.Touch2Position();
+            initialTouch1Position = inputProvider.Touch1Position();
+            initialTouch2Position = inputProvider.Touch2Position();
             touch1Position = initialTouch1Position;
             touch2Position = initialTouch2Position;
             currentAngle = Vector2.SignedAngle(touch2Position - touch1Position, Vector2.right);
-            isInitDataSet = true;
+            isDataInitialized = true;
         }
 
         private void ResetInitialData()
         {
-            isInitDataSet = false;
+            isDataInitialized = false;
             isHorizontalRotation = false;
             isVerticalRotation = false;
         }
 
         private void DetermineRotationType()
         {
-            Vector2 touch1 = _inputProvider.Touch1Position();
-            Vector2 touch2 = _inputProvider.Touch2Position();
+            Vector2 touch1 = inputProvider.Touch1Position();
+            Vector2 touch2 = inputProvider.Touch2Position();
 
             float angleDelta = Vector2.SignedAngle(touch2 - touch1, Vector2.right) - currentAngle;
             float newAverageY = (touch1.y + touch2.y) / 2;
@@ -105,8 +102,8 @@ namespace ReupVirtualTwin.behaviours
 
         private void UpdateHorizontalCameraRotation()
         {
-            Vector2 touch1 = _inputProvider.Touch1Position();
-            Vector2 touch2 = _inputProvider.Touch2Position();
+            Vector2 touch1 = inputProvider.Touch1Position();
+            Vector2 touch2 = inputProvider.Touch2Position();
 
             float newAngle = Vector2.SignedAngle(touch2 - touch1, Vector2.right);
             float angleDelta = newAngle - currentAngle;
@@ -118,8 +115,8 @@ namespace ReupVirtualTwin.behaviours
 
         private void UpdateVerticalCameraRotation()
         {
-            Vector2 touch1 = _inputProvider.Touch1Position();
-            Vector2 touch2 = _inputProvider.Touch2Position();
+            Vector2 touch1 = inputProvider.Touch1Position();
+            Vector2 touch2 = inputProvider.Touch2Position();
 
             if (!AreTouchesMovingInSameDirection(touch1, touch2))
             {
@@ -129,10 +126,14 @@ namespace ReupVirtualTwin.behaviours
             float newAverageY = (touch1.y + touch2.y) / 2;
             float previousAverageY = (touch1Position.y + touch2Position.y) / 2;
             float deltaY = newAverageY - previousAverageY;
-            float verticalRotation = (verticalRotationPerScreenHeight / Screen.height) * deltaY;
+            float verticalRotation = (RomuloGlobalSettings.verticalRotationPerScreenHeight / Screen.height) * deltaY;
 
             float currentVerticalAngle = dollhouseViewWrapper.localEulerAngles.x;
-            float newVerticalAngle = Mathf.Clamp(currentVerticalAngle - verticalRotation, minVerticalAngle, maxVerticalAngle);
+            float newVerticalAngle = Mathf.Clamp(
+                currentVerticalAngle - verticalRotation, 
+                RomuloGlobalSettings.minVerticalAngle, 
+                RomuloGlobalSettings.maxVerticalAngle
+            );
 
             dollhouseViewWrapper.localEulerAngles = new Vector3(
                 newVerticalAngle,
