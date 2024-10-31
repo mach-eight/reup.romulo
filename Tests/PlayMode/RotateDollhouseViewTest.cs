@@ -328,7 +328,7 @@ namespace ReupVirtualTwinTests.behaviours
         }
 
         [UnityTest]
-        public IEnumerator ShouldRotate9DegreesVerticallyDownWithAlignedTouches()
+        public IEnumerator ShouldRotate9DegreesVerticallyUpWithAlignedTouches()
         {
             Assert.AreEqual(initialRotationX, dollhouseViewWrapper.localEulerAngles.x);
             Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
@@ -348,7 +348,7 @@ namespace ReupVirtualTwinTests.behaviours
         }
 
         [UnityTest]
-        public IEnumerator ShouldRotate9DegreesVerticallyUpWithAlignedTouches()
+        public IEnumerator ShouldRotate9DegreesVerticallyDownWithAlignedTouches()
         {
             Assert.AreEqual(initialRotationX, dollhouseViewWrapper.localEulerAngles.x);
             Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
