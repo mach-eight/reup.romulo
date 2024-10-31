@@ -12,7 +12,6 @@ namespace ReupVirtualTwin.behaviours
     public class SetupBuilding : MonoBehaviour, ISetUpBuilding, IOnBuildingSetup
     {
 
-        [SerializeField]
         GameObject building;
 
         private bool buildingSetup = false;
