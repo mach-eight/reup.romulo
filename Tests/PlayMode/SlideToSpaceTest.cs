@@ -107,7 +107,7 @@ namespace ReupVirtualTwinTests.IOTests
                 })
             };
             yield return null;
-            yield return editMediator.ReceiveWebMessage(serializedMessage);
+            editMediator.ReceiveWebMessage(serializedMessage);
             yield return new WaitForSeconds(0.3f);
             Vector3 desiredPositionAfterJump = new Vector3(spaceJumpPointPosition.x, characterYPosition, spaceJumpPointPosition.z);
             AssertUtils.AssertVectorsAreClose(desiredPositionAfterJump, character.position, 0.02);
@@ -126,7 +126,7 @@ namespace ReupVirtualTwinTests.IOTests
                 })
             };
             yield return null;
-            yield return editMediator.ReceiveWebMessage(serializedMessage);
+            editMediator.ReceiveWebMessage(serializedMessage);
             yield return new WaitForSeconds(0.3f);
             Assert.AreEqual(1, webMessageSenderSpy.sentMessages.Count);
             WebMessage<JObject> sentMessage = (WebMessage<JObject>)webMessageSenderSpy.sentMessages[0];
@@ -157,7 +157,8 @@ namespace ReupVirtualTwinTests.IOTests
                     }
                 }
             };
-            yield return editMediator.ReceiveWebMessage(JsonConvert.SerializeObject(message));
+            editMediator.ReceiveWebMessage(JsonConvert.SerializeObject(message));
+            yield return null;
             Assert.AreEqual(1, webMessageSenderSpy.sentMessages.Count);
             WebMessage<JObject> sentMessage = (WebMessage<JObject>)webMessageSenderSpy.sentMessages[0];
             WebMessage<JObject> expectedMessage = new WebMessage<JObject>
@@ -185,7 +186,7 @@ namespace ReupVirtualTwinTests.IOTests
                 })
             };
             spaceSelectors[0].transform.position = new Vector3(100, 100, 100);
-            yield return editMediator.ReceiveWebMessage(serializedMessage);
+            editMediator.ReceiveWebMessage(serializedMessage);
             Assert.AreEqual(1, webMessageSenderSpy.sentMessages.Count);
             WebMessage<JObject> sentMessage = (WebMessage<JObject>)webMessageSenderSpy.sentMessages[0];
             WebMessage<JObject> expectedMessage = new WebMessage<JObject>

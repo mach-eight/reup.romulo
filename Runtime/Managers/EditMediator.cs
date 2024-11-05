@@ -199,7 +199,7 @@ namespace ReupVirtualTwin.managers
             }
         }
 
-        public async Task ReceiveWebMessage(string serializedWebMessage)
+        public void ReceiveWebMessage(string serializedWebMessage)
         {
             JObject message = JObject.Parse(serializedWebMessage);
             IList<string> errorMessages;
@@ -214,6 +214,11 @@ namespace ReupVirtualTwin.managers
             }
             string type = message["type"].ToString();
             JToken payload = message["payload"];
+            _ = ReceiveWebMessage(type, payload);
+        }
+
+        public async Task ReceiveWebMessage(string type, JToken payload)
+        {
             try
             {
                 await ExecuteWebMessage(type, payload);

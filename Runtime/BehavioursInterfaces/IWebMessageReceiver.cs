@@ -4,6 +4,6 @@ namespace ReupVirtualTwin.behaviourInterfaces
 {
     public interface IWebMessageReceiver
     {
-        public Task ReceiveWebMessage(string serializedWebMessage);
+        public void ReceiveWebMessage(string serializedWebMessage);
     }
 }
