@@ -9,11 +9,11 @@ using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwinTests.utils;
+using ReupVirtualTwin.enums;
 
 public class ReupPrefabTest : MonoBehaviour
 {
     ReupSceneInstantiator.SceneObjects sceneObjects;
-    Transform character;
 
     IObjectRegistry objectRegistry;
 
@@ -37,8 +37,6 @@ public class ReupPrefabTest : MonoBehaviour
         GameObject editMediatorGameObject = baseGlobalScriptGameObject.transform.Find("EditMediator").gameObject;
         editMediator = editMediatorGameObject.GetComponent<EditMediator>();
         editModeManager = editMediatorGameObject.transform.Find("EditModeManager").GetComponent<EditModeManager>();
-
-        character = sceneObjects.character;
     }
 
     [UnityTearDown]
@@ -161,6 +159,17 @@ public class ReupPrefabTest : MonoBehaviour
     public IEnumerator DHVCameraMovementShouldHaveADHVCameraTransformHandler()
     {
         Assert.IsNotNull(sceneObjects.moveDhvCameraBehavior.dollhouseViewWrapperTransform);
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator EditMediatorCanImpedeCharacterRotation_when_transformHandleInteractionHappens()
+    {
+        Assert.IsTrue(sceneObjects.characterRotationManager.allowRotation);
+        sceneObjects.editMediator.Notify(ReupEvent.transformHandleStartInteraction);
+        Assert.IsFalse(sceneObjects.characterRotationManager.allowRotation);
+        sceneObjects.editMediator.Notify(ReupEvent.transformHandleStopInteraction);
+        Assert.IsTrue(sceneObjects.characterRotationManager.allowRotation);
         yield return null;
     }
 

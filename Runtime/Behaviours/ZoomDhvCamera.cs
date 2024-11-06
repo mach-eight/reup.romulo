@@ -3,6 +3,7 @@ using ReupVirtualTwin.inputs;
 using Unity.Cinemachine;
 using ReupVirtualTwin.managerInterfaces;
 using System;
+using Zenject;
 
 namespace ReupVirtualTwin.behaviours
 {
@@ -16,19 +17,24 @@ namespace ReupVirtualTwin.behaviours
         [SerializeField] public float minFieldOfView = 1;
         [SerializeField] public float smoothTime = 0.2f;
 
-        private InputProvider _inputProvider;
+        private InputProvider inputProvider;
         private IGesturesManager gesturesManager;
-        
+
         private float initialPinchDistance = 0;
         private float targetFieldOfView;
         private float currentVelocity;
 
         private float SCROLL_STEP = 120;
 
-        private void Awake()
+        [Inject]
+        public void Init(InputProvider inputProvider, IGesturesManager gesturesManager)
         {
-            _inputProvider = new InputProvider();
-            gesturesManager = gesturesManagerGameObject.GetComponent<IGesturesManager>();
+            this.inputProvider = inputProvider;
+            this.gesturesManager = gesturesManager;
+        }
+
+        private void Start()
+        {
             targetFieldOfView = dhvCamera.Lens.FieldOfView;
         }
 
@@ -47,15 +53,15 @@ namespace ReupVirtualTwin.behaviours
                 return;
             }
 
-            Vector2 touch1 = _inputProvider.Touch1Position();
-            Vector2 touch2 = _inputProvider.Touch2Position();
-            
+            Vector2 touch0 = inputProvider.Touch0();
+            Vector2 touch1 = inputProvider.Touch1();
+
             if (initialPinchDistance == 0)
             {
-                initialPinchDistance = Vector2.Distance(touch1, touch2);
+                initialPinchDistance = Vector2.Distance(touch0, touch1);
             }
 
-            float currentDistance = Vector2.Distance(touch1, touch2);
+            float currentDistance = Vector2.Distance(touch0, touch1);
             float zoomFactor = currentDistance / initialPinchDistance;
 
             targetFieldOfView = Mathf.Clamp(targetFieldOfView / zoomFactor, minFieldOfView, maxFieldOfView);
@@ -64,7 +70,7 @@ namespace ReupVirtualTwin.behaviours
 
         private void ScrollWheelUpdateZoom()
         {
-            Vector2 scrollInput = _inputProvider.ScrollWheelZoomDhvCamera();
+            Vector2 scrollInput = inputProvider.ScrollWheelZoomDhvCamera();
             if (scrollInput == Vector2.zero)
             {
                 return;

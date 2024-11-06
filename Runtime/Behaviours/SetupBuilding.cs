@@ -3,25 +3,18 @@ using System;
 using ReupVirtualTwin.behaviourInterfaces;
 using ReupVirtualTwin.helperInterfaces;
 using ReupVirtualTwin.controllerInterfaces;
-using Zenject;
 using ReupVirtualTwin.helpers;
+using ReupVirtualTwin.enums;
+using Zenject;
 
 namespace ReupVirtualTwin.behaviours
 {
-    public class SetupBuilding : MonoBehaviour, ISetUpBuilding, IOnBuildingSetup, IBuildingGetterSetter
+    public class SetupBuilding : MonoBehaviour, IOnBuildingSetup
     {
 
-        [SerializeField]
-        GameObject _building;
-        public GameObject building { get => _building; set => _building = value; }
+        GameObject building;
 
         private bool buildingSetup = false;
-        private ITagSystemController _tagSystemController;
-        public ITagSystemController tagSystemController { get => _tagSystemController; set => _tagSystemController = value; }
-
-        private IObjectInfoController _objectInfoController;
-        public IObjectInfoController objectInfoController { get => _objectInfoController; set => _objectInfoController = value; }
-
 
         event Action _onBuildingSetUp;
         public event Action onBuildingSetUp
@@ -39,16 +32,12 @@ namespace ReupVirtualTwin.behaviours
 
         private IColliderAdder _colliderAdder;
         public IColliderAdder colliderAdder { set => _colliderAdder = value; }
-        private IIdAssignerController _idAssignerController;
-        public IIdAssignerController idAssignerController { get => _idAssignerController; set => _idAssignerController = value; }
-        int buildingLayerId;
 
         [Inject]
         public void Init(
-            [Inject(Id = "buildingLayerId")] int buildingLayerId
-        )
+            [Inject(Id = "building")] GameObject building)
         {
-            this.buildingLayerId = buildingLayerId;
+            this.building = building;
         }
 
         void Start()
@@ -56,7 +45,7 @@ namespace ReupVirtualTwin.behaviours
             if (building != null)
             {
                 _colliderAdder.AddCollidersToTree(building);
-                GameObjectUtils.ApplyLayerToObjectTree(building, buildingLayerId);
+                GameObjectUtils.ApplyLayerToObjectTree(building, RomuloLayerIds.buildingLayerId);
             }
             else
             {
@@ -64,27 +53,6 @@ namespace ReupVirtualTwin.behaviours
             }
             _onBuildingSetUp?.Invoke();
             buildingSetup = true;
-        }
-
-        public void AssignIdsAndObjectInfoToBuilding()
-        {
-            _idAssignerController.AssignIdsToTree(building);
-            _objectInfoController.AssignObjectInfoToTree(building);
-        }
-        public void RemoveIdsAndObjectInfoFromBuilding()
-        {
-            _idAssignerController.RemoveIdsFromTree(building);
-            _objectInfoController.RemoveObjectInfoFromTree(building);
-        }
-        public void ResetIdsOfBuilding()
-        {
-            RemoveIdsAndObjectInfoFromBuilding();
-            AssignIdsAndObjectInfoToBuilding();
-        }
-
-        public void AddTagSystemToBuildingObjects()
-        {
-            _tagSystemController.AssignTagSystemToTree(building);
         }
     }
 }

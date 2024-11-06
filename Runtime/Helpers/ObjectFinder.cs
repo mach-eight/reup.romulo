@@ -36,6 +36,10 @@ namespace ReupVirtualTwin.helpers
         {
             return GameObject.FindGameObjectWithTag(TagsEnum.setupBuilding);
         }
+        public static GameObject FindReupObject()
+        {
+            return GameObject.FindGameObjectWithTag(TagsEnum.reupObject);
+        }
         public static GameObject FindObjectRegistry()
         {
             return GameObject.FindGameObjectWithTag(TagsEnum.objectRegistry);
@@ -56,10 +60,6 @@ namespace ReupVirtualTwin.helpers
         public static IWebMessageReceiver FindWebMessageReceiver()
         {
             return GameObject.FindGameObjectWithTag(TagsEnum.editMediator).GetComponent<IWebMessageReceiver>();
-        }
-        public static GameObject FindDragManager()
-        {
-            return GameObject.FindGameObjectWithTag(TagsEnum.dragManager);
         }
         public static IMediator FindEditMediator()
         {

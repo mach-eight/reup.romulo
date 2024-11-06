@@ -2,59 +2,92 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using ReupVirtualTwin.inputs;
 using ReupVirtualTwin.managerInterfaces;
+using Zenject;
+using System;
+using UnityEditor;
 
 namespace ReupVirtualTwin.managers
 {
-    public class DragManager : MonoBehaviour, IDragManager
+    public class DragManager : IDragManager, IInitializable, ITickable, IDisposable
     {
-        [HideInInspector]
-        public bool dragging { get; private set; } = false;
-        [HideInInspector]
+        public bool primaryDragging { get; private set; } = false;
+        public bool secondaryDragging { get; private set; } = false;
         public bool prevDragging { get; private set; } = false;
 
-        private bool _isHolding = false;
-        private Vector2 _selectPosition;
-        private InputProvider _inputProvider;
-        private float _dragDistanceThreshold = 2.0f;
+        private bool isHoldingPrimaryDrag = false;
+        private bool isHoldingSecondaryDrag = false;
+        private Vector2 selectPositionPrimaryDrag;
+        private Vector2 selectPositionSecondaryDrag;
+        private InputProvider inputProvider;
+        private float dragDistanceThreshold = 2.0f;
 
-        private void Awake()
+        [Inject]
+        public void Init(InputProvider inputProvider)
         {
-            _inputProvider = new InputProvider();
+            this.inputProvider = inputProvider;
         }
 
-        private void OnEnable()
+
+        public void Initialize()
         {
-            _inputProvider.holdStarted += OnHold;
-            _inputProvider.holdCanceled += OnHoldCanceled;
+            inputProvider.holdStarted += OnHold;
+            inputProvider.holdCanceled += OnHoldCanceled;
+            inputProvider.holdRightClickStarted += OnHoldRightClick;
+            inputProvider.holdRightClickCanceled += OnHoldRightClickCanceled;
         }
 
-        private void OnDisable()
+        public void Dispose()
         {
-            _inputProvider.holdStarted -= OnHold;
-            _inputProvider.holdCanceled -= OnHoldCanceled;
+            inputProvider.holdStarted -= OnHold;
+            inputProvider.holdCanceled -= OnHoldCanceled;
+            inputProvider.holdRightClickStarted -= OnHoldRightClick;
+            inputProvider.holdRightClickCanceled -= OnHoldRightClickCanceled;
         }
 
-        void Update()
+        public void Tick()
         {
-            prevDragging = dragging;
-            if (_isHolding == true && dragging == false)
+            prevDragging = primaryDragging || secondaryDragging;
+            Vector2 currentPointerPosition = inputProvider.PointerInput();
+            if (isHoldingPrimaryDrag && !primaryDragging)
             {
-                var pointer = _inputProvider.PointerInput();
-                var distance = Vector2.Distance(pointer, _selectPosition);
-                dragging = distance > _dragDistanceThreshold;
+                primaryDragging = isDragging(currentPointerPosition, selectPositionPrimaryDrag);
             }
+            
+            if (isHoldingSecondaryDrag && !secondaryDragging)
+            {
+                secondaryDragging = isDragging(currentPointerPosition, selectPositionSecondaryDrag);
+            }
+        }
+
+        private bool isDragging(Vector2 pointerPosition, Vector2 selectPosition)
+        {
+            float distance = Vector2.Distance(pointerPosition, selectPosition);
+            return distance > dragDistanceThreshold;
         }
 
         private void OnHold(InputAction.CallbackContext obj)
         {
-            _isHolding = true;
-            _selectPosition = _inputProvider.PointerInput();
+            isHoldingPrimaryDrag = true;
+            selectPositionPrimaryDrag = inputProvider.PointerInput();
+        }
+
+        private void OnHoldRightClick(InputAction.CallbackContext obj)
+        {
+            isHoldingSecondaryDrag = true;
+            selectPositionSecondaryDrag = inputProvider.PointerInput();
         }
 
         private void OnHoldCanceled(InputAction.CallbackContext obj)
         {
-            _isHolding = false;
-            dragging = false;
+            isHoldingPrimaryDrag = false;
+            primaryDragging = false;
         }
+
+        private void OnHoldRightClickCanceled(InputAction.CallbackContext obj)
+        {
+            isHoldingSecondaryDrag = false;
+            secondaryDragging = false;
+        }
+
     }
 }

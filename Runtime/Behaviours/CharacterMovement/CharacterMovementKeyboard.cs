@@ -10,21 +10,18 @@ namespace ReupVirtualTwin.behaviours
         private Transform _innerCharacterTransform;
         public Transform innerCharacterTransform { set => _innerCharacterTransform = value; }
 
-        private InputProvider _inputProvider;
+        private InputProvider inputProvider;
         private ICharacterPositionManager characterPositionManager;
-
-        [Inject]
-        public void Init(ICharacterPositionManager characterPositionManager)
-        {
-            this.characterPositionManager = characterPositionManager;
-        }
 
         static public float WALK_SPEED_M_PER_SECOND = 2.5f;
 
-
-        private void Awake()
+        [Inject]
+        public void Init(
+            ICharacterPositionManager characterPositionManager,
+            InputProvider inputProvider)
         {
-            _inputProvider = new InputProvider();
+            this.characterPositionManager = characterPositionManager;
+            this.inputProvider = inputProvider;
         }
 
         private void Update()
@@ -34,7 +31,7 @@ namespace ReupVirtualTwin.behaviours
 
         private void UpdatePosition()
         {
-            Vector2 inputValue = _inputProvider.MovementInput().normalized;
+            Vector2 inputValue = inputProvider.MovementInput().normalized;
             PerformMovement(inputValue);
         }
 

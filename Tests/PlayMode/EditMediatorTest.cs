@@ -670,7 +670,7 @@ public class EditMediatorTest : MonoBehaviour
     }
 
     [Test]
-    public async Task ShouldSendSuccessMessage_When_LoadSceneIsSuccessful()
+    public void ShouldSendSuccessMessage_When_LoadSceneIsSuccessful()
     {
         string color = "#00FF00";
         requestSceneLoadMessage["payload"]["objects"] = new JArray(
@@ -692,7 +692,7 @@ public class EditMediatorTest : MonoBehaviour
         );
 
         string serializedMessage = JsonConvert.SerializeObject(requestSceneLoadMessage);
-        await editMediator.ReceiveWebMessage(serializedMessage);
+        editMediator.ReceiveWebMessage(serializedMessage);
 
         WebMessage<JObject> sentMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[0];
 
@@ -700,7 +700,7 @@ public class EditMediatorTest : MonoBehaviour
     }
 
     [Test]
-    public async Task ShouldSendFailureMessage_When_LoadSceneFails()
+    public void ShouldSendFailureMessage_When_LoadSceneFails()
     {
         JObject material = new JObject()
         {
@@ -729,7 +729,7 @@ public class EditMediatorTest : MonoBehaviour
 
         changeMaterialControllerSpy.throwError = true;
         string serializedMessage = JsonConvert.SerializeObject(requestSceneLoadMessage);
-        await editMediator.ReceiveWebMessage(serializedMessage);
+        editMediator.ReceiveWebMessage(serializedMessage);
 
         WebMessage<JObject> sentMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[0];
         string actualErrorMessage = sentMessage.payload["errorMessage"].ToString();
@@ -855,7 +855,7 @@ public class EditMediatorTest : MonoBehaviour
     }
 
     [Test]
-    public async Task ShouldSendFailureMessage_When_NotifiedOfMaterialCannotChange()
+    public void ShouldSendFailureMessage_When_NotifiedOfMaterialCannotChange()
     {
         JObject material = new JObject()
         {
@@ -876,7 +876,7 @@ public class EditMediatorTest : MonoBehaviour
 
         changeMaterialControllerSpy.throwError = true;
         string serializedMessage = JsonConvert.SerializeObject(requesMessage);
-        await editMediator.ReceiveWebMessage(serializedMessage);
+        editMediator.ReceiveWebMessage(serializedMessage);
 
         WebMessage<JObject> sentMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(WebMessageType.changeObjectsMaterialFailure, sentMessage.type);
@@ -1111,7 +1111,7 @@ public class EditMediatorTest : MonoBehaviour
     }
 
     [Test]
-    public async Task ShouldRequestChangeObjectsMaterial_when_Receive_loadSceneRequest_with_onlyOneMaterial()
+    public void ShouldRequestChangeObjectsMaterial_when_Receive_loadSceneRequest_with_onlyOneMaterial()
     {
         JObject material = new JObject()
         {
@@ -1144,7 +1144,7 @@ public class EditMediatorTest : MonoBehaviour
             }
         );
         string serializedMessage = JsonConvert.SerializeObject(requestSceneLoadMessage);
-        await editMediator.ReceiveWebMessage(serializedMessage);
+        editMediator.ReceiveWebMessage(serializedMessage);
         JObject expectedMaterialChangeRequest = new JObject
         {
             { "material", material },
@@ -1155,7 +1155,7 @@ public class EditMediatorTest : MonoBehaviour
     }
 
     [Test]
-    public async Task ShouldRequestChangeObjectsMaterial_when_Receive_loadSceneRequest_with_severalMaterials()
+    public void ShouldRequestChangeObjectsMaterial_when_Receive_loadSceneRequest_with_severalMaterials()
     {
         JObject material1 = new JObject()
         {
@@ -1195,7 +1195,7 @@ public class EditMediatorTest : MonoBehaviour
             }
         );
         string serializedMessage = JsonConvert.SerializeObject(requestSceneLoadMessage);
-        await editMediator.ReceiveWebMessage(serializedMessage);
+        editMediator.ReceiveWebMessage(serializedMessage);
 
         JObject[] expectedMaterialChangeRequests = new JObject[]
         {
@@ -1215,7 +1215,7 @@ public class EditMediatorTest : MonoBehaviour
     }
 
     [Test]
-    public async Task ShouldSendLoadSceneSuccessMessage_after_loadingSceneObjects()
+    public void ShouldSendLoadSceneSuccessMessage_after_loadingSceneObjects()
     {
         requestSceneLoadMessage["payload"]["objects"] = new JArray(
             new JObject[]
@@ -1243,7 +1243,7 @@ public class EditMediatorTest : MonoBehaviour
             }
         );
         string serializedMessage = JsonConvert.SerializeObject(requestSceneLoadMessage);
-        await editMediator.ReceiveWebMessage(serializedMessage);
+        editMediator.ReceiveWebMessage(serializedMessage);
         WebMessage<JObject> sentMessage = (WebMessage<JObject>)mockWebMessageSender.sentMessages[0];
         Assert.AreEqual(1, mockWebMessageSender.sentMessages.Count);
         Assert.AreEqual(WebMessageType.requestSceneLoadSuccess, sentMessage.type);
@@ -1251,7 +1251,7 @@ public class EditMediatorTest : MonoBehaviour
     }
 
     [Test]
-    public async Task ShouldNotPaintOrRequestMaterialChange_when_objectHaveColorAndMaterialIdSetToNull()
+    public void ShouldNotPaintOrRequestMaterialChange_when_objectHaveColorAndMaterialIdSetToNull()
     {
         requestSceneLoadMessage["payload"]["objects"] = new JArray(
             new JObject[]
@@ -1272,19 +1272,19 @@ public class EditMediatorTest : MonoBehaviour
             }
         );
         string serializedMessage = JsonConvert.SerializeObject(requestSceneLoadMessage);
-        await editMediator.ReceiveWebMessage(serializedMessage);
+        editMediator.ReceiveWebMessage(serializedMessage);
         Assert.AreEqual(1, mockWebMessageSender.sentMessages.Count);
         Assert.AreEqual(0, changeColorManagerSpy.calledColors.Count);
         Assert.AreEqual(0, changeMaterialControllerSpy.receivedMessageRequests.Count);
     }
 
     [Test]
-    public async Task ShouldRequestOnceForOriginalSceneToBeRestored_when_Receive_loadSceneRequest()
+    public void ShouldRequestOnceForOriginalSceneToBeRestored_when_Receive_loadSceneRequest()
     {
         requestSceneLoadMessage["payload"]["objects"] = new JArray();
         string serializedMessage = JsonConvert.SerializeObject(requestSceneLoadMessage);
         Assert.AreEqual(0, originalSceneControllerSpy.restoreOriginalSceneCallsCount);
-        await editMediator.ReceiveWebMessage(serializedMessage);
+        editMediator.ReceiveWebMessage(serializedMessage);
         Assert.AreEqual(1, originalSceneControllerSpy.restoreOriginalSceneCallsCount);
     }
 

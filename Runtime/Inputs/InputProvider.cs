@@ -1,12 +1,32 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Zenject;
 
 namespace ReupVirtualTwin.inputs
 {
-    public class InputProvider
+    public class InputProvider : IInitializable, IDisposable
     {
-        private static AppInputActions _input = new ();
+        AppInputActions _input;
+
+        public InputProvider()
+        {
+            _input = new AppInputActions();
+        }
+
+        public void Initialize()
+        {
+            _input.Player.Enable();
+            _input.DollhouseView.Enable();
+            _input.MultiTouch.Enable();
+        }
+
+        public void Dispose()
+        {
+            _input.Player.Disable();
+            _input.DollhouseView.Disable();
+            _input.MultiTouch.Disable();
+        }
 
         public event Action<InputAction.CallbackContext> selectStarted
         {
@@ -41,7 +61,6 @@ namespace ReupVirtualTwin.inputs
                 _input.Player.Select.canceled -= value;
             }
         }
-
         public event Action<InputAction.CallbackContext> holdStarted
         {
             add
@@ -75,75 +94,100 @@ namespace ReupVirtualTwin.inputs
                 _input.Player.Hold.canceled -= value;
             }
         }
-        public event Action<InputAction.CallbackContext> touch1HoldStarted
+        public event Action<InputAction.CallbackContext> holdRightClickStarted
         {
             add
             {
-                _input.MultiTouch.Touch1Hold.started += value;
+                _input.Player.HoldRightClick.started += value;
             }
             remove
             {
-                _input.MultiTouch.Touch1Hold.started -= value;
+                _input.Player.HoldRightClick.started -= value;
             }
         }
-        public event Action<InputAction.CallbackContext> touch1HoldSCanceled
+        public event Action<InputAction.CallbackContext> holdRightClickPerformed
         {
             add
             {
-                _input.MultiTouch.Touch1Hold.canceled += value;
+                _input.Player.HoldRightClick.performed += value;
             }
             remove
             {
-                _input.MultiTouch.Touch1Hold.canceled -= value;
+                _input.Player.HoldRightClick.performed -= value;
             }
         }
-        public event Action<InputAction.CallbackContext> touch2HoldStarted
+        public event Action<InputAction.CallbackContext> holdRightClickCanceled
         {
             add
             {
-                _input.MultiTouch.Touch2Hold.started += value;
+                _input.Player.HoldRightClick.canceled += value;
             }
             remove
             {
-                _input.MultiTouch.Touch2Hold.started -= value;
+                _input.Player.HoldRightClick.canceled -= value;
             }
         }
-        public event Action<InputAction.CallbackContext> touch2HoldCanceled
+        public event Action<InputAction.CallbackContext> touch0Started
         {
             add
             {
-                _input.MultiTouch.Touch2Hold.canceled += value;
+                _input.MultiTouch.Touch0.started += value;
             }
             remove
             {
-                _input.MultiTouch.Touch2Hold.canceled -= value;
+                _input.MultiTouch.Touch0.started -= value;
             }
         }
-        public void Enable()
+        public event Action<InputAction.CallbackContext> touch0Canceled
         {
-            _input.Player.Enable();
-            _input.DollhouseView.Enable();
-            _input.MultiTouch.Enable();
+            add
+            {
+                _input.MultiTouch.Touch0.canceled += value;
+            }
+            remove
+            {
+                _input.MultiTouch.Touch0.canceled -= value;
+            }
+        }
+        public event Action<InputAction.CallbackContext> touch1Started
+        {
+            add
+            {
+                _input.MultiTouch.Touch1.started += value;
+            }
+            remove
+            {
+                _input.MultiTouch.Touch1.started -= value;
+            }
+        }
+        public event Action<InputAction.CallbackContext> touch1Canceled
+        {
+            add
+            {
+                _input.MultiTouch.Touch1.canceled += value;
+            }
+            remove
+            {
+                _input.MultiTouch.Touch1.canceled -= value;
+            }
         }
 
-        public void Disable()
+        public Vector2 Touch0()
         {
-            _input.Player.Disable();
-            _input.DollhouseView.Disable();
-            _input.MultiTouch.Disable();
+            return _input.MultiTouch.Touch0.ReadValue<Vector2>();
+        }
+        public Vector2 Touch1()
+        {
+            return _input.MultiTouch.Touch1.ReadValue<Vector2>();
         }
 
-        public Vector2 RotateViewInput()
-        {
-            return _input.Player.RotateView.ReadValue<Vector2>() * -1;
-        }
         public Vector2 RotateViewKeyboardInput()
         {
             return _input.Player.RotateViewKeyborad.ReadValue<Vector2>();
         }
 
         public Vector2 MovementInput()
-        { 
+        {
             return _input.Player.Movement.ReadValue<Vector2>();
         }
 
@@ -163,13 +207,15 @@ namespace ReupVirtualTwin.inputs
         {
             return _input.DollhouseView.ScrollWheelZoom.ReadValue<Vector2>();
         }
-        public Vector2 Touch1Position()
+
+        public Vector2 KeyboardRotateDhvCamera()
         {
-            return _input.MultiTouch.Touch1Position.ReadValue<Vector2>(); 
+            return _input.DollhouseView.KeyboardRotateCamera.ReadValue<Vector2>();
         }
-        public Vector2 Touch2Position()
+
+        public Vector2 MouseRotateDhvCamera()
         {
-            return _input.MultiTouch.Touch2Position.ReadValue<Vector2>(); 
+            return _input.DollhouseView.MouseRotateCamera.ReadValue<Vector2>();
         }
     }
 }

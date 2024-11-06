@@ -23,11 +23,7 @@ namespace ReupVirtualTwin.managers
 {
     public class EditMediator : MonoBehaviour, IMediator, IWebMessageReceiver
     {
-        private ICharacterRotationManager _characterRotationManager;
-        public ICharacterRotationManager characterRotationManager
-        {
-            set { _characterRotationManager = value; }
-        }
+        private ICharacterRotationManager characterRotationManager;
         private IEditModeManager _editModeManager;
         public IEditModeManager editModeManager { set => _editModeManager = value; }
         private ISelectedObjectsManager _selectedObjectsManager;
@@ -79,17 +75,16 @@ namespace ReupVirtualTwin.managers
 
         ICharacterPositionManager characterPositionManager;
         ITagsController tagsController;
-        int buildingLayerId;
 
         [Inject]
         public void Init(
             ICharacterPositionManager characterPositionManager,
-            [Inject(Id = "buildingLayerId")] int buildingLayerId,
+            ICharacterRotationManager characterRotationManager,
             ITagsController tagsController)
         {
+            this.characterRotationManager = characterRotationManager;
             this.characterPositionManager = characterPositionManager;
             this.tagsController = tagsController;
-            this.buildingLayerId = buildingLayerId;
         }
 
         public void Notify(ReupEvent eventName)
@@ -97,10 +92,10 @@ namespace ReupVirtualTwin.managers
             switch (eventName)
             {
                 case ReupEvent.transformHandleStartInteraction:
-                    _characterRotationManager.allowRotation = false;
+                    characterRotationManager.allowRotation = false;
                     break;
                 case ReupEvent.transformHandleStopInteraction:
-                    _characterRotationManager.allowRotation = true;
+                    characterRotationManager.allowRotation = true;
                     break;
                 case ReupEvent.positionTransformModeActivated:
                     ProcessTransformModeActivation(TransformMode.PositionMode);
@@ -205,7 +200,7 @@ namespace ReupVirtualTwin.managers
             }
         }
 
-        public async Task ReceiveWebMessage(string serializedWebMessage)
+        public void ReceiveWebMessage(string serializedWebMessage)
         {
             JObject message = JObject.Parse(serializedWebMessage);
             IList<string> errorMessages;
@@ -220,6 +215,11 @@ namespace ReupVirtualTwin.managers
             }
             string type = message["type"].ToString();
             JToken payload = message["payload"];
+            _ = ReceiveWebMessage(type, payload);
+        }
+
+        public async Task ReceiveWebMessage(string type, JToken payload)
+        {
             try
             {
                 await ExecuteWebMessage(type, payload);
@@ -307,9 +307,10 @@ namespace ReupVirtualTwin.managers
         void ProcessObjectTagsUnderCharacterRequest(string requestId)
         {
             Vector3 characterPosition = characterPositionManager.characterPosition;
+            LayerMask buildingLayerMask = LayerMaskUtils.GetLayerMaskById(RomuloLayerIds.buildingLayerId);
             Ray characterDownRay = new Ray(characterPosition, Vector3.down);
             RaycastHit hit;
-            if (Physics.Raycast(characterDownRay, out hit, Mathf.Infinity, 1 << buildingLayerId))
+            if (Physics.Raycast(characterDownRay, out hit, Mathf.Infinity, buildingLayerMask))
             {
                 GameObject hitObject = hit.collider.gameObject;
                 SendObjectTagsUnderCharacterResponse(requestId, hitObject);

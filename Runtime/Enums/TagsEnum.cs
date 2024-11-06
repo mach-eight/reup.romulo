@@ -2,6 +2,7 @@ namespace ReupVirtualTwin.enums
 {
     public class TagsEnum
     {
+        public const string reupObject = "ReupObject";
         public const string materialSelection = "MaterialSelection";
         public const string trigger = "Trigger";
         public const string spaceSelector = "SpaceSelector";

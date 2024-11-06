@@ -1,4 +1,3 @@
-using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.behaviourInterfaces;
 using ReupVirtualTwin.dataModels;
 using ReupVirtualTwin.enums;
@@ -11,6 +10,7 @@ using ReupVirtualTwin.dataSchemas;
 using Newtonsoft.Json.Schema;
 using ReupVirtualTwin.modelInterfaces;
 using System.Linq;
+using Zenject;
 
 
 namespace ReupVirtualTwin.managers
@@ -20,15 +20,23 @@ namespace ReupVirtualTwin.managers
         public string buildVersion { get => _buildVersion; }
         public IObjectMapper objectMapper { set => _objectMapper = value; }
 
-        string _buildVersion = "2024-10-23"; // format: YYYY-MM-DD
+        string _buildVersion = "2024-11-06"; // format: YYYY-MM-DD
         public IOnBuildingSetup setupBuilding { get; set; }
         IObjectMapper _objectMapper;
 
         public ISpacesRecord spacesRecord { get; set; }
 
+        GameObject buildingObject;
+
+        [Inject]
+        public void Init(
+            [Inject(Id = "building")] GameObject building)
+        {
+            buildingObject = building;
+        }
+
         public JObject GetSceneState()
         {
-            GameObject buildingObject = ObtainBuildingObject();
             JObject sceneState = _objectMapper.GetTreeSceneState(buildingObject);
             if (
                 RomuloEnvironment.development &&
@@ -63,7 +71,6 @@ namespace ReupVirtualTwin.managers
 
         public void InsertObjectToBuilding(GameObject obj)
         {
-            GameObject buildingObject = ObtainBuildingObject();
             obj.transform.SetParent(buildingObject.transform);
         }
 
@@ -92,14 +99,8 @@ namespace ReupVirtualTwin.managers
 
         private ObjectDTO ObtainBuildingDTO()
         {
-            GameObject buildingObject = ObtainBuildingObject();
             ObjectDTO buildingDTO = _objectMapper.MapObjectTree(buildingObject);
             return buildingDTO;
-        }
-
-        private GameObject ObtainBuildingObject()
-        {
-            return ((IBuildingGetterSetter)setupBuilding).building;
         }
 
         JArray ObtainSpaceSelectorsList()

@@ -10,11 +10,16 @@ using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwinTests.mocks;
 using Zenject;
 using ReupVirtualTwin.dependencyInjectors;
+using ReupVirtualTwin.controllerInterfaces;
+using ReupVirtualTwin.controllers;
 
 namespace ReupVirtualTwinTests.utils
 {
     public static class ReupSceneInstantiator
     {
+        static IIdAssignerController idAssignerController = new IdController();
+        static ITagSystemController tagSystemController = new TagSystemController();
+        static IObjectInfoController objectInfoController = new ObjectInfoController();
         static GameObject reupPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Assets/Quickstart/Reup.prefab");
         public class SceneObjects
         {
@@ -45,8 +50,12 @@ namespace ReupVirtualTwinTests.utils
             public ITexturesManager texturesManager;
             public GesturesManager gesturesManager;
             public ZoomDhvCamera zoomDhvCameraBehavior;
-            public ICharacterPositionManager characterPositionManager;
             public GameObject houseContainer;
+            public ICharacterPositionManager characterPositionManager;
+            public RotateDhvCameraKeyboard rotateDhvCameraKeyboardBehavior;
+            public RotateDhvCameraMouse rotateDhvCameraMouseBehavior;
+            public RotateDhvCameraTouch rotateDhvCameraTouchBehavior;
+            public ICharacterRotationManager characterRotationManager;
         }
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab, Action<GameObject> modifyBuilding)
         {
@@ -69,7 +78,11 @@ namespace ReupVirtualTwinTests.utils
         {
             InputTestFixture input = new InputTestFixture();
             input.Setup();
+            ExternalInstaller externalInstaller = reupPrefab.transform.GetComponent<ExternalInstaller>();
+            externalInstaller.building = building;
+
             GameObject reupGameObject = (GameObject)PrefabUtility.InstantiatePrefab(reupPrefab);
+            DiContainer diContainer = reupGameObject.transform.Find("SceneContext").GetComponent<ReupDependenciesInstaller>().container;
             GameObject baseGlobalScriptGameObject = reupGameObject.transform.Find("BaseGlobalScripts").gameObject;
             Transform character = reupGameObject.transform.Find("Character");
             Transform innerCharacter = reupGameObject.transform.Find("Character").Find("InnerCharacter");
@@ -77,9 +90,9 @@ namespace ReupVirtualTwinTests.utils
 
             SetupBuilding setupBuilding = baseGlobalScriptGameObject.transform.Find("SetupBuilding").GetComponent<SetupBuilding>();
 
-            setupBuilding.building = building;
-            setupBuilding.AssignIdsAndObjectInfoToBuilding();
-            setupBuilding.AddTagSystemToBuildingObjects();
+            idAssignerController.AssignIdsToTree(building);
+            objectInfoController.AssignObjectInfoToTree(building);
+            tagSystemController.AssignTagSystemToTree(building);
 
             EditMediator editMediator = baseGlobalScriptGameObject.transform
                 .Find("EditMediator").GetComponent<EditMediator>();
@@ -104,7 +117,6 @@ namespace ReupVirtualTwinTests.utils
 
             GameObject dhvCamera = reupGameObject.transform
                 .Find("DollhouseViewWrapper")
-                .Find("VerticalRotationWrapper")
                 .Find("DHVCinemachineCamera").gameObject;
 
             GameObject fpvCamera = character.transform.Find("InnerCharacter").Find("FPVCinemachineCamera").gameObject;
@@ -122,6 +134,12 @@ namespace ReupVirtualTwinTests.utils
 
             ZoomDhvCamera zoomDhvCameraBehavior = dollhouseViewWrapper.GetComponent<ZoomDhvCamera>();
 
+            RotateDhvCameraKeyboard rotateDhvCameraKeyboardBehavior = dollhouseViewWrapper.GetComponent<RotateDhvCameraKeyboard>();
+
+            RotateDhvCameraMouse rotateDhvCameraMouseBehavior = dollhouseViewWrapper.GetComponent<RotateDhvCameraMouse>();
+
+            RotateDhvCameraTouch rotateDhvCameraTouchBehavior = dollhouseViewWrapper.GetComponent<RotateDhvCameraTouch>();
+
             ModelInfoManager modelInfoManager = baseGlobalScriptGameObject.transform.Find("ModelInfo").GetComponent<ModelInfoManager>();
 
             ObjectRegistry objectRegistry = baseGlobalScriptGameObject.transform.Find("ObjectRegistry").GetComponent<ObjectRegistry>();
@@ -135,11 +153,12 @@ namespace ReupVirtualTwinTests.utils
 
             ITexturesManager texturesManager = baseGlobalScriptGameObject.transform.Find("TexturesManager").GetComponent<ITexturesManager>();
 
-            GesturesManager gesturesManager = baseGlobalScriptGameObject.transform.Find("GesturesManager").GetComponent<GesturesManager>();
+            GesturesManager gesturesManager = diContainer.Resolve<GesturesManager>();
+
+            ICharacterPositionManager characterPositionManager = diContainer.Resolve<ICharacterPositionManager>();
+            ICharacterRotationManager characterRotationManager = diContainer.Resolve<ICharacterRotationManager>();
 
             GameObject houseContainer = reupGameObject.transform.Find("HouseContainer").gameObject;
-            DiContainer diContainer = reupGameObject.transform.Find("SceneContext").GetComponent<ReupDependenciesInstaller>().container;
-            ICharacterPositionManager characterPositionManager = diContainer.Resolve<ICharacterPositionManager>();
 
             return new SceneObjects
             {
@@ -170,8 +189,12 @@ namespace ReupVirtualTwinTests.utils
                 texturesManager = texturesManager,
                 gesturesManager = gesturesManager,
                 zoomDhvCameraBehavior = zoomDhvCameraBehavior,
-                characterPositionManager = characterPositionManager,
                 houseContainer = houseContainer,
+                characterPositionManager = characterPositionManager,
+                rotateDhvCameraKeyboardBehavior = rotateDhvCameraKeyboardBehavior,
+                rotateDhvCameraMouseBehavior = rotateDhvCameraMouseBehavior,
+                rotateDhvCameraTouchBehavior = rotateDhvCameraTouchBehavior,
+                characterRotationManager = characterRotationManager,
             };
         }
 
