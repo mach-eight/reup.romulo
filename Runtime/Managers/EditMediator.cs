@@ -79,6 +79,7 @@ namespace ReupVirtualTwin.managers
         [Inject]
         public void Init(
             ICharacterPositionManager characterPositionManager,
+            ICharacterRotationManager characterRotationManager,
             ITagsController tagsController)
         {
             this.characterRotationManager = characterRotationManager;

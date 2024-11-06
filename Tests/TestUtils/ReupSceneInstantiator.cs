@@ -50,6 +50,7 @@ namespace ReupVirtualTwinTests.utils
             public RotateDhvCameraKeyboard rotateDhvCameraKeyboardBehavior;
             public RotateDhvCameraMouse rotateDhvCameraMouseBehavior;
             public RotateDhvCameraTouch rotateDhvCameraTouchBehavior;
+            public ICharacterRotationManager characterRotationManager;
         }
         public static SceneObjects InstantiateSceneWithBuildingFromPrefab(GameObject buildingPrefab, Action<GameObject> modifyBuilding)
         {
@@ -149,6 +150,7 @@ namespace ReupVirtualTwinTests.utils
             GesturesManager gesturesManager = diContainer.Resolve<GesturesManager>();
 
             ICharacterPositionManager characterPositionManager = diContainer.Resolve<ICharacterPositionManager>();
+            ICharacterRotationManager characterRotationManager = diContainer.Resolve<ICharacterRotationManager>();
 
             GameObject houseContainer = reupGameObject.transform.Find("HouseContainer").gameObject;
 
@@ -186,6 +188,7 @@ namespace ReupVirtualTwinTests.utils
                 rotateDhvCameraKeyboardBehavior = rotateDhvCameraKeyboardBehavior,
                 rotateDhvCameraMouseBehavior = rotateDhvCameraMouseBehavior,
                 rotateDhvCameraTouchBehavior = rotateDhvCameraTouchBehavior,
+                characterRotationManager = characterRotationManager,
             };
         }
 
