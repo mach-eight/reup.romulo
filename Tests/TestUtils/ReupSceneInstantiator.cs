@@ -10,11 +10,16 @@ using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwinTests.mocks;
 using Zenject;
 using ReupVirtualTwin.dependencyInjectors;
+using ReupVirtualTwin.controllerInterfaces;
+using ReupVirtualTwin.controllers;
 
 namespace ReupVirtualTwinTests.utils
 {
     public static class ReupSceneInstantiator
     {
+        static IIdAssignerController idAssignerController = new IdController();
+        static ITagSystemController tagSystemController = new TagSystemController();
+        static IObjectInfoController objectInfoController = new ObjectInfoController();
         static GameObject reupPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.reup.romulo/Assets/Quickstart/Reup.prefab");
         public class SceneObjects
         {
@@ -85,8 +90,9 @@ namespace ReupVirtualTwinTests.utils
 
             SetupBuilding setupBuilding = baseGlobalScriptGameObject.transform.Find("SetupBuilding").GetComponent<SetupBuilding>();
 
-            setupBuilding.AssignIdsAndObjectInfoToBuilding();
-            setupBuilding.AddTagSystemToBuildingObjects();
+            idAssignerController.AssignIdsToTree(building);
+            objectInfoController.AssignObjectInfoToTree(building);
+            tagSystemController.AssignTagSystemToTree(building);
 
             EditMediator editMediator = baseGlobalScriptGameObject.transform
                 .Find("EditMediator").GetComponent<EditMediator>();
