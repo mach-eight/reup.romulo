@@ -89,7 +89,7 @@ namespace ReupVirtualTwin.behaviours
                 UpdateOriginalPositions();
                 return;
             }
-            if (!dragManager.primaryDragging)
+            if (!dragManager.primaryDragging || dragManager.secondaryDragging)
             {
                 return;
             }

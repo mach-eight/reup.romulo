@@ -398,5 +398,26 @@ namespace ReupVirtualTwinTests.behaviours
 
             Assert.AreEqual(RomuloGlobalSettings.minVerticalAngle, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
         }
+
+        [UnityTest]
+        public IEnumerator ShouldOnlyRotateIfBothMouseButtonsAreHold()
+        {
+            Assert.AreEqual(initialRotationX, dollhouseViewWrapper.localEulerAngles.x);
+            Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
+            Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
+
+            float percentageOfTheScreenDragged = 5f / 100f;
+            float performedRotationInDegrees = percentageOfTheScreenDragged * RomuloGlobalSettings.horizontalRotationPerScreenWidth;
+            Vector2 initialPosition = new Vector2(0.5f, 0.5f);
+            Vector2 finalPosition = new Vector2(0.55f, 0.5f);
+
+            yield return PointerUtils.DragMouseBothButtons(input, mouse, initialPosition, finalPosition, steps);
+
+            float expectedRotation = initialRotationY + performedRotationInDegrees;
+
+            Assert.AreEqual(expectedRotation, dollhouseViewWrapper.localEulerAngles.y, errorToleranceInDegrees);
+            Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
+        }
+
     }
 }
