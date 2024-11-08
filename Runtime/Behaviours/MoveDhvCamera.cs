@@ -84,12 +84,12 @@ namespace ReupVirtualTwin.behaviours
 
         void PointerUpdatePosition()
         {
-            if (gesturesManager.gestureInProgress)
+            if (gesturesManager.gestureInProgress || dragManager.secondaryDragging)
             {
                 UpdateOriginalPositions();
                 return;
             }
-            if (!dragManager.primaryDragging || dragManager.secondaryDragging)
+            if (!dragManager.primaryDragging)
             {
                 return;
             }
