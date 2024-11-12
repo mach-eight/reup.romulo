@@ -1,6 +1,7 @@
+using System.Threading;
+using System.Threading.Tasks;
 using ReupVirtualTwin.inputs;
 using ReupVirtualTwin.managerInterfaces;
-using ReupVirtualTwin.managers;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
@@ -17,6 +18,9 @@ namespace ReupVirtualTwin.behaviours
         Vector3 startDragRayDirection;
         Vector3 startRayDirProjectedToHorizontalPlane;
         Vector3 startDragRayRightDirection;
+        bool followingCursor = false;
+        CancellationTokenSource cancellationTokenSource;
+        readonly float fraction_to_reach_target = 0.5f;
 
         [Inject]
         public void Init(
@@ -59,26 +63,48 @@ namespace ReupVirtualTwin.behaviours
         {
             if (!dragManager.primaryDragging || gesturesManager.gestureInProgress)
             {
+                cancellationTokenSource?.Cancel();
                 return;
             }
-            Ray dragRay = Camera.main.ScreenPointToRay(inputProvider.PointerInput());
-            float horizontalRotationAngle = GetHorizontalRotationAngle(dragRay.direction);
-            characterRotationManager.horizontalRotation += horizontalRotationAngle;
-            float verticalRotationAngle = GetVerticalRotationAngle(dragRay.direction);
-            characterRotationManager.verticalRotation += verticalRotationAngle;
+            if (followingCursor == true)
+            {
+                return;
+            }
+            _ = FollowCursor();
+        }
+        async Task FollowCursor()
+        {
+            followingCursor = true;
+            cancellationTokenSource = new CancellationTokenSource();
+            while (followingCursor == true)
+            {
+                Ray dragRay = Camera.main.ScreenPointToRay(inputProvider.PointerInput());
+                float dragRayAngleDifference = Vector3.Angle(startDragRayDirection, dragRay.direction);
+                if (dragRayAngleDifference < characterRotationManager.ANGLE_THRESHOLD || cancellationTokenSource.Token.IsCancellationRequested)
+                {
+                    followingCursor = false;
+                    break;
+                }
+                float horizontalRotationAngle = GetHorizontalRotationAngle(dragRay.direction);
+                characterRotationManager.horizontalRotation += horizontalRotationAngle;
+                float verticalRotationAngle = GetVerticalRotationAngle(dragRay.direction);
+                characterRotationManager.verticalRotation += verticalRotationAngle;
+                await Task.Yield();
+            }
+            followingCursor = false;
         }
 
         float GetHorizontalRotationAngle(Vector3 currentDragRayDirection)
         {
             Vector3 currentRayProjectedToHorizontal = Vector3.ProjectOnPlane(currentDragRayDirection, Vector3.up);
             float angle = Vector3.SignedAngle(startRayDirProjectedToHorizontalPlane, currentRayProjectedToHorizontal, Vector3.up);
-            return -angle;
+            return -angle * fraction_to_reach_target;
         }
         float GetVerticalRotationAngle(Vector3 currentDragRayDirection)
         {
             Vector3 currentRayProjectedToVertical = Vector3.ProjectOnPlane(currentDragRayDirection, startDragRayRightDirection);
             float angle = Vector3.SignedAngle(startDragRayDirection, currentRayProjectedToVertical, startDragRayRightDirection);
-            return -angle;
+            return -angle * fraction_to_reach_target;
         }
     }
 }

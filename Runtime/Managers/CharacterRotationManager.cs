@@ -7,7 +7,7 @@ namespace ReupVirtualTwin.managers
 {
     public class CharacterRotationManager : ICharacterRotationManager, IInitializable, ILateTickable
     {
-        float ANGLE_THRESHOLD = 0.01f;
+        public float ANGLE_THRESHOLD { get; } = 0.01f;
         float _verticalRotation = 0f;
         float _horizontalRotation = 0f;
         Quaternion _desiredInnerRotation;
