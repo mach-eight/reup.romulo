@@ -7,7 +7,7 @@ namespace ReupVirtualTwin.managers
 {
     public class CharacterRotationManager : ICharacterRotationManager, IInitializable, ILateTickable
     {
-        public float ANGLE_THRESHOLD { get; } = 0.01f;
+        public float ANGLE_THRESHOLD_TO_ROTATE { get; } = 0.01f;
         float _verticalRotation = 0f;
         float _horizontalRotation = 0f;
         Quaternion _desiredInnerRotation;
@@ -76,8 +76,8 @@ namespace ReupVirtualTwin.managers
 
         bool ShouldRotate()
         {
-            var shouldRotateVertically = MathUtils.CalculateAngle(_desiredInnerRotation, innerCharacterTransform.rotation) > ANGLE_THRESHOLD;
-            var shouldRotateHorizontally = MathUtils.CalculateAngle(characterTransform.rotation, _desiredHorizontalRotation) > ANGLE_THRESHOLD;
+            var shouldRotateVertically = MathUtils.CalculateAngle(_desiredInnerRotation, innerCharacterTransform.rotation) > ANGLE_THRESHOLD_TO_ROTATE;
+            var shouldRotateHorizontally = MathUtils.CalculateAngle(characterTransform.rotation, _desiredHorizontalRotation) > ANGLE_THRESHOLD_TO_ROTATE;
             return shouldRotateVertically || shouldRotateHorizontally;
         }
 

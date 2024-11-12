@@ -20,7 +20,7 @@ namespace ReupVirtualTwin.behaviours
         Vector3 startDragRayRightDirection;
         bool followingCursor = false;
         CancellationTokenSource cancellationTokenSource;
-        readonly float fraction_to_reach_target = 0.5f;
+        readonly float FRACTION_TO_REACH_TARGET = 0.5f;
 
         [Inject]
         public void Init(
@@ -85,7 +85,7 @@ namespace ReupVirtualTwin.behaviours
                     followingCursor = false;
                     break;
                 }
-                if (dragRayAngleDifference < characterRotationManager.ANGLE_THRESHOLD || cancellationTokenSource.Token.IsCancellationRequested)
+                if (dragRayAngleDifference < characterRotationManager.ANGLE_THRESHOLD_TO_ROTATE || cancellationTokenSource.Token.IsCancellationRequested)
                 {
                     followingCursor = false;
                     break;
@@ -102,13 +102,13 @@ namespace ReupVirtualTwin.behaviours
         {
             Vector3 currentRayProjectedToHorizontal = Vector3.ProjectOnPlane(currentDragRayDirection, Vector3.up);
             float angle = Vector3.SignedAngle(startRayDirProjectedToHorizontalPlane, currentRayProjectedToHorizontal, Vector3.up);
-            return -angle * fraction_to_reach_target;
+            return -angle * FRACTION_TO_REACH_TARGET;
         }
         float GetVerticalRotationAngle(Vector3 currentDragRayDirection)
         {
             Vector3 currentRayProjectedToVertical = Vector3.ProjectOnPlane(currentDragRayDirection, startDragRayRightDirection);
             float angle = Vector3.SignedAngle(startDragRayDirection, currentRayProjectedToVertical, startDragRayRightDirection);
-            return -angle * fraction_to_reach_target;
+            return -angle * FRACTION_TO_REACH_TARGET;
         }
     }
 }
