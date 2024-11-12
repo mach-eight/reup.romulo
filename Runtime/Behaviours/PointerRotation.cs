@@ -80,6 +80,11 @@ namespace ReupVirtualTwin.behaviours
             {
                 Ray dragRay = Camera.main.ScreenPointToRay(inputProvider.PointerInput());
                 float dragRayAngleDifference = Vector3.Angle(startDragRayDirection, dragRay.direction);
+                if (cancellationTokenSource.Token.IsCancellationRequested)
+                {
+                    followingCursor = false;
+                    break;
+                }
                 if (dragRayAngleDifference < characterRotationManager.ANGLE_THRESHOLD || cancellationTokenSource.Token.IsCancellationRequested)
                 {
                     followingCursor = false;
@@ -91,7 +96,6 @@ namespace ReupVirtualTwin.behaviours
                 characterRotationManager.verticalRotation += verticalRotationAngle;
                 await Task.Yield();
             }
-            followingCursor = false;
         }
 
         float GetHorizontalRotationAngle(Vector3 currentDragRayDirection)
