@@ -13,6 +13,9 @@ namespace ReupVirtualTwin.managers
         InputProvider inputProvider;
         private int activeTouchInputs = 0;
 
+        public event Action GestureStarted;
+        public event Action GestureEnded;
+
         [Inject]
         public void Init(InputProvider inputProvider)
         {
@@ -38,13 +41,21 @@ namespace ReupVirtualTwin.managers
         private void TouchStarted(InputAction.CallbackContext ctx)
         {
             activeTouchInputs++;
-            gestureInProgress = activeTouchInputs > 1;
+            if (activeTouchInputs > 1 && !gestureInProgress)
+            {
+                gestureInProgress = true;
+                GestureStarted?.Invoke();
+            }
         }
 
         private void TouchStopped(InputAction.CallbackContext ctx)
         {
             activeTouchInputs--;
-            gestureInProgress = activeTouchInputs > 1;
+            if (activeTouchInputs < 2 && gestureInProgress)
+            {
+                gestureInProgress = false;
+                GestureEnded?.Invoke();
+            }
         }
     }
 }

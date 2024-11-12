@@ -1,8 +1,8 @@
+using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.enums;
 using ReupVirtualTwin.inputs;
 using ReupVirtualTwin.managerInterfaces;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using Zenject;
 
 namespace ReupVirtualTwin.behaviours
@@ -13,6 +13,7 @@ namespace ReupVirtualTwin.behaviours
 
         InputProvider inputProvider;
         IGesturesManager gesturesManager;
+        IDhvNavigationController dhvNavigationController;
 
         Vector2 initialTouch1Position;
         Vector2 initialTouch2Position;
@@ -20,7 +21,9 @@ namespace ReupVirtualTwin.behaviours
         Vector2 touch1Position;
         Vector2 touch2Position;
 
-        float rotationThreshold = 3f;
+        float horizontalRotationThreshold = 6f;
+        float verticalRotationThreshold = 5f;
+        float movementDirectionThreshold = 2f;
 
         float currentAngle;
 
@@ -28,22 +31,23 @@ namespace ReupVirtualTwin.behaviours
         bool isVerticalRotation = false;
 
         [Inject]
-        public void Init(InputProvider inputProvider, IGesturesManager gesturesManager)
+        public void Init(InputProvider inputProvider, IGesturesManager gesturesManager, IDhvNavigationController dhvNavigationController)
         {
             this.inputProvider = inputProvider;
             this.gesturesManager = gesturesManager;
+            this.dhvNavigationController = dhvNavigationController;
         }
 
         private void OnEnable() 
         {
-            inputProvider.touch1Started += OnGestureStarted;
-            inputProvider.touch1Canceled += OnGestureFinished;    
+            gesturesManager.GestureStarted += OnGestureStarted;
+            gesturesManager.GestureEnded += OnGestureFinished;    
         }
 
         private void OnDisable() 
         {
-            inputProvider.touch1Started -= OnGestureStarted;
-            inputProvider.touch1Canceled -= OnGestureFinished;
+            gesturesManager.GestureStarted -= OnGestureStarted;
+            gesturesManager.GestureEnded -= OnGestureFinished;
         }
 
         private void Update() 
@@ -55,18 +59,21 @@ namespace ReupVirtualTwin.behaviours
                     DetermineRotationType();
                 }
 
-                if (isHorizontalRotation)
+                if (dhvNavigationController.isRotating)
                 {
-                    UpdateHorizontalCameraRotation();
-                }
-                else if (isVerticalRotation)
-                {
-                    UpdateVerticalCameraRotation();
+                    if (isHorizontalRotation)
+                    {
+                        UpdateHorizontalCameraRotation();
+                    }
+                    else if (isVerticalRotation)
+                    {
+                        UpdateVerticalCameraRotation();
+                    }
                 }
             }
         }
 
-        private void OnGestureStarted(InputAction.CallbackContext ctx)
+        private void OnGestureStarted()
         {
             initialTouch1Position = inputProvider.Touch0();
             initialTouch2Position = inputProvider.Touch1();
@@ -75,10 +82,14 @@ namespace ReupVirtualTwin.behaviours
             currentAngle = Vector2.SignedAngle(touch2Position - touch1Position, Vector2.right);
         }
 
-        private void OnGestureFinished(InputAction.CallbackContext ctx)
+        private void OnGestureFinished()
         {
             isHorizontalRotation = false;
             isVerticalRotation = false;
+            if (dhvNavigationController.isRotating)
+            {
+                dhvNavigationController.StopNavigationAction();
+            }
         }
 
         private void DetermineRotationType()
@@ -91,13 +102,18 @@ namespace ReupVirtualTwin.behaviours
             float previousAverageY = (initialTouch1Position.y + initialTouch2Position.y) / 2;
             float verticalDelta = newAverageY - previousAverageY;
 
-            if (Mathf.Abs(angleDelta) > rotationThreshold)
+            if (Mathf.Abs(angleDelta) > horizontalRotationThreshold)
             {
                 isHorizontalRotation = true;
             }
-            else if (Mathf.Abs(verticalDelta) > rotationThreshold && AreTouchesMovingInSameDirection(touch1, touch2))
+            else if (Mathf.Abs(verticalDelta) > verticalRotationThreshold && AreTouchesMovingInSameDirection(touch1, touch2))
             {
                 isVerticalRotation = true;
+            }
+
+            if (isHorizontalRotation || isVerticalRotation)
+            {
+                dhvNavigationController.Rotate();
             }
         }
 
@@ -105,7 +121,6 @@ namespace ReupVirtualTwin.behaviours
         {
             Vector2 touch1 = inputProvider.Touch0();
             Vector2 touch2 = inputProvider.Touch1();
-            Debug.Log("Touch1: " + touch1 + " Touch2: " + touch2);
 
             float newAngle = Vector2.SignedAngle(touch2 - touch1, Vector2.right);
             float angleDelta = newAngle - currentAngle;
@@ -149,8 +164,8 @@ namespace ReupVirtualTwin.behaviours
 
         private bool AreTouchesMovingInSameDirection(Vector2 touch1, Vector2 touch2)
         {
-            bool bothMovingUp = touch1.y > touch1Position.y && touch2.y > touch2Position.y;
-            bool bothMovingDown = touch1.y < touch1Position.y && touch2.y < touch2Position.y;
+            bool bothMovingUp = touch1.y > touch1Position.y + movementDirectionThreshold && touch2.y > touch2Position.y + movementDirectionThreshold;
+            bool bothMovingDown = touch1.y < touch1Position.y - movementDirectionThreshold && touch2.y < touch2Position.y - movementDirectionThreshold;
             return bothMovingUp || bothMovingDown;
         }
     }
