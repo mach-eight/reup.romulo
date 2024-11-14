@@ -3,6 +3,7 @@ using UnityEngine;
 using System;
 using UnityEngine.InputSystem;
 using InSys = UnityEngine.InputSystem;
+using ReupVirtualTwin.helpers;
 
 namespace ReupVirtualTwinTests.utils
 {
@@ -19,12 +20,12 @@ namespace ReupVirtualTwinTests.utils
                 startMousePoint,
                 endMousePoint,
                 steps,
-                (Vector2 startPosition) => input.Move(mouse.position, startPosition),
+                YieldUtils.YieldifyAction((Vector2 startPosition) => input.Move(mouse.position, startPosition)),
                 (Vector2 currentPosition, Vector2 delta) => {
                     input.Move(mouse.position, currentPosition, delta);
                     input.Set(mouse.delta, delta);
                 },
-                (Vector2 endPosition) => { }
+                YieldUtils.YieldifyAction((Vector2 endPosition) => { })
             );
         }
         public static IEnumerator DragMouseLeftButton(
@@ -39,18 +40,43 @@ namespace ReupVirtualTwinTests.utils
                 startMousePoint,
                 endMousePoint,
                 steps,
-                (Vector2 startPosition) => { input.Move(mouse.position, startPosition); input.Press(mouse.leftButton); },
+                YieldUtils.YieldifyAction((Vector2 startPosition) => { input.Move(mouse.position, startPosition); input.Press(mouse.leftButton); }),
                 (Vector2 currentPosition, Vector2 delta) => {
                     input.Move(mouse.position, currentPosition, delta);
                     input.Set(mouse.delta, delta);
                 },
-                (Vector2 endPosition) =>
-                {
-                    if (liftButtonAfterMovement)
+                YieldUtils.YieldifyAction((Vector2 endPosition) =>
                     {
-                        input.Release(mouse.leftButton);
+                        if (liftButtonAfterMovement)
+                        {
+                            input.Release(mouse.leftButton);
+                        }
                     }
-                }
+                )
+            );
+        }
+
+        public static IEnumerator DragMouseBothButtons(
+            InputTestFixture input,
+            Mouse mouse,
+            Vector2 startMousePoint,
+            Vector2 endMousePoint,
+            int steps
+        ) {
+            yield return MovePointer(
+                startMousePoint,
+                endMousePoint,
+                steps,
+                CreatePressBothMouseButtonsAtPositionDelegate(input, mouse),
+                (Vector2 currentPosition, Vector2 delta) => {
+                    input.Move(mouse.position, currentPosition, delta);
+                    input.Set(mouse.delta, delta);
+                },
+                YieldUtils.YieldifyAction((Vector2 endPosition) =>
+                {
+                    input.Release(mouse.leftButton);
+                    input.Release(mouse.rightButton);
+                })
             );
         }
 
@@ -65,12 +91,12 @@ namespace ReupVirtualTwinTests.utils
                 startMousePoint,
                 endMousePoint,
                 steps,
-                (Vector2 startPosition) => { input.Move(mouse.position, startPosition); input.Press(mouse.rightButton); },
+                YieldUtils.YieldifyAction((Vector2 startPosition) => { input.Move(mouse.position, startPosition); input.Press(mouse.rightButton); }),
                 (Vector2 currentPosition, Vector2 delta) => {
                     input.Move(mouse.position, currentPosition, delta);
                     input.Set(mouse.delta, delta);
                 },
-                (Vector2 endPosition) => input.Release(mouse.leftButton)
+                YieldUtils.YieldifyAction((Vector2 endPosition) => input.Release(mouse.leftButton))
             );
         }
 
@@ -87,15 +113,14 @@ namespace ReupVirtualTwinTests.utils
                 startScreenPosition,
                 endScreenPosition,
                 steps,
-                (Vector2 startPosition) => input.BeginTouch(0, startPosition, true, touch),
+                YieldUtils.YieldifyAction((Vector2 startPosition) => input.BeginTouch(0, startPosition, true, touch)),
                 (Vector2 currentPosition, Vector2 delta) => input.MoveTouch(0, currentPosition, delta, true, touch),
-                (Vector2 endPosition) => {
+                YieldUtils.YieldifyAction((Vector2 endPosition) => {
                     if (liftFingerAfterMovement)
                     {
                         input.EndTouch(touchId, endPosition, Vector2.zero, true, touch);
                     }
-
-                }
+                })
             );
         }
 
@@ -103,13 +128,13 @@ namespace ReupVirtualTwinTests.utils
             Vector2 startScreenPosition,
             Vector2 endScreenPosition,
             int steps,
-            Action<Vector2> startAction,
+            Func<Vector2, IEnumerator> startAction,
             Action<Vector2, Vector2> stepAction,
-            Action<Vector2> endAction
+            Func<Vector2, IEnumerator> endAction
         ) {
             Vector2 startPosition = Camera.main.ViewportToScreenPoint(startScreenPosition);
             Vector2 endPosition = Camera.main.ViewportToScreenPoint(endScreenPosition);
-            startAction(startPosition);
+            yield return startAction(startPosition);
             for (int i = 1; i < steps + 1; i++)
             {
                 float prevT = (float)(i-1) / steps;
@@ -120,8 +145,7 @@ namespace ReupVirtualTwinTests.utils
                 stepAction(currentPosition, delta);
                 yield return null;
             }
-            endAction(endPosition);
-            yield return null;
+            yield return endAction(endPosition);
         }
 
         public static IEnumerator AbsolutePositionTouchGesture(
@@ -182,5 +206,18 @@ namespace ReupVirtualTwinTests.utils
             input.SetTouch(touchId, phase, tapPosition, 1.0f, Vector2.zero, true, touch);
             input.EndTouch(touchId, tapPosition);
         }
+
+        static Func<Vector2, IEnumerator> CreatePressBothMouseButtonsAtPositionDelegate(InputTestFixture input, Mouse mouse){
+            IEnumerator P(Vector2 startPosition, InputTestFixture input, Mouse mouse){
+                input.Move(mouse.position, startPosition);
+                yield return null;
+                input.Press(mouse.leftButton);
+                yield return null;
+                input.Press(mouse.rightButton);
+                yield return null;
+            }
+            return (Vector2 startPosition) => P(startPosition, input, mouse);
+        }
+
     }
 }
