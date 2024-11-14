@@ -32,7 +32,8 @@ namespace ReupVirtualTwinTests.utils
             Mouse mouse,
             Vector2 startMousePoint,
             Vector2 endMousePoint,
-            int steps
+            int steps,
+            bool liftButtonAfterMovement = true
         ) {
             return MovePointer(
                 startMousePoint,
@@ -43,7 +44,13 @@ namespace ReupVirtualTwinTests.utils
                     input.Move(mouse.position, currentPosition, delta);
                     input.Set(mouse.delta, delta);
                 },
-                (Vector2 endPosition) => input.Release(mouse.leftButton)
+                (Vector2 endPosition) =>
+                {
+                    if (liftButtonAfterMovement)
+                    {
+                        input.Release(mouse.leftButton);
+                    }
+                }
             );
         }
 
@@ -73,15 +80,22 @@ namespace ReupVirtualTwinTests.utils
             int touchId,
             Vector2 startScreenPosition,
             Vector2 endScreenPosition,
-            int steps
+            int steps,
+            bool liftFingerAfterMovement = true
         ) {
             return MovePointer(
                 startScreenPosition,
                 endScreenPosition,
                 steps,
-                (Vector2 startPosition) => input.SetTouch(touchId, InSys.TouchPhase.Began, startPosition, Vector2.zero, true, touch),
-                (Vector2 currentPosition, Vector2 delta) => input.SetTouch(touchId, InSys.TouchPhase.Moved, currentPosition, delta, true, touch),
-                (Vector2 endPosition) => input.EndTouch(touchId, endPosition, Vector2.zero, true, touch)
+                (Vector2 startPosition) => input.BeginTouch(0, startPosition, true, touch),
+                (Vector2 currentPosition, Vector2 delta) => input.MoveTouch(0, currentPosition, delta, true, touch),
+                (Vector2 endPosition) => {
+                    if (liftFingerAfterMovement)
+                    {
+                        input.EndTouch(touchId, endPosition, Vector2.zero, true, touch);
+                    }
+
+                }
             );
         }
 
