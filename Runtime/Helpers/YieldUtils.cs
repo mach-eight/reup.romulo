@@ -1,9 +1,10 @@
 using System.Collections;
 using System;
 
-namespace ReupVirtualTwin.helpers{
-    public static class YieldUtils{
-
+namespace ReupVirtualTwin.helpers
+{
+    public static class YieldUtils
+    {
         public static Func<T, IEnumerator> YieldifyAction<T>(Action<T> action)
         {
             return (T input) => Yieldify(action, input);
@@ -23,6 +24,14 @@ namespace ReupVirtualTwin.helpers{
         {
             action(input0, input1);
             yield return null;
+        }
+
+        public static IEnumerator WaitForFrames(int frames)
+        {
+            for (int i = 0; i < frames; i++)
+            {
+                yield return null;
+            }
         }
     }
 
