@@ -31,9 +31,13 @@ namespace ReupVirtualTwin.controllers
             }
         }
 
-        public void StopNavigationAction()
+        public void StopRotation()
         {
             isRotating = false;
+        }
+
+        public void StopZoom()
+        {
             isZooming = false;
         }
     }

@@ -11,6 +11,7 @@ namespace ReupVirtualTwin.controllerInterfaces
 
         public void Rotate();
         public void Zoom();
-        public void StopNavigationAction();
+        public void StopRotation();
+        public void StopZoom();
     }
 }

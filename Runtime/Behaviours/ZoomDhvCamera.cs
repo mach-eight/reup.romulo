@@ -25,7 +25,7 @@ namespace ReupVirtualTwin.behaviours
         private float targetFieldOfView;
         private float currentVelocity;
 
-        private float pinchGestureDistanceThreshold = 20f;
+        private float pinchGestureDistanceThresholdPixels = 20f;
         private float SCROLL_STEP = 120;
 
         [Inject]
@@ -55,11 +55,7 @@ namespace ReupVirtualTwin.behaviours
 
         private void Update()
         {
-            if (gesturesManager.gestureInProgress)
-            {
-                DetectZoomGesture();
-                PinchGestureUpdateZoom();
-            }
+            HandleZoomGesture();
             ScrollWheelUpdateZoom();
             ApplySmoothZoom();
         }
@@ -76,32 +72,39 @@ namespace ReupVirtualTwin.behaviours
             initialPinchDistance = 0;
             if (dhvNavigationController.isZooming)
             {
-                dhvNavigationController.StopNavigationAction();
+                dhvNavigationController.StopZoom();
             }
         }
 
-        private void DetectZoomGesture()
+        private void HandleZoomGesture()
         {
-            Vector2 touch0 = inputProvider.Touch0();
-            Vector2 touch1 = inputProvider.Touch1();
+            if (gesturesManager.gestureInProgress && !dhvNavigationController.isRotating)
+            {
+                Vector2 touch0 = inputProvider.Touch0();
+                Vector2 touch1 = inputProvider.Touch1();
 
+                if (!dhvNavigationController.isZooming)
+                {
+                    DetectZoomGesture(touch0, touch1);
+                } else 
+                {
+                    PinchGestureUpdateZoom(touch0, touch1);
+                }
+            }
+        }
+
+        private void DetectZoomGesture(Vector2 touch0, Vector2 touch1)
+        {
             float currentDistance = Vector2.Distance(touch0, touch1);
 
-            if (Mathf.Abs(currentDistance - initialPinchDistance) > pinchGestureDistanceThreshold)
+            if (Mathf.Abs(currentDistance - initialPinchDistance) > pinchGestureDistanceThresholdPixels)
             {
                 dhvNavigationController.Zoom();
             }
         }
 
-        private void PinchGestureUpdateZoom()
+        private void PinchGestureUpdateZoom(Vector2 touch0, Vector2 touch1)
         {
-            if (!dhvNavigationController.isZooming)
-            {
-                return;
-            }
-            Vector2 touch0 = inputProvider.Touch0();
-            Vector2 touch1 = inputProvider.Touch1();
-
             float currentDistance = Vector2.Distance(touch0, touch1);
             float zoomFactor = currentDistance / initialPinchDistance;
 
