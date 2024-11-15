@@ -106,6 +106,22 @@ namespace ReupVirtualTwinTests.mocks
             }
             return Task.FromResult(thirdPage);
         }
+
+        public Task<PaginationResult<Tag>> GetTags(int page = 1, int pageSize = 3)
+        {
+            timesFetched++;
+            lastPageRequested = page;
+            lastPageSizeRequested = pageSize;
+            if (page == 1)
+            {
+                return Task.FromResult(firstPage);
+            }
+            if (page == 2)
+            {
+                return Task.FromResult(secondPage);
+            }
+            return Task.FromResult(thirdPage);
+        }
     }
 
 }

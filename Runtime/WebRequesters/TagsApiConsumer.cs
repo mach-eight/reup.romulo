@@ -21,6 +21,11 @@ namespace ReupVirtualTwin.webRequesters
             return FetchTags($"page={page}");
         }
 
+        public Task<PaginationResult<Tag>> GetTags(int page, int pageSize)
+        {
+            return FetchTags($"page={page}&page_size={pageSize}");
+        }
+
         private async Task<PaginationResult<Tag>> FetchTags(string queryParams="")
         {
             string url = $"{baseUrl}tags/?{queryParams}";

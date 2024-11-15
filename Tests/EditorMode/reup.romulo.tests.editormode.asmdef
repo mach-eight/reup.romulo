@@ -8,7 +8,9 @@
         "GUID:c8829a0ba3b964e4e9e556498da7797c",
         "GUID:cef0c762c8b945745aa202022a4beafb",
         "GUID:a94387ec035d5514c93dfbc1c4e15171",
-        "GUID:5f723ba0ce93eb64ca6f59169571c5ed"
+        "GUID:5f723ba0ce93eb64ca6f59169571c5ed",
+        "GUID:ef71f4f9d4e9ed44987e6a7778893414",
+        "GUID:2fff08516fe8b484ea0191f9747e8d2b"
     ],
     "includePlatforms": [
         "Editor"
