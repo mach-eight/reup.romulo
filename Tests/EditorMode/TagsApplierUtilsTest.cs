@@ -181,6 +181,21 @@ namespace ReupVirtualTwinTests.editor
         }
 
         [Test]
+        public async Task ShouldNotDuplicateExistingTagsOnObject()
+        {
+            AddChildrenWithTags(building, 1);
+            GameObject child = building.transform.GetChild(0).gameObject;
+            child.AddComponent<ObjectTags>().AddTag(mockApiTags[0]);
+
+            List<string> result = await TagsApplierUtil.ApplyTags(building, mockTagsApiConsumer);
+
+            ObjectTags objectTagsChild = child.GetComponent<ObjectTags>();
+            Assert.AreEqual(1, objectTagsChild.GetTags().Count);
+            Assert.AreEqual(mockApiTags[0].id, objectTagsChild.GetTags()[0].id);
+            Assert.AreEqual(0, result.Count);
+        }
+
+        [Test]
         public async Task ShouldReturnErrorMessagesIfTagsAreNotFound()
         {
             AddChildrenWithTags(building, 1);
