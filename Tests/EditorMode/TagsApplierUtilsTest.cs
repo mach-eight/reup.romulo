@@ -185,13 +185,29 @@ namespace ReupVirtualTwinTests.editor
         {
             AddChildrenWithTags(building, 1);
             GameObject child = building.transform.GetChild(0).gameObject;
-            child.AddComponent<ObjectTags>().AddTag(mockApiTags[0]);
+            child.GetComponent<ObjectTags>().AddTag(mockApiTags[0]);
 
             List<string> result = await TagsApplierUtil.ApplyTags(building, mockTagsApiConsumer);
 
             ObjectTags objectTagsChild = child.GetComponent<ObjectTags>();
             Assert.AreEqual(1, objectTagsChild.GetTags().Count);
             Assert.AreEqual(mockApiTags[0].id, objectTagsChild.GetTags()[0].id);
+            Assert.AreEqual(0, result.Count);
+        }
+
+        [Test]
+        public async Task ShouldKeepPreviousAppliedTags()
+        {
+            AddChildrenWithTags(building, 1);
+            GameObject child = building.transform.GetChild(0).gameObject;
+            child.GetComponent<ObjectTags>().AddTag(mockApiTags[1]);
+
+            List<string> result = await TagsApplierUtil.ApplyTags(building, mockTagsApiConsumer);
+
+            ObjectTags objectTagsChild = child.GetComponent<ObjectTags>();
+            Assert.AreEqual(2, objectTagsChild.GetTags().Count);
+            Assert.AreEqual(mockApiTags[1].id, objectTagsChild.GetTags()[0].id);
+            Assert.AreEqual(mockApiTags[0].id, objectTagsChild.GetTags()[1].id);
             Assert.AreEqual(0, result.Count);
         }
 
