@@ -37,6 +37,14 @@ namespace ReupVirtualTwinTests.mocks
             await Task.Delay(delay);
             return returnPage;
         }
+
+        public async Task<PaginationResult<Tag>> GetTags(int page, int pageSize)
+        {
+            lastPageFetched = page;
+            numberOfTimesFetched++;
+            await Task.Delay(delay);
+            return returnPage;
+        }
     }
 }
 

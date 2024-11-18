@@ -3,6 +3,9 @@ using UnityEditor;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.dependencyInjectors;
+using ReupVirtualTwin.webRequestersInterfaces;
+using ReupVirtualTwin.webRequesters;
+using System.Collections.Generic;
 
 namespace ReupVirtualTwin.editor
 {
@@ -14,6 +17,7 @@ namespace ReupVirtualTwin.editor
         IIdAssignerController idAssignerController = new IdController();
         ITagSystemController tagSystemController = new TagSystemController();
         IObjectInfoController objectInfoController = new ObjectInfoController();
+        ITagsApiConsumer tagsApiConsumer = new TagsApiConsumer();
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
@@ -47,6 +51,10 @@ namespace ReupVirtualTwin.editor
                     AddTagSystemToBuildingObjects(externalInstaller.building);
                     Debug.Log("tags script added to tree");
                 }
+                if (GUILayout.Button("Apply SketchUp tags to objects"))
+                {
+                    ApplyTagsToBuildingObjects(externalInstaller.building, tagsApiConsumer);
+                }
             }
         }
 
@@ -68,6 +76,19 @@ namespace ReupVirtualTwin.editor
         public void AddTagSystemToBuildingObjects(GameObject building)
         {
             tagSystemController.AssignTagSystemToTree(building);
+        }
+
+        public async void ApplyTagsToBuildingObjects(GameObject building, ITagsApiConsumer tagsApiConsumer)
+        {
+            List<string> errorMessages = await TagsApplierUtil.ApplyTags(building, tagsApiConsumer);
+            if (errorMessages.Count > 0)
+            {
+                EditorUtility.DisplayDialog(
+                    "Something went wrong while applying tags",
+                    string.Join("\n", errorMessages),
+                    "OK"
+                );
+            }
         }
     }
 }
