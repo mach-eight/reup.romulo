@@ -13,7 +13,7 @@ namespace ReupVirtualTwin.behaviours
 
         InputProvider inputProvider;
         IGesturesManager gesturesManager;
-        IDhvNavigationController dhvNavigationController;
+        IDhvNavigationManager dhvNavigationManager;
 
         Vector2 initialTouch0Position;
         Vector2 initialTouch1Position;
@@ -31,11 +31,11 @@ namespace ReupVirtualTwin.behaviours
         bool isVerticalRotation = false;
 
         [Inject]
-        public void Init(InputProvider inputProvider, IGesturesManager gesturesManager, IDhvNavigationController dhvNavigationController)
+        public void Init(InputProvider inputProvider, IGesturesManager gesturesManager, IDhvNavigationManager dhvNavigationController)
         {
             this.inputProvider = inputProvider;
             this.gesturesManager = gesturesManager;
-            this.dhvNavigationController = dhvNavigationController;
+            this.dhvNavigationManager = dhvNavigationController;
         }
 
         private void OnEnable() 
@@ -52,22 +52,15 @@ namespace ReupVirtualTwin.behaviours
 
         private void Update() 
         {
-            if (gesturesManager.gestureInProgress && !dhvNavigationController.isZooming) 
+            if (gesturesManager.gestureInProgress && !dhvNavigationManager.isZooming) 
             {
                 Vector2 touch0 = inputProvider.Touch0();
                 Vector2 touch1 = inputProvider.Touch1();
 
-                if (!isHorizontalRotation && !isVerticalRotation)
+                if (!dhvNavigationManager.isRotating)
                 {
-                    DetermineRotationType(touch0, touch1);
-                }
-
-                if (isHorizontalRotation || isVerticalRotation)
-                {
-                    dhvNavigationController.Rotate();
-                }
-
-                if (dhvNavigationController.isRotating)
+                    DetectRotationGesture(touch0, touch1);
+                } else 
                 {
                     RotateCamera(touch0, touch1);
                 }
@@ -87,9 +80,18 @@ namespace ReupVirtualTwin.behaviours
         {
             isHorizontalRotation = false;
             isVerticalRotation = false;
-            if (dhvNavigationController.isRotating)
+            if (dhvNavigationManager.isRotating)
             {
-                dhvNavigationController.StopRotation();
+                dhvNavigationManager.StopRotation();
+            }
+        }
+
+        private void DetectRotationGesture(Vector2 touch0, Vector2 touch1)
+        {
+            DetermineRotationType(touch0, touch1);
+            if (isHorizontalRotation || isVerticalRotation)
+            {
+                dhvNavigationManager.Rotate();
             }
         }
 

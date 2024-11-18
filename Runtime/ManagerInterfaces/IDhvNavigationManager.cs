@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ReupVirtualTwin.controllerInterfaces
 {
-    public interface IDhvNavigationController
+    public interface IDhvNavigationManager
     {
         public bool isZooming { get; }
         public bool isRotating { get; }

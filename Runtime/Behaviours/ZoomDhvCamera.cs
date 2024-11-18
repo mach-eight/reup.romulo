@@ -18,7 +18,7 @@ namespace ReupVirtualTwin.behaviours
         [SerializeField] public float smoothTime = 0.2f;
 
         private InputProvider inputProvider;
-        private IDhvNavigationController dhvNavigationController;
+        private IDhvNavigationManager dhvNavigationManager;
         private IGesturesManager gesturesManager;
 
         private float initialPinchDistance = 0;
@@ -29,11 +29,11 @@ namespace ReupVirtualTwin.behaviours
         private float SCROLL_STEP = 120;
 
         [Inject]
-        public void Init(InputProvider inputProvider, IGesturesManager gesturesManager, IDhvNavigationController dhvNavigationController)
+        public void Init(InputProvider inputProvider, IGesturesManager gesturesManager, IDhvNavigationManager dhvNavigationController)
         {
             this.inputProvider = inputProvider;
             this.gesturesManager = gesturesManager;
-            this.dhvNavigationController = dhvNavigationController;
+            this.dhvNavigationManager = dhvNavigationController;
         }
 
         private void Start()
@@ -70,20 +70,20 @@ namespace ReupVirtualTwin.behaviours
         private void OnGestureFinished()
         {
             initialPinchDistance = 0;
-            if (dhvNavigationController.isZooming)
+            if (dhvNavigationManager.isZooming)
             {
-                dhvNavigationController.StopZoom();
+                dhvNavigationManager.StopZoom();
             }
         }
 
         private void HandleZoomGesture()
         {
-            if (gesturesManager.gestureInProgress && !dhvNavigationController.isRotating)
+            if (gesturesManager.gestureInProgress && !dhvNavigationManager.isRotating)
             {
                 Vector2 touch0 = inputProvider.Touch0();
                 Vector2 touch1 = inputProvider.Touch1();
 
-                if (!dhvNavigationController.isZooming)
+                if (!dhvNavigationManager.isZooming)
                 {
                     DetectZoomGesture(touch0, touch1);
                 } else 
@@ -99,7 +99,7 @@ namespace ReupVirtualTwin.behaviours
 
             if (Mathf.Abs(currentDistance - initialPinchDistance) > pinchGestureDistanceThresholdPixels)
             {
-                dhvNavigationController.Zoom();
+                dhvNavigationManager.Zoom();
             }
         }
 

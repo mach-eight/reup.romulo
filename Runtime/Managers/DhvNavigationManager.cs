@@ -3,13 +3,13 @@ using Zenject;
 
 namespace ReupVirtualTwin.controllers
 {
-    public class DhvNavigationController: IDhvNavigationController
+    public class DhvNavigationManager: IDhvNavigationManager
     {
         public bool isRotating { get; private set; }
         public bool isZooming { get; private set; }
 
         [Inject]
-        public DhvNavigationController()
+        public DhvNavigationManager()
         {
             isRotating = false;
             isZooming = false;

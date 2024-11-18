@@ -23,7 +23,7 @@ namespace ReupVirtualTwin.dependencyInjectors
             Container.BindInterfacesAndSelfTo<DragManager>().AsSingle();
             Container.BindInterfacesAndSelfTo<GesturesManager>().AsSingle();
             Container.Bind<ITagsController>().To<TagsController>().AsSingle();
-            Container.BindInterfacesAndSelfTo<DhvNavigationController>().AsSingle();
+            Container.BindInterfacesAndSelfTo<DhvNavigationManager>().AsSingle();
         }
     }
 }
