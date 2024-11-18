@@ -2,8 +2,8 @@ using UnityEngine;
 using ReupVirtualTwin.inputs;
 using Unity.Cinemachine;
 using ReupVirtualTwin.managerInterfaces;
-using System;
 using Zenject;
+using ReupVirtualTwin.controllerInterfaces;
 
 namespace ReupVirtualTwin.behaviours
 {
@@ -18,19 +18,22 @@ namespace ReupVirtualTwin.behaviours
         [SerializeField] public float smoothTime = 0.2f;
 
         private InputProvider inputProvider;
+        private IDhvNavigationManager dhvNavigationManager;
         private IGesturesManager gesturesManager;
 
         private float initialPinchDistance = 0;
         private float targetFieldOfView;
         private float currentVelocity;
 
+        private float pinchGestureDistanceThresholdPixels = 20f;
         private float SCROLL_STEP = 120;
 
         [Inject]
-        public void Init(InputProvider inputProvider, IGesturesManager gesturesManager)
+        public void Init(InputProvider inputProvider, IGesturesManager gesturesManager, IDhvNavigationManager dhvNavigationController)
         {
             this.inputProvider = inputProvider;
             this.gesturesManager = gesturesManager;
+            this.dhvNavigationManager = dhvNavigationController;
         }
 
         private void Start()
@@ -38,29 +41,70 @@ namespace ReupVirtualTwin.behaviours
             targetFieldOfView = dhvCamera.Lens.FieldOfView;
         }
 
+        private void OnEnable() 
+        {
+            gesturesManager.GestureStarted += OnGestureStarted;
+            gesturesManager.GestureEnded += OnGestureFinished;    
+        }
+
+        private void OnDisable() 
+        {
+            gesturesManager.GestureStarted -= OnGestureStarted;
+            gesturesManager.GestureEnded -= OnGestureFinished;
+        }
+
         private void Update()
         {
-            PinchGestureUpdateZoom();
+            HandleZoomGesture();
             ScrollWheelUpdateZoom();
             ApplySmoothZoom();
         }
 
-        private void PinchGestureUpdateZoom()
+        private void OnGestureStarted()
         {
-            if (!gesturesManager.gestureInProgress)
-            {
-                initialPinchDistance = 0;
-                return;
-            }
-
             Vector2 touch0 = inputProvider.Touch0();
             Vector2 touch1 = inputProvider.Touch1();
+            initialPinchDistance = Vector2.Distance(touch0, touch1);
+        }
 
-            if (initialPinchDistance == 0)
+        private void OnGestureFinished()
+        {
+            initialPinchDistance = 0;
+            if (dhvNavigationManager.isZooming)
             {
-                initialPinchDistance = Vector2.Distance(touch0, touch1);
+                dhvNavigationManager.StopZoom();
             }
+        }
 
+        private void HandleZoomGesture()
+        {
+            if (gesturesManager.gestureInProgress && !dhvNavigationManager.isRotating)
+            {
+                Vector2 touch0 = inputProvider.Touch0();
+                Vector2 touch1 = inputProvider.Touch1();
+
+                if (!dhvNavigationManager.isZooming)
+                {
+                    DetectZoomGesture(touch0, touch1);
+                } else 
+                {
+                    PinchGestureUpdateZoom(touch0, touch1);
+                }
+            }
+        }
+
+        private void DetectZoomGesture(Vector2 touch0, Vector2 touch1)
+        {
+            float currentDistance = Vector2.Distance(touch0, touch1);
+
+            if (Mathf.Abs(currentDistance - initialPinchDistance) > pinchGestureDistanceThresholdPixels)
+            {
+                dhvNavigationManager.Zoom();
+            }
+        }
+
+        private void PinchGestureUpdateZoom(Vector2 touch0, Vector2 touch1)
+        {
             float currentDistance = Vector2.Distance(touch0, touch1);
             float zoomFactor = currentDistance / initialPinchDistance;
 
@@ -83,6 +127,10 @@ namespace ReupVirtualTwin.behaviours
 
         private void ApplySmoothZoom()
         {
+            if (dhvCamera.Lens.FieldOfView == targetFieldOfView)
+            {
+                return;
+            }
             dhvCamera.Lens.FieldOfView = Mathf.SmoothDamp(dhvCamera.Lens.FieldOfView, targetFieldOfView, ref currentVelocity, smoothTime);
         }
 
