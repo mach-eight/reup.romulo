@@ -12,9 +12,6 @@ namespace ReupVirtualTwin.editor
 {
     public class TagsApplierUtil
     {
-        private const int PAGE = 1;
-        private const int PAGE_SIZE = 10000;
-        private static readonly Regex TagRegex = new Regex(@"TAG_(\d+)", RegexOptions.Compiled);
         public static async Task<List<string>> ApplyTags(GameObject building, ITagsApiConsumer tagsApiConsumer)
         {
             List<string> errorMessages = new List<string>();
@@ -33,7 +30,10 @@ namespace ReupVirtualTwin.editor
 
         private static async Task<Tag[]> fetchTags(ITagsApiConsumer tagsApiConsumer)
         {
-            PaginationResult<Tag> fetchedTagsResult = await tagsApiConsumer.GetTags(PAGE, PAGE_SIZE);
+            int page = 1;
+            int pageSize = 10000;
+
+            PaginationResult<Tag> fetchedTagsResult = await tagsApiConsumer.GetTags(page, pageSize);
             return fetchedTagsResult.results;
         }
 
@@ -71,7 +71,8 @@ namespace ReupVirtualTwin.editor
 
         private static List<string> ExtractTagsIdsFromObject(GameObject gameObject)
         {   
-            return TagRegex.Matches(gameObject.name)
+            var tagRegex = new Regex(@"TAG_(\d+)", RegexOptions.Compiled);
+            return tagRegex.Matches(gameObject.name)
                           .Cast<Match>()
                           .Where(match => match.Success)
                           .Select(match => match.Groups[1].Value)
