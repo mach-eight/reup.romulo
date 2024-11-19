@@ -39,22 +39,6 @@ namespace ReupVirtualTwinTests.editor
             return parent;
         }
 
-        // private static List<Tag> CreateMockTags(int childAmount)
-        // {
-        //     List<Tag> tags = new List<Tag>();
-        //     for (int i = 0; i < childAmount; i++)
-        //     {
-        //         tags.Add(new Tag()
-        //         {
-        //             id = $"{i}",
-        //             name = $"tag-{i}",
-        //             description = $"tag-{i}",
-        //             priority = i
-        //         });
-        //     }
-        //     return tags;
-        // }
-
         class MockTagsApiConsumer : ITagsApiConsumer
         {
             public List<Tag> mockApiTags;
