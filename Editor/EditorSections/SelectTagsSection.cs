@@ -86,7 +86,7 @@ namespace ReupVirtualTwin.editor
             {
                 allTags = new List<Tag>();
                 tagsApiManager.CleanTags();
-                await GetTags();
+                await tagsApiManager.GetTags();
             }
         }
 
@@ -124,17 +124,17 @@ namespace ReupVirtualTwin.editor
 
         private async Task GetTags()
         {
-            allTags = EditionTagsCreator.ApplyEditionTags(await tagsApiManager.GetTags());
+            allTags = await tagsApiManager.GetTags();
         }
 
         private async Task GetMoreTags()
         {
-            allTags = EditionTagsCreator.ApplyEditionTags(await tagsApiManager.LoadMoreTags());
+            allTags = await tagsApiManager.LoadMoreTags();
         }
 
         private bool IsTagAlreadyPresent(Tag tag)
         {
-            return selectedTags.Exists(presentTag => presentTag.name == tag.name);
+            return selectedTags.Exists(presentTag => presentTag.id == tag.id);
         }
 
     }

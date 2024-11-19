@@ -1,12 +1,11 @@
-using System.Runtime.CompilerServices;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.TestTools;
 using UnityEditor;
 
 using ReupVirtualTwin.managerInterfaces;
-using ReupVirtualTwinTests.utils;
 using NUnit.Framework;
+using ReupVirtualTwinTests.instantiators;
 
 namespace ReupVirtualTwinTests.managers
 {

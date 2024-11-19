@@ -6,8 +6,7 @@ using ReupVirtualTwin.editor;
 using ReupVirtualTwin.models;
 using ReupVirtualTwin.webRequestersInterfaces;
 using UnityEngine;
-using UnityEngine.TestTools;
-using System.Collections;
+using ReupVirtualTwinTests.utils;
 
 
 namespace ReupVirtualTwinTests.editor
@@ -38,22 +37,6 @@ namespace ReupVirtualTwinTests.editor
                 child.transform.parent = parent.transform;
             }
             return parent;
-        }
-
-        private static List<Tag> CreateMockTags(int childAmount)
-        {
-            List<Tag> tags = new List<Tag>();
-            for (int i = 0; i < childAmount; i++)
-            {
-                tags.Add(new Tag()
-                {
-                    id = $"{i}",
-                    name = $"tag-{i}",
-                    description = $"tag-{i}",
-                    priority = i
-                });
-            }
-            return tags;
         }
 
         class MockTagsApiConsumer : ITagsApiConsumer
@@ -92,7 +75,7 @@ namespace ReupVirtualTwinTests.editor
         public void SetUp()
         {
             building = new GameObject("building");
-            mockApiTags = CreateMockTags(5);
+            mockApiTags = TagFactory.CreateBulk(5, TagFactory.CreateFaker());
             mockTagsApiConsumer = new MockTagsApiConsumer() { mockApiTags = mockApiTags };
         }
 

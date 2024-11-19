@@ -5,6 +5,7 @@ using NUnit.Framework;
 
 using ReupVirtualTwin.models;
 using ReupVirtualTwin.dataModels;
+using ReupVirtualTwinTests.utils;
 
 
 public class ObjectTagsTest : MonoBehaviour
@@ -18,7 +19,7 @@ public class ObjectTagsTest : MonoBehaviour
     {
         containerGameObject = new GameObject("container");
         objectTags = containerGameObject.AddComponent<ObjectTags>();
-        testTag = new Tag() { id = "tag-id" };
+        testTag = TagFactory.Create();
     }
     [TearDown]
     public void TearDown()

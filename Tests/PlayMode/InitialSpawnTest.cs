@@ -1,9 +1,9 @@
 using NUnit.Framework;
-using ReupVirtualTwinTests.utils;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.TestTools;
 using UnityEditor;
+using ReupVirtualTwinTests.instantiators;
 
 namespace ReupVirtualTwinTests.behaviours
 {

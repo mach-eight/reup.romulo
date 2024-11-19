@@ -32,9 +32,9 @@ public class TagsApiManagerTest : MonoBehaviour
         tagsApiManager.tagsApiConsumer = tagsWebRequesterSpy;
         List<Tag> initialTags = await tagsApiManager.GetTags();
         Assert.AreEqual(3, initialTags.Count);
-        Assert.AreEqual("tag0", initialTags[0].name);
-        Assert.AreEqual("tag1", initialTags[1].name);
-        Assert.AreEqual("tag2", initialTags[2].name);
+        Assert.AreEqual(tagsWebRequesterSpy.firstPage.results[0].name, initialTags[0].name);
+        Assert.AreEqual(tagsWebRequesterSpy.firstPage.results[1].name, initialTags[1].name);
+        Assert.AreEqual(tagsWebRequesterSpy.firstPage.results[2].name, initialTags[2].name);
         Assert.AreEqual(1, tagsWebRequesterSpy.lastPageRequested);
         Assert.AreEqual(1, tagsWebRequesterSpy.timesFetched);
     }
@@ -48,9 +48,9 @@ public class TagsApiManagerTest : MonoBehaviour
         Assert.AreEqual(1, tagsWebRequesterSpy.lastPageRequested);
         List<Tag> initialTags = await tagsApiManager.GetTags();
         Assert.AreEqual(3, initialTags.Count);
-        Assert.AreEqual("tag0", initialTags[0].name);
-        Assert.AreEqual("tag1", initialTags[1].name);
-        Assert.AreEqual("tag2", initialTags[2].name);
+        Assert.AreEqual(tagsWebRequesterSpy.firstPage.results[0].name, initialTags[0].name);
+        Assert.AreEqual(tagsWebRequesterSpy.firstPage.results[1].name, initialTags[1].name);
+        Assert.AreEqual(tagsWebRequesterSpy.firstPage.results[2].name, initialTags[2].name);
         Assert.AreEqual(1, tagsWebRequesterSpy.lastPageRequested);
         Assert.AreEqual(1, tagsWebRequesterSpy.timesFetched);
     }
@@ -61,19 +61,19 @@ public class TagsApiManagerTest : MonoBehaviour
         tagsApiManager.tagsApiConsumer = tagsWebRequesterSpy;
         List<Tag> initialTags = await tagsApiManager.GetTags();
         Assert.AreEqual(3, initialTags.Count);
-        Assert.AreEqual("tag0", initialTags[0].name);
-        Assert.AreEqual("tag1", initialTags[1].name);
-        Assert.AreEqual("tag2", initialTags[2].name);
+        Assert.AreEqual(tagsWebRequesterSpy.firstPage.results[0].name, initialTags[0].name);
+        Assert.AreEqual(tagsWebRequesterSpy.firstPage.results[1].name, initialTags[1].name);
+        Assert.AreEqual(tagsWebRequesterSpy.firstPage.results[2].name, initialTags[2].name);
         Assert.AreEqual(1, tagsWebRequesterSpy.lastPageRequested);
         Assert.AreEqual(1, tagsWebRequesterSpy.timesFetched);
         List<Tag> moreTags = await tagsApiManager.LoadMoreTags();
         Assert.AreEqual(6, moreTags.Count);
-        Assert.AreEqual("tag0", moreTags[0].name);
-        Assert.AreEqual("tag1", moreTags[1].name);
-        Assert.AreEqual("tag2", moreTags[2].name);
-        Assert.AreEqual("tag3", moreTags[3].name);
-        Assert.AreEqual("tag4", moreTags[4].name);
-        Assert.AreEqual("tag5", moreTags[5].name);
+        Assert.AreEqual(tagsWebRequesterSpy.firstPage.results[0].name, moreTags[0].name);
+        Assert.AreEqual(tagsWebRequesterSpy.firstPage.results[1].name, moreTags[1].name);
+        Assert.AreEqual(tagsWebRequesterSpy.firstPage.results[2].name, moreTags[2].name);
+        Assert.AreEqual(tagsWebRequesterSpy.secondPage.results[0].name, moreTags[3].name);
+        Assert.AreEqual(tagsWebRequesterSpy.secondPage.results[1].name, moreTags[4].name);
+        Assert.AreEqual(tagsWebRequesterSpy.secondPage.results[2].name, moreTags[5].name);
         Assert.AreEqual(2, tagsWebRequesterSpy.lastPageRequested);
         Assert.AreEqual(2, tagsWebRequesterSpy.timesFetched);
     }
@@ -89,14 +89,13 @@ public class TagsApiManagerTest : MonoBehaviour
         Assert.AreEqual(2, tagsWebRequesterSpy.lastPageRequested);
         Assert.AreEqual(2, tagsWebRequesterSpy.timesFetched);
         List<Tag> moreTags = await tagsApiManager.LoadMoreTags();
-        Assert.AreEqual("tag0", moreTags[0].name);
-        Assert.AreEqual("tag1", moreTags[1].name);
-        Assert.AreEqual("tag2", moreTags[2].name);
-        Assert.AreEqual("tag3", moreTags[3].name);
-        Assert.AreEqual("tag4", moreTags[4].name);
-        Assert.AreEqual("tag5", moreTags[5].name);
-        Assert.AreEqual("tag6", moreTags[6].name);
-        Assert.AreEqual("tag7", moreTags[7].name);
+        Assert.AreEqual(tagsWebRequesterSpy.firstPage.results[0].name, moreTags[0].name);
+        Assert.AreEqual(tagsWebRequesterSpy.firstPage.results[1].name, moreTags[1].name);
+        Assert.AreEqual(tagsWebRequesterSpy.firstPage.results[2].name, moreTags[2].name);
+        Assert.AreEqual(tagsWebRequesterSpy.secondPage.results[0].name, moreTags[3].name);
+        Assert.AreEqual(tagsWebRequesterSpy.secondPage.results[1].name, moreTags[4].name);
+        Assert.AreEqual(tagsWebRequesterSpy.secondPage.results[2].name, moreTags[5].name);
+        Assert.AreEqual(tagsWebRequesterSpy.thirdPage.results[0].name, moreTags[6].name);
         Assert.AreEqual(8, moreTags.Count);
         Assert.AreEqual(3, tagsWebRequesterSpy.lastPageRequested);
         Assert.AreEqual(3, tagsWebRequesterSpy.timesFetched);

@@ -12,6 +12,7 @@ using NUnit.Framework;
 using ReupVirtualTwinTests.utils;
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.models;
+using ReupVirtualTwinTests.instantiators;
 
 public class ModelInfoManagerTest : MonoBehaviour
 {

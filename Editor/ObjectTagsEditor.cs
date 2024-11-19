@@ -81,7 +81,7 @@ namespace ReupVirtualTwin.editor
 
         private List<Tag> GetCommonTags()
         {
-            HashSet<string> commonTagNames = new HashSet<string>(objectTagsList[0].tags.Select(t => t.id));
+            HashSet<int> commonTagNames = new HashSet<int>(objectTagsList[0].tags.Select(t => t.id));
             for (int i = 1; i < objectTagsList.Count; i++)
             {
                 commonTagNames.IntersectWith(objectTagsList[i].tags.Select(t => t.id));
@@ -94,7 +94,7 @@ namespace ReupVirtualTwin.editor
 
         private List<Tag> GetDifferentTags()
         {
-            var commonTagNames = new HashSet<string>(GetCommonTags().Select(t => t.id));
+            var commonTagNames = new HashSet<int>(GetCommonTags().Select(t => t.id));
             var differentTags = objectTagsList
                 .SelectMany(objectTags => objectTags.tags)
                 .Where(t => !commonTagNames.Contains(t.id))

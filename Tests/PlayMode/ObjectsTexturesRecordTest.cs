@@ -3,7 +3,7 @@ using NUnit.Framework;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.models;
-using ReupVirtualTwinTests.utils;
+using ReupVirtualTwinTests.instantiators;
 using UnityEngine;
 using UnityEngine.TestTools;
 

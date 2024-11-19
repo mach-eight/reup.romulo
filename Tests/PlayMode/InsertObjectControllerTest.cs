@@ -14,9 +14,9 @@ using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.webRequestersInterfaces;
 using System.Collections;
 using ReupVirtualTwin.helpers;
-using ReupVirtualTwinTests.utils;
 using ReupVirtualTwin.models;
 using Newtonsoft.Json.Linq;
+using ReupVirtualTwinTests.instantiators;
 
 namespace ReupVirtualTwinTests.controllers
 {

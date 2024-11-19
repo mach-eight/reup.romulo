@@ -5,7 +5,7 @@ namespace ReupVirtualTwin.dataModels
     [Serializable]
     public class Tag
     {
-        public string id;
+        public int id;
         public string name;
         public string description;
         public int priority;

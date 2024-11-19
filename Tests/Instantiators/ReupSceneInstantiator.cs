@@ -7,13 +7,13 @@ using UnityEngine.InputSystem;
 using ReupVirtualTwin.models;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.managerInterfaces;
-using ReupVirtualTwinTests.mocks;
 using Zenject;
 using ReupVirtualTwin.dependencyInjectors;
 using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.controllers;
+using ReupVirtualTwinTests.mocks;
 
-namespace ReupVirtualTwinTests.utils
+namespace ReupVirtualTwinTests.instantiators
 {
     public static class ReupSceneInstantiator
     {

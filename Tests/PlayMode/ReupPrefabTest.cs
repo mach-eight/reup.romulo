@@ -3,13 +3,14 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
+using ReupVirtualTwinTests.instantiators;
 using ReupVirtualTwin.managers;
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.managerInterfaces;
 using ReupVirtualTwin.helperInterfaces;
-using ReupVirtualTwinTests.utils;
 using ReupVirtualTwin.enums;
+using ReupVirtualTwinTests.mocks;
 
 public class ReupPrefabTest : MonoBehaviour
 {

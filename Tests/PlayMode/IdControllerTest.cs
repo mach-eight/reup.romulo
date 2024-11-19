@@ -5,7 +5,7 @@ using NUnit.Framework;
 using ReupVirtualTwin.models;
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.controllers;
-using ReupVirtualTwinTests.utils;
+using ReupVirtualTwinTests.instantiators;
 
 namespace ReupVirtualTwinTests.Registry
 {

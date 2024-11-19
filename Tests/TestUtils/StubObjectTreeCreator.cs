@@ -1,8 +1,6 @@
-using ReupVirtualTwin.controllerInterfaces;
-using ReupVirtualTwin.controllers;
+using System.Collections.Generic;
+using System.Linq;
 using ReupVirtualTwin.dataModels;
-using ReupVirtualTwin.modelInterfaces;
-using ReupVirtualTwin.models;
 using UnityEngine;
 
 namespace ReupVirtualTwinTests.utils
@@ -14,33 +12,11 @@ namespace ReupVirtualTwinTests.utils
         public static string child1Id = "child1-id";
         public static string grandChild0Id = "grandChild0-id";
 
-        public static Tag[] parentTags = new Tag[3]
-        {
-        new Tag(){id="parent-tag-0"},
-        new Tag(){id="parent-tag-1"},
-        new Tag(){id="parent-tag-2"},
-        };
-        public static Tag commonChildrenTag = new Tag() { id = "common-children-tag" };
-        public static Tag[] child0Tags = new Tag[4]
-        {
-        new Tag(){id="child0-tag-0"},
-        new Tag(){id="child0-tag-1"},
-        new Tag(){id="child0-tag-2"},
-        commonChildrenTag,
-        };
-        public static Tag[] child1Tags = new Tag[4]
-        {
-        new Tag(){id="child1-tag-0"},
-        new Tag(){id="child1-tag-1"},
-        new Tag(){id="child1-tag-2"},
-        commonChildrenTag,
-        };
-        public static Tag[] grandChild0Tags = new Tag[3]
-        {
-        new Tag(){id="grandChild0-tag-0"},
-        new Tag(){id="grandChild0-tag-1"},
-        new Tag(){id="grandChild0-tag-2"},
-        };
+        public static Tag[] parentTags = TagFactory.CreateBulk(3).ToArray();
+        public static Tag commonChildrenTag = TagFactory.Create();
+        public static Tag[] child0Tags = TagFactory.CreateBulk(3).Concat(new[]{commonChildrenTag}).ToArray();
+        public static Tag[] child1Tags = TagFactory.CreateBulk(3).Concat(new[]{commonChildrenTag}).ToArray();
+        public static Tag[] grandChild0Tags = TagFactory.CreateBulk(3).ToArray();
 
         /// <summary>
         /// Creates a mock building with a parent, two children, a grandchild.
@@ -86,7 +62,7 @@ namespace ReupVirtualTwinTests.utils
             string objectId = $"object-{objectIndex}";
             GameObject obj = new(objectId);
             StubObjectCreatorUtils.AssignIdToObject(obj, objectId);
-            StubObjectCreatorUtils.AssignTagsToObject(obj, new Tag[1] { new Tag() { id = $"object-{objectIndex}-tag", name = $"object-{objectIndex}-tag" } });
+            StubObjectCreatorUtils.AssignTagsToObject(obj, new Tag[1] { new Tag() { id = objectIndex + 1000, name = $"object-{objectIndex}-tag" } });
             GameObject child = CreateDeepChainedLineOfObjects(depth - 1, objectIndex + 1);
             if (child != null)
             {
