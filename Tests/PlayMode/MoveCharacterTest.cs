@@ -7,6 +7,7 @@ using InSys = UnityEngine.InputSystem;
 using UnityEngine.InputSystem;
 using UnityEngine.TestTools;
 using UnityEditor;
+using ReupVirtualTwinTests.instantiators;
 
 namespace ReupVirtualTwinTests.behaviours
 {

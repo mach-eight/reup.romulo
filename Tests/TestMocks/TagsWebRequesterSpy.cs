@@ -1,6 +1,8 @@
 using ReupVirtualTwin.webRequestersInterfaces;
 using System.Threading.Tasks;
 using ReupVirtualTwin.dataModels;
+using ReupVirtualTwinTests.utils;
+using System.Collections.Generic;
 
 namespace ReupVirtualTwinTests.mocks
 {
@@ -9,81 +11,35 @@ namespace ReupVirtualTwinTests.mocks
         public int lastPageRequested;
         public int lastPageSizeRequested;
         public int timesFetched = 0;
+        public PaginationResult<Tag> firstPage;
+        public PaginationResult<Tag> secondPage;
+        public PaginationResult<Tag> thirdPage;
 
-        private PaginationResult<Tag> firstPage = new PaginationResult<Tag>()
+        public TagsWebRequesterSpy()
         {
-            count = 8,
-            next = "url-for-page/2",
-            previous = null,
-            results = new Tag[] {
-                new Tag
-                {
-                    id = "0",
-                    name = "tag0",
-                    description = "tag0 description"
-                },
-                new Tag
-                {
-                    id = "1",
-                    name = "tag1",
-                    description = "tag1 description"
-                },
-                new Tag
-                {
-                    id = "2",
-                    name = "tag2",
-                    description = "tag2 description"
-                },
-            }
-        };
+            firstPage = new PaginationResult<Tag>()
+            {
+                count = 8,
+                next = "url-for-page/2",
+                previous = null,
+                results = TagFactory.CreateBulk(3).ToArray(),
+            };
+            secondPage = new PaginationResult<Tag>()
+            {
+                count = 8,
+                next = "url-for-page/3",
+                previous = "url-for-page/1",
+                results = TagFactory.CreateBulk(3).ToArray(),
 
-        private PaginationResult<Tag> secondPage = new PaginationResult<Tag>()
-        {
-            count = 8,
-            next = "url-for-page/3",
-            previous = "url-for-page/1",
-            results = new Tag[] {
-                new Tag
-                {
-                    id = "3",
-                    name = "tag3",
-                    description = "tag3 description"
-                },
-                new Tag
-                {
-                    id = "4",
-                    name = "tag4",
-                    description = "tag4 description"
-                },
-                new Tag
-                {
-                    id = "5",
-                    name = "tag5",
-                    description = "tag5 description"
-                },
-            }
-        };
-
-        private PaginationResult<Tag> thirdPage = new PaginationResult<Tag>()
-        {
-            count = 8,
-            next = null,
-            previous = "url-for-page/2",
-            results = new Tag[] {
-                new Tag
-                {
-                    id = "6",
-                    name = "tag6",
-                    description = "tag6 description"
-                },
-                new Tag
-                {
-                    id = "7",
-                    name = "tag7",
-                    description = "tag7 description"
-                },
-            }
-        };
+            };
+            thirdPage = new PaginationResult<Tag>()
+            {
+                count = 8,
+                next = null,
+                previous = "url-for-page/2",
+                results = TagFactory.CreateBulk(2).ToArray(),
+            };
+        }
 
         public Task<PaginationResult<Tag>> GetTags()
         {

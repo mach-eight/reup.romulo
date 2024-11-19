@@ -8,7 +8,7 @@ using ReupVirtualTwin.managers;
 using ReupVirtualTwin.enums;
 using Newtonsoft.Json;
 using ReupVirtualTwin.dataModels;
-using ReupVirtualTwinTests.utils;
+using ReupVirtualTwinTests.instantiators;
 using ReupVirtualTwinTests.mocks;
 using System.Linq;
 

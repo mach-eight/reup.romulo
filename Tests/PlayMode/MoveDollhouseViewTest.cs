@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.TestTools;
 using UnityEditor;
 using ReupVirtualTwin.helpers;
+using ReupVirtualTwinTests.instantiators;
 
 
 namespace ReupVirtualTwinTests.behaviours

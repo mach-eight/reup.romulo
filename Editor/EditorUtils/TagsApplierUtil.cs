@@ -18,7 +18,7 @@ namespace ReupVirtualTwin.editor
             try
             {
                 Tag[] apiTags = await fetchTags(tagsApiConsumer);
-                Dictionary<string, Tag> apiTagsDict = apiTags.ToDictionary(tag => tag.id);
+                Dictionary<int, Tag> apiTagsDict = apiTags.ToDictionary(tag => tag.id);
                 ApplyTagsToTree(building, apiTagsDict, errorMessages);
             }
             catch (Exception e)
@@ -37,7 +37,7 @@ namespace ReupVirtualTwin.editor
             return fetchedTagsResult.results;
         }
 
-        private static void ApplyTagsToTree(GameObject obj, Dictionary<string, Tag> apiTags, List<string> errorMessages)
+        private static void ApplyTagsToTree(GameObject obj, Dictionary<int, Tag> apiTags, List<string> errorMessages)
         {
             ApplyTagsToObject(obj, apiTags, errorMessages);
 
@@ -47,15 +47,15 @@ namespace ReupVirtualTwin.editor
             }
         }
 
-        private static void ApplyTagsToObject(GameObject obj, Dictionary<string, Tag> apiTags, List<string> errorMessages)
+        private static void ApplyTagsToObject(GameObject obj, Dictionary<int, Tag> apiTags, List<string> errorMessages)
         {
-            List<string> objectTagsIds = ExtractTagsIdsFromObject(obj);            
+            List<int> objectTagsIds = ExtractTagsIdsFromObject(obj);            
             List<Tag> tagsToApply = objectTagsIds
                 .Where(id => apiTags.TryGetValue(id, out _))
                 .Select(id => apiTags[id])
                 .ToList();
 
-            List<string> notFoundTagsIds = objectTagsIds.Where(id => tagsToApply.All(tag => tag.id != id)).ToList();
+            List<int> notFoundTagsIds = objectTagsIds.Where(id => tagsToApply.All(tag => tag.id != id)).ToList();
             if (notFoundTagsIds.Count > 0)
             {
                 string notFoundTagIdsStr = string.Join(" - ", notFoundTagsIds);
@@ -63,19 +63,19 @@ namespace ReupVirtualTwin.editor
             }
 
             ObjectTags objectTags = obj.GetComponent<ObjectTags>() ?? obj.gameObject.AddComponent<ObjectTags>();
-            Dictionary<string, Tag> existingTagsDict = objectTags.GetTags().ToDictionary(tag => tag.id);
+            Dictionary<int, Tag> existingTagsDict = objectTags.GetTags().ToDictionary(tag => tag.id);
             List<Tag> tagsToAdd = tagsToApply.Where(tag => !existingTagsDict.ContainsKey(tag.id)).ToList();
 
             objectTags.AddTags(tagsToAdd.ToArray());
         }
 
-        private static List<string> ExtractTagsIdsFromObject(GameObject gameObject)
+        private static List<int> ExtractTagsIdsFromObject(GameObject gameObject)
         {   
             var tagRegex = new Regex(@"TAG_(\d+)", RegexOptions.Compiled);
             return tagRegex.Matches(gameObject.name)
                           .Cast<Match>()
                           .Where(match => match.Success)
-                          .Select(match => match.Groups[1].Value)
+                          .Select(match => int.Parse(match.Groups[1].Value))
                           .ToList();
         }
     }

@@ -1,0 +1,28 @@
+{
+    "name": "reup.romulo.tests.instantiators",
+    "rootNamespace": "",
+    "references": [
+        "GUID:db1051acd1be67444bdd582f8c8da4bd",
+        "GUID:51949aeab7ddd114ea276b96726cb4bb",
+        "GUID:75469ad4d38634e559750d17036d5f7c",
+        "GUID:5f723ba0ce93eb64ca6f59169571c5ed",
+        "GUID:f423d50bd16e5af44b5de6fb9aa6914c",
+        "GUID:993f0e698e8fb354b8eee1296bc5f2f6",
+        "GUID:15c1dcf2b670848439ceff09bf17acd2",
+        "GUID:1f8fa41a8be0a6f4e8779e83989ae122",
+        "GUID:716a66b966d7f4d4dbe82763abab9053",
+        "GUID:1772869efacc54544ac5d329d23fc591",
+        "GUID:0da6763f50b07ec4c9363bdf3985cee5",
+        "GUID:dc04f38471c3a459fb4d31124ee9127d",
+        "GUID:40b5750f5722c3a489ac791a57baac05"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -4,7 +4,7 @@ using ReupVirtualTwin.models;
 using ReupVirtualTwin.modelInterfaces;
 using UnityEngine;
 using UnityEngine.TestTools;
-using ReupVirtualTwinTests.utils;
+using ReupVirtualTwinTests.instantiators;
 
 namespace ReupVirtualTwinTests.Registry
 {

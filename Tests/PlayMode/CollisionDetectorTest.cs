@@ -4,9 +4,9 @@ using UnityEngine.TestTools;
 using UnityEditor;
 using System.Collections;
 
-using ReupVirtualTwinTests.utils;
 using ReupVirtualTwin.managerInterfaces;
 using UnityEngine.InputSystem;
+using ReupVirtualTwinTests.instantiators;
 
 public class CollisionDetectorTest : MonoBehaviour
 {

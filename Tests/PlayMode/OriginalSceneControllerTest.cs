@@ -7,8 +7,8 @@ using UnityEditor;
 using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.models;
-using ReupVirtualTwinTests.utils;
 using ReupVirtualTwinTests.mocks;
+using ReupVirtualTwinTests.instantiators;
 
 namespace ReupVirtualTwinTests.controllers
 {

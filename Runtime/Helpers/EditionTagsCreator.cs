@@ -18,7 +18,7 @@ namespace ReupVirtualTwin.helpers
         {
             return new Tag()
             {
-                id = "action-deletable",
+                id = 234,
                 name = EditionTag.DELETABLE.ToString(),
                 description = "this is an action tag burn into unity"
             };
@@ -27,7 +27,7 @@ namespace ReupVirtualTwin.helpers
         {
             return new Tag()
             {
-                id = "action-transformable",
+                id = 233,
                 name = EditionTag.TRANSFORMABLE.ToString(),
                 description = "this is an action tag burn into unity"
             };
@@ -36,15 +36,10 @@ namespace ReupVirtualTwin.helpers
         {
             return new Tag()
             {
-                id = "action-selectable",
+                id = 232,
                 name = EditionTag.SELECTABLE.ToString(),
                 description = "this is an action tag burn into unity"
             };
-        }
-
-        public static List<Tag> ApplyEditionTags(List<Tag> tags)
-        {
-            return EditionTagsCreator.CreateEditionTags().Concat(tags).ToList();
         }
     }
 }

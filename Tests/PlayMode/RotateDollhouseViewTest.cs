@@ -3,6 +3,7 @@ using NUnit.Framework;
 using ReupVirtualTwin.behaviours;
 using ReupVirtualTwin.enums;
 using ReupVirtualTwin.helpers;
+using ReupVirtualTwinTests.instantiators;
 using ReupVirtualTwinTests.utils;
 using Unity.Cinemachine;
 using UnityEngine;
