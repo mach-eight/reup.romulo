@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using ReupVirtualTwin.models;
 using System;
+using ReupVirtualTwin.helpers;
 
 namespace ReupVirtualTwin.editor
 {
@@ -17,7 +18,7 @@ namespace ReupVirtualTwin.editor
             List<string> errorMessages = new List<string>();
             try
             {
-                Tag[] apiTags = await fetchTags(tagsApiConsumer);
+                List<Tag> apiTags = await fetchTags(tagsApiConsumer);
                 Dictionary<int, Tag> apiTagsDict = apiTags.ToDictionary(tag => tag.id);
                 ApplyTagsToTree(building, apiTagsDict, errorMessages);
             }
@@ -28,13 +29,13 @@ namespace ReupVirtualTwin.editor
             return errorMessages;
         }
 
-        private static async Task<Tag[]> fetchTags(ITagsApiConsumer tagsApiConsumer)
+        private static async Task<List<Tag>> fetchTags(ITagsApiConsumer tagsApiConsumer)
         {
             int page = 1;
             int pageSize = 10000;
 
             PaginationResult<Tag> fetchedTagsResult = await tagsApiConsumer.GetTags(page, pageSize);
-            return fetchedTagsResult.results;
+            return EditionTagsCreator.ApplyEditionTags(fetchedTagsResult.results.ToList());
         }
 
         private static void ApplyTagsToTree(GameObject obj, Dictionary<int, Tag> apiTags, List<string> errorMessages)
@@ -71,7 +72,7 @@ namespace ReupVirtualTwin.editor
 
         private static List<int> ExtractTagsIdsFromObject(GameObject gameObject)
         {   
-            var tagRegex = new Regex(@"TAG_(\d+)", RegexOptions.Compiled);
+            var tagRegex = new Regex(@"TAG_(-?\d+)", RegexOptions.Compiled);
             return tagRegex.Matches(gameObject.name)
                           .Cast<Match>()
                           .Where(match => match.Success)
