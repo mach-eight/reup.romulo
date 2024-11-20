@@ -218,6 +218,19 @@ namespace ReupVirtualTwinTests.editor
             Assert.AreEqual("Error fetching tags", result[0]);
         }
 
+        [Test]
+        public async Task ShouldApplyActionTags()
+        {
+            GameObject child = new GameObject("TAG_-1_action_selectable");
+            child.transform.parent = building.transform;
 
+            List<string> result = await TagsApplierUtil.ApplyTags(building, mockTagsApiConsumer);
+
+            ObjectTags objectTagsChild = child.GetComponent<ObjectTags>();
+
+            Assert.AreEqual(1, objectTagsChild.GetTags().Count);
+            Assert.AreEqual(-1, objectTagsChild.GetTags()[0].id);
+            Assert.AreEqual(0, result.Count);
+        }
     }
 }
