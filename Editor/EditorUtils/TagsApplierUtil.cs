@@ -24,7 +24,7 @@ namespace ReupVirtualTwin.editor
             }
             catch (Exception e)
             {
-                Debug.LogError(e);
+                Debug.LogWarning(e);
                 errorMessages.Add(e.Message);
             }
             return errorMessages;
