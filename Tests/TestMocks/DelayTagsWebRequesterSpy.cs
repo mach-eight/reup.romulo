@@ -1,6 +1,7 @@
 using ReupVirtualTwin.webRequestersInterfaces;
 using ReupVirtualTwin.dataModels;
 using System.Threading.Tasks;
+using ReupVirtualTwinTests.utils;
 
 namespace ReupVirtualTwinTests.mocks
 {
@@ -13,7 +14,7 @@ namespace ReupVirtualTwinTests.mocks
             count = 100000,
             next = "some-next-page-url",
             previous = "some-previous-page-url",
-            results = new Tag[1] { new Tag(){name = "tag0", id = "0", description="description0"}, },
+            results = TagFactory.CreateBulk(1).ToArray(),
         };
         private int delay;
 
@@ -31,6 +32,14 @@ namespace ReupVirtualTwinTests.mocks
         }
 
         public async Task<PaginationResult<Tag>> GetTags(int page)
+        {
+            lastPageFetched = page;
+            numberOfTimesFetched++;
+            await Task.Delay(delay);
+            return returnPage;
+        }
+
+        public async Task<PaginationResult<Tag>> GetTags(int page, int pageSize)
         {
             lastPageFetched = page;
             numberOfTimesFetched++;

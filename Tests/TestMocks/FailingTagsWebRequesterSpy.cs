@@ -18,5 +18,10 @@ namespace ReupVirtualTwinTests.mocks
         {
             throw new System.Exception("Error from FailingTagsWebRequesterSpy");
         }
+
+        public Task<PaginationResult<Tag>> GetTags(int page, int pageSize)
+        {
+            throw new System.Exception("Error from FailingTagsWebRequesterSpy");
+        }
     }
 }

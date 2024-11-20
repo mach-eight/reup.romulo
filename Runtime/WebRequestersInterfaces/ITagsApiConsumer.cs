@@ -7,5 +7,6 @@ namespace ReupVirtualTwin.webRequestersInterfaces
     {
         public Task<PaginationResult<Tag>> GetTags();
         public Task<PaginationResult<Tag>> GetTags(int page);
+        public Task<PaginationResult<Tag>> GetTags(int page, int pageSize);
     }
 }

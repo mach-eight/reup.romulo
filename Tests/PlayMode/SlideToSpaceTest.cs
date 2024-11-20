@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using ReupVirtualTwin.dataModels;
 using ReupVirtualTwinTests.utils;
 using ReupVirtualTwinTests.mocks;
+using ReupVirtualTwinTests.instantiators;
 
 namespace ReupVirtualTwinTests.IOTests
 {

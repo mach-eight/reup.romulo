@@ -1,7 +1,7 @@
 using System.Collections;
 using NUnit.Framework;
 using ReupVirtualTwin.managers;
-using ReupVirtualTwinTests.utils;
+using ReupVirtualTwinTests.instantiators;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.TestTools;

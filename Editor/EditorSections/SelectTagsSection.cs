@@ -86,7 +86,7 @@ namespace ReupVirtualTwin.editor
             {
                 allTags = new List<Tag>();
                 tagsApiManager.CleanTags();
-                await GetTags();
+                await tagsApiManager.GetTags();
             }
         }
 
@@ -134,7 +134,7 @@ namespace ReupVirtualTwin.editor
 
         private bool IsTagAlreadyPresent(Tag tag)
         {
-            return selectedTags.Exists(presentTag => presentTag.name == tag.name);
+            return selectedTags.Exists(presentTag => presentTag.id == tag.id);
         }
 
     }

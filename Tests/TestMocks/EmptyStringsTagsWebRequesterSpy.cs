@@ -27,6 +27,12 @@ namespace ReupVirtualTwinTests.mocks
             return Task.FromResult(returnPage);
         }
 
+        public Task<PaginationResult<Tag>> GetTags(int page, int pageSize)
+        {
+            numberOfTimesFetched++;
+            return Task.FromResult(returnPage);
+        }
+
     }
 }
 

@@ -13,6 +13,7 @@ using ReupVirtualTwinTests.utils;
 using ReupVirtualTwinTests.mocks;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.controllerInterfaces;
+using ReupVirtualTwinTests.instantiators;
 
 namespace ReupVirtualTwinTests.IOTests
 {

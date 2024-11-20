@@ -5,10 +5,9 @@ using UnityEngine.TestTools;
 using NUnit.Framework;
 
 using ReupVirtualTwin.models;
-using ReupVirtualTwin.enums;
-using ReupVirtualTwin.behaviours;
 using ReupVirtualTwin.controllers;
 using ReupVirtualTwin.dataModels;
+using ReupVirtualTwinTests.utils;
 
 public class tagsControllerTest : MonoBehaviour
 {
@@ -18,9 +17,7 @@ public class tagsControllerTest : MonoBehaviour
     TagsController tagsController;
     ObjectTags objectTags0;
     ObjectTags objectTags1;
-    Tag tag0 = new Tag() { id = "tag0", name = "tag0" };
-    Tag tag1 = new Tag() { id = "tag1", name = "tag1" };
-    Tag tag2 = new Tag() { id = "tag2", name = "tag2" };
+    List<Tag> tags = TagFactory.CreateBulk(3);
 
     [SetUp]
     public void SetUp()
@@ -28,10 +25,10 @@ public class tagsControllerTest : MonoBehaviour
         tagsController = new TagsController();
         taggedObject0 = new GameObject("taggedObj0");
         objectTags0 = taggedObject0.AddComponent<ObjectTags>();
-        objectTags0.AddTags(new Tag[2] {tag0, tag1});
+        objectTags0.AddTags(new Tag[2] {tags[0], tags[1]});
         taggedObject1 = new GameObject("taggedObject1");
         objectTags1 = taggedObject1.AddComponent<ObjectTags>();
-        objectTags1.AddTag(tag0);
+        objectTags1.AddTag(tags[0]);
         nonTaggedObject0 = new GameObject("nonTaggedObj0");
     }
     [TearDown]
@@ -44,34 +41,34 @@ public class tagsControllerTest : MonoBehaviour
     [UnityTest]
     public IEnumerator ShouldReturnFalseOnCheckForTags()
     {
-        Assert.IsFalse(tagsController.DoesObjectHaveTag(taggedObject0, tag2.id));
-        Assert.IsFalse(tagsController.DoesObjectHaveTag(taggedObject1, tag2.id));
-        Assert.IsFalse(tagsController.DoesObjectHaveTag(nonTaggedObject0, tag2.id));
+        Assert.IsFalse(tagsController.DoesObjectHaveTag(taggedObject0, tags[2].id));
+        Assert.IsFalse(tagsController.DoesObjectHaveTag(taggedObject1, tags[2].id));
+        Assert.IsFalse(tagsController.DoesObjectHaveTag(nonTaggedObject0, tags[2].id));
         yield return null;
     }
     [UnityTest]
     public IEnumerator ShouldReturnTrueOnCheckForTags()
     {
-        Assert.IsTrue(tagsController.DoesObjectHaveTag(taggedObject0, tag0.id));
-        Assert.IsTrue(tagsController.DoesObjectHaveTag(taggedObject1, tag0.id));
+        Assert.IsTrue(tagsController.DoesObjectHaveTag(taggedObject0, tags[0].id));
+        Assert.IsTrue(tagsController.DoesObjectHaveTag(taggedObject1, tags[0].id));
         yield return null;
     }
     [UnityTest]
     public IEnumerator ShouldAddTags()
     {
-        Assert.IsFalse(tagsController.DoesObjectHaveTag(taggedObject0, tag2.id));
-        tagsController.AddTagToObject(taggedObject0, tag2);
+        Assert.IsFalse(tagsController.DoesObjectHaveTag(taggedObject0, tags[2].id));
+        tagsController.AddTagToObject(taggedObject0, tags[2]);
         yield return null;
-        Assert.IsTrue(tagsController.DoesObjectHaveTag(taggedObject0, tag2.id));
+        Assert.IsTrue(tagsController.DoesObjectHaveTag(taggedObject0, tags[2].id));
         yield return null;
     }
     [UnityTest]
     public IEnumerator ShouldRemoveTags()
     {
-        Assert.IsTrue(tagsController.DoesObjectHaveTag(taggedObject0, tag0.id));
-        tagsController.RemoveTagFromObject(taggedObject0, tag0);
+        Assert.IsTrue(tagsController.DoesObjectHaveTag(taggedObject0, tags[0].id));
+        tagsController.RemoveTagFromObject(taggedObject0, tags[0]);
         yield return null;
-        Assert.IsFalse(tagsController.DoesObjectHaveTag(taggedObject0, tag0.id));
+        Assert.IsFalse(tagsController.DoesObjectHaveTag(taggedObject0, tags[0].id));
         yield return null;
     }
 

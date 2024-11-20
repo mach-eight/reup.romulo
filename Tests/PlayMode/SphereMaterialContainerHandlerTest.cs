@@ -7,7 +7,8 @@ using ReupVirtualTwin.enums;
 using UnityEditor;
 using ReupVirtualTwin.models;
 using ReupVirtualTwin.helpers;
-using ReupVirtualTwinTests.utils;
+using ReupVirtualTwinTests.mocks;
+using ReupVirtualTwinTests.instantiators;
 
 public class SphereMaterialContainerHandlerTest
 {

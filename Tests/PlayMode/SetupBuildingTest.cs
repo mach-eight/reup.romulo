@@ -1,10 +1,10 @@
 using UnityEngine;
 using NUnit.Framework;
 using ReupVirtualTwin.models;
-using ReupVirtualTwinTests.utils;
 using ReupVirtualTwin.behaviours;
 using UnityEngine.TestTools;
 using System.Collections;
+using ReupVirtualTwinTests.instantiators;
 
 namespace ReupVirtualTwinTests.behaviours
 {

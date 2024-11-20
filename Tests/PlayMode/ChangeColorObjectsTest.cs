@@ -10,6 +10,7 @@ using ReupVirtualTwin.modelInterfaces;
 using ReupVirtualTwin.helpers;
 using Newtonsoft.Json.Linq;
 using ReupVirtualTwinTests.utils;
+using ReupVirtualTwinTests.instantiators;
 
 public class ChangeColorObjectsTest : MonoBehaviour
 {

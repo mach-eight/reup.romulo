@@ -1,8 +1,8 @@
+using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.enums;
 using ReupVirtualTwin.inputs;
 using ReupVirtualTwin.managerInterfaces;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using Zenject;
 
 namespace ReupVirtualTwin.behaviours
@@ -13,14 +13,17 @@ namespace ReupVirtualTwin.behaviours
 
         InputProvider inputProvider;
         IGesturesManager gesturesManager;
+        IDhvNavigationManager dhvNavigationManager;
 
+        Vector2 initialTouch0Position;
         Vector2 initialTouch1Position;
-        Vector2 initialTouch2Position;
 
+        Vector2 touch0Position;
         Vector2 touch1Position;
-        Vector2 touch2Position;
 
-        float rotationThreshold = 3f;
+        float horizontalRotationThresholdDegrees = 6f;
+        float verticalRotationThresholdPixels = 5f;
+        float movementDirectionThresholdPixels = 2f;
 
         float currentAngle;
 
@@ -28,86 +31,102 @@ namespace ReupVirtualTwin.behaviours
         bool isVerticalRotation = false;
 
         [Inject]
-        public void Init(InputProvider inputProvider, IGesturesManager gesturesManager)
+        public void Init(InputProvider inputProvider, IGesturesManager gesturesManager, IDhvNavigationManager dhvNavigationController)
         {
             this.inputProvider = inputProvider;
             this.gesturesManager = gesturesManager;
+            this.dhvNavigationManager = dhvNavigationController;
         }
 
         private void OnEnable() 
         {
-            inputProvider.touch1Started += OnGestureStarted;
-            inputProvider.touch1Canceled += OnGestureFinished;    
+            gesturesManager.GestureStarted += OnGestureStarted;
+            gesturesManager.GestureEnded += OnGestureFinished;    
         }
 
         private void OnDisable() 
         {
-            inputProvider.touch1Started -= OnGestureStarted;
-            inputProvider.touch1Canceled -= OnGestureFinished;
+            gesturesManager.GestureStarted -= OnGestureStarted;
+            gesturesManager.GestureEnded -= OnGestureFinished;
         }
 
         private void Update() 
         {
-            if (gesturesManager.gestureInProgress) 
+            if (gesturesManager.gestureInProgress && !dhvNavigationManager.isZooming) 
             {
-                if (!isHorizontalRotation && !isVerticalRotation)
-                {
-                    DetermineRotationType();
-                }
+                Vector2 touch0 = inputProvider.Touch0();
+                Vector2 touch1 = inputProvider.Touch1();
 
-                if (isHorizontalRotation)
+                if (!dhvNavigationManager.isRotating)
                 {
-                    UpdateHorizontalCameraRotation();
-                }
-                else if (isVerticalRotation)
+                    DetectRotationGesture(touch0, touch1);
+                } else 
                 {
-                    UpdateVerticalCameraRotation();
+                    RotateCamera(touch0, touch1);
                 }
             }
         }
 
-        private void OnGestureStarted(InputAction.CallbackContext ctx)
+        private void OnGestureStarted()
         {
-            initialTouch1Position = inputProvider.Touch0();
-            initialTouch2Position = inputProvider.Touch1();
+            initialTouch0Position = inputProvider.Touch0();
+            initialTouch1Position = inputProvider.Touch1();
+            touch0Position = initialTouch0Position;
             touch1Position = initialTouch1Position;
-            touch2Position = initialTouch2Position;
-            currentAngle = Vector2.SignedAngle(touch2Position - touch1Position, Vector2.right);
+            currentAngle = Vector2.SignedAngle(touch1Position - touch0Position, Vector2.right);
         }
 
-        private void OnGestureFinished(InputAction.CallbackContext ctx)
+        private void OnGestureFinished()
         {
             isHorizontalRotation = false;
             isVerticalRotation = false;
+            if (dhvNavigationManager.isRotating)
+            {
+                dhvNavigationManager.StopRotation();
+            }
         }
 
-        private void DetermineRotationType()
+        private void DetectRotationGesture(Vector2 touch0, Vector2 touch1)
         {
-            Vector2 touch1 = inputProvider.Touch0();
-            Vector2 touch2 = inputProvider.Touch1();
+            DetermineRotationType(touch0, touch1);
+            if (isHorizontalRotation || isVerticalRotation)
+            {
+                dhvNavigationManager.Rotate();
+            }
+        }
 
-            float angleDelta = Vector2.SignedAngle(touch2 - touch1, Vector2.right) - currentAngle;
-            float newAverageY = (touch1.y + touch2.y) / 2;
-            float previousAverageY = (initialTouch1Position.y + initialTouch2Position.y) / 2;
+        private void DetermineRotationType(Vector2 touch0, Vector2 touch1)
+        {
+            float horizontalAngleDelta = Vector2.SignedAngle(touch1 - touch0, Vector2.right) - currentAngle;
+            float newAverageY = (touch0.y + touch1.y) / 2;
+            float previousAverageY = (initialTouch0Position.y + initialTouch1Position.y) / 2;
             float verticalDelta = newAverageY - previousAverageY;
 
-            if (Mathf.Abs(angleDelta) > rotationThreshold)
+            if (Mathf.Abs(horizontalAngleDelta) > horizontalRotationThresholdDegrees)
             {
                 isHorizontalRotation = true;
             }
-            else if (Mathf.Abs(verticalDelta) > rotationThreshold && AreTouchesMovingInSameDirection(touch1, touch2))
+            else if (Mathf.Abs(verticalDelta) > verticalRotationThresholdPixels && AreTouchesMovingInSameDirection(touch0, touch1))
             {
                 isVerticalRotation = true;
             }
         }
 
-        private void UpdateHorizontalCameraRotation()
+        private void RotateCamera(Vector2 touch0, Vector2 touch1)
         {
-            Vector2 touch1 = inputProvider.Touch0();
-            Vector2 touch2 = inputProvider.Touch1();
-            Debug.Log("Touch1: " + touch1 + " Touch2: " + touch2);
+            if (isHorizontalRotation)
+            {
+                UpdateHorizontalCameraRotation(touch0, touch1);
+            }
+            else if (isVerticalRotation)
+            {
+                UpdateVerticalCameraRotation(touch0, touch1);
+            }
+        }
 
-            float newAngle = Vector2.SignedAngle(touch2 - touch1, Vector2.right);
+        private void UpdateHorizontalCameraRotation(Vector2 touch0, Vector2 touch1)
+        {
+            float newAngle = Vector2.SignedAngle(touch1 - touch0, Vector2.right);
             float angleDelta = newAngle - currentAngle;
 
             dollhouseViewWrapper.Rotate(Vector3.up, -angleDelta, Space.World);
@@ -115,18 +134,15 @@ namespace ReupVirtualTwin.behaviours
             currentAngle = newAngle;
         }
 
-        private void UpdateVerticalCameraRotation()
+        private void UpdateVerticalCameraRotation(Vector2 touch0, Vector2 touch1)
         {
-            Vector2 touch1 = inputProvider.Touch0();
-            Vector2 touch2 = inputProvider.Touch1();
-
-            if (!AreTouchesMovingInSameDirection(touch1, touch2))
+            if (!AreTouchesMovingInSameDirection(touch0, touch1))
             {
                 return;
             }
 
-            float newAverageY = (touch1.y + touch2.y) / 2;
-            float previousAverageY = (touch1Position.y + touch2Position.y) / 2;
+            float newAverageY = (touch0.y + touch1.y) / 2;
+            float previousAverageY = (touch0Position.y + touch1Position.y) / 2;
             float deltaY = newAverageY - previousAverageY;
             float verticalRotation = (RomuloGlobalSettings.verticalRotationPerScreenHeight / Screen.height) * deltaY;
 
@@ -143,14 +159,14 @@ namespace ReupVirtualTwin.behaviours
                 0
             );
 
+            touch0Position = touch0;
             touch1Position = touch1;
-            touch2Position = touch2;
         }
 
         private bool AreTouchesMovingInSameDirection(Vector2 touch1, Vector2 touch2)
         {
-            bool bothMovingUp = touch1.y > touch1Position.y && touch2.y > touch2Position.y;
-            bool bothMovingDown = touch1.y < touch1Position.y && touch2.y < touch2Position.y;
+            bool bothMovingUp = touch1.y > touch0Position.y + movementDirectionThresholdPixels && touch2.y > touch1Position.y + movementDirectionThresholdPixels;
+            bool bothMovingDown = touch1.y < touch0Position.y - movementDirectionThresholdPixels && touch2.y < touch1Position.y - movementDirectionThresholdPixels;
             return bothMovingUp || bothMovingDown;
         }
     }

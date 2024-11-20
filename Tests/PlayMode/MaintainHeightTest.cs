@@ -5,8 +5,7 @@ using UnityEditor;
 using System.Collections;
 
 using ReupVirtualTwin.behaviours;
-using ReupVirtualTwin.managerInterfaces;
-using ReupVirtualTwinTests.utils;
+using ReupVirtualTwinTests.instantiators;
 
 
 public class MaintainHeightTest : MonoBehaviour

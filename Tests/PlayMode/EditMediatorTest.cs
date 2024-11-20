@@ -18,6 +18,7 @@ using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.dataSchemas;
 using Newtonsoft.Json.Schema;
 using ReupVirtualTwinTests.mocks;
+using ReupVirtualTwinTests.utils;
 
 public class EditMediatorTest : MonoBehaviour
 {
@@ -241,7 +242,7 @@ public class EditMediatorTest : MonoBehaviour
             building = new ObjectDTO
             {
                 id = "building-id",
-                tags = new Tag[2] { new Tag() { id = "tag0" }, new Tag() { id = "tag1" } },
+                tags = TagFactory.CreateBulk(2).ToArray(),
             };
         }
 
@@ -356,12 +357,12 @@ public class EditMediatorTest : MonoBehaviour
             new ObjectDTO
             {
                 id = "id0",
-                tags = new Tag[2]{ new Tag() { id = "tag0"},  new Tag() { id = "tag1"} },
+                tags = TagFactory.CreateBulk(2).ToArray(),
             },
             new ObjectDTO
             {
                 id = "id1",
-                tags = new Tag[2]{ new Tag() { id = "tag2"},  new Tag() { id = "tag3"} },
+                tags = TagFactory.CreateBulk(2).ToArray(),
             },
         };
 

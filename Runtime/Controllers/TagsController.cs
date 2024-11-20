@@ -21,7 +21,7 @@ namespace ReupVirtualTwin.controllers
             return objectTags.AddTag(tag);
         }
 
-        public bool DoesObjectHaveTag(GameObject obj, string tagId)
+        public bool DoesObjectHaveTag(GameObject obj, int tagId)
         {
             List<Tag> tags = GetTagsFromObject(obj);
             if (tags == null) return false;

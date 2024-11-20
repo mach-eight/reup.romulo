@@ -2,7 +2,6 @@ using UnityEngine;
 using System;
 using ReupVirtualTwin.behaviourInterfaces;
 using ReupVirtualTwin.helperInterfaces;
-using ReupVirtualTwin.controllerInterfaces;
 using ReupVirtualTwin.helpers;
 using ReupVirtualTwin.enums;
 using Zenject;

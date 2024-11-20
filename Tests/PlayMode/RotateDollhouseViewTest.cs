@@ -3,7 +3,9 @@ using NUnit.Framework;
 using ReupVirtualTwin.behaviours;
 using ReupVirtualTwin.enums;
 using ReupVirtualTwin.helpers;
+using ReupVirtualTwinTests.instantiators;
 using ReupVirtualTwinTests.utils;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.TestTools;
@@ -18,6 +20,7 @@ namespace ReupVirtualTwinTests.behaviours
         RotateDhvCameraKeyboard rotateDhvCameraKeyboardBehavior;
         RotateDhvCameraMouse rotateDhvCameraMouseBehavior;
         RotateDhvCameraTouch rotateDhvCameraTouchBehavior;
+        CinemachineCamera dhvCineMachineComponent;
         Keyboard keyboard;
         Mouse mouse;
         Touchscreen touch;
@@ -37,6 +40,7 @@ namespace ReupVirtualTwinTests.behaviours
             rotateDhvCameraKeyboardBehavior = sceneObjects.rotateDhvCameraKeyboardBehavior;
             rotateDhvCameraMouseBehavior = sceneObjects.rotateDhvCameraMouseBehavior;
             rotateDhvCameraTouchBehavior = sceneObjects.rotateDhvCameraTouchBehavior;
+            dhvCineMachineComponent = sceneObjects.dhvCamera.GetComponent<CinemachineCamera>();
             input = sceneObjects.input;
             keyboard = InputSystem.AddDevice<Keyboard>();
             mouse = InputSystem.AddDevice<Mouse>();
@@ -390,13 +394,49 @@ namespace ReupVirtualTwinTests.behaviours
             Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
 
             Vector2 initialPositionTouch1 = new Vector2(0.0f, 0.0f);
-            Vector2 initialPositionTouch2 = new Vector2(0.1f, 0.0f);
+            Vector2 initialPositionTouch2 = new Vector2(0.0f, 0.0f);
             Vector2 finalPositionTouch1 = new Vector2(0.0f, 1.0f);
-            Vector2 finalPositionTouch2 = new Vector2(0.1f, 1.0f);
+            Vector2 finalPositionTouch2 = new Vector2(0.0f, 1.0f);
 
             yield return PointerUtils.TouchGesture(input, touch, initialPositionTouch1, initialPositionTouch2, finalPositionTouch1, finalPositionTouch2, steps);
 
             Assert.AreEqual(RomuloGlobalSettings.minVerticalAngle, dollhouseViewWrapper.localEulerAngles.x, errorToleranceInDegrees);
         }
+
+        [UnityTest]
+        public IEnumerator ShouldNotZoomWhileRotationTouchMultiGesture()
+        {
+            float initialFieldOfView = dhvCineMachineComponent.Lens.FieldOfView;
+
+            Vector2 initialPositionTouch1 = new Vector2(0.0f, 0.0f);
+            Vector2 initialPositionTouch2 = new Vector2(0.0f, 0.5f);
+            Vector2 finalPositionTouch1 = new Vector2(0.0f, 0.0f);
+            Vector2 finalPositionTouch2 = new Vector2(0.0f, 0.10f);
+
+            yield return PointerUtils.AbsolutePositionTouchGesture(input, touch, initialPositionTouch1, initialPositionTouch2, finalPositionTouch1, finalPositionTouch2, steps);
+
+            Assert.AreEqual(initialFieldOfView, dhvCineMachineComponent.Lens.FieldOfView);
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldOnlyRotateIfBothMouseButtonsAreHold()
+        {
+            Assert.AreEqual(initialRotationX, dollhouseViewWrapper.localEulerAngles.x);
+            Assert.AreEqual(initialRotationY, dollhouseViewWrapper.localEulerAngles.y);
+            Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
+
+            float percentageOfTheScreenDragged = 5f / 100f;
+            float performedRotationInDegrees = percentageOfTheScreenDragged * RomuloGlobalSettings.horizontalRotationPerScreenWidth;
+            Vector2 initialPosition = new Vector2(0.5f, 0.5f);
+            Vector2 finalPosition = new Vector2(0.55f, 0.5f);
+
+            yield return PointerUtils.DragMouseBothButtons(input, mouse, initialPosition, finalPosition, steps);
+
+            float expectedRotation = initialRotationY + performedRotationInDegrees;
+
+            Assert.AreEqual(expectedRotation, dollhouseViewWrapper.localEulerAngles.y, errorToleranceInDegrees);
+            Assert.AreEqual(Vector3.zero, dollhouseViewWrapper.position);
+        }
+
     }
 }
