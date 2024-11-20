@@ -24,6 +24,7 @@ namespace ReupVirtualTwin.editor
             }
             catch (Exception e)
             {
+                Debug.LogError(e);
                 errorMessages.Add(e.Message);
             }
             return errorMessages;
@@ -72,12 +73,15 @@ namespace ReupVirtualTwin.editor
 
         private static List<int> ExtractTagsIdsFromObject(GameObject gameObject)
         {   
-            var tagRegex = new Regex(@"TAG_(-?\d+)", RegexOptions.Compiled);
+            var tagRegex = new Regex(@"TAG_(_?\d+)", RegexOptions.Compiled);
             return tagRegex.Matches(gameObject.name)
                           .Cast<Match>()
                           .Where(match => match.Success)
-                          .Select(match => int.Parse(match.Groups[1].Value))
+                          .Select(match => ParseTagId(match.Groups[1].Value))
                           .ToList();
+        }
+        private static int ParseTagId(string serializedId) {
+            return int.Parse(serializedId.Replace('_', '-'));
         }
     }
 }

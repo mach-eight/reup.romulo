@@ -221,7 +221,7 @@ namespace ReupVirtualTwinTests.editor
         [Test]
         public async Task ShouldApplyActionTags()
         {
-            GameObject child = new GameObject("TAG_-1_action_selectable");
+            GameObject child = new GameObject("TAG__1_action_selectable");
             child.transform.parent = building.transform;
 
             List<string> result = await TagsApplierUtil.ApplyTags(building, mockTagsApiConsumer);
